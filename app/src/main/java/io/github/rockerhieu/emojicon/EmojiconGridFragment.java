@@ -27,7 +27,7 @@ import android.widget.GridView;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.myapplication.R;
+import com.season.myapplication.R;
 
 import io.github.rockerhieu.emojicon.emoji.Emojicon;
 import io.github.rockerhieu.emojicon.emoji.People;

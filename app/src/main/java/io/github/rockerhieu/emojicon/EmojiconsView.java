@@ -34,7 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.myapplication.R;
+import com.season.myapplication.R;
 
 import java.util.Arrays;
 import java.util.List;

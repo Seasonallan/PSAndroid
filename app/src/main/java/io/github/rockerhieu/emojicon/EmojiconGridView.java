@@ -24,7 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.example.myapplication.R;
+import com.season.myapplication.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

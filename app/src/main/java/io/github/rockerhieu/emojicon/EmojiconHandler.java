@@ -27,11 +27,10 @@ import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseIntArray;
 
 
-import com.example.myapplication.R;
+import com.season.myapplication.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

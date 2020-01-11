@@ -43,13 +43,13 @@
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:visibility="gone" />
-                    <com.seaon.lib.movie.GifMovieView
+                    <com.season.lib.view.GifMovieView
                         android:id="@+id/gifview"
                         android:visibility="gone"
                         android:layout_centerInParent="true"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
-                    <com.biaoqing.library.diy.gifmaker.frame.GifFrameView
+                    <com.season.lib.gif.frame.GifFrameView
                         android:id="@+id/gifFrameview"
                         android:visibility="gone"
                         android:layout_centerInParent="true"
@@ -60,13 +60,13 @@
             </FrameLayout>
 
 
-            <com.seaon.lib.view.ContainerView
+            <com.season.lib.view.ContainerView
                 android:id="@+id/layout_stickLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="visible" />
 
-            <com.seaon.lib.view.TuyaView
+            <com.season.lib.view.TuyaView
                 android:id="@+id/tuya"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -160,7 +160,7 @@
                         android:text="背景"
                         android:textSize="20px" />
 
-                    <com.seaon.lib.view.ColorImageView
+                    <com.season.lib.view.ColorImageView
                         android:id="@+id/v_color"
                         android:layout_width="47px"
                         android:layout_height="47px"
@@ -178,7 +178,7 @@
                         android:orientation="horizontal"
                         android:visibility="gone">
 
-                        <com.seaon.lib.view.ColorPickView
+                        <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_translate"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -186,7 +186,7 @@
                             android:button="@null"
                             android:checked="true" />
 
-                        <com.seaon.lib.view.ColorPickView
+                        <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_white"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -194,7 +194,7 @@
                             android:background="@mipmap/baise_white"
                             android:button="@null" />
 
-                        <com.seaon.lib.view.ColorPickView
+                        <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_hui"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -203,7 +203,7 @@
                             android:button="@null"
                             android:visibility="gone" />
 
-                        <com.seaon.lib.view.ColorPickView
+                        <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_black"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -211,7 +211,7 @@
                             android:background="@mipmap/base_heise"
                             android:button="@null" />
 
-                        <com.seaon.lib.view.ColorPickView
+                        <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_vid_pic"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -297,7 +297,7 @@
 
     </LinearLayout>
 
-    <com.seaon.lib.view.DiyCoverView
+    <com.season.lib.view.DiyCoverView
         android:id="@+id/layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
