@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RecordButtonStyle">
+        <attr name="diameter_VideoBtn_Normal" format="dimension|reference" />
+        <attr name="diameter_VideoBtn_Down" format="dimension|reference" />
+        <attr name="diameter_outer_Circle" format="dimension|reference" />
+        <attr name="diameter_outerBig_Circle" format="dimension|reference" />
+        <attr name="diameter_Progress_Width" format="dimension|reference" />
+        <attr name="small_pause" format="dimension|reference" />
+        <attr name="big_pause" format="dimension|reference" />
+        <!--<attr name="left_text_color" format="color|reference" />-->
+        <!--<attr name="action_type">-->
+        <!--<enum name="LEFT_IMG" value="0" />-->
+        <!--<enum name="LEFT_IMG_RIGHT_IMG" value="1" />-->
+        <!--<enum name="LEFT_IMG_RIGHT_TXT" value="2" />-->
+        <!--<enum name="LEFT_TXT" value="3" />-->
+        <!--<enum name="LEFT_TXT_RIGHT_IMG" value="4" />-->
+        <!--<enum name="LEFT_TXT_RIGHT_TXT" value="5" />-->
+        <!--<enum name="RIGHT_IMG" value="6" />-->
+        <!--<enum name="RIGHT_TXT" value="7" />-->
+        <!--<enum name="ONLY_TITLE" value="8" />-->
+        <!--</attr>-->
+    </declare-styleable>
+    <declare-styleable name="color_picker">
+        <!-- 背景圆的半径 -->
+        <attr name="circle_radius" format="dimension" />
+        <!-- 可滑动小球的半径 -->
+        <attr name="center_radius" format="dimension" />
+        <!-- 可滑动小球的颜色 -->
+        <attr name="center_color" format="color" />
+    </declare-styleable>
+    <declare-styleable name="RangeSeekBar">
+        <attr name="orientation" format="string" />
+        <attr name="limitThumbRange" format="boolean" />
+        <attr name="scaleMin" format="float" />
+        <attr name="scaleMax" format="float" />
+        <attr name="scaleStep" format="float" />
+        <attr name="leftThumb" format="reference" />
+        <attr name="rightThumb" format="reference" />
+        <attr name="thumbs" format="integer" />
+        <attr name="thumbWidth" format="dimension" />
+        <attr name="thumbHeight" format="dimension" />
+        <attr name="track" format="reference" />
+        <attr name="range" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="RangeSeekBar2">
+        <attr name="limitThumbRange2" format="boolean" />
+        <attr name="progressMin" format="float" />
+        <attr name="progressMax" format="float" />
+        <attr name="progressStep" format="float" />
+        <attr name="leftThumb2" format="reference" />
+        <attr name="rightThumb2" format="reference" />
+        <attr name="thumbWidth2" format="dimension" />
+        <attr name="thumbHeight2" format="dimension" />
+        <attr name="bg" format="reference" />
+        <attr name="selectRangeBg" format="reference" />
+        <attr name="scroll_ball" format="reference" />
+        <attr name="scroll_ball_radius" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="EmojiconStyle">
+        <attr name="emojiconGridViewStyle" format="reference"/>
+    </declare-styleable>
+    <declare-styleable name="Emojicon">
+        <attr name="emojiconSize" format="dimension" />
+        <attr name="emojiconAlignment" format="enum">
+            <enum name="bottom" value="0" />
+            <enum name="baseline" value="1" />
+        </attr>
+        <attr name="emojiconTextStart" format="integer" />
+        <attr name="emojiconTextLength" format="integer" />
+        <attr name="emojiconUseSystemDefault" format="boolean" />
+    </declare-styleable>
+</resources>
