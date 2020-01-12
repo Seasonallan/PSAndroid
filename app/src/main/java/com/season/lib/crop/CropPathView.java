@@ -11,7 +11,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.view.MotionEvent;
 
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.lib.util.Logger;
 
 import java.io.File;

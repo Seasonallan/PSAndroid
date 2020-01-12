@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,23 +8,20 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.season.lib.scale.ScaleView;
 
-
-public class LayerImageView extends AppCompatImageView
-        implements LayerInfoI, IScaleView {
-    private LayerInfoI mLayerInfoI;
+public class CustomImageView extends AppCompatImageView
+        implements ILayer {
     private float centerX;
     private float centerY;
     public String url;
 
-    public LayerImageView copy(){
-        LayerImageView layerImageView = new LayerImageView(getContext());
-        layerImageView.setBitmap(bitmap);
-        layerImageView.url = url;
-        layerImageView.isTuya = isTuya;
-        layerImageView.filePath = filePath;
-        return layerImageView;
+    public CustomImageView copy(){
+        CustomImageView customImageView = new CustomImageView(getContext());
+        customImageView.setBitmap(bitmap);
+        customImageView.url = url;
+        customImageView.isTuya = isTuya;
+        customImageView.filePath = filePath;
+        return customImageView;
     }
 
     @Override
@@ -39,11 +36,11 @@ public class LayerImageView extends AppCompatImageView
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (getParent() instanceof ScaleView){
+        if (getParent() instanceof PSLayer){
             int width = right - left;
             int height = bottom - top;
             if (width > 0 && height > 0){
-                ((ScaleView) getParent()).rebindOpView();
+                ((PSLayer) getParent()).rebindOpView();
             }
         }
     }
@@ -66,34 +63,14 @@ public class LayerImageView extends AppCompatImageView
         return centerY;
     }
 
-    public LayerImageView(Context context)
+    public CustomImageView(Context context)
     {
         super(context);
-        init();
     }
 
-    public LayerImageView(Context context, AttributeSet attributeSet)
+    public CustomImageView(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
-        init();
-    }
-
-
-    private void init()
-    {
-        mLayerInfoI = new LayerInfoImp();
-    }
-
-    @Override
-    public long getViewId()
-    {
-        return mLayerInfoI.getViewId();
-    }
-
-    @Override
-    public void setViewId(long id)
-    {
-        mLayerInfoI.setViewId(id);
     }
 
     private Bitmap bitmap;

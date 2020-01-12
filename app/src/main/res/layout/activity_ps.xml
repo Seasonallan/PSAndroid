@@ -43,13 +43,13 @@
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:visibility="gone" />
-                    <com.season.lib.view.GifMovieView
+                    <com.season.lib.view.ps.CustomGifMovie
                         android:id="@+id/gifview"
                         android:visibility="gone"
                         android:layout_centerInParent="true"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
-                    <com.season.lib.gif.frame.GifFrameView
+                    <com.season.lib.view.ps.CustomGifFrame
                         android:id="@+id/gifFrameview"
                         android:visibility="gone"
                         android:layout_centerInParent="true"
@@ -60,13 +60,13 @@
             </FrameLayout>
 
 
-            <com.season.lib.view.ContainerView
+            <com.season.lib.view.ps.PSCanvas
                 android:id="@+id/layout_stickLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="visible" />
 
-            <com.season.lib.view.TuyaView
+            <com.season.lib.view.ps.CustomCanvas
                 android:id="@+id/tuya"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -165,7 +165,7 @@
                         android:layout_width="47px"
                         android:layout_height="47px"
                         android:layout_margin="6px"
-                        android:background="@mipmap/touming" />
+                        android:background="@mipmap/icon_color_transparent" />
 
                     <RadioGroup
                         android:id="@+id/rg_auto_bg"
@@ -182,7 +182,7 @@
                             android:id="@+id/rb_translate"
                             android:layout_width="47px"
                             android:layout_height="47px"
-                            android:background="@mipmap/touming"
+                            android:background="@mipmap/icon_color_transparent"
                             android:button="@null"
                             android:checked="true" />
 
@@ -191,7 +191,7 @@
                             android:layout_width="47px"
                             android:layout_height="47px"
                             android:layout_marginLeft="5dp"
-                            android:background="@mipmap/baise_white"
+                            android:background="@mipmap/icon_color_white"
                             android:button="@null" />
 
                         <com.season.lib.view.ColorPickView
@@ -199,7 +199,7 @@
                             android:layout_width="47px"
                             android:layout_height="47px"
                             android:layout_marginLeft="5dp"
-                            android:background="@mipmap/huise"
+                            android:background="@mipmap/icon_color_gray"
                             android:button="@null"
                             android:visibility="gone" />
 
@@ -208,7 +208,7 @@
                             android:layout_width="47px"
                             android:layout_height="47px"
                             android:layout_marginLeft="5dp"
-                            android:background="@mipmap/base_heise"
+                            android:background="@mipmap/icon_color_black"
                             android:button="@null" />
 
                         <com.season.lib.view.ColorPickView
@@ -242,7 +242,7 @@
                         android:layout_height="59px"
                         android:paddingLeft="30px"
                         android:paddingRight="24px"
-                        android:src="@mipmap/crop_chexiao2" />
+                        android:src="@mipmap/icon_op_pre_sel" />
 
                     <ImageView
                         android:id="@+id/iv_redo"
@@ -250,7 +250,7 @@
                         android:layout_height="59px"
                         android:paddingLeft="24px"
                         android:paddingRight="30px"
-                        android:src="@mipmap/crop_chongzuo2" />
+                        android:src="@mipmap/icon_op_pro_sel" />
 
                     <ImageView
                         android:id="@+id/iv_delete"
@@ -280,7 +280,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingBottom="8px"
-                        android:src="@mipmap/zuoyoulashen" />
+                        android:src="@mipmap/icon_zoom_h" />
 
                     <TextView
                         android:id="@+id/del_tv"
@@ -297,7 +297,7 @@
 
     </LinearLayout>
 
-    <com.season.lib.view.DiyCoverView
+    <com.season.lib.view.ps.PSCoverView
         android:id="@+id/layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

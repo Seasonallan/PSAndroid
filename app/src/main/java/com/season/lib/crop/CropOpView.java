@@ -9,9 +9,9 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.lib.util.ToolBitmapCache;
-import com.season.lib.scale.ScaleView;
+import com.season.lib.view.ps.PSLayer;
 import com.season.lib.util.AutoUtils;
 
 /**
@@ -79,7 +79,7 @@ public class CropOpView {
 
         float ox = center[0], oy = center[1];
         center = new float[]{desPoints[0] + (desPoints[4] - desPoints[0])/2, desPoints[1] + (desPoints[5] - desPoints[1])/2};
-        degree = ScaleView.getRotationBetweenLines(desPoints[6], desPoints[7], desPoints[0], desPoints[1]);
+        degree = PSLayer.getRotationBetweenLines(desPoints[6], desPoints[7], desPoints[0], desPoints[1]);
 
         double oriX = (srcPoints[2] - srcPoints[0]) * (srcPoints[2] - srcPoints[0]) + (srcPoints[3] - srcPoints[1]) * (srcPoints[3] - srcPoints[1]);
         oriX = Math.sqrt(oriX);

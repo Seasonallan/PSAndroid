@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -19,29 +20,29 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.gif.frame.GifFrameView;
-import com.season.lib.gif.utils.Util;
-import com.season.lib.view.IScaleView;
+import com.season.lib.bean.LayerItem;
+import com.season.lib.view.ps.CustomGifFrame;
+import com.season.lib.util.Util;
+import com.season.lib.view.ps.ILayer;
 import com.season.lib.util.Logger;
 import com.season.lib.http.DownloadAPI;
-import com.season.lib.layout.TextLayout;
-import com.season.lib.view.GifMovieView;
-import com.season.lib.scale.BackInfoModelBean;
-import com.season.lib.scale.ItemArrayBean;
-import com.season.lib.scale.LayerEntity;
-import com.season.lib.scale.ScaleView;
+import com.season.example.layout.TextLayout;
+import com.season.lib.view.ps.CustomGifMovie;
+import com.season.lib.bean.LayerBackground;
+import com.season.lib.bean.LayerEntity;
+import com.season.lib.view.ps.PSBackground;
+import com.season.lib.view.ps.PSLayer;
 import com.season.lib.util.Constant;
 import com.season.lib.util.FileManager;
 import com.season.lib.util.FileUtils;
 import com.season.lib.util.ScreenUtils;
 import com.season.lib.view.ColorPickView;
-import com.season.lib.view.ContainerView;
-import com.season.lib.view.DelView;
-import com.season.lib.view.DiyBackgroundView;
-import com.season.lib.view.DiyCoverView;
-import com.season.lib.view.LayerImageView;
-import com.season.lib.view.TextStyleView;
-import com.season.lib.view.TuyaView;
+import com.season.lib.view.ps.PSCanvas;
+import com.season.example.layout.TopDeleteLayout;
+import com.season.lib.view.ps.PSCoverView;
+import com.season.lib.view.ps.CustomImageView;
+import com.season.lib.view.ps.CustomTextView;
+import com.season.lib.view.ps.CustomCanvas;
 import com.season.myapplication.BuildConfig;
 import com.season.myapplication.R;
 import com.season.lib.util.AutoUtils;
@@ -50,13 +51,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class DiyMainActivity extends Activity implements View.OnClickListener {
+public class PsActivity extends Activity implements View.OnClickListener {
 
-    DiyCoverView mLayoutContainer;
+    PSCoverView mLayoutContainer;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tuya);
+        setContentView(R.layout.activity_ps);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -67,7 +68,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         opviewContainer = findViewById(R.id.opviewContainer);
         del_container = findViewById(R.id.del_container);
         mStickerLayout = findViewById(R.id.layout_stickLayout);
-        tuyaView = findViewById(R.id.tuya);
+        customCanvas = findViewById(R.id.tuya);
         iv_redo = findViewById(R.id.iv_redo);
         iv_undo = findViewById(R.id.iv_undo);
         iv_delete = findViewById(R.id.iv_delete);
@@ -75,8 +76,6 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         vColor = findViewById(R.id.v_color);
         rb_vid_pic = findViewById(R.id.rb_vid_pic);
 
-        del_iv = findViewById(R.id.del_iv);
-        del_tv = findViewById(R.id.del_tv);
         iv_back = findViewById(R.id.iv_back);
         iv_next = findViewById(R.id.iv_next);
         iv_share = findViewById(R.id.iv_share);
@@ -104,15 +103,13 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
     ImageView iv_confirm;
 
     int videoWidthHeight, offsetX, offsetY;
-    ContainerView mStickerLayout;
+    PSCanvas mStickerLayout;
     View rl_op_top;
     View ll_op_bottom;
     LinearLayout del_container;
-    ImageView del_iv;
-    TextView del_tv;
 
     View opview;View opviewContainer;
-    TuyaView tuyaView;
+    CustomCanvas customCanvas;
     ImageView iv_redo;
     ImageView iv_undo;
     ImageView iv_delete;
@@ -177,8 +174,8 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
                 layerEntity = (LayerEntity) localData;
             }
             if (layerEntity != null){
-                BackInfoModelBean backgroundInfo = layerEntity.getBackInfoModel();
-                List<ItemArrayBean> items = layerEntity.getItemArray();
+                LayerBackground backgroundInfo = layerEntity.getBackInfoModel();
+                List<LayerItem> items = layerEntity.getItemArray();
 //            filePath = backgroundInfo.assetPathFile;
 //            String bgUrl = backgroundInfo.getAssetPath();
                 /**
@@ -210,7 +207,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         }
 }
 
-    private void showBg(boolean copyFile, boolean saveHistory, BackInfoModelBean backgroundInfo) {
+    private void showBg(boolean copyFile, boolean saveHistory, LayerBackground backgroundInfo) {
         if (!TextUtils.isEmpty(backgroundInfo.assetPathFile)) {
             //背景是视频
             String videoFilePath = backgroundInfo.assetPathFile;
@@ -223,7 +220,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
                 } else {
                     addLocalMessageUio(url, videoFilePath, true, backgroundInfo.getRate(), saveHistory);
                 }
-                //ProgressDialogUtils.Show(DiyMainActivity.this, "视频处理中，请稍候");
+                //ProgressDialogUtils.Show(PsActivity.this, "视频处理中，请稍候");
                 //addKeyFrameMp4(bgUrl, filePath, true, backgroundInfo.getRate(), saveHistory);
             } else {
                 addLocalMessageUio(url, videoFilePath, true, backgroundInfo.getRate(), saveHistory);
@@ -290,12 +287,12 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void showLayers(LayerEntity layerEntity, List<ItemArrayBean> items) {
+    private void showLayers(LayerEntity layerEntity, List<LayerItem> items) {
         if (items.size() > 0) {//图层信息转化
             for (int i = 0; i < items.size(); i++) {
                 int position = i;
-                ItemArrayBean item = items.get(i);
-                ScaleView scaleView = new ScaleView(this, handler);
+                LayerItem item = items.get(i);
+                PSLayer PSLayer = new PSLayer(this, handler);
                 if (item.getContentViewType() != Constant.contentViewType.ContentViewTypeTextbox) {//不是文字图层
                     String path = item.filePath;
                     String url = item.getImageURL();
@@ -310,62 +307,62 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
                                 int imageWidth;
                                 int imageHeight;
                                 if (Util.isGif(fileType)) {//图片是Gif
-                                    GifMovieView gifMovieView = new GifMovieView(DiyMainActivity.this, false);
-                                    boolean res = gifMovieView.setMovieResource(path);
+                                    CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
+                                    boolean res = customGifMovie.setMovieResource(path);
                                     if (res) {//sometimes movie decode gif error url duration = 0
-                                        gifMovieView.url = url;
-                                        imageWidth = gifMovieView.getViewWidth();
-                                        imageHeight = gifMovieView.getViewHeight();
-                                        scaleView.addView(gifMovieView,
+                                        customGifMovie.url = url;
+                                        imageWidth = customGifMovie.getViewWidth();
+                                        imageHeight = customGifMovie.getViewHeight();
+                                        PSLayer.addView(customGifMovie,
                                                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                         .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                     } else {
-                                        GifFrameView gifFrameView = new GifFrameView(DiyMainActivity.this);
-                                        gifFrameView.setMovieResource(path);
-                                        gifFrameView.url = url;
-                                        imageWidth = gifFrameView.getViewWidth();
-                                        imageHeight = gifFrameView.getViewHeight();
-                                        scaleView.addView(gifFrameView,
+                                        CustomGifFrame customGifFrame = new CustomGifFrame(PsActivity.this);
+                                        customGifFrame.setMovieResource(path);
+                                        customGifFrame.url = url;
+                                        imageWidth = customGifFrame.getViewWidth();
+                                        imageHeight = customGifFrame.getViewHeight();
+                                        PSLayer.addView(customGifFrame,
                                                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                         .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                     }
                                 } else {//图片是静图
-                                    LayerImageView imageView = new LayerImageView(this);
+                                    CustomImageView imageView = new CustomImageView(this);
                                     imageView.setImageFile(path);
                                     imageWidth = imageView.getViewWidth();
                                     imageHeight = imageView.getViewHeight();
                                     imageView.url = url;
                                     imageView.isTuya = false;
-                                    scaleView
+                                    PSLayer
                                             .addView(imageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                     .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                 }
-                                scaleView.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
+                                PSLayer.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
                                         layerEntity.getWidth(),
                                         layerEntity.getHeight(), imageWidth, imageHeight);
                                 break;
                             case Constant.contentViewType.ContentViewTypeDraw://图层是涂鸦，静图，设置标志位isTuya=true
-                                LayerImageView layerImageView = new LayerImageView(this);
-                                layerImageView.setImageFile(path);
-                                layerImageView.url = url;
-                                layerImageView.isTuya = true;
-                                scaleView
-                                        .addView(layerImageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
+                                CustomImageView customImageView = new CustomImageView(this);
+                                customImageView.setImageFile(path);
+                                customImageView.url = url;
+                                customImageView.isTuya = true;
+                                PSLayer
+                                        .addView(customImageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                 .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                scaleView.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
+                                PSLayer.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
                                         layerEntity.getWidth(),
-                                        layerEntity.getHeight(), layerImageView.getViewWidth(),
-                                        layerImageView.getViewHeight());
+                                        layerEntity.getHeight(), customImageView.getViewWidth(),
+                                        customImageView.getViewHeight());
                                 break;
                         }
-                        addViewPost(scaleView, i * 100, i == items.size() - 1);
+                        addViewPost(PSLayer, i * 100, i == items.size() - 1);
                     } else {
                         Logger.d("file missed");
                     }
                 } else {
                     //图层是文字
-                    TextStyleView textStyleView = new TextStyleView(this);
-                    boolean scaleOrNot = textStyleView.setTextEntry(item, layerEntity.getWidth());
+                    CustomTextView customTextView = new CustomTextView(this);
+                    boolean scaleOrNot = customTextView.setTextEntry(item, layerEntity.getWidth());
                     int duration = 0;
                     int delayVideo = 0;
                     int animationType = 0;
@@ -378,29 +375,29 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    textStyleView.setTextAnimationType(animationType, duration, delayVideo, speed);
-                    scaleView.addView(textStyleView,
+                    customTextView.setTextAnimationType(animationType, duration, delayVideo, speed);
+                    PSLayer.addView(customTextView,
                             new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                                     .LayoutParams.WRAP_CONTENT));
-                    scaleView.bindMatrix(item, videoWidthHeight, offsetX, offsetY, layerEntity.getWidth(),
+                    PSLayer.bindMatrix(item, videoWidthHeight, offsetX, offsetY, layerEntity.getWidth(),
                             layerEntity.getHeight(),
                             scaleOrNot);
-                    addViewPost(scaleView, i * 100, i == items.size() - 1);
+                    addViewPost(PSLayer, i * 100, i == items.size() - 1);
                 }
             }
         }
     }
 
     //post一个一个显示图层，比较好看
-    private void addViewPost(final ScaleView scaleView, int delay, final boolean isLast) {
+    private void addViewPost(final PSLayer PSLayer, int delay, final boolean isLast) {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (scaleView.getChildCount() > 0) {
-                    mStickerLayout.addView(scaleView);
+                if (PSLayer.getChildCount() > 0) {
+                    mStickerLayout.addView(PSLayer);
                     if (isLast) {
                         resetStatus();
-                        checkSelectedPosition(scaleView.getChildAt(0));
+                        checkSelectedPosition(PSLayer.getChildAt(0));
                     }
                 }
                 if (isLast) {
@@ -477,10 +474,11 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
     }
 
     private void initBg() {
-        mLayoutContainer.setOnActionUpListener(new DiyCoverView.OnUpListener() {
+        mLayoutContainer.setOnActionUpListener(new PSCoverView.OnUpListener() {
             @Override
             public void onActionUp(float x, float y) {
                 //如果选择背景是展开的，关闭它
+                Logger.LOG("setOnActionUpListener "+ rgAutoBg.getVisibility() );
                 if (rgAutoBg.getVisibility() == View.VISIBLE) {
                     int[] location = new int[2];
                     rgAutoBg.getLocationOnScreen(location);
@@ -489,7 +487,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
                     int right = left + rgAutoBg.getMeasuredWidth();
                     int bottom = top + rgAutoBg.getMeasuredHeight();
                     if (y >= top && y <= bottom && x >= 0 && x <= right) {
-
+                        Logger.LOG("N ");
                     } else {
                         vColor.setVisibility(View.VISIBLE);
                         rgAutoBg.setVisibility(View.GONE);
@@ -509,6 +507,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         });
     }
 
+    TopDeleteLayout topDeleteLayout;
     private void initStickerLayout() {
         mStickerLayout.bindBgView(opview, new MediaPlayer.OnPreparedListener() {
             @Override
@@ -516,13 +515,23 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
                // resetTextFragment();
             }
         });
-        mStickerLayout
-                .bindDelView(new DelView(del_container, del_iv, del_tv, iv_back, iv_share, iv_next));
+        topDeleteLayout = new TopDeleteLayout(del_container, iv_back, iv_share, iv_next);
+        mStickerLayout.setOnMoveListener(new PSCanvas.IOnMoveListener() {
+            @Override
+            public boolean onMove(MotionEvent event) {
+                return topDeleteLayout.checkPosition(event);
+            }
+
+            @Override
+            public void onMoveEnd() {
+                topDeleteLayout.hide();
+            }
+        });
         initStickerlayoutOnClick();
     }
 
     private void initStickerlayoutOnClick() {
-        mStickerLayout.setClickListener(new ScaleView.OnClickListener() {
+        mStickerLayout.setClickListener(new PSLayer.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editTextView(view);
@@ -537,7 +546,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
             public void onDelete(View view) {
             }
         });
-        mStickerLayout.setFocusChangeListener(new ContainerView.IFocusChangeListener() {
+        mStickerLayout.setFocusChangeListener(new PSCanvas.IFocusChangeListener() {
             @Override
             public void onFocusLose(ViewGroup view) {
             }
@@ -559,8 +568,8 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
     }
 
     private boolean editTextView(View view) {
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView obj = (TextStyleView) view;
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView obj = (CustomTextView) view;
             String text = obj.getText();
             addTextPopInput(text);
             return true;
@@ -573,7 +582,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
     //文字编辑弹窗
     private void addTextPopInput(String text) {
         mLayoutContainer.removeAllViews();
-        textLayout = new TextLayout(DiyMainActivity.this, "");
+        textLayout = new TextLayout(PsActivity.this, "");
         if (TextUtils.isEmpty(text)) {
             isEditText = false;
         } else {
@@ -592,16 +601,16 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
 
 
     public void addGifFromFile(String filePath) {
-        GifMovieView gifMovieView = new GifMovieView(DiyMainActivity.this, false);
-        boolean res = gifMovieView.setMovieResource(filePath);
+        CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
+        boolean res = customGifMovie.setMovieResource(filePath);
         if (res) {//sometimes movie decode gif error url duration = 0
 //                gifMovieView.url = url;
-            addView(gifMovieView, getInitScale(gifMovieView));
+            addView(customGifMovie, getInitScale(customGifMovie));
         } else {
-            GifFrameView gifFrameView = new GifFrameView(DiyMainActivity.this);
-            gifFrameView.setMovieResource(filePath);
+            CustomGifFrame customGifFrame = new CustomGifFrame(PsActivity.this);
+            customGifFrame.setMovieResource(filePath);
 //                gifFrameView.url = url;
-            addView(gifFrameView, getInitScale(gifFrameView));
+            addView(customGifFrame, getInitScale(customGifFrame));
         }
 //        if (saveHistory && mImageFragment != null && !TextUtils.isEmpty(filePath)) {
 //            mImageFragment.addImageHistory(filePath);
@@ -609,7 +618,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
     }
 
     //TODO
-    private float getInitScale(IScaleView scaleView) {
+    private float getInitScale(ILayer scaleView) {
         float width = scaleView.getViewWidth() * 1.0f;
         if (width >= Constant.Camerasettings.DIY_STICKER_BASE_SIZE) {
             return videoWidthHeight / width;
@@ -620,22 +629,22 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
 
 
     private void addView(View view, float scale) {
-        ScaleView scaleView = new ScaleView(this);
-        scaleView.scaleInit(scale);
-        scaleView.addView(view,
+        PSLayer PSLayer = new PSLayer(this);
+        PSLayer.scaleInit(scale);
+        PSLayer.addView(view,
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
                         .WRAP_CONTENT));
-        mStickerLayout.addView(scaleView);
+        mStickerLayout.addView(PSLayer);
         resetStatus();
     }
 
     private void addView(View view) {
-        ScaleView scaleView = new ScaleView(this);
+        PSLayer PSLayer = new PSLayer(this);
 //        scaleView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        scaleView.addView(view,
+        PSLayer.addView(view,
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
                         .WRAP_CONTENT));
-        mStickerLayout.addView(scaleView);
+        mStickerLayout.addView(PSLayer);
         resetStatus();
     }
 
@@ -647,21 +656,21 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (tuyaView.isEnable()) {
+                if (customCanvas.isEnable()) {
                     iv_undo.setImageResource(
-                            tuyaView.canUndo() ? R.drawable.selector_crop_pre : R.mipmap.crop_chexiao2);
+                            customCanvas.canUndo() ? R.drawable.selector_crop_pre : R.mipmap.icon_op_pre_sel);
                     iv_redo.setImageResource(
-                            tuyaView.canRedo() ? R.drawable.selector_crop_pro : R.mipmap.crop_chongzuo2);
-                    iv_delete.setImageResource(R.mipmap.crop_lajitong2);
+                            customCanvas.canRedo() ? R.drawable.selector_crop_pro : R.mipmap.icon_op_pro_sel);
+                    iv_delete.setImageResource(R.mipmap.icon_top_delete_sel);
                     return;
                 }
 
                 iv_delete.setImageResource(
-                        isDelete() ? R.drawable.selector_crop_clear : R.mipmap.crop_lajitong2);
+                        isDelete() ? R.drawable.selector_crop_clear : R.mipmap.icon_top_delete_sel);
                 iv_undo.setImageResource(
-                        mStickerLayout.canPre() ? R.drawable.selector_crop_pre : R.mipmap.crop_chexiao2);
+                        mStickerLayout.canPre() ? R.drawable.selector_crop_pre : R.mipmap.icon_op_pre_sel);
                 iv_redo.setImageResource(
-                        mStickerLayout.canPro() ? R.drawable.selector_crop_pro : R.mipmap.crop_chongzuo2);
+                        mStickerLayout.canPro() ? R.drawable.selector_crop_pro : R.mipmap.icon_op_pro_sel);
                 resetRgAutoBg();
                 resetBottomStatus();
             }
@@ -676,7 +685,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
     }
 
     private void resetRgAutoBg() {
-        DiyBackgroundView.BgOperate op = mStickerLayout.backgroundView.currentOperate;
+        PSBackground.BgOperate op = mStickerLayout.backgroundView.currentOperate;
         if (op != null) {
             int checkId = R.id.rb_vid_pic;
             if (op.visible1 == View.VISIBLE) {
@@ -702,28 +711,28 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
 
     private void setCanvaBackGround(int i) {
         if (i == R.id.rb_white) {
-            vColor.setImageResource(R.mipmap.baise_white);
+            vColor.setImageResource(R.mipmap.icon_color_white);
             //setBrushColor(Color.WHITE, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
                 mStickerLayout.showBackground(Color.WHITE);
             }
 
         } else if (i == R.id.rb_translate) {
-            vColor.setImageResource(R.mipmap.touming);
+            vColor.setImageResource(R.mipmap.icon_color_transparent);
             //setBrushColor(Color.TRANSPARENT, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
                 mStickerLayout.showBackground(Color.TRANSPARENT);
             }
 
         } else if (i == R.id.rb_hui) {
-            vColor.setImageResource(R.mipmap.huise);
+            vColor.setImageResource(R.mipmap.icon_color_gray);
             //setBrushColor(Color.GRAY, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
                 mStickerLayout.showBackground(Color.GRAY);
             }
 
         } else if (i == R.id.rb_black) {
-            vColor.setImageResource(R.mipmap.base_heise);
+            vColor.setImageResource(R.mipmap.icon_color_black);
             //setBrushColor(Color.BLACK, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
                 mStickerLayout.showBackground(Color.BLACK);
@@ -835,7 +844,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
             if (!isDelete()) {
                 return;
             }
-            if (tuyaView.isEnable()) {
+            if (customCanvas.isEnable()) {
                 return;
             }
             delete();
@@ -845,9 +854,9 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
 
     //重做
     private void redo() {
-        if (tuyaView.isEnable()) {
-            if (tuyaView.canRedo()) {
-                tuyaView.redo();
+        if (customCanvas.isEnable()) {
+            if (customCanvas.canRedo()) {
+                customCanvas.redo();
             }
             resetStatus();
             return;
@@ -860,9 +869,9 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
 
     //撤销
     private void undo() {
-        if (tuyaView.isEnable()) {
-            if (tuyaView.canUndo()) {
-                tuyaView.undo();
+        if (customCanvas.isEnable()) {
+            if (customCanvas.canUndo()) {
+                customCanvas.undo();
             }
             resetStatus();
             return;
@@ -886,15 +895,15 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
     public void finishTuya() {
         statesbarGoInEditMode(false);
         try {
-            String filePath = tuyaView.getCacheFilePath();
+            String filePath = customCanvas.getCacheFilePath();
             if (filePath != null) {
-                float[] center = tuyaView.getBitmapcenter();
+                float[] center = customCanvas.getBitmapcenter();
                 float centerX = (center[0] + center[1]) / 2;
                 float centerY = (center[2] + center[3]) / 2;
                 addImageViewFromFile(true, null, filePath, centerX, centerY);
             }
-            tuyaView.clear();
-            tuyaView.changeStatus(false);
+            customCanvas.clear();
+            customCanvas.changeStatus(false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -903,7 +912,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
 
 
     private void addImageViewFromFile(boolean isTuya, String url, String filePath, float x, float y) {
-        LayerImageView imageView = new LayerImageView(this);
+        CustomImageView imageView = new CustomImageView(this);
         imageView.setImageFile(filePath);
         imageView.isTuya = isTuya;
         imageView.url = url;
@@ -960,16 +969,16 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         String fileType = Util.getFileType(filePath);
         Logger.d("fileType>> " + fileType);
         if (Util.isGif(fileType)) {
-            GifMovieView gifMovieView = new GifMovieView(DiyMainActivity.this, false);
-            boolean res = gifMovieView.setMovieResource(filePath);
+            CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
+            boolean res = customGifMovie.setMovieResource(filePath);
             if (res) {//sometimes movie decode gif error url duration = 0
-                gifMovieView.url = url;
-                addView(gifMovieView, getInitScale(gifMovieView));
+                customGifMovie.url = url;
+                addView(customGifMovie, getInitScale(customGifMovie));
             } else {
-                GifFrameView gifFrameView = new GifFrameView(DiyMainActivity.this);
-                gifFrameView.setMovieResource(filePath);
-                gifFrameView.url = url;
-                addView(gifFrameView, getInitScale(gifFrameView));
+                CustomGifFrame customGifFrame = new CustomGifFrame(PsActivity.this);
+                customGifFrame.setMovieResource(filePath);
+                customGifFrame.url = url;
+                addView(customGifFrame, getInitScale(customGifFrame));
             }
         } else {
             addImageViewFromFile(false, url, filePath);
@@ -984,37 +993,37 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
         float aspect = opview.getHeight() * 1f / mStickerLayout.getHeight();
         float v = (1f - aspect) / 2 + aspect;
         //
-        TextStyleView textStyleView = new TextStyleView(DiyMainActivity.this);
+        CustomTextView customTextView = new CustomTextView(PsActivity.this);
         if (mStickerLayout.backgroundView.isBackgroundVideoImageViewVisible()) {
-            textStyleView.setPaintColorReverse(Color.WHITE, Color.BLACK);
-            textStyleView.setisDiyBottom(true);
-            textStyleView.setisDiyBottomHeightPercent(v);
-            textStyleView.setOffsetY4Diy(offsetY);
+            customTextView.setPaintColorReverse(Color.WHITE, Color.BLACK);
+            customTextView.setisDiyBottom(true);
+            customTextView.setisDiyBottomHeightPercent(v);
+            customTextView.setOffsetY4Diy(offsetY);
         } else {
-            textStyleView.setisDiyBottom(false);
-            textStyleView.setPaintColorReverse(Color.BLACK, Color.WHITE);
+            customTextView.setisDiyBottom(false);
+            customTextView.setPaintColorReverse(Color.BLACK, Color.WHITE);
         }
-        textStyleView.setText(text);
-        addView(textStyleView);
+        customTextView.setText(text);
+        addView(customTextView);
     }
 
     //取消涂鸦
     private void closeTuya() {
-        tuyaView.clear();
-        tuyaView.changeStatus(false);
+        customCanvas.clear();
+        customCanvas.changeStatus(false);
         statesbarGoInEditMode(false);
         resetStatus();
     }
 
     //开始涂鸦
     public void startTuya() {
-        tuyaView.setCallback(new View.OnClickListener() {
+        customCanvas.setCallback(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetStatus();
             }
         });
-        tuyaView.changeStatus(true);
+        customCanvas.changeStatus(true);
         statesbarGoInEditMode(true);
         mStickerLayout.deleteFocus();
         resetStatus();
@@ -1036,7 +1045,7 @@ public class DiyMainActivity extends Activity implements View.OnClickListener {
 
     //清空画布
     private void delete() {
-        if (tuyaView.isEnable()) {
+        if (customCanvas.isEnable()) {
             return;
         }
         mStickerLayout.reset();

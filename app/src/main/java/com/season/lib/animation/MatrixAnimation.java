@@ -1,4 +1,4 @@
-package com.season.lib.scale;
+package com.season.lib.animation;
 
 import android.animation.TimeInterpolator;
 import android.graphics.Matrix;
@@ -14,7 +14,7 @@ public class MatrixAnimation {
     private float progress = 0;
     private float[] matrixBefore, matrixAfter;
     private TimeInterpolator timeInterpolator;
-    MatrixAnimation(Matrix matrix, float[] matrixAfter){
+    public MatrixAnimation(Matrix matrix, float[] matrixAfter){
         matrixBefore = new float[9];
         matrix.getValues(matrixBefore);
         this.matrixAfter = matrixAfter;

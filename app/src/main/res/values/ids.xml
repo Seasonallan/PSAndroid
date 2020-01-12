@@ -3,7 +3,7 @@
 
 
 
-    <!--DiyBackgroundView,为了这个控件暂时不报错而写，具体需要和制作界面中的id挂钩-->
+    <!--PSBackground,为了这个控件暂时不报错而写，具体需要和制作界面中的id挂钩-->
     <item name="videoView" type="id"/>
     <item name="picture" type="id"/>
     <item name="bg_view" type="id"/>

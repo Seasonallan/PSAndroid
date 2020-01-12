@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,7 +18,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.lib.util.Logger;
 import com.season.lib.util.FileManager;
 
@@ -34,7 +34,7 @@ import java.util.List;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 14:44
  */
-public class TuyaView extends View implements LayerInfoI {
+public class CustomCanvas extends View{
 
     private DrawPath currentPath;
     private List<DrawPath> savePath;
@@ -43,7 +43,6 @@ public class TuyaView extends View implements LayerInfoI {
     public Paint markPaint;
     public Paint paint = null;
     public Paint whitepaint = new Paint();
-    private LayerInfoI mLayerInfoI;
     private int view_height;
     private int view_width;
     private float preX;
@@ -62,7 +61,7 @@ public class TuyaView extends View implements LayerInfoI {
     private Bitmap shaderbitmap;
 
 
-    public TuyaView(Context context) {
+    public CustomCanvas(Context context) {
         super(context);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -70,7 +69,7 @@ public class TuyaView extends View implements LayerInfoI {
         init(context);
     }
 
-    public TuyaView(Context context, AttributeSet attributeSet) {
+    public CustomCanvas(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -88,7 +87,6 @@ public class TuyaView extends View implements LayerInfoI {
         markPaint.setPathEffect(new CornerPathEffect(10));
         markPaint.setColor(Color.BLUE);
 
-        mLayerInfoI = new LayerInfoImp();
         view_height = context.getResources().getDisplayMetrics().heightPixels;
         view_width = context.getResources().getDisplayMetrics().widthPixels;
         savePath = new ArrayList<>();
@@ -109,16 +107,6 @@ public class TuyaView extends View implements LayerInfoI {
         whitepaint.setAntiAlias(true);
         whitepaint.setDither(true);
         whitepaint.setColor(Color.WHITE);
-    }
-
-    @Override
-    public long getViewId() {
-        return mLayerInfoI.getViewId();
-    }
-
-    @Override
-    public void setViewId(long id) {
-        mLayerInfoI.setViewId(id);
     }
 
     @Override

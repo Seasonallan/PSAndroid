@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,8 +17,7 @@ import android.widget.RelativeLayout;
 import com.season.myapplication.BuildConfig;
 import com.season.myapplication.R;
 import com.season.lib.util.ScreenUtils;
-import com.season.lib.gif.frame.GifFrameView;
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.lib.util.ToolBitmapCache;
 import com.season.lib.util.Logger;
 
@@ -29,58 +28,46 @@ import java.util.List;
  * Created by Administrator on 2017/10/12.
  */
 
-public class DiyBackgroundView {
+public class PSBackground {
 
-    Context context;
+    protected Context context;
     public ImageView picture;
-    public GifMovieView gifMovieView;
-    public GifFrameView gifFrameview;
+    public CustomGifMovie customGifMovie;
+    public CustomGifFrame customGifFrameview;
     public View bgView;
     public BgOperate currentOperate;
     int position = -1;
     List<BgOperate> list = new ArrayList<>();
 
-    public DiyBackgroundView(View view) {
+    public PSBackground(View view) {
         context = view.getContext();
-        picture = (ImageView) view.findViewById(R.id.picture);
+        picture = view.findViewById(R.id.picture);
         bgView = view.findViewById(R.id.bg_view);
-        gifMovieView = view.findViewById(R.id.gifview);
-        gifFrameview = view.findViewById(R.id.gifFrameview);
+        customGifMovie = view.findViewById(R.id.gifview);
+        customGifFrameview = view.findViewById(R.id.gifFrameview);
         if (bgView != null) bgView.setBackgroundColor(Color.TRANSPARENT);
         init();
     }
 
     public void refreshGifbg() {
-//        if (BuildConfig.DEBUG) {
-//            Logger.t("testGif").d("gifMovieView != null==>" + (gifMovieView != null));
-//            Logger.t("testGif").d("gifMovieView.getVisibility() == View.VISIBLE==>" + (gifMovieView.getVisibility() == View.VISIBLE));
-//            Logger.t("testGif").d("gifFrameview != null==>" + (gifFrameview != null));
-//            Logger.t("testGif").d("gifFrameview.getVisibility() == View.VISIBLE==>" + (gifFrameview.getVisibility() == View.VISIBLE));
-//            Logger.t("testGif").d("isGif()==>" + (isGif()));
-//        }
         if (isGif()) {
-            if (gifMovieView != null && gifMovieView.getVisibility() == View.VISIBLE) {
-                gifMovieView.postInvalidate();
+            if (customGifMovie != null && customGifMovie.getVisibility() == View.VISIBLE) {
+                customGifMovie.postInvalidate();
             }
-            if (gifFrameview != null && gifFrameview.getVisibility() == View.VISIBLE) {
-                gifFrameview.postInvalidate();
+            if (customGifFrameview != null && customGifFrameview.getVisibility() == View.VISIBLE) {
+                customGifFrameview.postInvalidate();
             }
         }
     }
 
-    public IScaleView getGifView() {
-        if (gifMovieView != null && gifMovieView.getVisibility() == View.VISIBLE) {
-            return gifMovieView;
+    public ILayer getGifView() {
+        if (customGifMovie != null && customGifMovie.getVisibility() == View.VISIBLE) {
+            return customGifMovie;
         }
-        if (gifFrameview != null && gifFrameview.getVisibility() == View.VISIBLE) {
-            return gifFrameview;
+        if (customGifFrameview != null && customGifFrameview.getVisibility() == View.VISIBLE) {
+            return customGifFrameview;
         }
         return null;
-    }
-
-    public boolean isVideo() {
-        return false;
-//        return (videoView!=null&&currentOperate.visible3==View.VISIBLE);
     }
 
     public boolean isPhoto() {
@@ -89,7 +76,7 @@ public class DiyBackgroundView {
     }
 
     public boolean isGif() {
-        return ((gifMovieView != null && gifMovieView.getVisibility() == View.VISIBLE) || (gifFrameview != null && gifFrameview
+        return ((customGifMovie != null && customGifMovie.getVisibility() == View.VISIBLE) || (customGifFrameview != null && customGifFrameview
                 .getVisibility() == View.VISIBLE));
     }
 
@@ -99,11 +86,11 @@ public class DiyBackgroundView {
 
     public int getGifWidth() {
         if (isGif()) {
-            if (gifMovieView.getVisibility() == View.VISIBLE) {
-                return gifMovieView.getViewWidth();
+            if (customGifMovie.getVisibility() == View.VISIBLE) {
+                return customGifMovie.getViewWidth();
             }
-            if (gifFrameview.getVisibility() == View.VISIBLE) {
-                return gifFrameview.getViewWidth();
+            if (customGifFrameview.getVisibility() == View.VISIBLE) {
+                return customGifFrameview.getViewWidth();
             }
         }
         return 0;
@@ -111,27 +98,21 @@ public class DiyBackgroundView {
 
     public int getGifHeight() {
         if (isGif()) {
-            if (gifMovieView.getVisibility() == View.VISIBLE) {
-                return gifMovieView.getViewHeight();
+            if (customGifMovie.getVisibility() == View.VISIBLE) {
+                return customGifMovie.getViewHeight();
             }
-            if (gifFrameview.getVisibility() == View.VISIBLE) {
-                return gifFrameview.getViewHeight();
+            if (customGifFrameview.getVisibility() == View.VISIBLE) {
+                return customGifFrameview.getViewHeight();
             }
         }
         return 0;
     }
 
     public float getSpeed() {
-//        if (videoView == null) {
-//            return 1.0f;
-//        }
-//        if (videoView.getVisibility() == View.VISIBLE) {
-//            return videoView.getSpeed();
-//        }
         return 1.0f;
     }
 
-    public IScaleView getBackgroundView() {
+    public ILayer getBackgroundView() {
         return null;
     }
 
@@ -145,7 +126,6 @@ public class DiyBackgroundView {
 
     public void release() {
         if (list.size() > 0) {
-            //Canvas: trying to use a recycled bitmap android.graphics.Bitmap@126543a
             for (BgOperate op : list) {
                 Util.recycleBitmaps(op.bitmap);
             }
@@ -155,14 +135,14 @@ public class DiyBackgroundView {
         bgView = null;
         picture = null;
         currentOperate = null;
-        if (gifMovieView != null) {
-            gifMovieView.onRelease();
+        if (customGifMovie != null) {
+            customGifMovie.onRelease();
         }
-        if (gifFrameview != null) {
-            gifFrameview.onRelease();
+        if (customGifFrameview != null) {
+            customGifFrameview.onRelease();
         }
-        gifMovieView = null;
-        gifFrameview = null;
+        customGifMovie = null;
+        customGifFrameview = null;
     }
 
     private void init() {
@@ -193,10 +173,10 @@ public class DiyBackgroundView {
     public boolean showGIf(String url, String path, decoderGifDoneListener decoderGifDoneListener) {
         this.gifDoneListener = decoderGifDoneListener;
         if (currentOperate != null) {
-            if (gifMovieView != null&&currentOperate.visibleGif == View.VISIBLE && gifMovieView.equals(currentOperate.gifFile)) {
+            if (customGifMovie != null&&currentOperate.visibleGif == View.VISIBLE && customGifMovie.equals(currentOperate.gifFile)) {
                 return false;
             }
-            if (gifFrameview != null&&currentOperate.visibleGif == View.VISIBLE && gifFrameview.equals(currentOperate.gifFile)) {
+            if (customGifFrameview != null&&currentOperate.visibleGif == View.VISIBLE && customGifFrameview.equals(currentOperate.gifFile)) {
                 return false;
             }
         }
@@ -343,31 +323,31 @@ public class DiyBackgroundView {
 //        String gifFile = op.gifFile;
 //        boolean b = op.visibleGif == View.VISIBLE;
         if (!TextUtils.isEmpty(op.gifFile) && op.visibleGif == View.VISIBLE) {
-            if (gifMovieView != null) {
-                gifMovieView.post(new Runnable() {
+            if (customGifMovie != null) {
+                customGifMovie.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (gifMovieView == null){
+                        if (customGifMovie == null){
                             return;
                         }
                         ViewGroup.LayoutParams layoutParams = null;
                         int height = 0;
                         int width = 0;
 
-                        boolean isSuccess = gifMovieView.setMovieResource(op.gifFile);
+                        boolean isSuccess = customGifMovie.setMovieResource(op.gifFile);
                         if (isSuccess) {
-                            gifMovieView.setVisibility(View.VISIBLE);
-                            gifMovieView.setisGifEditMode(true);
-                            layoutParams = gifMovieView.getLayoutParams();
-                            width = gifMovieView.getViewWidth();
-                            height = gifMovieView.getViewHeight();
+                            customGifMovie.setVisibility(View.VISIBLE);
+                            customGifMovie.setisGifEditMode(true);
+                            layoutParams = customGifMovie.getLayoutParams();
+                            width = customGifMovie.getViewWidth();
+                            height = customGifMovie.getViewHeight();
                         } else {
-                            gifFrameview.setVisibility(View.VISIBLE);
-                            gifFrameview.setisGifEditMode(true);
-                            gifFrameview.setMovieResource(op.gifFile);
-                            layoutParams = gifFrameview.getLayoutParams();
-                            width = gifFrameview.getViewWidth();
-                            height = gifFrameview.getViewHeight();
+                            customGifFrameview.setVisibility(View.VISIBLE);
+                            customGifFrameview.setisGifEditMode(true);
+                            customGifFrameview.setMovieResource(op.gifFile);
+                            layoutParams = customGifFrameview.getLayoutParams();
+                            width = customGifFrameview.getViewWidth();
+                            height = customGifFrameview.getViewHeight();
                         }
                         Logger.d("showGif,isSuccess:" + isSuccess + ",width:" + width + ",height:" + height);
                         if (layoutParams == null) {

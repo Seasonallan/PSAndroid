@@ -1,4 +1,4 @@
-package com.season.lib.scale;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -13,17 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.season.lib.bean.LayerItem;
+import com.season.lib.animation.MatrixAnimation;
 import com.season.myapplication.BuildConfig;
 import com.season.lib.util.Constant;
 import com.season.lib.util.MathUtil;
 import com.season.lib.util.ScreenUtils;
 import com.season.lib.util.ToolPaint;
-import com.season.lib.view.ContainerView;
-import com.season.lib.view.LayerImageView;
-import com.season.lib.view.TextStyleView;
-import com.season.lib.gif.frame.GifFrameView;
-import com.season.lib.view.GifMovieView;
-import com.season.lib.view.IScaleView;
 import com.season.lib.util.Logger;
 
 
@@ -32,12 +28,12 @@ import com.season.lib.util.Logger;
  * <p>
  * 父类是：
  *
- * @see ContainerView 画布
+ * @see PSCanvas 画布
  * 子类有：
- * @see TextStyleView 文字图层
- * @see LayerImageView 静图图层，包含涂鸦
- * @see GifMovieView gif动图图层
- * @see GifFrameView gif动图图层，只有在GifMovieView解析失败的情况下会用
+ * @see CustomTextView 文字图层
+ * @see CustomImageView 静图图层，包含涂鸦
+ * @see CustomGifMovie gif动图图层
+ * @see CustomGifFrame gif动图图层，只有在GifMovieView解析失败的情况下会用
  * <p>
  * //TODO 未来可以做图层的动效，做法参照回撤的时候的矩阵动画
  * @see MatrixAnimation 矩阵动画
@@ -45,27 +41,27 @@ import com.season.lib.util.Logger;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 21:44
  */
-public class ScaleView extends RelativeLayout {
+public class PSLayer extends RelativeLayout {
 
 
 
 
-    public ScaleView(Context context) {
+    public PSLayer(Context context) {
         super(context);
         init();
     }
 
-    public ScaleView(Context context, Handler handler) {
+    public PSLayer(Context context, Handler handler) {
         super(context);
         init(handler);
     }
 
-    public ScaleView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PSLayer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
-    public ScaleView(Context context, AttributeSet attrs) {
+    public PSLayer(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
@@ -86,7 +82,7 @@ public class ScaleView extends RelativeLayout {
     public boolean isPreview = false;//是否是预览界面
     public boolean isPreviewEdit = false;//是否是预览界面,编辑文字
 
-    public void bindMatrix(ItemArrayBean item, int opViewWidthEx, int offsetX, int offsetY, float width, float height, boolean scale) {
+    public void bindMatrix(LayerItem item, int opViewWidthEx, int offsetX, int offsetY, float width, float height, boolean scale) {
 //        Logger.d("itemArrayBean:  width=" + width+", height="+height +", sizeW="+ item.getSizeWidth() +"  ,sizeH="+item
 // .getSizeHeight());
         if (height <= 1) {
@@ -104,8 +100,8 @@ public class ScaleView extends RelativeLayout {
             mCurrentMatrix.postTranslate((float) transX, (float) transY);
 
             float scaleX = (float) (item.getXScale() * opViewWidth / width);
-            mOpView.isRight = !item.isTurnOverH();
-            if (!mOpView.isRight) {
+            mPSOpView.isRight = !item.isTurnOverH();
+            if (!mPSOpView.isRight) {
                 scaleX = -scaleX;
             }
             mCurrentMatrix.postScale(scaleX, (float) (item.getYScale() * opViewWidth / width), centerX, centerY);
@@ -118,7 +114,7 @@ public class ScaleView extends RelativeLayout {
         }
 
         float degree = (float) (item.getAngle() * 180 / Math.PI);//(float) (rotation * Math.PI / 180);
-        if (!mOpView.isRight) {
+        if (!mPSOpView.isRight) {
             //degree += 180;
         }
         mCurrentMatrix.postRotate(degree, centerX, centerY);
@@ -126,7 +122,7 @@ public class ScaleView extends RelativeLayout {
     }
 
     //适配IOS的viewWidth数值， 本来该字段应该是图片的宽高，可是实际IOS存储的图片宽高却是viewwidth * scaleX
-    public void bindMatrixImage(ItemArrayBean item, int opViewWidthEx, int offsetX, int offsetY, float width, float height, int
+    public void bindMatrixImage(LayerItem item, int opViewWidthEx, int offsetX, int offsetY, float width, float height, int
             imageWidth, int imageHeight) {
         if (height <= 1) {
             height = width * 4 / 3;
@@ -156,18 +152,18 @@ public class ScaleView extends RelativeLayout {
         float scaleX = viewWidth / imageWidth * 1.0f;
         float scaleY = viewHeight / imageHeight * 1.0f;
 
-        mOpView.isRight = !item.isTurnOverH();
-        if (!mOpView.isRight) {
+        mPSOpView.isRight = !item.isTurnOverH();
+        if (!mPSOpView.isRight) {
             scaleX = -scaleX;
         }
-        //mOpView.isRight = (item.getXScale() >= 0 ? true:false);
+        //mPSOpView.isRight = (item.getXScale() >= 0 ? true:false);
         mCurrentMatrix.postScale(scaleX, scaleY, centerX, centerY);
 
         Logger.d("initViewFromData  centerX=" + centerX + ", centerY=" + centerY + ", viewWidth=" + viewWidth + "  ,viewHeight=" +
                 viewHeight + ", scaleX=" + scaleX + "  ,scaleY=" + scaleY);
 
         float degree = (float) (item.getAngle() * 180 / Math.PI);//(float) (rotation * Math.PI / 180);
-        if (!mOpView.isRight) {
+        if (!mPSOpView.isRight) {
             //degree += 180;
         }
         mCurrentMatrix.postRotate(degree, centerX, centerY);
@@ -181,9 +177,9 @@ public class ScaleView extends RelativeLayout {
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         super.addView(child, index, params);
-        if (child instanceof TextStyleView) {
-            maxScale = ((TextStyleView) child).getMaxScale();
-            disableHardWareWhenText2Long((TextStyleView) child);
+        if (child instanceof CustomTextView) {
+            maxScale = ((CustomTextView) child).getMaxScale();
+            disableHardWareWhenText2Long((CustomTextView) child);
         }
     }
 
@@ -201,7 +197,7 @@ public class ScaleView extends RelativeLayout {
     /**
      * 文字太长的时候禁止硬件加速，防止无法绘制问题
      */
-    public void disableHardWareWhenText2Long(TextStyleView view) {
+    public void disableHardWareWhenText2Long(CustomTextView view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (view.isText2Long()) {
                 Logger.d("硬件disableHardWareWhenText2Long");
@@ -254,50 +250,50 @@ public class ScaleView extends RelativeLayout {
                 boolean isPreviewBottom = false;
                 if (getChildCount() > 0) {
                     View child = getChildAt(0);
-                    if (child instanceof LayerImageView) {
-                        if (((LayerImageView) child).changeCenter) {
-                            offsetX = (int) ((LayerImageView) child).getCenterX();
-                            offsetY = (int) ((LayerImageView) child).getCenterY();
+                    if (child instanceof CustomImageView) {
+                        if (((CustomImageView) child).changeCenter) {
+                            offsetX = (int) ((CustomImageView) child).getCenterX();
+                            offsetY = (int) ((CustomImageView) child).getCenterY();
                             isTuyaAttach = true;
                         }
                     }
-                    if (child instanceof IScaleView) {
-                        TextStyleView mText = null;
-                        if (child instanceof TextStyleView) {
-                            mText = (TextStyleView) child;
+                    if (child instanceof ILayer) {
+                        CustomTextView mText = null;
+                        if (child instanceof CustomTextView) {
+                            mText = (CustomTextView) child;
                             isDiyBottom4Text = mText.isDiyBottom();
                             isPreviewBottom = mText.isPreViewBottom();
                         }
                         if (isDiyBottom4Text) {
                             //校正文字大小
-                            if (getChildAt(0) instanceof TextStyleView) {
-                                TextStyleView textStyleView = (TextStyleView) getChildAt(0);
-                                int singleLinemaxCount = getSingleLinemaxCount(textStyleView.getText());
+                            if (getChildAt(0) instanceof CustomTextView) {
+                                CustomTextView customTextView = (CustomTextView) getChildAt(0);
+                                int singleLinemaxCount = getSingleLinemaxCount(customTextView.getText());
                                 scale = ToolPaint.getDefault().getScale(getContext(), singleLinemaxCount);
-                                float v = textStyleView.getisDiyBottomHeightPercent();
-                                halfHText = ((IScaleView) child).getViewHeight() / 2;
-                                int offsetY4Diy = textStyleView.getOffsetY4Diy();
+                                float v = customTextView.getisDiyBottomHeightPercent();
+                                halfHText = ((ILayer) child).getViewHeight() / 2;
+                                int offsetY4Diy = customTextView.getOffsetY4Diy();
                                 int lineWidth = 0;
-                                if (mOpView != null) {
-                                    lineWidth = mOpView.getLineWidth();
+                                if (mPSOpView != null) {
+                                    lineWidth = mPSOpView.getLineWidth();
                                 }
                                 offsetY = (int) (parentHeight * v - halfHText * 2);
 //                                offsetY = (int) (parentHeight * 1+2*lineWidth);
 //                                offsetY = (int) (parentHeight * 1 - scale*halfH);
 //                                offsetY = (int) (parentHeight * v - halfH);
-//                                offsetY = (int) (parentHeight * v - scale * ((IScaleView) child).getViewHeight() / 2);
+//                                offsetY = (int) (parentHeight * v - scale * ((ILayer) child).getViewHeight() / 2);
                                 if (BuildConfig.DEBUG) {
                                     Logger.d("ScaleViewDiyBottom:scale==>" + scale + ",offsetX:" + offsetX + ",offsetY:" + offsetY +
                                             ",halfH:" + halfHText + ",v:" + v+",offsetY4Diy:"+offsetY4Diy);
                                 }
                             } else {
-                                offsetY = (int) (parentHeight * 3 / 4 - scale * ((IScaleView) child).getViewHeight() / 2);
+                                offsetY = (int) (parentHeight * 3 / 4 - scale * ((ILayer) child).getViewHeight() / 2);
                             }
-                            offsetX = offsetX - ((IScaleView) child).getViewWidth() / 2;
+                            offsetX = offsetX - ((ILayer) child).getViewWidth() / 2;
                             if (mText != null) mText.setisDiyBottom(false);
                         } else {
-                            offsetX = offsetX - ((IScaleView) child).getViewWidth() / 2;
-                            offsetY = offsetY - ((IScaleView) child).getViewHeight() / 2;
+                            offsetX = offsetX - ((ILayer) child).getViewWidth() / 2;
+                            offsetY = offsetY - ((ILayer) child).getViewHeight() / 2;
                         }
                     } else {
                         offsetX = offsetX - child.getMeasuredWidth() / 2;
@@ -307,7 +303,7 @@ public class ScaleView extends RelativeLayout {
                 if (!isPreviewBottom) {
                     //TODO
                     float minScaleY = 0.7f;//暂时写死 0.7046263
-//                    float minScaleY = mOpView.getMinScaleY();
+//                    float minScaleY = mPSOpView.getMinScaleY();
                     if (BuildConfig.DEBUG) {
                         Logger.d("ScaleViewDiyBottom,isPreviewBottom==>:scale==>" + scale + ",offsetX:" + offsetX + ",offsetY:" +
                                 offsetY);
@@ -327,9 +323,9 @@ public class ScaleView extends RelativeLayout {
             }
         }
         isFocusNow = true;
-        //mOpView.bindRect(this, mViewMatrix, true);
-        if (getParent() instanceof ContainerView) {
-            ((ContainerView) getParent()).addEvent(ContainerView.IType.ADD, this, mCurrentMatrix);
+        //mPSOpView.bindRect(this, mViewMatrix, true);
+        if (getParent() instanceof PSCanvas) {
+            ((PSCanvas) getParent()).addEvent(PSCanvas.IType.ADD, this, mCurrentMatrix);
         }
         invalidate();
         if (isTuyaAttach) {
@@ -341,7 +337,7 @@ public class ScaleView extends RelativeLayout {
     public boolean isSeekingTo() {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof IScaleView && ((IScaleView) view).isSeeking()) {
+            if (view instanceof ILayer && ((ILayer) view).isSeeking()) {
                 return true;
             }
         }
@@ -354,7 +350,7 @@ public class ScaleView extends RelativeLayout {
         } else {
             for (int i = 0; i < getChildCount(); i++) {
                 View view = getChildAt(i);
-                if (view instanceof IScaleView && ((IScaleView) view).getDuration() > 0) {
+                if (view instanceof ILayer && ((ILayer) view).getDuration() > 0) {
                     view.postInvalidate();
                 }
             }
@@ -364,8 +360,8 @@ public class ScaleView extends RelativeLayout {
     public void record(int time) {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof IScaleView && ((IScaleView) view).getDuration() > 0) {
-                ((IScaleView) view).recordFrame(time);
+            if (view instanceof ILayer && ((ILayer) view).getDuration() > 0) {
+                ((ILayer) view).recordFrame(time);
             }
         }
     }
@@ -373,8 +369,8 @@ public class ScaleView extends RelativeLayout {
     public void recordFinish() {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof IScaleView) {
-                ((IScaleView) view).stopRecord();
+            if (view instanceof ILayer) {
+                ((ILayer) view).stopRecord();
             }
         }
     }
@@ -426,18 +422,18 @@ public class ScaleView extends RelativeLayout {
                 Logger.d("scaleView:maxCount" + singleLinemaxCount + "，text:" + text);
             }
         }
-        if (mOpView != null) {
-//            offsetY =mOpView.getOpViewBitmapWidth()-mOpView.getPadding();
-            offsetY = mOpView.getLineWidth();
-            float minScaleY = mOpView.getMinScaleY();
+        if (mPSOpView != null) {
+//            offsetY =mPSOpView.getOpViewBitmapWidth()-mPSOpView.getPadding();
+            offsetY = mPSOpView.getLineWidth();
+            float minScaleY = mPSOpView.getMinScaleY();
 //            ((ScaleView) getParent()).rebindOpView(height, scale);后调用补偿位移
-//            if (height < mOpView.getMinWidth()) {
-//                height = mOpView.getMinWidth();
+//            if (height < mPSOpView.getMinWidth()) {
+//                height = mPSOpView.getMinWidth();
 //            }
-//            height = (int) (mOpView.getOpviewHeight()/scale);
+//            height = (int) (mPSOpView.getOpviewHeight()/scale);
             if (BuildConfig.DEBUG) {
-                Logger.d("scaleView:offsetY" + offsetY + ",padding:" + mOpView.getPadding());
-                Logger.d("scaleView:height" + height + ",mOpView.getMinWidth():" + mOpView.getMinWidth());
+                Logger.d("scaleView:offsetY" + offsetY + ",padding:" + mPSOpView.getPadding());
+                Logger.d("scaleView:height" + height + ",mPSOpView.getMinWidth():" + mPSOpView.getMinWidth());
                 Logger.d("scaleView:minScaleY" + minScaleY);
             }
         }
@@ -459,7 +455,7 @@ public class ScaleView extends RelativeLayout {
             mCurrentMatrix.postScale(scale, scale, centerX, centerY);
             mCurrentMatrix.postTranslate(0, (1 - scale) * 0.5f * height);
         }
-//        9-03 15:26:54.291 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:height474,mOpView.getMinWidth():227
+//        9-03 15:26:54.291 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:height474,mPSOpView.getMinWidth():227
 //        09-03 15:26:54.291 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:左边一个mua~
 //                09-03 15:26:54.291 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:getHeight():1080,
 // height:474,offsetY:6
@@ -529,14 +525,14 @@ public class ScaleView extends RelativeLayout {
     }
 
     public float[] rebindOpView() {
-        if (mOpView != null) {
-            float[] res = mOpView.bindRect(this, mCurrentMatrix, true);
+        if (mPSOpView != null) {
+            float[] res = mPSOpView.bindRect(this, mCurrentMatrix, true);
             if (BuildConfig.DEBUG) {
                 int height = 0;
-                height = mOpView.getOpviewHeight();
+                height = mPSOpView.getOpviewHeight();
                 Logger.d("scaleView:rebindOpView" + height);
             }
-            float minScaleY = mOpView.getMinScaleY();
+            float minScaleY = mPSOpView.getMinScaleY();
             Logger.d("scaleView:rebindOpView,minScaleY:" + minScaleY);
             invalidate();
             return res;
@@ -551,15 +547,15 @@ public class ScaleView extends RelativeLayout {
      * @return
      */
     public float[] rebindOpView(int height, float scale) {
-        if (mOpView != null) {
-            float[] res = mOpView.bindRect(this, mCurrentMatrix, true);
+        if (mPSOpView != null) {
+            float[] res = mPSOpView.bindRect(this, mCurrentMatrix, true);
 //            if (BuildConfig.DEBUG) {
 //                int height = 0;
-//                height = mOpView.getOpviewHeight();
+//                height = mPSOpView.getOpviewHeight();
 //                Logger.d("scaleView:rebindOpView" + height);
 //            }
             //opView线条框校正的情况下，需要做位移补偿。
-            float minScaleY = mOpView.getMinScaleY();
+            float minScaleY = mPSOpView.getMinScaleY();
             Logger.d("scaleView:rebindOpView,minScaleY:" + minScaleY + ",scale:" + scale+",height："+height);
             if (scale < minScaleY) {
                 mCurrentMatrix.postTranslate(0, (scale - minScaleY) * 0.5f * height);
@@ -591,23 +587,23 @@ public class ScaleView extends RelativeLayout {
 
         if (isOpEnable && getChildCount() > 0 && isFocusNow && value != null) {
             BindRect();
-            mOpView.setPaintColor(0xffeeeeee);
+            mPSOpView.setPaintColor(0xffeeeeee);
             if (isScale) {
-                mOpView.draw(canvas, true, false, false);
+                mPSOpView.draw(canvas, true, false, false);
             } else if (isZoom) {
-                mOpView.setPaintColor(!isOffsetDegree ? 0xffeeeeee : 0xff00ff00);
-                mOpView.draw(canvas, false, true, false);
+                mPSOpView.setPaintColor(!isOffsetDegree ? 0xffeeeeee : 0xff00ff00);
+                mPSOpView.draw(canvas, false, true, false);
             } else if (isOpe) {
-                mOpView.draw(canvas, false, false, false);
+                mPSOpView.draw(canvas, false, false, false);
             } else {
-                mOpView.draw(canvas, true, true, true);
+                mPSOpView.draw(canvas, true, true, true);
             }
         }
     }
 
     private float offDegree = 0;
     private boolean isOffsetDegree = false;
-    public OpView mOpView;
+    public PSOpView mPSOpView;
 
     public void init() {
         ZeroValue = ScreenUtils.getScreenWidth(getContext()) * 1f;
@@ -620,7 +616,7 @@ public class ScaleView extends RelativeLayout {
             this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
         // setClipChildren(false);
-        mOpView = new OpView(getContext());
+        mPSOpView = new PSOpView(getContext());
 
         mCurrentMatrix = new Matrix();
         ScaleDetector.OnScaleGestureListener scaleListener = new ScaleDetector.SimpleOnScaleGestureListener() {
@@ -680,7 +676,7 @@ public class ScaleView extends RelativeLayout {
                 if (mClickListener != null) {
                     if (simpleTextMode) {
                         if (isDelete) {
-                            mClickListener.onDelete(ScaleView.this);
+                            mClickListener.onDelete(PSLayer.this);
                         } else {
                             mClickListener.onClick(getChildAt(0));
                         }
@@ -689,7 +685,7 @@ public class ScaleView extends RelativeLayout {
                     }
                     if (isFocusBefore) {
                         if (isDelete) {
-                            mClickListener.onDelete(ScaleView.this);
+                            mClickListener.onDelete(PSLayer.this);
                         } else if (mClickListener != null) {
                             mClickListener.onClick(getChildAt(0));
                         }
@@ -720,7 +716,7 @@ public class ScaleView extends RelativeLayout {
                         float newDegree = getRotationBetweenLines(center[0], center[1], currentEvent.getX(), currentEvent.getY());
 
                         float degree = newDegree - preDegree;
-                        float degreeBefore = mOpView.degree;
+                        float degreeBefore = mPSOpView.degree;
                         //正负5度的矫正
                         if (degreeBefore < 355 && degreeBefore > 5 || Math.abs(degree) >= 5) {
                             offDegree = 0;
@@ -766,30 +762,30 @@ public class ScaleView extends RelativeLayout {
                         //  float scaleFactor = detector.getScaleFactor();
 
                         float cad = -1f;
-                        if (mOpView.isRight) {
+                        if (mPSOpView.isRight) {
                             if (currentEvent.getX() > center[0]) {
                                 cad = 1f;
                             } else {
                                 cad = -1f;
-                                mOpView.isRight = false;
+                                mPSOpView.isRight = false;
                             }
                         } else {
                             if (currentEvent.getX() > center[0]) {
                                 cad = -1f;
-                                mOpView.isRight = true;
+                                mPSOpView.isRight = true;
                             } else {
                                 cad = 1f;
                             }
                         }
                         //  mViewMatrix.postRotate(0);
-                        mCurrentMatrix.postRotate(-mOpView.degree, center[0], center[1]);
+                        mCurrentMatrix.postRotate(-mPSOpView.degree, center[0], center[1]);
                         mCurrentMatrix.postScale(newDistance / preDistance * cad, 1, center[0], center[1]);
-                        mCurrentMatrix.postRotate(mOpView.degree, center[0], center[1]);
+                        mCurrentMatrix.postRotate(mPSOpView.degree, center[0], center[1]);
                         invalidate();
 
                     } else {
-                        if (getParent() instanceof ContainerView) {
-                            ((ContainerView) getParent()).onMove(ScaleView.this, currentEvent);
+                        if (getParent() instanceof PSCanvas) {
+                            ((PSCanvas) getParent()).onMove(PSLayer.this, currentEvent);
                         }
                         zeropositionControl(distanceX, distanceY);
                     }
@@ -865,8 +861,8 @@ public class ScaleView extends RelativeLayout {
 
     private boolean checkScaleOutOfBound(float scaleFactor) {
         if (scaleFactor > 1) {
-            if (mOpView.scale != null && mOpView.scale.length > 0) {
-                float scale = mOpView.scale[0];
+            if (mPSOpView.scale != null && mPSOpView.scale.length > 0) {
+                float scale = mPSOpView.scale[0];
                 if (scale >= maxScale) {
                     invalidate();
                     return false;
@@ -887,8 +883,8 @@ public class ScaleView extends RelativeLayout {
     public boolean onTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             boolean canAttach = true;
-            if (getParent() instanceof ContainerView) {
-                canAttach = !((ContainerView) getParent()).isEventAttaching();
+            if (getParent() instanceof PSCanvas) {
+                canAttach = !((PSCanvas) getParent()).isEventAttaching();
             }
             if (getChildCount() > 0 && canAttach) {
                 center = null;
@@ -897,11 +893,11 @@ public class ScaleView extends RelativeLayout {
                 isScale = false;
                 isZoom = false;
                 isDelete = false;
-                isFocusNow = mOpView.isTouched((int) ev.getX(), (int) ev.getY());
+                isFocusNow = mPSOpView.isTouched((int) ev.getX(), (int) ev.getY());
                 if (isFocusBefore && value != null) {
-                    isScale = mOpView.isScaleTouched((int) ev.getX(), (int) ev.getY());
-                    isZoom = mOpView.isRotateTouched((int) ev.getX(), (int) ev.getY());
-                    isDelete = mOpView.isDeleteTouched((int) ev.getX(), (int) ev.getY());
+                    isScale = mPSOpView.isScaleTouched((int) ev.getX(), (int) ev.getY());
+                    isZoom = mPSOpView.isRotateTouched((int) ev.getX(), (int) ev.getY());
+                    isDelete = mPSOpView.isDeleteTouched((int) ev.getX(), (int) ev.getY());
                     if (isScale || isZoom || isDelete) {
                         isFocusNow = true;
                     }
@@ -916,26 +912,26 @@ public class ScaleView extends RelativeLayout {
                 isOpe = true;
                 invalidate();
             }
-            if (getParent() instanceof ContainerView) {
-                ((ContainerView) getParent()).startOp(this, isFocusNow, true);
+            if (getParent() instanceof PSCanvas) {
+                ((PSCanvas) getParent()).startOp(this, isFocusNow, true);
             }
         }
         if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_CANCEL) {
             isOpe = false;
             isScale = false;
             isZoom = false;
-            if (getParent() instanceof ContainerView) ((ContainerView) getParent()).onMoveEnd();
+            if (getParent() instanceof PSCanvas) ((PSCanvas) getParent()).onMoveEnd();
 
             if (ev.getAction() == MotionEvent.ACTION_UP) {
                 invalidate();
                 if (isInDelRect) {
                     if (mClickListener != null) {
-                        mClickListener.onDelete(ScaleView.this);
+                        mClickListener.onDelete(PSLayer.this);
                     }
                 } else {
                     if (isMatrixChanged) {
-                        if (getParent() instanceof ContainerView) {
-                            ((ContainerView) getParent()).addEvent(ContainerView.IType.MOVE, this, mCurrentMatrix);
+                        if (getParent() instanceof PSCanvas) {
+                            ((PSCanvas) getParent()).addEvent(PSCanvas.IType.MOVE, this, mCurrentMatrix);
                         }
                     }
                 }
@@ -956,7 +952,7 @@ public class ScaleView extends RelativeLayout {
     }
 
     public void BindRect() {
-        if (mOpView != null) mOpView.bindRect(this, mCurrentMatrix);
+        if (mPSOpView != null) mPSOpView.bindRect(this, mCurrentMatrix);
     }
 
     private boolean isInDelRect = false;
@@ -966,9 +962,9 @@ public class ScaleView extends RelativeLayout {
     }
 
 
-    private ContainerView.IFocusChangeListener mOnFocusChangeListener;
+    private PSCanvas.IFocusChangeListener mOnFocusChangeListener;
 
-    public void setFocusChangeListener(ContainerView.IFocusChangeListener listener) {
+    public void setFocusChangeListener(PSCanvas.IFocusChangeListener listener) {
         mOnFocusChangeListener = listener;
     }
 
@@ -988,107 +984,107 @@ public class ScaleView extends RelativeLayout {
     }
 
     public float[] getOffset() {
-        return mOpView.center;
+        return mPSOpView.center;
     }
 
 
-    public ItemArrayBean getItemInfro(int index) {
-        ItemArrayBean itemArrayBean = new ItemArrayBean();
-        itemArrayBean.setCenterX(mOpView.center[0]);
-        itemArrayBean.setCenterY(mOpView.center[1]);
+    public LayerItem getItemInfro(int index) {
+        LayerItem layerItem = new LayerItem();
+        layerItem.setCenterX(mPSOpView.center[0]);
+        layerItem.setCenterY(mPSOpView.center[1]);
 
-        float rotation = mOpView.degree;
+        float rotation = mPSOpView.degree;
         if (rotation < 0) {
             rotation += 360;
         }
         rotation = (float) (rotation * Math.PI / 180);
-        itemArrayBean.setAngle(rotation);
-        itemArrayBean.setIndex(index);
+        layerItem.setAngle(rotation);
+        layerItem.setIndex(index);
 
         //IOS适配，只有正数
-        itemArrayBean.setXScale(Math.abs(mOpView.scale[0]));
-        itemArrayBean.setYScale(mOpView.scale[1]);
+        layerItem.setXScale(Math.abs(mPSOpView.scale[0]));
+        layerItem.setYScale(mPSOpView.scale[1]);
 
-        if (mOpView.scale[0] < 0) {
-            itemArrayBean.setHMoveBtnPositionType(Constant.ToolViewsType.ButtonPositionTypeLeft);
-            itemArrayBean.setTurnOverH(true);
+        if (mPSOpView.scale[0] < 0) {
+            layerItem.setHMoveBtnPositionType(Constant.ToolViewsType.ButtonPositionTypeLeft);
+            layerItem.setTurnOverH(true);
         } else {
-            itemArrayBean.setHMoveBtnPositionType(Constant.ToolViewsType.ButtonPositionTypeRight);
-            itemArrayBean.setTurnOverH(false);
+            layerItem.setHMoveBtnPositionType(Constant.ToolViewsType.ButtonPositionTypeRight);
+            layerItem.setTurnOverH(false);
         }
 
         View view = getChildAt(0);
         //适配IOS的viewWidth数值， 本来该字段应该是图片的宽高，可是实际IOS存储的图片宽高却是viewwidth * scaleX
-        itemArrayBean.setSizeWidth(view.getWidth());
-        itemArrayBean.setSizeHeight(view.getHeight());
-        if (view instanceof TextStyleView) {
+        layerItem.setSizeWidth(view.getWidth());
+        layerItem.setSizeHeight(view.getHeight());
+        if (view instanceof CustomTextView) {
             //该字段应该是文字的宽高
-            itemArrayBean.setSizeWidth(view.getWidth());
-            itemArrayBean.setSizeHeight(view.getHeight());
-            itemArrayBean.setContentViewType(Constant.contentViewType.ContentViewTypeTextbox);
-            itemArrayBean.setText(((TextStyleView) view).getText());
-            itemArrayBean.setTextFontSize(((TextStyleView) view).getTextSize());
-           // itemArrayBean.setTextStyleModel(((TextStyleView) view).getTextEntry());
-            //itemArrayBean.setImageURL();
-            if (((TextStyleView) view).fontName == null) {
-                itemArrayBean.setTextFontName("");
+            layerItem.setSizeWidth(view.getWidth());
+            layerItem.setSizeHeight(view.getHeight());
+            layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeTextbox);
+            layerItem.setText(((CustomTextView) view).getText());
+            layerItem.setTextFontSize(((CustomTextView) view).getTextSize());
+           // layerItem.setTextStyleModel(((TextStyleView) view).getTextEntry());
+            //layerItem.setImageURL();
+            if (((CustomTextView) view).fontName == null) {
+                layerItem.setTextFontName("");
             } else {
-                itemArrayBean.setTextFontName(((TextStyleView) view).fontName);
+                layerItem.setTextFontName(((CustomTextView) view).fontName);
             }
-        } else if (view instanceof LayerImageView) {
-            LayerImageView layerImageView = (LayerImageView) view;
-            if (layerImageView.isTuya) {
-                itemArrayBean.setContentViewType(Constant.contentViewType.ContentViewTypeDraw);
+        } else if (view instanceof CustomImageView) {
+            CustomImageView customImageView = (CustomImageView) view;
+            if (customImageView.isTuya) {
+                layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeDraw);
             } else {
-                if (TextUtils.isEmpty(layerImageView.url)) {
-                    itemArrayBean.setContentViewType(Constant.contentViewType.ContentViewTypeLocaImage);
+                if (TextUtils.isEmpty(customImageView.url)) {
+                    layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeLocaImage);
                 } else {
-                    itemArrayBean.setContentViewType(Constant.contentViewType.ContentViewTypeImage);
+                    layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeImage);
                 }
             }
-            itemArrayBean.filePath = layerImageView.filePath;
-            itemArrayBean.setImageURL(layerImageView.url);
-        } else if (view instanceof GifMovieView) {
-            GifMovieView gifMovieView = (GifMovieView) view;
-            if (TextUtils.isEmpty(gifMovieView.url)) {
-                itemArrayBean.setContentViewType(Constant.contentViewType.ContentViewTypeLocaImage);
+            layerItem.filePath = customImageView.filePath;
+            layerItem.setImageURL(customImageView.url);
+        } else if (view instanceof CustomGifMovie) {
+            CustomGifMovie customGifMovie = (CustomGifMovie) view;
+            if (TextUtils.isEmpty(customGifMovie.url)) {
+                layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeLocaImage);
             } else {
-                itemArrayBean.setContentViewType(Constant.contentViewType.ContentViewTypeImage);
+                layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeImage);
             }
-            itemArrayBean.filePath = gifMovieView.file;
-            itemArrayBean.setImageURL(gifMovieView.url);
+            layerItem.filePath = customGifMovie.file;
+            layerItem.setImageURL(customGifMovie.url);
         }
-        return itemArrayBean;
+        return layerItem;
     }
 
-    public ScaleView copy() {
-        ScaleView scaleView = new ScaleView(getContext());
+    public PSLayer copy() {
+        PSLayer PSLayer = new PSLayer(getContext());
         View currentview = getChildAt(0);
-        if (currentview instanceof LayerImageView) {
-            LayerImageView layerImageView = ((LayerImageView) currentview).copy();
-            scaleView.addView(layerImageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
+        if (currentview instanceof CustomImageView) {
+            CustomImageView customImageView = ((CustomImageView) currentview).copy();
+            PSLayer.addView(customImageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                     .LayoutParams.WRAP_CONTENT));
         }
-        if (currentview instanceof TextStyleView) {
-            TextStyleView textStyleView = ((TextStyleView) currentview).copy();
-            scaleView.addView(textStyleView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
+        if (currentview instanceof CustomTextView) {
+            CustomTextView customTextView = ((CustomTextView) currentview).copy();
+            PSLayer.addView(customTextView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                     .LayoutParams.WRAP_CONTENT));
         }
-        if (currentview instanceof GifMovieView) {
-            GifMovieView textStyleView = ((GifMovieView) currentview).copy();
-            scaleView.addView(textStyleView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
+        if (currentview instanceof CustomGifMovie) {
+            CustomGifMovie textStyleView = ((CustomGifMovie) currentview).copy();
+            PSLayer.addView(textStyleView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                     .LayoutParams.WRAP_CONTENT));
         }
-        if (currentview instanceof GifFrameView) {
-            GifFrameView textStyleView = ((GifFrameView) currentview).copy();
-            scaleView.addView(textStyleView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
+        if (currentview instanceof CustomGifFrame) {
+            CustomGifFrame textStyleView = ((CustomGifFrame) currentview).copy();
+            PSLayer.addView(textStyleView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                     .LayoutParams.WRAP_CONTENT));
         }
         float[] matrix = new float[9];
         mCurrentMatrix.getValues(matrix);
-        scaleView.copyMatrix(matrix);
-        scaleView.copy = true;
-        return scaleView;
+        PSLayer.copyMatrix(matrix);
+        PSLayer.copy = true;
+        return PSLayer;
     }
 
     public interface OnClickListener {
@@ -1105,7 +1101,7 @@ public class ScaleView extends RelativeLayout {
 
     public boolean isTextView() {
         View currentview = getChildAt(0);
-        if (currentview instanceof LayerImageView) {
+        if (currentview instanceof CustomImageView) {
             return true;
         }
         return false;

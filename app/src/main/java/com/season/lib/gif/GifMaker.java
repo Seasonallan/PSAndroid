@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.season.lib.gif.extend.LZWEncoderOrderHolder;
 import com.season.lib.gif.extend.ThreadGifEncoder;
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.lib.gif.frame.GifDecoderUtils;
 import com.season.myapplication.BuildConfig;
 import com.season.lib.util.Logger;

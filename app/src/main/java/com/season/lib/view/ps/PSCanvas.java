@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,16 +20,14 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.season.myapplication.BuildConfig;
-import com.season.lib.scale.BackInfoModelBean;
-import com.season.lib.scale.ItemArrayBean;
-import com.season.lib.scale.LayerEntity;
+import com.season.lib.bean.LayerBackground;
+import com.season.lib.bean.LayerItem;
+import com.season.lib.bean.LayerEntity;
 import com.season.lib.util.Constant;
 import com.season.lib.util.FileManager;
 import com.season.lib.util.ScreenUtils;
-import com.season.lib.gif.frame.GifFrameView;
-import com.season.lib.scale.ScaleView;
 import com.season.lib.gif.GifMaker;
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.lib.util.AreaAveragingScale;
 import com.season.lib.util.Logger;
 
@@ -45,23 +43,23 @@ import java.util.concurrent.Executors;
  * 合成流程说明：       图片帧数<=1则直接生成一个PNG文件， 否则则是循环绘制每一帧（通过先绘制背景信息，然后绘制图层信息，没背景则对图片进行裁剪），
  *
  * @see GifMaker       绘制成Bitmap后添加到GifMaker之中，同时多个线程解析bitmap信息。最终生成Gif文件
- * @see ScaleView 标注：它的一级子View都是ScaleView，代表图层 代表图层 代表图层 ,重要的事情说三遍，ScaleView是图层，ContainerView是画布
+ * @see PSLayer 标注：它的一级子View都是ScaleView，代表图层 代表图层 代表图层 ,重要的事情说三遍，ScaleView是图层，ContainerView是画布
  * 标注2：当前合成方式是直接绘制360大小的图片，无需裁剪， 没背景信息的时候也是直接绘制如320大小的图片，无需裁剪，只是对画布进行操作而已。
  * <p>
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 14:44
  */
-public class ContainerView extends RelativeLayout implements ICompose {
+public class PSCanvas extends RelativeLayout{
     private String TAG = "ContainerView,";
     private long startTime;//合成开始时间，用于超时判断，超时则中断合成并提示合成失败
     private int offsetX = 0, offsetY = 0;//画布边界和屏幕的左边和顶部的距离
     public int videoWidthHeight;//正中画布的宽高
 
     public boolean isMakingGifOrNot = false; //是否正在合成
-    private ScaleView focusView;//当前获取焦点拥有操作框的图层
+    private PSLayer focusView;//当前获取焦点拥有操作框的图层
 
     private GifMaker mGifMaker;//Gif合成功能类
-    private IScaleView relyView;//Gif合成需要依赖的图层，没有视频或者Gif的情况下，找出所有图层中时长duration最长的图层作为relyView.合成的duration，delay等以relyView为基准。
+    private ILayer relyView;//Gif合成需要依赖的图层，没有视频或者Gif的情况下，找出所有图层中时长duration最长的图层作为relyView.合成的duration，delay等以relyView为基准。
     private boolean isFullScreen = false;//合成是否是全屏，不是全屏的情况下需要剪切最后的图片
     private float left = Float.MAX_VALUE, top = Float.MAX_VALUE, right = Float.MIN_VALUE, bottom = Float.MIN_VALUE;
     private int makeType = 1; //1是默认静图720 动图360   2是微信分享静图300 动图240   3是本地，文件保存地址修正
@@ -76,14 +74,13 @@ public class ContainerView extends RelativeLayout implements ICompose {
     int resortCount = 1;//由于数量太多缩小合成的数量倍数
     private boolean isPreview;
     private Bitmap bitmapPreview;
-    private boolean isWaterMark;//是否打水印
     private RefreshListener refreshListener;
     private GifMaker.OnGifMakerListener onGifMakerListener;
     int position = -1;
     //所有的操作列表
     List<Operate> list = new ArrayList<>();
     //背景控制
-    public DiyBackgroundView backgroundView;
+    public PSBackground backgroundView;
     private List<Bitmap> bitmapListVideoToGif;
     private boolean isTexttureSeek;
     private int defaultDealy = 100;
@@ -161,8 +158,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
         this.onGifMakerListener = listener;
         this.makeType = makeType;
         // deleteFocus();
-        if (ContainerView.this != null) {
-            ContainerView.this.postDelayed(new Runnable() {
+        if (PSCanvas.this != null) {
+            PSCanvas.this.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     startDelay(listener);
@@ -171,33 +168,6 @@ public class ContainerView extends RelativeLayout implements ICompose {
         }
     }
 
-    public void setWaterMark(boolean isWaterMark) {
-        this.isWaterMark = isWaterMark;
-    }
-
-    public void start4Preview_Image_Gif(boolean isWaterMark, Bitmap bitmapPreview, final GifMaker.OnGifMakerListener listener) {
-        if (isMakingGifOrNot) {
-            return;
-        }
-        this.onGifMakerListener = listener;
-        this.isWaterMark = isWaterMark;
-        this.bitmapPreview = bitmapPreview;
-        if (BuildConfig.DEBUG) {
-            if (bitmapPreview != null) {
-                Logger.d("watermark,bitmapPreview_W:" + bitmapPreview.getWidth() + "*" + bitmapPreview.getHeight());
-            }
-        }
-        this.makeType = backgroundView.isVideo() ? ONLY_LAYER : DEFAULT;
-        // deleteFocus();
-        if (ContainerView.this != null) {
-            ContainerView.this.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startDelay(listener);
-                }
-            }, 300);
-        }
-    }
 
     public void startImage(boolean isHD, Bitmap bitmap, GifMaker.OnGifMakerListener listener) {
        // Fresco.getImagePipeline().clearMemoryCaches();
@@ -208,16 +178,16 @@ public class ContainerView extends RelativeLayout implements ICompose {
             finalGifWidthHeight = 300;
             for (int i = 0; i < getChildCount(); i++) {
                 View scaleView = getChildAt(i);
-                if (scaleView instanceof ScaleView && ((ScaleView) scaleView).getChildCount() > 0) {
+                if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
                     //((ScaleView) scaleView).startRecord();
-                    View view = ((ScaleView) scaleView).getChildAt(0);
-                    if (view instanceof IScaleView) {//找到时长最长的那个图层
+                    View view = ((PSLayer) scaleView).getChildAt(0);
+                    if (view instanceof ILayer) {//找到时长最长的那个图层
                         if (relyView == null) {
-                            relyView = (IScaleView) view;
+                            relyView = (ILayer) view;
                         }
-                        int duration = ((IScaleView) view).getDuration();
+                        int duration = ((ILayer) view).getDuration();
                         if (relyView.getDuration() < duration) {
-                            relyView = (IScaleView) view;
+                            relyView = (ILayer) view;
                         }
                     }
                 }
@@ -264,7 +234,6 @@ public class ContainerView extends RelativeLayout implements ICompose {
             if (BuildConfig.DEBUG) {
                 Logger.d("startImage", ",png,w:" + finalGifWidthHeight + ",h:" + finalGifWidthHeight);
             }
-//                            drawWaterMark(canvas, finalGifWidthHeight, finalGifWidthHeight);
             saveAndNotify(tBitmap, listener);
         }
     }
@@ -272,8 +241,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
     public boolean hasTextView() {
         for (int i = 0; i < getChildCount(); i++) {
             View scaleView = getChildAt(i);
-            if (scaleView instanceof ScaleView && ((ScaleView) scaleView).getChildCount() > 0) {
-                if (((ScaleView) scaleView).getChildAt(0) instanceof TextStyleView) {
+            if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
+                if (((PSLayer) scaleView).getChildAt(0) instanceof CustomTextView) {
                     return true;
                 }
             }
@@ -284,11 +253,11 @@ public class ContainerView extends RelativeLayout implements ICompose {
     public boolean hasGif() {
         for (int i = 0; i < getChildCount(); i++) {
             View scaleView = getChildAt(i);
-            if (scaleView instanceof ScaleView && ((ScaleView) scaleView).getChildCount() > 0) {
-                View view = ((ScaleView) scaleView).getChildAt(0);
+            if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
+                View view = ((PSLayer) scaleView).getChildAt(0);
                 if (view != null) {
-                    if (view instanceof GifMovieView) {
-                        String filePath = ((GifMovieView) view).file;
+                    if (view instanceof CustomGifMovie) {
+                        String filePath = ((CustomGifMovie) view).file;
                         Logger.d("hasGif1:" + filePath);
                         if (TextUtils.isEmpty(filePath)) {
                             continue;
@@ -298,8 +267,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
                             return true;
                         }
                     }
-                    if (view instanceof GifFrameView) {
-                        String filePath = ((GifFrameView) view).file;
+                    if (view instanceof CustomGifFrame) {
+                        String filePath = ((CustomGifFrame) view).file;
                         Logger.d("hasGif2:" + filePath);
                         if (TextUtils.isEmpty(filePath)) {
                             continue;
@@ -327,13 +296,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 //        boolean hasLayer = getChildCount() > 0;
         Logger.d("LayerhasGif:" + LayerhasGif);
         relyView = backgroundView.getBackgroundView();
-        if (backgroundView.isVideo() && (LayerhasGif)) {//背景是视频,且是gif图层或者没有图层
-            if (LayerhasGif) {
-                isFullScreen = true;
-                startGifMaker(listener, true);
-            } else {
+        if (false) {//背景是视频,且是gif图层或者没有图层
 
-            }
         } else {//背景不是视频，找到时长最长的那个图层
             isFullScreen = backgroundView.isBackgroundImageViewVisible();//背景是图片的情况下，合成的是全屏的
             left = videoWidthHeight + offsetX;
@@ -347,23 +311,23 @@ public class ContainerView extends RelativeLayout implements ICompose {
             } else {
                 for (int i = 0; i < getChildCount(); i++) {
                     View scaleView = getChildAt(i);
-                    if (scaleView instanceof ScaleView && ((ScaleView) scaleView).getChildCount() > 0) {
+                    if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
                         //((ScaleView) scaleView).startRecord();
-                        View view = ((ScaleView) scaleView).getChildAt(0);
+                        View view = ((PSLayer) scaleView).getChildAt(0);
                         if (!isFullScreen) {//不是全屏，需要定位上下左右用于剪切
-                            float[] points = ((ScaleView) scaleView).mOpView.desPoints;
+                            float[] points = ((PSLayer) scaleView).mPSOpView.desPoints;
                             checkPoint(points[0], points[1]);
                             checkPoint(points[2], points[3]);
                             checkPoint(points[4], points[5]);
                             checkPoint(points[6], points[7]);
                         }
-                        if (view instanceof IScaleView) {//找到时长最长的那个图层
+                        if (view instanceof ILayer) {//找到时长最长的那个图层
                             if (relyView == null) {
-                                relyView = (IScaleView) view;
+                                relyView = (ILayer) view;
                             }
-                            int duration = ((IScaleView) view).getDuration();
+                            int duration = ((ILayer) view).getDuration();
                             if (relyView.getDuration() < duration) {
-                                relyView = (IScaleView) view;
+                                relyView = (ILayer) view;
                             }
                         }
                     }
@@ -385,59 +349,20 @@ public class ContainerView extends RelativeLayout implements ICompose {
                 get1PngImage(listener);
                 return;
             }
-            /**
-             * 视频，图层是静态图
-             */
-            if (backgroundView.isVideo()) {
-                left = offsetX;
-                right = videoWidthHeight + offsetX;
-                top = offsetY;
-                bottom = videoWidthHeight + offsetY;
-                //为了视频静态图优化
-                makeSize(true);
-                //透明
-                float realShowWidth = right - left;
-                float realShowHeight = bottom - top;
-                float height = realShowHeight * finalGifWidthHeight / realShowWidth;
-                try {
-                    Bitmap tBitmap = Bitmap.createBitmap(finalGifWidthHeight, (int) height, Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(tBitmap);
-                    canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-                    drawItem(canvas, realShowWidth, left, top);
-                    /**
-                     *如果是动态水印，水印显示的图片，完全没有了透明度
-                     */
-                    drawWaterMark(canvas, finalGifWidthHeight, (int) height);
-                    saveAndNotify(tBitmap, listener);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Logger.d("bug3:" + e);
-                    listener.onMakeGifFail();
-                }
-                return;
-            }
             startGifMaker(listener, false);
         }
     }
 
-    @Override
-    public void drawWaterMark(Canvas canvas, int w, int h) {
-        if (isWaterMark) {
-            //WaterMarkUtils.getSingleton().WaterMark(canvas, w, h);
-        }
-    }
-
-
     public boolean LayerhasGif() {
         for (int i = 0; i < getChildCount(); i++) {
             View scaleView = getChildAt(i);
-            if (scaleView instanceof ScaleView) {
-                View view = ((ScaleView) scaleView).getChildAt(0);
-                if (view instanceof TextStyleView) {
-                    if (((TextStyleView) view).animationProvider != null) {
+            if (scaleView instanceof PSLayer) {
+                View view = ((PSLayer) scaleView).getChildAt(0);
+                if (view instanceof CustomTextView) {
+                    if (((CustomTextView) view).animationProvider != null) {
                         return true;
                     }
-                } else if ((view instanceof GifMovieView) || (view instanceof GifFrameView)) {
+                } else if ((view instanceof CustomGifMovie) || (view instanceof CustomGifFrame)) {
                     return true;
                 }
             }
@@ -464,10 +389,10 @@ public class ContainerView extends RelativeLayout implements ICompose {
         int count = 1;
         if (BuildConfig.DEBUG)
             Logger.d(TAG + "startGifMaker_duration:" + duration + "，delay：" + delay);
-        if (makeType == ContainerView.ONLY_LAYER && isVideo) {
+        if (makeType == PSCanvas.ONLY_LAYER && isVideo) {
             //由于新需求，需要上传合成结果的视频，且这个视频的原速的。
             //ONLY_LAYER模式下，生成和视频一样的长的gif，不受速度影响
-            DiyBackgroundView.BgOperate bgOperate = backgroundView.currentOperate;
+            PSBackground.BgOperate bgOperate = backgroundView.currentOperate;
             if (bgOperate.rate != 0) {
                 duration *= bgOperate.rate;
                 delay *= bgOperate.rate;
@@ -513,16 +438,16 @@ public class ContainerView extends RelativeLayout implements ICompose {
             repeatCount++;
         }
         long maxTime = 0;
-        if (makeType == ContainerView.ONLY_LAYER && isVideo) {
+        if (makeType == PSCanvas.ONLY_LAYER && isVideo) {
             repeatCount = 1;
             //relyView不是视频，是最长的图层，如果图层时间比视频时长还长，那就用视频的长度
             for (int i = 0; i < getChildCount(); i++) {
                 View scaleView = getChildAt(i);
-                if (scaleView instanceof ScaleView && ((ScaleView) scaleView).getChildCount() > 0) {
+                if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
                     //((ScaleView) scaleView).startRecord();
-                    View view = ((ScaleView) scaleView).getChildAt(0);
-                    if (view instanceof IScaleView) {//找到时长最长的那个图层
-                        int layerduration = ((IScaleView) view).getDuration();
+                    View view = ((PSLayer) scaleView).getChildAt(0);
+                    if (view instanceof ILayer) {//找到时长最长的那个图层
+                        int layerduration = ((ILayer) view).getDuration();
                         if (maxTime < layerduration) {
                             //找出最长的图层的时长
                             maxTime = layerduration;
@@ -548,7 +473,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
         //确定合成总帧数和帧与帧之间的延迟时间
         mGifMaker = new GifMaker(count / resortCount, delay * resortCount, Executors.newCachedThreadPool()).setOutputPath
                 (absolutePath);
-        if (makeType == ContainerView.ONLY_LAYER) {
+        if (makeType == PSCanvas.ONLY_LAYER) {
             //4 only gif
             mGifMaker.setRepeatCount(repeatCount);
         }
@@ -569,7 +494,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
     void makeSize(boolean isGif) {
         if (isGif) {
             finalGifWidthHeight = makeType == WEIXIN ? Constant.Camerasettings.SHARE_WECHAT_GIF_RESOLUTION : ((makeType ==
-                    ContainerView.ONLY_LAYER) ? Constant.Camerasettings.IDEAL_VIDEO_RESOLUTION : Constant.Camerasettings
+                    PSCanvas.ONLY_LAYER) ? Constant.Camerasettings.IDEAL_VIDEO_RESOLUTION : Constant.Camerasettings
                     .IDEAL_GIF_RESOLUTION);//正好gif分辨率和照片分辨率相等
         } else {
             finalGifWidthHeight = makeType == WEIXIN ? Constant.Camerasettings.PHOTO_RESOLUTION_WECHAT_SHARE : Constant
@@ -580,7 +505,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
     //合成一张PNG图片
     private void get1PngImage(final GifMaker.OnGifMakerListener listener) {
         makeSize(false);
-        ContainerView.this.postDelayed(new Runnable() {
+        PSCanvas.this.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (backgroundView != null && backgroundView.currentOperate != null) {
@@ -598,7 +523,6 @@ public class ContainerView extends RelativeLayout implements ICompose {
                             if (BuildConfig.DEBUG) {
                                 Logger.e("png,w:" + finalGifWidthHeight + ",h:" + finalGifWidthHeight);
                             }
-//                            drawWaterMark(canvas, finalGifWidthHeight, finalGifWidthHeight);
                             //overlay
                             saveAndNotify(tBitmap, listener);
                             return;
@@ -656,7 +580,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
     //合成完成，重置标志位
     private void onRecordFinish() {
         isMakingGifOrNot = false;
-        if (relyView instanceof GifMovieView || relyView instanceof GifFrameView) {
+        if (relyView instanceof CustomGifMovie || relyView instanceof CustomGifFrame) {
             relyView.stopRecord();
         }
         recordViewFinish();
@@ -715,21 +639,21 @@ public class ContainerView extends RelativeLayout implements ICompose {
     }
 
     //获取获取焦点的图层
-    public ScaleView getView() {
+    public PSLayer getView() {
         return focusView;
     }
 
-    public ContainerView(Context context) {
+    public PSCanvas(Context context) {
         super(context);
         init();
     }
 
-    public ContainerView(Context context, AttributeSet attrs) {
+    public PSCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ContainerView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PSCanvas(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -756,8 +680,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
     private void refreshView() {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof ScaleView) {
-                ((ScaleView) view).refresh();
+            if (view instanceof PSLayer) {
+                ((PSLayer) view).refresh();
             }
         }
     }
@@ -765,8 +689,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
     private void recordView(int time) {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof ScaleView) {
-                ((ScaleView) view).record(time);
+            if (view instanceof PSLayer) {
+                ((PSLayer) view).record(time);
             }
         }
     }
@@ -774,8 +698,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
     private void recordViewFinish() {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof ScaleView) {
-                ((ScaleView) view).recordFinish();
+            if (view instanceof PSLayer) {
+                ((PSLayer) view).recordFinish();
             }
         }
     }
@@ -795,7 +719,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
             isDrawing = true;
             Bitmap bitmap = null;
             Bitmap tBitmap;
-            if (makeType == ContainerView.ONLY_LAYER) {
+            if (makeType == PSCanvas.ONLY_LAYER) {
                 tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.ARGB_8888);
             } else {
                 tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.RGB_565);
@@ -803,20 +727,19 @@ public class ContainerView extends RelativeLayout implements ICompose {
             }
             Canvas canvas = new Canvas(tBitmap);
             canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-            if (makeType != ContainerView.ONLY_LAYER) {
+            if (makeType != PSCanvas.ONLY_LAYER) {
                 canvas.drawBitmap(bitmap, null, new RectF(0, 0, finalGifWidthHeight, finalGifWidthHeight), null);
                 Util.recycleBitmaps(bitmap);
             }
             drawItem(canvas, videoWidthHeight, offsetX, offsetY);
-            drawWaterMark(canvas, finalGifWidthHeight, finalGifWidthHeight);
             mGifMaker.addBitmap(tBitmap);
             isDrawing = false;
         } catch (Exception e) {
             //PAD必须在主线程中调用TextureView.getBitmap
             //否则出现错误java.lang.IllegalStateException: Hardware acceleration can only be used url a single UI thread.
             e.printStackTrace();
-            if (ContainerView.this != null) {
-                ContainerView.this.postDelayed(new Runnable() {
+            if (PSCanvas.this != null) {
+                PSCanvas.this.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         drawVideo();
@@ -855,15 +778,14 @@ public class ContainerView extends RelativeLayout implements ICompose {
 //            bitmapListVideoToGif.set(mGifMaker.getFrameCountNow(), null);
 //            }
             drawItem(canvas, videoWidthHeight, offsetX, offsetY);
-            drawWaterMark(canvas, finalGifWidthHeight, finalGifWidthHeight);
             mGifMaker.addBitmap(tBitmap);
             isDrawing = false;
         } catch (Exception e) {
             //PAD必须在主线程中调用TextureView.getBitmap
             //否则出现错误java.lang.IllegalStateException: Hardware acceleration can only be used url a single UI thread.
             e.printStackTrace();
-            if (ContainerView.this != null) {
-                ContainerView.this.postDelayed(new Runnable() {
+            if (PSCanvas.this != null) {
+                PSCanvas.this.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         drawVideoToGIf();
@@ -930,7 +852,6 @@ public class ContainerView extends RelativeLayout implements ICompose {
             relyView.drawCanvas(canvas);
             canvas.restore();
             drawItem4GIf(canvas, width, height, offsetX, offsetY, scale);
-//            drawWaterMark(canvas, width, height);
             mGifMaker.addBitmap(tBitmap);
             isDrawing = false;
         } catch (Exception e) {
@@ -954,19 +875,19 @@ public class ContainerView extends RelativeLayout implements ICompose {
         float scale = finalGifWidthHeight * 1.0f / showWidth;
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof ScaleView) {
-                ScaleView scaleView = (ScaleView) view;
+            if (view instanceof PSLayer) {
+                PSLayer PSLayer = (PSLayer) view;
                 Matrix matrix = new Matrix();
-                matrix.set(scaleView.mCurrentMatrix);
+                matrix.set(PSLayer.mCurrentMatrix);
                 matrix.postTranslate(-left, -top);
                 matrix.postScale(scale, scale, 0, 0);
                 //matrix.postTranslate(-left * scale, -top * scale);
                 canvas.save();
                 canvas.concat(matrix);
-                if (scaleView.getChildCount() > 0) {
-                    View childView = scaleView.getChildAt(0);
-                    if (childView instanceof IScaleView) {
-                        ((IScaleView) childView).drawCanvas(canvas);
+                if (PSLayer.getChildCount() > 0) {
+                    View childView = PSLayer.getChildAt(0);
+                    if (childView instanceof ILayer) {
+                        ((ILayer) childView).drawCanvas(canvas);
                     }
                 }
                 canvas.restore();
@@ -977,10 +898,10 @@ public class ContainerView extends RelativeLayout implements ICompose {
     private void drawItem4GIf(Canvas canvas, float width, float height, float left, float top, float scale) {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof ScaleView) {
-                ScaleView scaleView = (ScaleView) view;
+            if (view instanceof PSLayer) {
+                PSLayer PSLayer = (PSLayer) view;
                 Matrix matrix = new Matrix();
-                matrix.set(scaleView.mCurrentMatrix);
+                matrix.set(PSLayer.mCurrentMatrix);
                 matrix.postTranslate(-left, -top);
                 matrix.postScale(scale, scale, 0, 0);
                 if (BuildConfig.DEBUG) {
@@ -988,10 +909,10 @@ public class ContainerView extends RelativeLayout implements ICompose {
                 }
                 canvas.save();
                 canvas.concat(matrix);
-                if (scaleView.getChildCount() > 0) {
-                    View childView = scaleView.getChildAt(0);
-                    if (childView instanceof IScaleView) {
-                        ((IScaleView) childView).drawCanvas(canvas);
+                if (PSLayer.getChildCount() > 0) {
+                    View childView = PSLayer.getChildAt(0);
+                    if (childView instanceof ILayer) {
+                        ((ILayer) childView).drawCanvas(canvas);
                     }
                 }
                 canvas.restore();
@@ -1041,8 +962,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
                         if (System.currentTimeMillis() - startTime > mGifMaker.getTotalSize() * 1000) {
                             onRecordFinish();
                             if (mGifMaker != null && mGifMaker.mOnGifMakerListener != null) {
-                                if (ContainerView.this != null) {
-                                    ContainerView.this.postDelayed(new Runnable() {
+                                if (PSCanvas.this != null) {
+                                    PSCanvas.this.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
                                             mGifMaker.mOnGifMakerListener.onMakeGifFail();
@@ -1171,12 +1092,12 @@ public class ContainerView extends RelativeLayout implements ICompose {
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         super.addView(child, index, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        if (child instanceof ScaleView) {//添加图层的时候，居中图层
-            boolean callback = ((ScaleView) child).initViewOffset(getWidth(), getHeight());//居中图层
-            startOp((ScaleView) child, true, callback);//给图层焦点
-            ((ScaleView) child).getFocus();//图层标志位重置
+        if (child instanceof PSLayer) {//添加图层的时候，居中图层
+            boolean callback = ((PSLayer) child).initViewOffset(getWidth(), getHeight());//居中图层
+            startOp((PSLayer) child, true, callback);//给图层焦点
+            ((PSLayer) child).getFocus();//图层标志位重置
             isEventAttaching = false;//多点触控标志位重置
-            ((ScaleView) child).setClickListener(new ScaleView.OnClickListener() {
+            ((PSLayer) child).setClickListener(new PSLayer.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mClickListener != null) {
@@ -1193,7 +1114,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
                 @Override
                 public void onDelete(View view) {
-                    deleteView((ScaleView) view);
+                    deleteView((PSLayer) view);
                 }
             });
         }
@@ -1208,9 +1129,9 @@ public class ContainerView extends RelativeLayout implements ICompose {
     }
 
 
-    private ScaleView.OnClickListener mClickListener;
+    private PSLayer.OnClickListener mClickListener;
 
-    public void setClickListener(ScaleView.OnClickListener listener) {
+    public void setClickListener(PSLayer.OnClickListener listener) {
         mClickListener = listener;
     }
 
@@ -1221,7 +1142,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
         oprate.childs = new View[count];
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
-            if (child instanceof ScaleView) {
+            if (child instanceof PSLayer) {
                 oprate.childs[i] = child;
             }
         }
@@ -1234,19 +1155,29 @@ public class ContainerView extends RelativeLayout implements ICompose {
     }
 
     //移动图层的时候，图层会调用该方法添加一条操作
-    public void onMove(ScaleView view, MotionEvent event) {
-        if (delView != null) {
-            boolean isInDelRect = delView.checkPosition(event);
+    public void onMove(PSLayer view, MotionEvent event) {
+        if (moveListener != null) {
+            boolean isInDelRect = moveListener.onMove(event);
             view.setDelPosition(isInDelRect);
         }
     }
 
     //图层移动结束，需要隐藏拖动删除垃圾箱，并且重置多点标志位
     public void onMoveEnd() {
-        if (delView != null) {
-            delView.hide();
+        if (moveListener != null) {
+            moveListener.onMoveEnd();
         }
         isEventAttaching = false;
+    }
+
+    private IOnMoveListener moveListener;
+    public interface IOnMoveListener{
+        boolean onMove(MotionEvent event);
+        void onMoveEnd();
+    }
+
+    public void setOnMoveListener(IOnMoveListener listener){
+        this.moveListener = listener;
     }
 
     /**
@@ -1269,32 +1200,32 @@ public class ContainerView extends RelativeLayout implements ICompose {
      */
     class Operate {
         public int type;
-        public ScaleView scaleView;
-        public TextStyleView textView;
+        public PSLayer PSLayer;
+        public CustomTextView textView;
         public View[] childs;
         public float[] matrix;
 
-        public Operate(int op, ScaleView scaleView, Matrix ma) {
+        public Operate(int op, PSLayer PSLayer, Matrix ma) {
             matrix = new float[9];
             if (ma != null) {
                 ma.getValues(matrix);
             }
             type = op;
-            this.scaleView = scaleView;
+            this.PSLayer = PSLayer;
         }
 
         public Operate(int op) {
             this.type = op;
         }
 
-        public Operate(TextStyleView textView) {
+        public Operate(CustomTextView textView) {
             this.type = IType.TEXT_OBJECT;
             this.textView = textView;
         }
     }
 
     //删除图层
-    public void deleteView(ScaleView view) {
+    public void deleteView(PSLayer view) {
         if (view.getParent() != null) {
             addEvent(IType.REMOVE, view, view.mCurrentMatrix);
             removeView(view);
@@ -1333,7 +1264,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
     }
 
     //焦点切换，触发监听器
-    public void startOp(ScaleView view, boolean isFocus, boolean callback) {
+    public void startOp(PSLayer view, boolean isFocus, boolean callback) {
         if (isFocus) {
             if (this.focusView != null && this.focusView != view) {
                 this.focusView.removeFocus();
@@ -1421,8 +1352,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     //添加所有类型操作的事件
     public void addEvent(int type, View scaleView, Matrix matrix) {
-        if (scaleView instanceof ScaleView) {
-            addEvent(new Operate(type, (ScaleView) scaleView, matrix));
+        if (scaleView instanceof PSLayer) {
+            addEvent(new Operate(type, (PSLayer) scaleView, matrix));
         }
     }
 
@@ -1438,9 +1369,9 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     //获取上一个与当前一样的图层记录
     private int getPreScaleViewPosition(int position) {
-        ScaleView scaleView = list.get(position).scaleView;
+        PSLayer PSLayer = list.get(position).PSLayer;
         for (int i = position - 1; i >= 0; i--) {
-            if (list.get(i).scaleView == scaleView) {
+            if (list.get(i).PSLayer == PSLayer) {
                 return i;
             }
         }
@@ -1452,30 +1383,30 @@ public class ContainerView extends RelativeLayout implements ICompose {
         switch (list.get(position).type) {
             case IType.MOVE:
                 int pos = getPreScaleViewPosition(position);
-                ScaleView scaleView = list.get(pos).scaleView;
+                PSLayer PSLayer = list.get(pos).PSLayer;
                 float[] data = list.get(pos).matrix;
-                scaleView.resetMatrix(data);
+                PSLayer.resetMatrix(data);
                 break;
             case IType.ADD:
-                removeView(list.get(position).scaleView);
+                removeView(list.get(position).PSLayer);
                 break;
             case IType.REMOVE:
                 int posPre = getPreScaleViewPosition(position);
-                ScaleView scaleViewPre = list.get(position).scaleView;
+                PSLayer PSLayerPre = list.get(position).PSLayer;
                 float[] dataPre = list.get(posPre).matrix;
-                scaleViewPre.resetMatrix(dataPre);
-                int index = list.get(position).scaleView.index;
+                PSLayerPre.resetMatrix(dataPre);
+                int index = list.get(position).PSLayer.index;
                 if (index == 0) {
-                    addView(scaleViewPre, 0);
+                    addView(PSLayerPre, 0);
                 } else {
-                    addView(scaleViewPre);
+                    addView(PSLayerPre);
                 }
                 break;
             case IType.DOWN_LAYER:
-                upLayer(list.get(position).scaleView, false);
+                upLayer(list.get(position).PSLayer, false);
                 break;
             case IType.UP_LAYER:
-                downLayer(list.get(position).scaleView, false);
+                downLayer(list.get(position).PSLayer, false);
                 break;
             case IType.RESET:
                 View[] views = list.get(position).childs;
@@ -1492,7 +1423,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
                 }
                 break;
             case IType.TEXT_OBJECT:
-                TextStyleView textView = list.get(position).textView;
+                CustomTextView textView = list.get(position).textView;
                 textView.pre();
                 break;
         }
@@ -1504,26 +1435,26 @@ public class ContainerView extends RelativeLayout implements ICompose {
         position++;
         switch (list.get(position).type) {
             case IType.MOVE:
-                ScaleView scaleView = list.get(position).scaleView;
+                PSLayer PSLayer = list.get(position).PSLayer;
                 float[] data = list.get(position).matrix;
-                scaleView.resetMatrix(data);
+                PSLayer.resetMatrix(data);
                 break;
             case IType.ADD:
-                int index = list.get(position).scaleView.index;
+                int index = list.get(position).PSLayer.index;
                 if (index == 0) {
-                    addView(list.get(position).scaleView, 0);
+                    addView(list.get(position).PSLayer, 0);
                 } else {
-                    addView(list.get(position).scaleView);
+                    addView(list.get(position).PSLayer);
                 }
                 break;
             case IType.REMOVE:
-                removeView(list.get(position).scaleView);
+                removeView(list.get(position).PSLayer);
                 break;
             case IType.DOWN_LAYER:
-                downLayer(list.get(position).scaleView, false);
+                downLayer(list.get(position).PSLayer, false);
                 break;
             case IType.UP_LAYER:
-                upLayer(list.get(position).scaleView, false);
+                upLayer(list.get(position).PSLayer, false);
                 break;
             case IType.RESET:
                 View[] views = list.get(position).childs;
@@ -1541,7 +1472,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
                 }
                 break;
             case IType.TEXT_OBJECT:
-                TextStyleView textView = list.get(position).textView;
+                CustomTextView textView = list.get(position).textView;
                 textView.pro();
                 break;
         }
@@ -1550,11 +1481,11 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     //绑定背景控制视图
     public void bindBgView(View parentView, MediaPlayer.OnPreparedListener listener) {
-        backgroundView = new DiyBackgroundView(parentView);
+        backgroundView = new PSBackground(parentView);
     }
 
     public void bindBgView(View parentView) {
-        backgroundView = new DiyBackgroundView(parentView);
+        backgroundView = new PSBackground(parentView);
     }
 
 
@@ -1575,7 +1506,7 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void showGIf(String url, String path) {
         if (backgroundView != null) {
-            if (backgroundView.showGIf(url, path, new DiyBackgroundView.decoderGifDoneListener() {
+            if (backgroundView.showGIf(url, path, new PSBackground.decoderGifDoneListener() {
                 @Override
                 public void decoder(int offset_x, int offset_y) {
                     offsetX += offset_x;
@@ -1604,8 +1535,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setTextAnimationType(int type) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             int duration = backgroundView.getDuration();
             if (textObjectView.setTextAnimationType(type, duration, 300, 10)) {
                 addEvent(new Operate(textObjectView));
@@ -1619,12 +1550,12 @@ public class ContainerView extends RelativeLayout implements ICompose {
     public void changeAnimationTime() {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof ScaleView) {
-                ScaleView scaleView = (ScaleView) view;
-                if (scaleView.getChildCount() > 0) {
-                    View childView = scaleView.getChildAt(0);
-                    if (childView instanceof TextStyleView) {
-                        ((TextStyleView) childView).changeAnimationTime(backgroundView.getDuration(), 10, backgroundView.getSpeed());
+            if (view instanceof PSLayer) {
+                PSLayer PSLayer = (PSLayer) view;
+                if (PSLayer.getChildCount() > 0) {
+                    View childView = PSLayer.getChildAt(0);
+                    if (childView instanceof CustomTextView) {
+                        ((CustomTextView) childView).changeAnimationTime(backgroundView.getDuration(), 10, backgroundView.getSpeed());
                     }
                 }
             }
@@ -1633,8 +1564,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setTextWidth(float size) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setPaintWidthByPercent(size)) {
                 addEvent(new Operate(textObjectView));
             }
@@ -1643,8 +1574,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setTextColor(String textColor) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setTextcolor(textColor)) {
                 addEvent(new Operate(textObjectView));
             }
@@ -1653,18 +1584,18 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setTextColor(int textColor) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textStyleView = (TextStyleView) view;
-            if (textStyleView.setTextcolor(textColor)) {
-                addEvent(new Operate(textStyleView));
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView customTextView = (CustomTextView) view;
+            if (customTextView.setTextcolor(textColor)) {
+                addEvent(new Operate(customTextView));
             }
         }
     }
 
     public void setTextColorAlpha(int alpha) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setTextalpha(alpha)) {
                 addEvent(new Operate(textObjectView));
             }
@@ -1673,19 +1604,19 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void editText(String params) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textStyleView = (TextStyleView) view;
-            textStyleView.setFontHistory();//设置字体历史记录
-            textStyleView.editText(params);
-            textStyleView.requestLayout();
-            addEvent(new Operate(textStyleView));
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView customTextView = (CustomTextView) view;
+            customTextView.setFontHistory();//设置字体历史记录
+            customTextView.editText(params);
+            customTextView.requestLayout();
+            addEvent(new Operate(customTextView));
         }
     }
 
     public void setStrokeSize(float size) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setStrokeWidthByPercent(size)) {
                 addEvent(new Operate(textObjectView));
             }
@@ -1694,8 +1625,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setStrokeColorAlpha(int alpha) {
         View view = getFocusView();
-        if (view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setStrokealpha(alpha)) {
                 addEvent(new Operate(textObjectView));
             }
@@ -1704,8 +1635,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setStrokeColor(String color) {
         View view = getFocusView();
-        if (view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setStrokecolor(color)) {
                 addEvent(new Operate(textObjectView));
             }
@@ -1714,8 +1645,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setStrokeColor(int color) {
         View view = getFocusView();
-        if (view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setStrokecolor(color)) {
                 addEvent(new Operate(textObjectView));
             }
@@ -1724,22 +1655,13 @@ public class ContainerView extends RelativeLayout implements ICompose {
 
     public void setTypeFace(Typeface typeface) {
         View view = getFocusView();
-        if (view != null && view instanceof TextStyleView) {
-            TextStyleView textObjectView = (TextStyleView) view;
+        if (view != null && view instanceof CustomTextView) {
+            CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setTexttypeface(typeface)) {
                 addEvent(new Operate(textObjectView));
             }
         }
     }
-
-
-    //拖动删除 垃圾箱 控制
-    public DelView delView;
-
-    public void bindDelView(DelView delView) {
-        this.delView = delView;
-    }
-
 
     //记录ID，用于改图的时候记录之前的数据
     public long originId;
@@ -1771,11 +1693,11 @@ public class ContainerView extends RelativeLayout implements ICompose {
             Logger.d("text==>" + textPublishDescribe);
         }
 
-        BackInfoModelBean backInfoModel = new BackInfoModelBean();
+        LayerBackground backInfoModel = new LayerBackground();
         backInfoModel.orignalVideoUrl = orignalVideoUrl;
         backInfoModel.orignalImageUrl = orignalImageUrl;
         backInfoModel.orignalGIfUrl = orignalGifUrl;
-        DiyBackgroundView.BgOperate bgOperate = backgroundView.currentOperate;
+        PSBackground.BgOperate bgOperate = backgroundView.currentOperate;
         long oneAudio = audioId;
         if (bgOperate != null) {
             if (bgOperate.visible1 == View.VISIBLE) {
@@ -1807,13 +1729,13 @@ public class ContainerView extends RelativeLayout implements ICompose {
         layerEntity.audioId = (int) oneAudio;
         layerEntity.setBackInfoModel(backInfoModel);
 
-        List<ItemArrayBean> list = new ArrayList<>();
+        List<LayerItem> list = new ArrayList<>();
         int layer = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View scaleView = getChildAt(i);
-            if (scaleView instanceof ScaleView) {
-                ItemArrayBean itemArrayBean = ((ScaleView) scaleView).getItemInfro(layer++);
-                list.add(itemArrayBean);
+            if (scaleView instanceof PSLayer) {
+                LayerItem layerItem = ((PSLayer) scaleView).getItemInfro(layer++);
+                list.add(layerItem);
             }
         }
         layerEntity.setItemArray(list);
@@ -1838,10 +1760,10 @@ public class ContainerView extends RelativeLayout implements ICompose {
 //            Logger.d("text==>" + textPublishDescribe);
 //        }
 
-//        BackInfoModelBean backInfoModel = new BackInfoModelBean();
+//        LayerBackground backInfoModel = new LayerBackground();
 //        backInfoModel.orignalVideoUrl = orignalVideoUrl;
 //        backInfoModel.orignalImageUrl = orignalImageUrl;
-//        DiyBackgroundView.BgOperate bgOperate = backgroundView.currentOperate;
+//        PSBackground.BgOperate bgOperate = backgroundView.currentOperate;
 //        long oneAudio = audioId;
 //        if (bgOperate != null) {
 //            if (bgOperate.visible1 == View.VISIBLE) {
@@ -1870,13 +1792,13 @@ public class ContainerView extends RelativeLayout implements ICompose {
 //        layerEntity.audioId = (int) oneAudio;
 //        layerEntity.setBackInfoModel(backInfoModel);
 
-        List<ItemArrayBean> list = new ArrayList<>();
+        List<LayerItem> list = new ArrayList<>();
         int layer = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View scaleView = getChildAt(i);
-            if (scaleView instanceof ScaleView) {
-                ItemArrayBean itemArrayBean = ((ScaleView) scaleView).getItemInfro(layer++);
-                list.add(itemArrayBean);
+            if (scaleView instanceof PSLayer) {
+                LayerItem layerItem = ((PSLayer) scaleView).getItemInfro(layer++);
+                list.add(layerItem);
             }
         }
         layerEntity.setItemArray(list);
@@ -1895,10 +1817,10 @@ public class ContainerView extends RelativeLayout implements ICompose {
     private void release(ViewGroup parent) {
         for (int i = 0; i < list.size(); i++) {
             Operate view = list.get(i);
-            if (view.scaleView != null && view.scaleView.getChildCount() > 0) {
-                View childView = view.scaleView.getChildAt(0);
-                if (childView instanceof IScaleView) {
-                    ((IScaleView) childView).onRelease();
+            if (view.PSLayer != null && view.PSLayer.getChildCount() > 0) {
+                View childView = view.PSLayer.getChildAt(0);
+                if (childView instanceof ILayer) {
+                    ((ILayer) childView).onRelease();
                 }
             }
             if (view.textView != null) {
@@ -1913,8 +1835,8 @@ public class ContainerView extends RelativeLayout implements ICompose {
             if (view instanceof ViewGroup) {
                 release((ViewGroup) view);
             } else {
-                if (view instanceof IScaleView) {
-                    ((IScaleView) view).onRelease();
+                if (view instanceof ILayer) {
+                    ((ILayer) view).onRelease();
                 }
             }
         }

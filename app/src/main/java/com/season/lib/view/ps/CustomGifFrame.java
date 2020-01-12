@@ -1,4 +1,4 @@
-package com.season.lib.gif.frame;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,9 +9,10 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.season.lib.gif.utils.Util;
+import com.season.lib.gif.frame.GifDecoder;
+import com.season.lib.gif.frame.GifFrame;
+import com.season.lib.util.Util;
 import com.season.lib.gif.movie.FrameDecoder;
-import com.season.lib.view.IScaleView;
 import com.season.myapplication.BuildConfig;
 import com.season.lib.util.Logger;
 
@@ -25,7 +26,7 @@ import java.util.List;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 18:37
  */
-public class GifFrameView extends View implements IScaleView {
+public class CustomGifFrame extends View implements ILayer {
 
     private final String TAG = "GifFrameView";
     private GifDecoder gifDecoder = null;
@@ -40,17 +41,17 @@ public class GifFrameView extends View implements IScaleView {
     private float mLeft;
     private float mTop;
 
-    public GifFrameView(Context context) {
+    public CustomGifFrame(Context context) {
         super(context);
         init();
     }
 
-    public GifFrameView(Context context, AttributeSet attrs) {
+    public CustomGifFrame(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public GifFrameView(Context context, AttributeSet attrs, int defStyle) {
+    public CustomGifFrame(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -266,8 +267,8 @@ public class GifFrameView extends View implements IScaleView {
         recordTime = -1;
     }
 
-    public GifFrameView copy() {
-        GifFrameView gifView = new GifFrameView(getContext());
+    public CustomGifFrame copy() {
+        CustomGifFrame gifView = new CustomGifFrame(getContext());
         if (!TextUtils.isEmpty(file)) {
             gifView.setMovieResource(file);
         } else {

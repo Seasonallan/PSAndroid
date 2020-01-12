@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,10 +12,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.gif.frame.GifFrameView;
 import com.season.lib.gif.movie.DelayDecoder;
 import com.season.myapplication.BuildConfig;
-import com.season.lib.scale.ScaleView;
 import com.season.lib.util.Logger;
 
 import java.io.ByteArrayOutputStream;
@@ -26,14 +24,14 @@ import java.io.InputStream;
 
 /**
  * Disc: 使用Android系统自带的Movie解析Gif，有时候会解析失败，失败后使用(但是高性能，不占内存)
- * @see GifFrameView 来解析
+ * @see CustomGifFrame 来解析
  *
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 18:37
  *
  * 这里如果需要让Gif动起来，必须在View外部调用重绘。onDraw()中根据当前时间，准备需要绘制的帧数据。
  */
-public class GifMovieView extends View implements IScaleView {
+public class CustomGifMovie extends View implements ILayer {
     private static final int DEFAULT_MOVIE_DURATION = 1000;
     private Movie mMovie;
     private long mMovieStart;
@@ -49,25 +47,25 @@ public class GifMovieView extends View implements IScaleView {
     int resourceId;
     public String file;
     public String url;
-    public GifMovieView(Context context) {
+    public CustomGifMovie(Context context) {
         super(context);
         init();
     }
 
-    public GifMovieView(Context context, @Nullable AttributeSet attrs) {
+    public CustomGifMovie(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         isFullScreen = true;
         init();
     }
 
-    public GifMovieView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CustomGifMovie(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         isFullScreen = true;
         init();
     }
 
     private boolean isFullScreen = false;
-    public GifMovieView(Context context, boolean full) {
+    public CustomGifMovie(Context context, boolean full) {
         super(context);
         isFullScreen = full;
         init();
@@ -183,11 +181,11 @@ public class GifMovieView extends View implements IScaleView {
         if (BuildConfig.DEBUG){
             Logger.d(TAG+"getWidth():"+getWidth()+",mLeft:"+mLeft+",mTop:"+mTop);
         }
-        if (getParent() instanceof ScaleView){
+        if (getParent() instanceof PSLayer){
             int width = r - l;
             int height = b - t;
             if (width > 0 && height > 0){
-                ((ScaleView) getParent()).rebindOpView();
+                ((PSLayer) getParent()).rebindOpView();
             }
         }
     }
@@ -411,8 +409,8 @@ public class GifMovieView extends View implements IScaleView {
 
     int delay = -1;
 
-    public GifMovieView copy() {
-        GifMovieView gifView = new GifMovieView(getContext());
+    public CustomGifMovie copy() {
+        CustomGifMovie gifView = new CustomGifMovie(getContext());
         if (!TextUtils.isEmpty(file)){
             gifView.setMovieResource(file);
         }else{

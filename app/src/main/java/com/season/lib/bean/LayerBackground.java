@@ -1,4 +1,4 @@
-package com.season.lib.scale;
+package com.season.lib.bean;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Created by lizhongxin on 2018/2/23.
  */
 
-public  class BackInfoModelBean implements Serializable {
+public  class LayerBackground implements Serializable {
 
     /**
      * assetPath : https: //img.biaoqing.com/video/20170817/16372400064.mp4
@@ -129,7 +129,7 @@ public  class BackInfoModelBean implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BackInfoModelBean that = (BackInfoModelBean) o;
+        LayerBackground that = (LayerBackground) o;
 
         if (Float.compare(that.rate, rate) != 0) return false;
         if (assetPath != null ? !assetPath.equals(that.assetPath) : that.assetPath != null) return false;

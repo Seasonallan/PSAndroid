@@ -1,4 +1,4 @@
-package com.season.lib.scale;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.content.res.Resources;

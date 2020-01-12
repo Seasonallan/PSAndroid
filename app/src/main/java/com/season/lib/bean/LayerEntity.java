@@ -1,4 +1,4 @@
-package com.season.lib.scale;
+package com.season.lib.bean;
 
 import android.text.TextUtils;
 
@@ -67,11 +67,11 @@ public class LayerEntity implements Serializable {
     }
 
     //    proportionType 比例
-    private BackInfoModelBean backInfoModel;
+    private LayerBackground backInfoModel;
     private float width;
     private float height;
     private int proportionType;
-    private List<ItemArrayBean> itemArray = new ArrayList<>();
+    private List<LayerItem> itemArray = new ArrayList<>();
     public boolean isPrivate;
     public boolean notRecommend;
     public int audioId;
@@ -97,11 +97,11 @@ public class LayerEntity implements Serializable {
         this.height = height;
     }
 
-    public BackInfoModelBean getBackInfoModel() {
+    public LayerBackground getBackInfoModel() {
         return backInfoModel;
     }
 
-    public void setBackInfoModel(BackInfoModelBean backInfoModel) {
+    public void setBackInfoModel(LayerBackground backInfoModel) {
         this.backInfoModel = backInfoModel;
     }
 
@@ -121,13 +121,13 @@ public class LayerEntity implements Serializable {
         this.proportionType = proportionType;
     }
 
-    public List<ItemArrayBean> getItemArray() {
+    public List<LayerItem> getItemArray() {
         return itemArray;
     }
 
-    public void setItemArray(List<ItemArrayBean> itemArray) {
+    public void setItemArray(List<LayerItem> itemArray) {
         if (itemArray != null) {
-            for (ItemArrayBean bean : itemArray) {
+            for (LayerItem bean : itemArray) {
                 this.itemArray.add(bean);
             }
         } else {
@@ -139,9 +139,9 @@ public class LayerEntity implements Serializable {
         if (itemArray != null && itemArray.size() > 0) {
             String text = "";
             for (int i = 0; i < itemArray.size(); i++) {
-                ItemArrayBean itemArrayBean = itemArray.get(i);
-                if (itemArrayBean.getContentViewType() == Constant.contentViewType.ContentViewTypeTextbox) {
-                    String textString = itemArrayBean.getText();
+                LayerItem layerItem = itemArray.get(i);
+                if (layerItem.getContentViewType() == Constant.contentViewType.ContentViewTypeTextbox) {
+                    String textString = layerItem.getText();
                     if (!TextUtils.isEmpty(textString)) {
                         String replace = textString.replace("\n", " ");
                         text += replace;

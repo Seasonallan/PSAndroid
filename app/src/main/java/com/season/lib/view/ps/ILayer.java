@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.graphics.Canvas;
 
@@ -17,7 +17,7 @@ import android.graphics.Canvas;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 14:44
  */
-public interface IScaleView {
+public interface ILayer {
     /**
      * 获取显示的宽度
      * @return

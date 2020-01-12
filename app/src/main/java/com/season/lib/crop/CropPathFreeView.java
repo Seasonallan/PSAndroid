@@ -12,7 +12,7 @@ import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 import android.view.MotionEvent;
 
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.view.MotionEvent;
 
-import com.season.lib.scale.ScaleDetector;
+import com.season.lib.view.ps.ScaleDetector;
 
 /**
  * Disc: 裁剪伪工厂模型父类

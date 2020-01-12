@@ -11,9 +11,9 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-import com.season.lib.gif.utils.Util;
-import com.season.lib.scale.ScaleDetector;
-import com.season.lib.scale.ScaleView;
+import com.season.lib.util.Util;
+import com.season.lib.view.ps.ScaleDetector;
+import com.season.lib.view.ps.PSLayer;
 import com.season.lib.util.Logger;
 import com.season.lib.util.MathUtil;
 
@@ -181,8 +181,8 @@ public class CropRectView extends CropTool {
                 mOpMatrix.mapPoints(centerCrop);
             }
 
-            float preDegree = ScaleView.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
-            float newDegree = ScaleView.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
+            float preDegree = PSLayer.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
+            float newDegree = PSLayer.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
 
             float degree = newDegree - preDegree;
             if (Math.abs(degree) < 18){
@@ -208,8 +208,8 @@ public class CropRectView extends CropTool {
                 mOpMatrix.mapPoints(centerCrop);
             }
             //   mCurrentScale *= scaleFactor;
-            float preDegree = ScaleView.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX() + distanceX, currentEvent.getY() + distanceY);
-            float newDegree = ScaleView.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX(), currentEvent.getY());
+            float preDegree = PSLayer.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX() + distanceX, currentEvent.getY() + distanceY);
+            float newDegree = PSLayer.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX(), currentEvent.getY());
 
             float degree = newDegree - preDegree;
             mOpMatrix.postRotate(degree, centerCrop[0], centerCrop[1]);

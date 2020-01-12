@@ -1,7 +1,8 @@
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
@@ -9,22 +10,24 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.season.lib.util.Logger;
+
 /**
- * DiyMainActivity布局最外层View， 用于拦截第一个事件，
+ * 布局最外层View， 用于拦截第一个事件，
  * 用于选择背景展开的时候 点击屏幕其他的位置关闭背景的radioGroup
  * Created by Administrator on 2017/10/27.
  */
 
-public class DiyCoverView extends FrameLayout {
-    public DiyCoverView(@NonNull Context context) {
+public class PSCoverView extends FrameLayout {
+    public PSCoverView(@NonNull Context context) {
         super(context);
     }
 
-    public DiyCoverView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public PSCoverView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public DiyCoverView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public PSCoverView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -39,7 +42,7 @@ public class DiyCoverView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_DOWN){
             float x = event.getX();
             float y = event.getY();
             if (listener != null){

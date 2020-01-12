@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.example.layout;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
@@ -16,17 +16,17 @@ import com.season.myapplication.R;
  * Created by Administrator on 2017/10/31.
  */
 
-public class DelView {
+public class TopDeleteLayout {
     ImageView del_iv;
     TextView del_tv;
     LinearLayout del_container;
 
     View view1, view2, view3;
 
-    public DelView(LinearLayout linearLayout, ImageView imageView, TextView textView, View backView, View shareView, View nextView) {
+    public TopDeleteLayout(LinearLayout linearLayout, View backView, View shareView, View nextView) {
         this.del_container = linearLayout;
-        this.del_iv = imageView;
-        this.del_tv = textView;
+        this.del_iv = del_container.findViewById(R.id.del_iv);
+        this.del_tv = del_container.findViewById(R.id.del_tv);
         this.view1 = backView;
         this.view2 = shareView;
         this.view3 = nextView;
@@ -42,11 +42,11 @@ public class DelView {
         boolean res = false;
         if (currentY <= del_container.getHeight() * 4 / 5) {
             del_tv.setTextColor(0xffff5d7c);
-            del_iv.setImageResource(R.mipmap.crop_shangchu2);
+            del_iv.setImageResource(R.mipmap.icon_op_delete_sel);
             res = true;
         } else {
             del_tv.setTextColor(0xff7b7b7b);
-            del_iv.setImageResource(R.mipmap.crop_shanchu);
+            del_iv.setImageResource(R.mipmap.icon_op_delete);
             res = false;
         }
         if (del_container.getVisibility() == View.VISIBLE || isAnimating) {

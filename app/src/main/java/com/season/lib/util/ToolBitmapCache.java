@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.season.lib.gif.utils.Util;
 import com.season.myapplication.R;
 
 import java.util.HashMap;
@@ -57,21 +56,21 @@ public class ToolBitmapCache {
     private Bitmap zoom, scaleX, scaleY, close;
     public Bitmap getZoom(Context context){
         if (zoom == null || zoom.isRecycled()){
-            zoom = BitmapFactory.decodeResource(context.getResources(), R.mipmap.toolview_zoom);
+            zoom = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_zoom);
             zoom = Util.scaleBitmap(zoom, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
         }
         return zoom;
     }
     public Bitmap getScaleX(Context context){
         if (scaleX == null || scaleX.isRecycled()){
-            scaleX = BitmapFactory.decodeResource(context.getResources(), R.mipmap.zuoyoulashen);
+            scaleX = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_zoom_h);
             scaleX = Util.scaleBitmap(scaleX, AutoUtils.getPercentWidthSize(25), AutoUtils.getPercentWidthSize(60));
         }
         return scaleX;
     }
     public Bitmap getClose(Context context){
         if (close == null || close.isRecycled()){
-            close = BitmapFactory.decodeResource(context.getResources(), R.mipmap.cha);
+            close = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_delete);
             close = Util.scaleBitmap(close, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
         }
         return close;

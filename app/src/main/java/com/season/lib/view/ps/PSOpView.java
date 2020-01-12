@@ -1,4 +1,4 @@
-package com.season.lib.scale;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.season.myapplication.BuildConfig;
 import com.season.lib.util.ToolBitmapCache;
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.lib.util.Logger;
 import com.season.lib.util.AutoUtils;
 
@@ -21,7 +21,7 @@ import com.season.lib.util.AutoUtils;
 /**
  * Disc: 操作框管理
  *
- * @see ScaleView 图层
+ * @see PSLayer 图层
  * 重要：图层的scale, translate, rotate信息都在这里。
  * 这里主要包含几个数据数组，1、原始的四角坐标数组srcPoints
  * 2、矩阵操作后的坐标 desPoints
@@ -30,7 +30,7 @@ import com.season.lib.util.AutoUtils;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 21:44
  */
-public class OpView {
+public class PSOpView {
 
     private int padding = 2;
     private Paint bitmapPaint = new Paint();
@@ -46,7 +46,7 @@ public class OpView {
     private float[] minScale;
     public boolean isRight = true;
 
-    public OpView(Context context) {
+    public PSOpView(Context context) {
         this.context = context;
         desPoints = new float[8];
         fixPoints = new float[8];
@@ -107,7 +107,7 @@ public class OpView {
         if (BuildConfig.DEBUG) {
             for (int i = 0; i < 8; i++) {
                 Logger.d("getOpviewHeightI:" + i + fixPoints[i]);
-                Logger.d("getOpviewHeight:7==" + fixPoints[7] + ",1==" + fixPoints[1] + ",cha:" + (int) (fixPoints[7] - fixPoints[1]));
+                Logger.d("getOpviewHeight:7==" + fixPoints[7] + ",1==" + fixPoints[1] + ",icon_delete:" + (int) (fixPoints[7] - fixPoints[1]));
             }
         }
 //            return (int) (fixPoints[7] - fixPoints[1]);
@@ -155,7 +155,7 @@ public class OpView {
         //获取到中心点位置 可得到位移X,Y
         center = new float[]{desPoints[0] + (desPoints[4] - desPoints[0]) / 2, desPoints[1] + (desPoints[5] - desPoints[1]) / 2};
         //获取旋转的角度0-360
-        degree = ScaleView.getRotationBetweenLines(desPoints[6], desPoints[7], desPoints[0], desPoints[1]);
+        degree = PSLayer.getRotationBetweenLines(desPoints[6], desPoints[7], desPoints[0], desPoints[1]);
 
         double oriX = (srcPoints[2] - srcPoints[0]) * (srcPoints[2] - srcPoints[0]) + (srcPoints[3] - srcPoints[1]) * (srcPoints[3]
                 - srcPoints[1]);

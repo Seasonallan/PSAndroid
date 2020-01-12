@@ -1,4 +1,4 @@
-package com.season.example;
+package com.season.example.test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

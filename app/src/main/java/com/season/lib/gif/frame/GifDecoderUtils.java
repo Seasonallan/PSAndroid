@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.season.lib.gif.movie.DelayDecoder;
 import com.season.lib.gif.movie.FrameDecoder;
-import com.season.lib.gif.utils.Util;
+import com.season.lib.util.Util;
 import com.season.myapplication.BuildConfig;
 import com.season.lib.util.Logger;
 

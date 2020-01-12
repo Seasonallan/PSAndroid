@@ -1,4 +1,4 @@
-package com.season.lib.gif.utils;
+package com.season.lib.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

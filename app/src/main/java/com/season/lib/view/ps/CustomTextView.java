@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package com.season.lib.view;
+package com.season.lib.view.ps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -35,12 +35,10 @@ import android.view.ViewParent;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.gif.utils.Util;
+import com.season.lib.bean.LayerItem;
+import com.season.lib.util.Util;
 import com.season.myapplication.BuildConfig;
 import com.season.lib.animation.AnimationProvider;
-import com.season.lib.scale.ItemArrayBean;
-import com.season.lib.scale.ScaleView;
-import com.season.lib.scale.TextStyleEntity;
 import com.season.lib.util.FileManager;
 import com.season.lib.util.ScreenUtils;
 import com.season.lib.util.ToolPaint;
@@ -63,7 +61,7 @@ import io.github.rockerhieu.emojicon.EmojiconHandler;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 14:44
  */
-public class TextStyleView extends View implements IScaleView {
+public class CustomTextView extends View implements ILayer {
     private int offsetY;//由于Android系统的drawText中的y无法确定，这个值是调节的比较居中的值
     private boolean nullInput = false;
     public boolean isAudio = false;
@@ -115,27 +113,27 @@ public class TextStyleView extends View implements IScaleView {
 
     }
 
-    public TextStyleView copy() {
-        TextStyleView textStyleView = new TextStyleView(context);
-        textStyleView.paint = new Paint();
-        textStyleView.paint.set(paint);
-        textStyleView.strokepaint = new Paint();
-        textStyleView.strokepaint.set(strokepaint);
-        textStyleView.backgroudRes = backgroudRes;
-        textStyleView.fontName = fontName;
-        textStyleView.text = text;
-        textStyleView.startColorStr=startColorStr;
-        textStyleView.endColorStr=endColorStr;
-        textStyleView.fixEmoji();
-        textStyleView.calculateWidthHeight();
-        textStyleView.setTextAnimationType(currentType, duration, delay, speed);
-        textStyleView.resetAnimationPaint();
-        textStyleView.addEvent();
-        return textStyleView;
+    public CustomTextView copy() {
+        CustomTextView customTextView = new CustomTextView(context);
+        customTextView.paint = new Paint();
+        customTextView.paint.set(paint);
+        customTextView.strokepaint = new Paint();
+        customTextView.strokepaint.set(strokepaint);
+        customTextView.backgroudRes = backgroudRes;
+        customTextView.fontName = fontName;
+        customTextView.text = text;
+        customTextView.startColorStr=startColorStr;
+        customTextView.endColorStr=endColorStr;
+        customTextView.fixEmoji();
+        customTextView.calculateWidthHeight();
+        customTextView.setTextAnimationType(currentType, duration, delay, speed);
+        customTextView.resetAnimationPaint();
+        customTextView.addEvent();
+        return customTextView;
     }
 
 
-    public boolean setTextEntry(ItemArrayBean item, float width) {
+    public boolean setTextEntry(LayerItem item, float width) {
         int opViewWidth = ScreenUtils.getScreenWidth(getContext());
         //TODO 如果需要对旧版本单行超过8字符文字进行8个字符换行，在这里修改。
         this.text = item.getText();
@@ -156,25 +154,6 @@ public class TextStyleView extends View implements IScaleView {
 
         addEvent();
         return true;
-    }
-
-    public TextStyleEntity getTextEntry() {
-        TextStyleEntity textStyleEntity = new TextStyleEntity();
-        textStyleEntity.setTextH(getHeight());
-        textStyleEntity.setTextW(getWidth());
-        textStyleEntity.setTextX(0);
-        textStyleEntity.setTextY(0);
-        textStyleEntity.animationType = currentType;
-        //        textStyleEntity.setTextX(textX);
-        //        textStyleEntity.setTextY(textY);//因为我都剧中显示,可能这些参数不正确
-        //重要参数
-        textStyleEntity.setImageWidth(getWidth());
-        textStyleEntity.setImageHeight(getHeight());
-        // getResources().getIdentifier()
-        textStyleEntity.setFontName(fontName);
-
-
-        return textStyleEntity;
     }
 
 
@@ -232,23 +211,23 @@ public class TextStyleView extends View implements IScaleView {
     }
 
 
-    public TextStyleView(Context context) {
+    public CustomTextView(Context context) {
         super(context);
         init(context);
     }
 
-    public TextStyleView(Context context, String fontName) {
+    public CustomTextView(Context context, String fontName) {
         super(context);
         this.fontName = fontName;
         init(context);
     }
 
-    public TextStyleView(Context context, @Nullable AttributeSet attrs) {
+    public CustomTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public TextStyleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CustomTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
@@ -453,8 +432,8 @@ public class TextStyleView extends View implements IScaleView {
         resetAnimationPaint();
 
         ViewParent parent = getParent();
-        if (parent != null && parent instanceof ScaleView) {
-            ((ScaleView) parent).disableHardWareWhenText2Long(this);
+        if (parent != null && parent instanceof PSLayer) {
+            ((PSLayer) parent).disableHardWareWhenText2Long(this);
         }
     }
 
@@ -477,14 +456,14 @@ public class TextStyleView extends View implements IScaleView {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (getParent() instanceof ScaleView) {
+        if (getParent() instanceof PSLayer) {
             if (BuildConfig.DEBUG) {
                 Logger.d("textstyleview_onlayout");
             }
             int width = right - left;
             int height = bottom - top;
             if (preWidth == width && preHeight == height) {
-                ((ScaleView) getParent()).rebindOpView();
+                ((PSLayer) getParent()).rebindOpView();
                 return;
             }
             preWidth = width;
@@ -496,8 +475,8 @@ public class TextStyleView extends View implements IScaleView {
                     int offsetY = 0;
 //                    int offsetY = AutoUtils.getPercentWidthSize(0);
 //                    int offsetY = AutoUtils.getPercentWidthSize(20);
-                    float scale = ((ScaleView) getParent()).showBottomCenter(width, height, offsetY, isAudio ? getText() : null);
-                    ((ScaleView) getParent()).rebindOpView(height, scale);
+                    float scale = ((PSLayer) getParent()).showBottomCenter(width, height, offsetY, isAudio ? getText() : null);
+                    ((PSLayer) getParent()).rebindOpView(height, scale);
                     isAudio = false;
 //                    ((ScaleView) getParent()).showBottomCenter(width, height, offsetY, isAudio ? getText() : null);
 //                    ((ScaleView) getParent()).rebindOpView();
@@ -508,14 +487,14 @@ public class TextStyleView extends View implements IScaleView {
 //                    isDiyBottom = false;
 //                    ((ScaleView) getParent()).rebindOpView();
                 } else {
-                    float[] offset = ((ScaleView) getParent()).rebindOpView();
+                    float[] offset = ((PSLayer) getParent()).rebindOpView();
                     if (offset != null && offset.length == 2) {
                         if (offset[0] == 0 && offset[1] == 0) {
                         } else {
                             //文字长度变化的时候，对位置进行矫正
                             if (resetPosition) {
                                 Logger.d("对位置进行矫正");
-                                ((ScaleView) getParent()).changeOffset(getText(), offset[0], offset[1]);
+                                ((PSLayer) getParent()).changeOffset(getText(), offset[0], offset[1]);
                             }
                             resetPosition = true;
                         }
@@ -744,7 +723,7 @@ public class TextStyleView extends View implements IScaleView {
             animationProvider.setDurationDelay(duration, delay);
             resetAnimationParams();
         }
-        TextStyleView.this.post(new Runnable() {
+        CustomTextView.this.post(new Runnable() {
             @Override
             public void run() {
                 invalidate();

@@ -14,9 +14,9 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.gif.utils.Util;
-import com.season.lib.scale.ScaleDetector;
-import com.season.lib.scale.ScaleView;
+import com.season.lib.util.Util;
+import com.season.lib.view.ps.ScaleDetector;
+import com.season.lib.view.ps.PSLayer;
 import com.season.lib.util.Logger;
 import com.season.lib.util.FileManager;
 
@@ -203,8 +203,8 @@ public class CropView extends View{
                     }
                 }
 
-                float preDegree = ScaleView.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
-                float newDegree = ScaleView.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
+                float preDegree = PSLayer.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
+                float newDegree = PSLayer.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
 
                 float degree = newDegree - preDegree;
                 //  mViewMatrix.postRotate(degree, (detector.preX2 + detector.preX1) / 2, (detector.preY2 + detector.preY1) / 2);

@@ -1,4 +1,4 @@
-package com.season.lib.scale;
+package com.season.lib.bean;
 
 
 import java.io.Serializable;
@@ -9,13 +9,13 @@ import java.io.Serializable;
  */
 
 
-public class ItemArrayBean implements Serializable {
+public class LayerItem implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ItemArrayBean that = (ItemArrayBean) o;
+        LayerItem that = (LayerItem) o;
 
         if (Double.compare(that.xScale, xScale) != 0) return false;
         if (index != that.index) return false;
@@ -32,7 +32,6 @@ public class ItemArrayBean implements Serializable {
         if (Float.compare(that.textFontSize, textFontSize) != 0) return false;
         if (Double.compare(that.yScale, yScale) != 0) return false;
         if (textFontPath != null ? !textFontPath.equals(that.textFontPath) : that.textFontPath != null) return false;
-        if (textStyleModel != null ? !textStyleModel.equals(that.textStyleModel) : that.textStyleModel != null) return false;
         if (text != null ? !text.equals(that.text) : that.text != null) return false;
         if (imageURL != null ? !imageURL.equals(that.imageURL) : that.imageURL != null) return false;
         if (filePath != null ? !filePath.equals(that.filePath) : that.filePath != null) return false;
@@ -55,7 +54,6 @@ public class ItemArrayBean implements Serializable {
         temp = Double.doubleToLongBits(angle);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (textFontPath != null ? textFontPath.hashCode() : 0);
-        result = 31 * result + (textStyleModel != null ? textStyleModel.hashCode() : 0);
         result = 31 * result + (turnOverV ? 1 : 0);
         temp = Double.doubleToLongBits(centerX);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
@@ -119,7 +117,6 @@ public class ItemArrayBean implements Serializable {
     private boolean turnOverH;
     private double angle;
     private String textFontPath = "";
-    private TextStyleEntity textStyleModel;
     private boolean turnOverV;
     private double centerX;
     private String text = "";

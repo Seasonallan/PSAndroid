@@ -1,4 +1,4 @@
-package com.season.lib.layout;
+package com.season.example.layout;
 
 import android.content.Context;
 import android.view.View;
