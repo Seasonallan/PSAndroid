@@ -1,6 +1,8 @@
 package com.season.example;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -20,6 +22,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.season.example.layout.BottomPaintLayout;
+import com.season.example.support.MosaicUtil;
 import com.season.lib.bean.LayerItem;
 import com.season.lib.view.ps.CustomGifFrame;
 import com.season.lib.util.Util;
@@ -794,14 +798,98 @@ public class PsActivity extends Activity implements View.OnClickListener {
         super.finish();
     }
 
+
+    private BottomPaintLayout bottomPaintLayout;
+    private void initListener() {
+        iv_close.setOnClickListener(this);
+        iv_confirm.setOnClickListener(this);
+        vColor.setOnClickListener(this);
+        iv_lable.setOnClickListener(this);
+
+        iv_back.setOnClickListener(this);
+        iv_next.setOnClickListener(this);
+        iv_share.setOnClickListener(this);
+        iv_undo.setOnClickListener(this);
+        iv_redo.setOnClickListener(this);
+        iv_delete.setOnClickListener(this);
+
+        bottomPaintLayout = new BottomPaintLayout(this) {
+            @Override
+            public void onClose() {
+                finishTuya();
+            }
+
+            @Override
+            public void onColorChange(int color) {
+                // 设置画笔颜色
+                setBrushColor(color, false);
+            }
+
+            @Override
+            public void onClear() {
+                addEraser();
+            }
+
+            @Override
+            public void onMosaic() {
+                addMosaic();
+            }
+
+            @Override
+            public void onBitmapMode(int drawableId) {
+                setBrushColor(BitmapFactory.decodeResource(getResources(), drawableId));
+            }
+
+            @Override
+            public void onColorShape(int color) {
+                // 设置画笔颜色
+                setBrushColor(color, true);
+            }
+
+            @Override
+            public void onPaintSizeChange(float size) {
+                customCanvas.setPaintSize(size);
+            }
+        };
+        findViewById(R.id.bt_paint).setOnClickListener(this);
+    }
+
+    //橡皮擦模式开启
+    private void addEraser() {
+        customCanvas.setEraserMode();
+    }
+
+    //马赛克模式开启
+    private void addMosaic() {
+        if (!customCanvas.isEnable()) {
+            startTuya();
+        }
+        Bitmap srcBitmap = mStickerLayout.getCacheBitmap();
+        Bitmap bit = MosaicUtil.getMosaic(srcBitmap);
+        Util.recycleBitmaps(srcBitmap);
+        customCanvas.setMosaic(bit);
+    }
+
+    public void setBrushColor(int color, boolean isMask) {
+        customCanvas.setColor(color, isMask);
+    }
+
+    public void setBrushColor(Bitmap bitmap) {
+        customCanvas.setColor(bitmap);
+    }
+
     @Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.iv_close) {
             closeTuya();
+            bottomPaintLayout.hide();
+        } else if (i == R.id.bt_paint) {
+            startTuya();
+            bottomPaintLayout.show();
         } else if (i == R.id.iv_confirm) {
             finishTuya();
-
+            bottomPaintLayout.hide();
         } else if (i == R.id.iv_lable || i == R.id.v_color) {
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
                 rgAutoBg.setVisibility(View.GONE);
@@ -1027,20 +1115,6 @@ public class PsActivity extends Activity implements View.OnClickListener {
         statesbarGoInEditMode(true);
         mStickerLayout.deleteFocus();
         resetStatus();
-    }
-
-    private void initListener() {
-        iv_close.setOnClickListener(this);
-        iv_confirm.setOnClickListener(this);
-        vColor.setOnClickListener(this);
-        iv_lable.setOnClickListener(this);
-
-        iv_back.setOnClickListener(this);
-        iv_next.setOnClickListener(this);
-        iv_share.setOnClickListener(this);
-        iv_undo.setOnClickListener(this);
-        iv_redo.setOnClickListener(this);
-        iv_delete.setOnClickListener(this);
     }
 
     //清空画布
