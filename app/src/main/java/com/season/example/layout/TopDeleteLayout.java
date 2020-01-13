@@ -21,14 +21,13 @@ public class TopDeleteLayout {
     TextView del_tv;
     LinearLayout del_container;
 
-    View view1, view2, view3;
+    View view1,  view3;
 
-    public TopDeleteLayout(LinearLayout linearLayout, View backView, View shareView, View nextView) {
+    public TopDeleteLayout(LinearLayout linearLayout, View backView, View nextView) {
         this.del_container = linearLayout;
         this.del_iv = del_container.findViewById(R.id.del_iv);
         this.del_tv = del_container.findViewById(R.id.del_tv);
         this.view1 = backView;
-        this.view2 = shareView;
         this.view3 = nextView;
     }
 
@@ -62,8 +61,6 @@ public class TopDeleteLayout {
                 isAnimating = true;
                 if (view1!=null)
                 view1.setVisibility(View.INVISIBLE);
-                if (view2!=null)
-                view2.setVisibility(View.INVISIBLE);
                 if (view3!=null)
                 view3.setVisibility(View.INVISIBLE);
             }
@@ -103,7 +100,6 @@ public class TopDeleteLayout {
             return;
         }
         show(view1);
-        show(view2);
         show(view3);
         ObjectAnimator fadeAnim = ObjectAnimator.ofFloat(del_container, "translationY", 0, -del_container.getHeight());
         fadeAnim.setInterpolator(new DecelerateInterpolator());

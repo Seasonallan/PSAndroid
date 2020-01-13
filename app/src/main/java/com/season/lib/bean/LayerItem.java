@@ -10,6 +10,8 @@ import java.io.Serializable;
 
 
 public class LayerItem implements Serializable {
+    public int animationType;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

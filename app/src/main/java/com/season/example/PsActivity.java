@@ -1,6 +1,5 @@
 package com.season.example;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,21 +17,21 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.season.example.layout.BottomPaintLayout;
+import com.season.example.layout.BottomTextLayout;
 import com.season.example.support.MosaicUtil;
 import com.season.lib.bean.LayerItem;
+import com.season.lib.gif.GifMaker;
 import com.season.lib.view.ps.CustomGifFrame;
 import com.season.lib.util.Util;
 import com.season.lib.view.ps.ILayer;
 import com.season.lib.util.Logger;
 import com.season.lib.http.DownloadAPI;
-import com.season.example.layout.TextLayout;
+import com.season.example.layout.PopInputLayout;
 import com.season.lib.view.ps.CustomGifMovie;
 import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerEntity;
@@ -84,7 +83,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
         iv_back = findViewById(R.id.iv_back);
         iv_next = findViewById(R.id.iv_next);
-        iv_share = findViewById(R.id.iv_share);
         iv_close = findViewById(R.id.iv_close);
         iv_confirm = findViewById(R.id.iv_confirm);
         iv_lable = findViewById(R.id.iv_lable);
@@ -104,7 +102,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
     ImageView iv_back;
     ImageView iv_next;
-    ImageView iv_share;
     ImageView iv_close;
     ImageView iv_confirm;
 
@@ -374,7 +371,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     int animationType = 0;
                     float speed = 1.0f;
                     try {//视频时长，用于动效效果
-                       // animationType = item.getTextStyleModel().animationType;
+                        animationType = item.animationType;
                         duration = mStickerLayout.backgroundView.getDuration();
                        // delayVideo = mStickerLayout.backgroundView.videoView.getDelay();
                         speed = mStickerLayout.backgroundView.getSpeed();
@@ -403,7 +400,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     mStickerLayout.addView(PSLayer);
                     if (isLast) {
                         resetStatus();
-                        checkSelectedPosition(PSLayer.getChildAt(0));
                     }
                 }
                 if (isLast) {
@@ -411,9 +407,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 }
             }
         }, delay);
-    }
-
-    private void checkSelectedPosition(View view) { // 底部操作栏位置
     }
 
     private void addLocalMessageUio(String url, String filePath, boolean isMp4, float rate,
@@ -521,7 +514,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                // resetTextFragment();
             }
         });
-        topDeleteLayout = new TopDeleteLayout(del_container, iv_back, iv_share, iv_next);
+        topDeleteLayout = new TopDeleteLayout(del_container, iv_back, iv_next);
         mStickerLayout.setOnMoveListener(new PSCanvas.IOnMoveListener() {
             @Override
             public boolean onMove(MotionEvent event) {
@@ -560,14 +553,10 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             @Override
             public void onFocusGet(ViewGroup parent) {
                 resetBottomStatus();
-                if (parent.getChildCount() > 0) {
-                    checkSelectedPosition(parent.getChildAt(0));
-                }
             }
 
             @Override
             public void onFocusClear() {
-              //  mTextFragment.closeOpened();
                 resetBottomStatus();
             }
         });
@@ -595,12 +584,12 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         super.onBackPressed();
     }
 
-    TextLayout textLayout;
+    PopInputLayout popInputLayout;
     boolean isEditText;
     //文字编辑弹窗
     private void addTextPopInput(String text) {
         mLayoutContainer.removeAllViews();
-        textLayout = new TextLayout(PsActivity.this) {
+        popInputLayout = new PopInputLayout(PsActivity.this) {
             @Override
             public void onRemove() {
                 isEditText = false;
@@ -639,10 +628,10 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         if (TextUtils.isEmpty(text)) {
             isEditText = false;
         } else {
-            textLayout.setText(text);
+            popInputLayout.setText(text);
             isEditText = true;
         }
-        mLayoutContainer.addView(textLayout);
+        mLayoutContainer.addView(popInputLayout);
     }
 
     private void addLayer(View view) {
@@ -657,18 +646,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     public void addGifFromFile(String filePath) {
         CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
         boolean res = customGifMovie.setMovieResource(filePath);
-        if (res) {//sometimes movie decode gif error url duration = 0
-//                gifMovieView.url = url;
+        if (res) {
             addView(customGifMovie, getInitScale(customGifMovie));
         } else {
             CustomGifFrame customGifFrame = new CustomGifFrame(PsActivity.this);
             customGifFrame.setMovieResource(filePath);
-//                gifFrameView.url = url;
             addView(customGifFrame, getInitScale(customGifFrame));
         }
-//        if (saveHistory && mImageFragment != null && !TextUtils.isEmpty(filePath)) {
-//            mImageFragment.addImageHistory(filePath);
-//        }
     }
 
     //TODO
@@ -735,7 +719,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
      * 刷新底部操作状态
      */
     private void resetBottomStatus() {
-       // mLayerFragment.reset(mStickerLayout.getViewIndex(), 0, mStickerLayout.getChildCount() - 1);
+        View view = mStickerLayout.getFocusView();
+        if (view != null && view instanceof CustomTextView) {
+            bottomTextLayout.show();
+            bottomTextLayout.select(((CustomTextView) view).currentType);
+        }else{
+            bottomTextLayout.hide();
+        }
     }
 
     private void resetRgAutoBg() {
@@ -850,6 +840,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
 
     private BottomPaintLayout bottomPaintLayout;
+    private BottomTextLayout bottomTextLayout;
     private void initListener() {
         iv_close.setOnClickListener(this);
         iv_confirm.setOnClickListener(this);
@@ -858,10 +849,16 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
         iv_back.setOnClickListener(this);
         iv_next.setOnClickListener(this);
-        iv_share.setOnClickListener(this);
         iv_undo.setOnClickListener(this);
         iv_redo.setOnClickListener(this);
         iv_delete.setOnClickListener(this);
+
+        bottomTextLayout = new BottomTextLayout(this) {
+            @Override
+            public void onItemClick(int position) {
+                mStickerLayout.setTextAnimationType(position);
+            }
+        };
 
         bottomPaintLayout = new BottomPaintLayout(this) {
             @Override
@@ -939,7 +936,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             startTuya();
             bottomPaintLayout.show();
         }  else if (i == R.id.bt_text) {
-            addTextPopInput("");
+            View view = mStickerLayout.getFocusView();
+            if (view != null && view instanceof CustomTextView) {
+                bottomTextLayout.show();
+                bottomTextLayout.select(((CustomTextView) view).currentType);
+            }else{
+                addTextPopInput("");
+            }
         } else if (i == R.id.iv_confirm) {
             finishTuya();
             bottomPaintLayout.hide();
@@ -958,8 +961,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             back();
 
         } else if (i == R.id.iv_next) {
-
-        } else if (i == R.id.iv_share) {//                isSaveVideo = false;
             if (mStickerLayout.getChildCount() == 0) {
                 if (mStickerLayout.backgroundView.currentOperate != null) {
                     if (mStickerLayout.backgroundView.currentOperate.visible1 == View.VISIBLE) {
@@ -977,7 +978,24 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             if (BuildConfig.DEBUG) {
                 Logger.d("sharetype==" + type);
             }
-        } else if (i == R.id.iv_undo) {//我们得知道最后的状态，然后对StickerLayer进行相应对处理
+            mStickerLayout.start(type, new GifMaker.OnGifMakerListener() {
+                @Override
+                public void onMakeProgress(int index, int count) {
+                    Logger.LOG("onMakeProgress" + index);
+                }
+
+                @Override
+                public void onMakeGifSucceed(String outPath) {
+                    Logger.LOG(outPath);
+                    CropActivity.start(PsActivity.this, outPath);
+                }
+
+                @Override
+                public void onMakeGifFail() {
+                    Logger.LOG("onMakeGifFail");
+                }
+            });
+        }  else if (i == R.id.iv_undo) {//我们得知道最后的状态，然后对StickerLayer进行相应对处理
             undo();
         } else if (i == R.id.iv_redo) {
             redo();
@@ -1182,7 +1200,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     private void statesbarGoInEditMode(boolean isedit) {
         iv_back.setVisibility(isedit ? View.GONE : View.VISIBLE);
         iv_next.setVisibility(isedit ? View.GONE : View.VISIBLE);
-        iv_share.setVisibility(isedit ? View.GONE : View.VISIBLE);
         iv_confirm.setVisibility(isedit ? View.VISIBLE : View.GONE);
         iv_close.setVisibility(isedit ? View.VISIBLE : View.GONE);
     }

@@ -169,86 +169,6 @@ public class PSCanvas extends RelativeLayout{
     }
 
 
-    public void startImage(boolean isHD, Bitmap bitmap, GifMaker.OnGifMakerListener listener) {
-       // Fresco.getImagePipeline().clearMemoryCaches();
-        this.videoToGif_Static_Image_Bitmap = bitmap;
-        finalGifWidthHeight = bitmap.getWidth();
-        makeType = Type_VIDEO_TO_IMAGE_BG_LAYER_IS_ANIME_GIF;
-        if (LayerhasGif()) {
-            finalGifWidthHeight = 300;
-            for (int i = 0; i < getChildCount(); i++) {
-                View scaleView = getChildAt(i);
-                if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
-                    //((ScaleView) scaleView).startRecord();
-                    View view = ((PSLayer) scaleView).getChildAt(0);
-                    if (view instanceof ILayer) {//找到时长最长的那个图层
-                        if (relyView == null) {
-                            relyView = (ILayer) view;
-                        }
-                        int duration = ((ILayer) view).getDuration();
-                        if (relyView.getDuration() < duration) {
-                            relyView = (ILayer) view;
-                        }
-                    }
-                }
-            }
-            if (relyView == null || relyView.getDuration() == 0) {
-                listener.onMakeGifFail();
-                return;
-            }
-            int duration = relyView.getDuration();
-            int delay = relyView.getDelay();
-            if (duration == 0) {
-                duration = 1000;
-            }
-            if (delay == 0) {
-                delay = defaultDealy;
-            }
-            int count = duration / delay;
-            if (duration % delay != 0) {
-                count++;
-            }
-            //fix 部分gif 只显示一帧
-            if (count == 1 && duration < delay) {
-                count = 2;
-            }
-            relyView.startRecord();
-            File outFile = FileManager.getDiyFile(".gif");
-            mGifMaker = new GifMaker(count, delay, Executors.newCachedThreadPool()).setOutputPath
-                    (outFile.toString());
-            if (mGifMaker != null) {
-                if (mGifMaker.isGifMaded) {
-                    listener.onMakeGifSucceed(mGifMaker.mOutputPath);
-                } else {
-                    mGifMaker.setGifMakerListener(listener);
-                }
-            }
-            isMakingGifOrNot = true;//启动标志位，开始合成
-            startTime = System.currentTimeMillis();
-        } else {
-            Bitmap tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, isHD ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
-            Canvas canvas = new Canvas(tBitmap);
-            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-            canvas.drawBitmap(videoToGif_Static_Image_Bitmap, null, new RectF(0, 0, finalGifWidthHeight, finalGifWidthHeight), null);
-            drawItem(canvas, videoWidthHeight, offsetX, offsetY);
-            if (BuildConfig.DEBUG) {
-                Logger.d("startImage", ",png,w:" + finalGifWidthHeight + ",h:" + finalGifWidthHeight);
-            }
-            saveAndNotify(tBitmap, listener);
-        }
-    }
-
-    public boolean hasTextView() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View scaleView = getChildAt(i);
-            if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
-                if (((PSLayer) scaleView).getChildAt(0) instanceof CustomTextView) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     public boolean hasGif() {
         for (int i = 0; i < getChildCount(); i++) {
@@ -377,7 +297,7 @@ public class PSCanvas extends RelativeLayout{
         if (makeType == LOCAL) {
             outFile = FileManager.getShareLocalFile(".gif");
         } else {
-            outFile = FileManager.getDiyFile(".gif");
+            outFile = FileManager.getDiyFile(getContext(), ".gif");
         }
         if (outFile == null) {
             listener.onMakeGifFail();
@@ -566,7 +486,7 @@ public class PSCanvas extends RelativeLayout{
         if (makeType == LOCAL) {
             file = FileManager.getShareLocalFile(".png");
         } else {
-            file = FileManager.getDiyFile(".png");
+            file = FileManager.getDiyFile(getContext(), ".png");
         }
         String filePath = Util.saveBitmap(file, bitmap);
         if (filePath == null) {

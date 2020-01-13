@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.season.example.PsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.season.example.CropActivity" android:screenOrientation="portrait"/>
         <meta-data
             android:name="xposedmodule"
             android:value="true" />

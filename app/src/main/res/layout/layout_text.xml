@@ -1,65 +1,439 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mask_view"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_text"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#4C000000"
-    android:orientation="vertical">
+    android:background="#dadada"
+    android:orientation="horizontal" >
 
-    <View
+    <ImageView
+        android:id="@+id/text_iv"
+        android:layout_width="128dp"
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:padding="24dp"
+        android:src="@mipmap/img_text"/>
+
+    <com.season.lib.view.VerticalSeekBar
+        android:id="@+id/text_sb"
+        android:layout_width="14dp"
+        android:layout_height="match_parent"
+        />
+
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        style="@style/overScrollmode"
+        android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:id="@+id/et_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@android:color/white"
-        android:orientation="vertical">
-
-        <View style="@style/horizontal_line"/>
-        <io.github.rockerhieu.emojicon.EmojiconEditText
-            android:id="@+id/et_input"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@null"
-            android:gravity="top|center_horizontal"
-            android:hint=""
-            android:maxLength="30"
-            android:padding="10dp"
-            android:textColor="@android:color/darker_gray"
-            android:textColorHint="@android:color/darker_gray"
-            android:textSize="14sp"/>
-        <View style="@style/horizontal_line"/>
         <LinearLayout
-            android:id="@+id/ll_cop"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:gravity="center_vertical">
+            android:id="@+id/animation_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingLeft="32px"
+                android:orientation="vertical">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"/>
+                <RelativeLayout
+                    android:id="@+id/animation_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
 
-            <ImageView
-                android:id="@+id/btn_finish"
+                    <TextView
+                        android:id="@+id/animation_text1"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="无状态"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text2"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="上下抖动"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:src="@drawable/selector_fabu_wancheng"/>
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="32px" >
 
+                <RelativeLayout
+                    android:id="@+id/animation_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text3"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="放大缩小"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text4"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="排队出现"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="32px" >
+
+                <RelativeLayout
+                    android:id="@+id/animation_5"
+                    android:layout_width="140px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="突然闪现"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text6"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="彩色渐变"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="32px" >
+
+                <RelativeLayout
+                    android:id="@+id/animation_7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text7"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="波浪跳动"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text8"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="单字跳动"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="32px" >
+
+                <RelativeLayout
+                    android:id="@+id/animation_9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text9"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="波浪放大"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text10"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="缩小出现"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="32px" >
+
+                <RelativeLayout
+                    android:id="@+id/animation_11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text11"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="走跑马灯"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text12"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="底部升起"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:paddingLeft="32px" >
+
+                <RelativeLayout
+                    android:id="@+id/animation_13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text13"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="走跑马灯"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_text14"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="底部升起"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
+            <!--新动画-->
+            <LinearLayout
+                android:id="@+id/newAnimeLayout"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingRight="32px"
+                android:paddingLeft="32px"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/animation_singleline1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_animation_singleline1_text"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="single1"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/animation_singleline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/img_rect">
+
+                    <TextView
+                        android:id="@+id/animation_animation_singleline1_text2"
+                        android:layout_width="140px"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="single1"
+                        android:textColor="@color/diy_text_anim"
+                        android:textSize="22px" />
+                </RelativeLayout>
+
+            </LinearLayout>
         </LinearLayout>
+    </HorizontalScrollView>
 
-        <View style="@style/horizontal_line"/>
-
-        <FrameLayout
-            android:id="@+id/framelayout_emoji"
-            android:layout_width="match_parent"
-            android:layout_height="274dp"
-            android:layout_gravity="bottom"
-            android:background="@android:color/white" />
-    </LinearLayout>
 </LinearLayout>

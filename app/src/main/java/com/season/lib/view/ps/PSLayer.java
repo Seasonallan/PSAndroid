@@ -1031,6 +1031,7 @@ public class PSLayer extends RelativeLayout {
             } else {
                 layerItem.setTextFontName(((CustomTextView) view).fontName);
             }
+            layerItem.animationType = ((CustomTextView) view).currentType;
         } else if (view instanceof CustomImageView) {
             CustomImageView customImageView = (CustomImageView) view;
             if (customImageView.isTuya) {

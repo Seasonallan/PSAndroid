@@ -2,46 +2,31 @@ package com.season.example.layout;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.ViewPager;
 
-import com.season.lib.util.Constant;
-import com.season.lib.util.DimenUtil;
 import com.season.lib.util.InputMethodUtil;
-import com.season.lib.util.Logger;
-import com.season.lib.util.StringUtils;
 import com.season.myapplication.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.github.rockerhieu.emojicon.EmojiconEditText;
-import io.github.rockerhieu.emojicon.EmojiconHandler;
 import io.github.rockerhieu.emojicon.EmojiconsFragment;
 import io.github.rockerhieu.emojicon.emoji.Emojicon;
 
 
-public abstract class TextLayout extends FrameLayout implements View.OnClickListener {
+public abstract class PopInputLayout extends FrameLayout implements View.OnClickListener {
     ImageView btn_finish;
     EmojiconEditText mEtInput;
     FragmentActivity activity;
@@ -61,10 +46,10 @@ public abstract class TextLayout extends FrameLayout implements View.OnClickList
         }
     }
 
-    public TextLayout(FragmentActivity activity) {
+    public PopInputLayout(FragmentActivity activity) {
         super(activity);
         this.activity = activity;
-        LayoutInflater.from(activity).inflate(R.layout.layout_text, this, true);
+        LayoutInflater.from(activity).inflate(R.layout.pop_input, this, true);
         init();
         initView();
     }
@@ -181,12 +166,12 @@ public abstract class TextLayout extends FrameLayout implements View.OnClickList
         emojiconsFragment.setmOnEmojiconBackspaceClickedListener(new EmojiconsFragment.OnEmojiconBackspaceClickedListener() {
             @Override
             public void onEmojiconBackspaceClicked(View v) {
-                TextLayout.this.onEmojiconBackspaceClicked(v);
+                PopInputLayout.this.onEmojiconBackspaceClicked(v);
             }
 
             @Override
             public void onEmojiconClicked(Emojicon emojicon) {
-                TextLayout.this.onEmojiconClicked(emojicon);
+                PopInputLayout.this.onEmojiconClicked(emojicon);
             }
         });
         activity.getSupportFragmentManager().beginTransaction().replace(R.id.framelayout_emoji, emojiconsFragment).commit();

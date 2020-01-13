@@ -66,6 +66,9 @@ public class CropView extends View{
     Bitmap preViewBitmap;
     @Override
     protected void onDraw(Canvas canvas) {
+        if (bitmap == null){
+            return;
+        }
         canvas.drawBitmap(bitmap, mViewMatrix, null);
         if (cropTool != null){
             cropTool.onDraw(canvas);
@@ -325,6 +328,9 @@ public class CropView extends View{
      * 释放内存
      */
     public void release() {
+        if (bitmap == null){
+            return;
+        }
         Util.recycleBitmaps(bitmap, screenBitmap, preViewBitmap);
         if (cropTool != null){
             cropTool.release();

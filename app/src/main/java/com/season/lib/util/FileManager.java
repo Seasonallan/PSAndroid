@@ -511,9 +511,8 @@ public class FileManager implements IFileManager {
         return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + Calendar.getInstance().getTimeInMillis() + type);
     }
 
-    public static File getDiyFile(String type) {
-        File mediaStorageDir = getDirectory(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + Constant
-                .FileManager.BQ_Separator), Constant.FileManager.DIY);
+    public static File getDiyFile(Context context, String type) {
+        File mediaStorageDir = context.getCacheDir();
         return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + Calendar.getInstance().getTimeInMillis() + type);
     }
 
