@@ -48,17 +48,20 @@ public class EmojiconGridFragment extends Fragment implements AdapterView.OnItem
     private static final String ARG_EMOJICONS = "emojicons";
     private static final String ARG_EMOJICON_TYPE = "emojiconType";
 
-    protected static EmojiconGridFragment newInstance(Emojicon[] emojicons, EmojiconRecents recents) {
-        return newInstance(Emojicon.TYPE_UNDEFINED, emojicons, recents, false);
+    protected static EmojiconGridFragment newInstance(Emojicon[] emojicons, EmojiconRecents recents
+            ,OnEmojiconClickedListener listener) {
+        return newInstance(Emojicon.TYPE_UNDEFINED, emojicons, recents, false, listener);
     }
 
     protected static EmojiconGridFragment newInstance(
-            @Emojicon.Type int type, EmojiconRecents recents, boolean useSystemDefault) {
-        return newInstance(type, null, recents, useSystemDefault);
+            @Emojicon.Type int type, EmojiconRecents recents, boolean useSystemDefault
+            ,OnEmojiconClickedListener listener) {
+        return newInstance(type, null, recents, useSystemDefault, listener);
     }
 
     protected static EmojiconGridFragment newInstance(
-            @Emojicon.Type int type, Emojicon[] emojicons, EmojiconRecents recents, boolean useSystemDefault) {
+            @Emojicon.Type int type, Emojicon[] emojicons, EmojiconRecents recents, boolean useSystemDefault
+    ,OnEmojiconClickedListener listener) {
         EmojiconGridFragment emojiGridFragment = new EmojiconGridFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_EMOJICON_TYPE, type);
@@ -66,6 +69,7 @@ public class EmojiconGridFragment extends Fragment implements AdapterView.OnItem
         args.putBoolean(ARG_USE_SYSTEM_DEFAULTS, useSystemDefault);
         emojiGridFragment.setArguments(args);
         emojiGridFragment.setRecents(recents);
+        emojiGridFragment.setmOnEmojiconClickedListener(listener);
         return emojiGridFragment;
     }
 
@@ -106,22 +110,8 @@ public class EmojiconGridFragment extends Fragment implements AdapterView.OnItem
         outState.putParcelableArray(ARG_EMOJICONS, mEmojicons);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnEmojiconClickedListener) {
-            mOnEmojiconClickedListener = (OnEmojiconClickedListener) context;
-        } else if (getParentFragment() instanceof OnEmojiconClickedListener) {
-            mOnEmojiconClickedListener = (OnEmojiconClickedListener) getParentFragment();
-        } else {
-            throw new IllegalArgumentException(context + " must implement interface " + OnEmojiconClickedListener.class.getSimpleName());
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        mOnEmojiconClickedListener = null;
-        super.onDetach();
+    public void setmOnEmojiconClickedListener(OnEmojiconClickedListener listener){
+        this.mOnEmojiconClickedListener = listener;
     }
 
     @Override

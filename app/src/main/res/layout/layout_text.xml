@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mask_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#4C000000"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/et_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <View style="@style/horizontal_line"/>
+        <io.github.rockerhieu.emojicon.EmojiconEditText
+            android:id="@+id/et_input"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@null"
+            android:gravity="top|center_horizontal"
+            android:hint=""
+            android:maxLength="30"
+            android:padding="10dp"
+            android:textColor="@android:color/darker_gray"
+            android:textColorHint="@android:color/darker_gray"
+            android:textSize="14sp"/>
+        <View style="@style/horizontal_line"/>
+        <LinearLayout
+            android:id="@+id/ll_cop"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/btn_finish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/selector_fabu_wancheng"/>
+
+        </LinearLayout>
+
+        <View style="@style/horizontal_line"/>
+
+        <FrameLayout
+            android:id="@+id/framelayout_emoji"
+            android:layout_width="match_parent"
+            android:layout_height="274dp"
+            android:layout_gravity="bottom"
+            android:background="@android:color/white" />
+    </LinearLayout>
+</LinearLayout>

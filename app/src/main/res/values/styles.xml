@@ -35,4 +35,12 @@
         <item name="android:scrollbars">vertical</item>
         <item name="android:verticalSpacing">0dp</item>
     </style>
+
+
+    <style name="horizontal_line">
+        <item name="android:layout_height">1px</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">#FFF2F4F6</item>
+    </style>
+
 </resources>

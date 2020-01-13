@@ -21,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.season.example.layout.BottomPaintLayout;
 import com.season.example.support.MosaicUtil;
@@ -55,7 +57,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class PsActivity extends Activity implements View.OnClickListener {
+public class PsActivity extends FragmentActivity implements View.OnClickListener {
 
     PSCoverView mLayoutContainer;
     @Override
@@ -581,12 +583,59 @@ public class PsActivity extends Activity implements View.OnClickListener {
         return false;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mLayoutContainer.getChildCount() > 0) {
+            isEditText = false;
+            if (mLayoutContainer != null) {
+                mLayoutContainer.removeAllViews();
+            }
+            return;
+        }
+        super.onBackPressed();
+    }
+
     TextLayout textLayout;
     boolean isEditText;
     //文字编辑弹窗
     private void addTextPopInput(String text) {
         mLayoutContainer.removeAllViews();
-        textLayout = new TextLayout(PsActivity.this, "");
+        textLayout = new TextLayout(PsActivity.this) {
+            @Override
+            public void onRemove() {
+                isEditText = false;
+                if (mLayoutContainer != null) {
+                    mLayoutContainer.removeAllViews();
+                }
+            }
+
+            @Override
+            public void onTextConfirm(String text) {
+                if (mLayoutContainer != null) {
+                    mLayoutContainer.removeAllViews();
+                }
+                //编辑文字
+                if (isEditText) {
+                    mStickerLayout.editText(text);
+                    isEditText = false;
+                } else {
+                    float aspect = opview.getHeight() * 1f / mStickerLayout.getHeight();
+                    float v = (1f - aspect) / 2 + aspect;
+                    CustomTextView textStyleView = new CustomTextView(PsActivity.this);
+                    if (mStickerLayout.backgroundView.isBackgroundVideoImageViewVisible()) {
+                        textStyleView.setPaintColorReverse(Color.WHITE, Color.BLACK);
+                        textStyleView.setisDiyBottom(true);
+                        textStyleView.setisDiyBottomHeightPercent(v);
+                        textStyleView.setOffsetY4Diy(offsetY);
+                    } else {
+                        textStyleView.setisDiyBottom(false);
+                        textStyleView.setPaintColorReverse(Color.BLACK, Color.WHITE);
+                    }
+                    textStyleView.setText(text);
+                    addLayer(textStyleView);
+                }
+            }
+        };
         if (TextUtils.isEmpty(text)) {
             isEditText = false;
         } else {
@@ -596,13 +645,14 @@ public class PsActivity extends Activity implements View.OnClickListener {
         mLayoutContainer.addView(textLayout);
     }
 
-
-
-
-
-
-
-
+    private void addLayer(View view) {
+        PSLayer scaleView = new PSLayer(this);
+        scaleView.addView(view,
+                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
+                        .WRAP_CONTENT));
+        mStickerLayout.addView(scaleView);
+        resetStatus();
+    }
 
     public void addGifFromFile(String filePath) {
         CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
@@ -852,6 +902,7 @@ public class PsActivity extends Activity implements View.OnClickListener {
             }
         };
         findViewById(R.id.bt_paint).setOnClickListener(this);
+        findViewById(R.id.bt_text).setOnClickListener(this);
     }
 
     //橡皮擦模式开启
@@ -887,6 +938,8 @@ public class PsActivity extends Activity implements View.OnClickListener {
         } else if (i == R.id.bt_paint) {
             startTuya();
             bottomPaintLayout.show();
+        }  else if (i == R.id.bt_text) {
+            addTextPopInput("");
         } else if (i == R.id.iv_confirm) {
             finishTuya();
             bottomPaintLayout.hide();
