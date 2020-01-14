@@ -870,9 +870,6 @@ public class PSCanvas extends RelativeLayout{
                 }
                 if (running == 1 && !isMakingGifOrNot) {
                     refreshView();
-//                    if (refreshListener!=null){
-//                        refreshListener.Refresh();
-//                    }
                     refreshGifBg();
                 }
                 if (running == 1 && isMakingGifOrNot) {
@@ -916,19 +913,6 @@ public class PSCanvas extends RelativeLayout{
                             int time = mGifMaker.getFrameCountNow() * relyView.getDelay() * resortCount;
                             recordView(time);
                             Bitmap tBitmap = null;
-//                            if (isPreview) {
-//                                if (bitmapPreview != null && !bitmapPreview.isRecycled()) {
-//                                    tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.RGB_565);
-//                                    Canvas canvas = new Canvas(tBitmap);
-//                                    canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint
-//                                            .FILTER_BITMAP_FLAG));
-//                                    canvas.drawBitmap(bitmapPreview, null, new RectF(0, 0, finalGifWidthHeight, finalGifWidthHeight)
-//                                            , null);
-//                                    drawItem(canvas, videoWidthHeight, offsetX, offsetY);
-//                                }
-//                                if (mGifMaker != null) mGifMaker.addBitmap(tBitmap);
-//                                return;
-//                            }
                             if (backgroundView.currentOperate != null) {
                                 //图片
                                 if (backgroundView.currentOperate.visible2 == View.VISIBLE) {
@@ -1662,68 +1646,6 @@ public class PSCanvas extends RelativeLayout{
         return layerEntity;
     }
 
-    //获取当前的所有图层信息
-    public LayerEntity getLayerMessage4Preview() {
-        LayerEntity layerEntity = new LayerEntity();
-
-//        layerEntity.setWidth(getWidth());
-//        layerEntity.setHeight(getHeight());
-//        layerEntity.setProportionType(1);
-
-//        layerEntity.originalId = originalId;
-//        layerEntity.originId = originId;
-//        layerEntity.relateType = relateType;
-//        layerEntity.faceId = faceId;
-//        layerEntity.type = type;
-//        layerEntity.setTextPublishDescribe(textPublishDescribe);
-//        if (BuildConfig.DEBUG) {
-//            Logger.d("text==>" + textPublishDescribe);
-//        }
-
-//        LayerBackground backInfoModel = new LayerBackground();
-//        backInfoModel.orignalVideoUrl = orignalVideoUrl;
-//        backInfoModel.orignalImageUrl = orignalImageUrl;
-//        PSBackground.BgOperate bgOperate = backgroundView.currentOperate;
-//        long oneAudio = audioId;
-//        if (bgOperate != null) {
-//            if (bgOperate.visible1 == View.VISIBLE) {
-//                oneAudio = 0;
-//                int bgColor = bgOperate.color;
-//                if (bgColor != Color.TRANSPARENT) {
-//                    backInfoModel.setBackColorString(Util.getColorStr(bgColor));
-//                }
-//            } else if (bgOperate.visible2 == View.VISIBLE) {
-//                oneAudio = 0;
-//                backInfoModel.imageURLPathFile = bgOperate.imageFile;
-//                backInfoModel.setImgURLPath(bgOperate.url);
-//            } else {
-//                String videoPath = bgOperate.videoFile;
-//                if (TextUtils.isEmpty(videoPath)) {
-//                    oneAudio = 0;
-//                    backInfoModel.imageURLPathFile = bgOperate.gifFile;
-//                    backInfoModel.setImgURLPath(bgOperate.url);
-//                } else {
-//                    backInfoModel.assetPathFile = videoPath;
-//                    backInfoModel.setAssetPath(bgOperate.url);
-//                    backInfoModel.setRate(bgOperate.rate);
-//                }
-//            }
-//        }
-//        layerEntity.audioId = (int) oneAudio;
-//        layerEntity.setBackInfoModel(backInfoModel);
-
-        List<LayerItem> list = new ArrayList<>();
-        int layer = 0;
-        for (int i = 0; i < getChildCount(); i++) {
-            View scaleView = getChildAt(i);
-            if (scaleView instanceof PSLayer) {
-                LayerItem layerItem = ((PSLayer) scaleView).getItemInfro(layer++);
-                list.add(layerItem);
-            }
-        }
-        layerEntity.setItemArray(list);
-        return layerEntity;
-    }
 
     //停止刷新，释放内存
     public void release() {

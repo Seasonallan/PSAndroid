@@ -72,7 +72,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         ll_op_bottom = findViewById(R.id.ll_op_bottom);
         opviewContainer = findViewById(R.id.opviewContainer);
         del_container = findViewById(R.id.del_container);
-        mStickerLayout = findViewById(R.id.layout_stickLayout);
+        mPsCanvas = findViewById(R.id.layout_stickLayout);
         customCanvas = findViewById(R.id.tuya);
         iv_redo = findViewById(R.id.iv_redo);
         iv_undo = findViewById(R.id.iv_undo);
@@ -106,7 +106,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     ImageView iv_confirm;
 
     int videoWidthHeight, offsetX, offsetY;
-    PSCanvas mStickerLayout;
+    PSCanvas mPsCanvas;
     View rl_op_top;
     View ll_op_bottom;
     LinearLayout del_container;
@@ -153,9 +153,9 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         delParams.height = Math.max(offsetY, AutoUtils.getPercentWidthSize(128));
         del_container.requestLayout();
 
-        mStickerLayout.videoWidthHeight = videoWidthHeight;
-        mStickerLayout.setOffsetX(offsetX);
-        mStickerLayout.setOffsetY(offsetY);
+        mPsCanvas.videoWidthHeight = videoWidthHeight;
+        mPsCanvas.setOffsetX(offsetX);
+        mPsCanvas.setOffsetY(offsetY);
         Logger.LOG(""+ offsetX +"----"+ offsetY);
     }
 
@@ -184,17 +184,17 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 /**
                  * 把TAG保存到Container类中，跳转到发布的时候，需要重新构造LayerEntity
                  */
-                mStickerLayout.relateType = layerEntity.relateType;
-                mStickerLayout.audioId = layerEntity.audioId;
-                mStickerLayout.type = layerEntity.type;
+                mPsCanvas.relateType = layerEntity.relateType;
+                mPsCanvas.audioId = layerEntity.audioId;
+                mPsCanvas.type = layerEntity.type;
                 //保存文字描述
-                mStickerLayout.textPublishDescribe = layerEntity.getTextPublishDescribe();
+                mPsCanvas.textPublishDescribe = layerEntity.getTextPublishDescribe();
                 if (saveOrignal) {
-                    mStickerLayout.orignalImageUrl = backgroundInfo.getImgURLPath();
-                    mStickerLayout.orignalVideoUrl = backgroundInfo.getAssetPath();
-                    mStickerLayout.orignalGifUrl = backgroundInfo.getOrignalGIfUrl();
-                    mStickerLayout.originalId = layerEntity.originalId;
-                    mStickerLayout.originId = layerEntity.originId;
+                    mPsCanvas.orignalImageUrl = backgroundInfo.getImgURLPath();
+                    mPsCanvas.orignalVideoUrl = backgroundInfo.getAssetPath();
+                    mPsCanvas.orignalGifUrl = backgroundInfo.getOrignalGIfUrl();
+                    mPsCanvas.originalId = layerEntity.originalId;
+                    mPsCanvas.originId = layerEntity.originId;
                 }
                 showLayers(layerEntity, items);
                 showBg(copyFile, saveHistory, backgroundInfo);
@@ -238,7 +238,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mStickerLayout.showBackground(Util.getColor(colorStr, 0x000000));
+                            mPsCanvas.showBackground(Util.getColor(colorStr, 0x000000));
                             resetStatus();
                         }
                     });
@@ -372,9 +372,9 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     float speed = 1.0f;
                     try {//视频时长，用于动效效果
                         animationType = item.animationType;
-                        duration = mStickerLayout.backgroundView.getDuration();
-                       // delayVideo = mStickerLayout.backgroundView.videoView.getDelay();
-                        speed = mStickerLayout.backgroundView.getSpeed();
+                        duration = mPsCanvas.backgroundView.getDuration();
+                       // delayVideo = mPsCanvas.backgroundView.videoView.getDelay();
+                        speed = mPsCanvas.backgroundView.getSpeed();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -397,7 +397,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             @Override
             public void run() {
                 if (PSLayer.getChildCount() > 0) {
-                    mStickerLayout.addView(PSLayer);
+                    mPsCanvas.addView(PSLayer);
                     if (isLast) {
                         resetStatus();
                     }
@@ -439,22 +439,22 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                         String name = filePath.substring(lastDot + 1).toUpperCase();
                         if (isMp4 || name.equals("MP4") || FileUtils.isMp4File(filePath)) {
 //                if (name.equals("MP4")) {
-                            mStickerLayout.showVideoView(url, filePath, rate);
+                            mPsCanvas.showVideoView(url, filePath, rate);
                             resetStatus();
                         } else {
                             // 暂时没有GIF背景需求
                             String fileHeader = FileUtils.getFileHeader(filePath);
                             if (fileHeader.equals(Constant.FileSuffix.PNG) || fileHeader
                                     .equals(Constant.FileSuffix.JPG)) {
-                                mStickerLayout.showImage(url, filePath);
+                                mPsCanvas.showImage(url, filePath);
                                 Logger.d("addLocalMessage,2:" + System.currentTimeMillis());
                             } else {
                                 Logger.d("addLocalMessage,3:" + System.currentTimeMillis());
                                 //格式异常了
                                 if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
-                                    mStickerLayout.showGIf(url, filePath);
+                                    mPsCanvas.showGIf(url, filePath);
                                 } else {
-                                    mStickerLayout.showImage(url, filePath);
+                                    mPsCanvas.showImage(url, filePath);
                                 }
                             }
                         }
@@ -508,14 +508,14 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
     TopDeleteLayout topDeleteLayout;
     private void initStickerLayout() {
-        mStickerLayout.bindBgView(opview, new MediaPlayer.OnPreparedListener() {
+        mPsCanvas.bindBgView(opview, new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
                // resetTextFragment();
             }
         });
         topDeleteLayout = new TopDeleteLayout(del_container, iv_back, iv_next);
-        mStickerLayout.setOnMoveListener(new PSCanvas.IOnMoveListener() {
+        mPsCanvas.setOnMoveListener(new PSCanvas.IOnMoveListener() {
             @Override
             public boolean onMove(MotionEvent event) {
                 return topDeleteLayout.checkPosition(event);
@@ -530,7 +530,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     }
 
     private void initStickerlayoutOnClick() {
-        mStickerLayout.setClickListener(new PSLayer.OnClickListener() {
+        mPsCanvas.setClickListener(new PSLayer.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editTextView(view);
@@ -545,7 +545,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             public void onDelete(View view) {
             }
         });
-        mStickerLayout.setFocusChangeListener(new PSCanvas.IFocusChangeListener() {
+        mPsCanvas.setFocusChangeListener(new PSCanvas.IFocusChangeListener() {
             @Override
             public void onFocusLose(ViewGroup view) {
             }
@@ -605,13 +605,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 }
                 //编辑文字
                 if (isEditText) {
-                    mStickerLayout.editText(text);
+                    mPsCanvas.editText(text);
                     isEditText = false;
                 } else {
-                    float aspect = opview.getHeight() * 1f / mStickerLayout.getHeight();
+                    float aspect = opview.getHeight() * 1f / mPsCanvas.getHeight();
                     float v = (1f - aspect) / 2 + aspect;
                     CustomTextView textStyleView = new CustomTextView(PsActivity.this);
-                    if (mStickerLayout.backgroundView.isBackgroundVideoImageViewVisible()) {
+                    if (mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible()) {
                         textStyleView.setPaintColorReverse(Color.WHITE, Color.BLACK);
                         textStyleView.setisDiyBottom(true);
                         textStyleView.setisDiyBottomHeightPercent(v);
@@ -639,7 +639,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         scaleView.addView(view,
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
                         .WRAP_CONTENT));
-        mStickerLayout.addView(scaleView);
+        mPsCanvas.addView(scaleView);
         resetStatus();
     }
 
@@ -672,7 +672,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         PSLayer.addView(view,
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
                         .WRAP_CONTENT));
-        mStickerLayout.addView(PSLayer);
+        mPsCanvas.addView(PSLayer);
         resetStatus();
     }
 
@@ -682,7 +682,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         PSLayer.addView(view,
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
                         .WRAP_CONTENT));
-        mStickerLayout.addView(PSLayer);
+        mPsCanvas.addView(PSLayer);
         resetStatus();
     }
 
@@ -706,9 +706,9 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 iv_delete.setImageResource(
                         isDelete() ? R.drawable.selector_crop_clear : R.mipmap.icon_top_delete_sel);
                 iv_undo.setImageResource(
-                        mStickerLayout.canPre() ? R.drawable.selector_crop_pre : R.mipmap.icon_op_pre_sel);
+                        mPsCanvas.canPre() ? R.drawable.selector_crop_pre : R.mipmap.icon_op_pre_sel);
                 iv_redo.setImageResource(
-                        mStickerLayout.canPro() ? R.drawable.selector_crop_pro : R.mipmap.icon_op_pro_sel);
+                        mPsCanvas.canPro() ? R.drawable.selector_crop_pro : R.mipmap.icon_op_pro_sel);
                 resetRgAutoBg();
                 resetBottomStatus();
             }
@@ -719,7 +719,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
      * 刷新底部操作状态
      */
     private void resetBottomStatus() {
-        View view = mStickerLayout.getFocusView();
+        View view = mPsCanvas.getFocusView();
         if (view != null && view instanceof CustomTextView) {
             bottomTextLayout.show();
             bottomTextLayout.select(((CustomTextView) view).currentType);
@@ -729,7 +729,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     }
 
     private void resetRgAutoBg() {
-        PSBackground.BgOperate op = mStickerLayout.backgroundView.currentOperate;
+        PSBackground.BgOperate op = mPsCanvas.backgroundView.currentOperate;
         if (op != null) {
             int checkId = R.id.rb_vid_pic;
             if (op.visible1 == View.VISIBLE) {
@@ -758,38 +758,38 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             vColor.setImageResource(R.mipmap.icon_color_white);
             //setBrushColor(Color.WHITE, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mStickerLayout.showBackground(Color.WHITE);
+                mPsCanvas.showBackground(Color.WHITE);
             }
 
         } else if (i == R.id.rb_translate) {
             vColor.setImageResource(R.mipmap.icon_color_transparent);
             //setBrushColor(Color.TRANSPARENT, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mStickerLayout.showBackground(Color.TRANSPARENT);
+                mPsCanvas.showBackground(Color.TRANSPARENT);
             }
 
         } else if (i == R.id.rb_hui) {
             vColor.setImageResource(R.mipmap.icon_color_gray);
             //setBrushColor(Color.GRAY, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mStickerLayout.showBackground(Color.GRAY);
+                mPsCanvas.showBackground(Color.GRAY);
             }
 
         } else if (i == R.id.rb_black) {
             vColor.setImageResource(R.mipmap.icon_color_black);
             //setBrushColor(Color.BLACK, false);
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mStickerLayout.showBackground(Color.BLACK);
+                mPsCanvas.showBackground(Color.BLACK);
             }
 
         } else if (i == R.id.rb_vid_pic) {
             if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mStickerLayout.showVideoOrImage();
+                mPsCanvas.showVideoOrImage();
             }
-            if (mStickerLayout.backgroundView.currentOperate != null) {
-                if (mStickerLayout.backgroundView.currentOperate.bitmap != null) {
-                    rb_vid_pic.setDrawImage(mStickerLayout.backgroundView.currentOperate.bitmap);
-                    vColor.setImageBitmap(mStickerLayout.backgroundView.currentOperate.bitmap);
+            if (mPsCanvas.backgroundView.currentOperate != null) {
+                if (mPsCanvas.backgroundView.currentOperate.bitmap != null) {
+                    rb_vid_pic.setDrawImage(mPsCanvas.backgroundView.currentOperate.bitmap);
+                    vColor.setImageBitmap(mPsCanvas.backgroundView.currentOperate.bitmap);
                     rb_vid_pic.setVisibility(View.VISIBLE);
                 }
             }
@@ -802,8 +802,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
      */
     public boolean isDelete() {
         try {
-            ImageView picture = mStickerLayout.backgroundView.picture;
-            if (mStickerLayout.getChildCount() == 0 && (
+            ImageView picture = mPsCanvas.backgroundView.picture;
+            if (mPsCanvas.getChildCount() == 0 && (
                     picture.getVisibility() !=
                             View.VISIBLE)) {
                 return false;
@@ -820,13 +820,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         super.onDestroy();
         Logger.d("diy>> onDestroy");
         try {
-            if (mStickerLayout != null) {
-                LayerEntity layerEntity = mStickerLayout.getLayerMessage();
-                if (!TextUtils.isEmpty(getIntent().getStringExtra(mStickerLayout.textPublishDescribe))) {
-                    layerEntity.setTextPublishDescribe(mStickerLayout.textPublishDescribe);
+            if (mPsCanvas != null) {
+                LayerEntity layerEntity = mPsCanvas.getLayerMessage();
+                if (!TextUtils.isEmpty(getIntent().getStringExtra(mPsCanvas.textPublishDescribe))) {
+                    layerEntity.setTextPublishDescribe(mPsCanvas.textPublishDescribe);
                 }
                 FileUtils.saveSerialData(this, "layerInfo", layerEntity);
-                mStickerLayout.release();
+                mPsCanvas.release();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -856,7 +856,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         bottomTextLayout = new BottomTextLayout(this) {
             @Override
             public void onItemClick(int position) {
-                mStickerLayout.setTextAnimationType(position);
+                mPsCanvas.setTextAnimationType(position);
             }
         };
 
@@ -912,7 +912,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         if (!customCanvas.isEnable()) {
             startTuya();
         }
-        Bitmap srcBitmap = mStickerLayout.getCacheBitmap();
+        Bitmap srcBitmap = mPsCanvas.getCacheBitmap();
         Bitmap bit = MosaicUtil.getMosaic(srcBitmap);
         Util.recycleBitmaps(srcBitmap);
         customCanvas.setMosaic(bit);
@@ -936,7 +936,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             startTuya();
             bottomPaintLayout.show();
         }  else if (i == R.id.bt_text) {
-            View view = mStickerLayout.getFocusView();
+            View view = mPsCanvas.getFocusView();
             if (view != null && view instanceof CustomTextView) {
                 bottomTextLayout.show();
                 bottomTextLayout.select(((CustomTextView) view).currentType);
@@ -961,16 +961,16 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             back();
 
         } else if (i == R.id.iv_next) {
-            if (mStickerLayout.getChildCount() == 0) {
-                if (mStickerLayout.backgroundView.currentOperate != null) {
-                    if (mStickerLayout.backgroundView.currentOperate.visible1 == View.VISIBLE) {
+            if (mPsCanvas.getChildCount() == 0) {
+                if (mPsCanvas.backgroundView.currentOperate != null) {
+                    if (mPsCanvas.backgroundView.currentOperate.visible1 == View.VISIBLE) {
                         //ToastUtil.show("画板上没有东西");
                         return;
                     }
                 }
             }
             int type;
-            if (mStickerLayout.hasGif()) {
+            if (mPsCanvas.hasGif()) {
                 type = Constant.ShareOriginalType.Gif;
             } else {
                 type = Constant.ShareOriginalType.Photo;
@@ -978,7 +978,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             if (BuildConfig.DEBUG) {
                 Logger.d("sharetype==" + type);
             }
-            mStickerLayout.start(type, new GifMaker.OnGifMakerListener() {
+            mPsCanvas.start(type, new GifMaker.OnGifMakerListener() {
                 @Override
                 public void onMakeProgress(int index, int count) {
                     Logger.LOG("onMakeProgress" + index);
@@ -1020,8 +1020,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             resetStatus();
             return;
         }
-        if (mStickerLayout.canPro()) {
-            mStickerLayout.pro();
+        if (mPsCanvas.canPro()) {
+            mPsCanvas.pro();
         }
         resetStatus();
     }
@@ -1035,8 +1035,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             resetStatus();
             return;
         }
-        if (mStickerLayout.canPre()) {
-            mStickerLayout.pre();
+        if (mPsCanvas.canPre()) {
+            mPsCanvas.pre();
         }
         resetStatus();
     }
@@ -1149,11 +1149,11 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     }
 
     private void addTextView(String text){
-        float aspect = opview.getHeight() * 1f / mStickerLayout.getHeight();
+        float aspect = opview.getHeight() * 1f / mPsCanvas.getHeight();
         float v = (1f - aspect) / 2 + aspect;
         //
         CustomTextView customTextView = new CustomTextView(PsActivity.this);
-        if (mStickerLayout.backgroundView.isBackgroundVideoImageViewVisible()) {
+        if (mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible()) {
             customTextView.setPaintColorReverse(Color.WHITE, Color.BLACK);
             customTextView.setisDiyBottom(true);
             customTextView.setisDiyBottomHeightPercent(v);
@@ -1184,7 +1184,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         });
         customCanvas.changeStatus(true);
         statesbarGoInEditMode(true);
-        mStickerLayout.deleteFocus();
+        mPsCanvas.deleteFocus();
         resetStatus();
     }
 
@@ -1193,7 +1193,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         if (customCanvas.isEnable()) {
             return;
         }
-        mStickerLayout.reset();
+        mPsCanvas.reset();
         statesbarGoInEditMode(false);
         resetStatus();
     }
