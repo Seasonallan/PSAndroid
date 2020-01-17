@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.season.lib.animation.AnimationProvider;
+import com.season.lib.ps.animation.AnimationProvider;
 import com.season.myapplication.R;
 
 /**

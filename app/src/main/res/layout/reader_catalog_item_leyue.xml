@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.season.bookreader.view.CheckedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.season.example.bookreader.view.CheckedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:background="@drawable/list_item_selector"
@@ -26,4 +26,4 @@
 		android:paddingRight="10dip"
 		android:textColor="@color/common_black_6"
 		android:textSize="@dimen/font_common_num4" />
-</com.season.bookreader.view.CheckedLinearLayout>
+</com.season.example.bookreader.view.CheckedLinearLayout>

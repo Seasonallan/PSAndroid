@@ -7,7 +7,7 @@
 		android:id="@+id/menu_header_layout"
 		android:layout_alignParentTop="true"
 		layout="@layout/menu_header_leyue" />
-	<com.season.bookreader.view.CheckedGridView
+	<com.season.example.bookreader.view.CheckedGridView
 		android:id="@+id/reader_menu_gv"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"

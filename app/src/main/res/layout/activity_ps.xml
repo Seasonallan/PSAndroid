@@ -42,13 +42,13 @@
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:visibility="gone" />
-                    <com.season.lib.view.ps.CustomGifMovie
+                    <com.season.lib.ps.view.ps.CustomGifMovie
                         android:id="@+id/gifview"
                         android:visibility="gone"
                         android:layout_centerInParent="true"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
-                    <com.season.lib.view.ps.CustomGifFrame
+                    <com.season.lib.ps.view.ps.CustomGifFrame
                         android:id="@+id/gifFrameview"
                         android:visibility="gone"
                         android:layout_centerInParent="true"
@@ -59,13 +59,13 @@
             </FrameLayout>
 
 
-            <com.season.lib.view.ps.PSCanvas
+            <com.season.lib.ps.view.ps.PSCanvas
                 android:id="@+id/layout_stickLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="visible" />
 
-            <com.season.lib.view.ps.CustomCanvas
+            <com.season.lib.ps.view.ps.CustomCanvas
                 android:id="@+id/tuya"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -152,7 +152,7 @@
                         android:text="背景"
                         android:textSize="20px" />
 
-                    <com.season.lib.view.ColorImageView
+                    <com.season.lib.ps.view.ColorImageView
                         android:id="@+id/v_color"
                         android:layout_width="47px"
                         android:layout_height="47px"
@@ -170,7 +170,7 @@
                         android:orientation="horizontal"
                         android:visibility="gone">
 
-                        <com.season.lib.view.ColorPickView
+                        <com.season.lib.ps.view.ColorPickView
                             android:id="@+id/rb_translate"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -178,7 +178,7 @@
                             android:button="@null"
                             android:checked="true" />
 
-                        <com.season.lib.view.ColorPickView
+                        <com.season.lib.ps.view.ColorPickView
                             android:id="@+id/rb_white"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -186,7 +186,7 @@
                             android:background="@mipmap/icon_color_white"
                             android:button="@null" />
 
-                        <com.season.lib.view.ColorPickView
+                        <com.season.lib.ps.view.ColorPickView
                             android:id="@+id/rb_hui"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -195,7 +195,7 @@
                             android:button="@null"
                             android:visibility="gone" />
 
-                        <com.season.lib.view.ColorPickView
+                        <com.season.lib.ps.view.ColorPickView
                             android:id="@+id/rb_black"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -203,7 +203,7 @@
                             android:background="@mipmap/icon_color_black"
                             android:button="@null" />
 
-                        <com.season.lib.view.ColorPickView
+                        <com.season.lib.ps.view.ColorPickView
                             android:id="@+id/rb_vid_pic"
                             android:layout_width="47px"
                             android:layout_height="47px"
@@ -321,7 +321,7 @@
 
     </LinearLayout>
 
-    <com.season.lib.view.ps.PSCoverView
+    <com.season.lib.ps.view.ps.PSCoverView
         android:id="@+id/layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

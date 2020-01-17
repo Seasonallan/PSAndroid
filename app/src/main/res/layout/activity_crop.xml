@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom">
 
-        <com.season.lib.crop.CropView
+        <com.season.lib.ps.crop.CropView
             android:id="@+id/mask_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -87,13 +87,13 @@
         android:layout_height="match_parent"
         android:visibility="gone" >
 
-        <com.season.lib.view.ps.CustomGifMovie
+        <com.season.lib.ps.view.ps.CustomGifMovie
             android:id="@+id/gifview"
             android:visibility="gone" android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <com.season.lib.view.ps.CustomGifFrame
+        <com.season.lib.ps.view.ps.CustomGifFrame
             android:id="@+id/gifFrameview"
             android:visibility="gone"
             android:layout_gravity="center"

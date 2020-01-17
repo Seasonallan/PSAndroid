@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.season.lib.view.VerticalSeekBar;
+import com.season.lib.ps.view.VerticalSeekBar;
 import com.season.myapplication.R;
 
 

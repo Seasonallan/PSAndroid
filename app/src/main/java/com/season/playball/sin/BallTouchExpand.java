@@ -25,7 +25,7 @@ public class BallTouchExpand {
     }
 
     float degree = 0;
-    String[] items = {"hide","stop","start","quick","slow"};
+    String[] items = {"in","stop","start","quick","slow"};
 
     int touchIndex = -1;
     void onDraw(Canvas canvas, float ex, float ey){

@@ -17,10 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.season.example.support.TextModeUtil;
-import com.season.lib.crop.CropView;
+import com.season.lib.ps.crop.CropView;
 import com.season.lib.util.Constant;
-import com.season.lib.view.ps.CustomGifFrame;
-import com.season.lib.view.ps.CustomGifMovie;
+import com.season.lib.ps.view.ps.CustomGifFrame;
+import com.season.lib.ps.view.ps.CustomGifMovie;
 import com.season.myapplication.R;
 
 import java.util.List;

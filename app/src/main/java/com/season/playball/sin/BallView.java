@@ -173,7 +173,10 @@ public class BallView extends View {
                             touchBall.onRelease(x, y);
                         }else{
                             if (index == 0){
-                                removeBall(touchBall);
+                                if (listener != null){
+                                    setTag(touchBall.special);
+                                    listener.onClick(this);
+                                }
                             }else if(index == 1){
                                 touchBall.stop();
                             }else if(index == 2){

@@ -37,8 +37,8 @@
             android:name="xposedminversion"
             android:value="30" />
         <provider
-            android:name="com.season.bookreader.provider.DataProvider"
-            android:authorities="com.season.bookreader.provider.DataProvider" />
+            android:name="com.season.example.bookreader.provider.DataProvider"
+            android:authorities="com.season.example.bookreader.provider.DataProvider" />
     </application>
 
 </manifest>
