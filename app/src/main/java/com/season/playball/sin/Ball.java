@@ -128,6 +128,10 @@ public class Ball {
         }
     }
 
+    public int getRadius(){
+        return radius;
+    }
+
     int width, height;
 
     int radius;

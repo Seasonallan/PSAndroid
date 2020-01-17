@@ -20,6 +20,10 @@ public class BallTouchExpand {
     float radius = 0;
     float padding = 20;
 
+    public void setMaxRadius(float value){
+        this.maxRadius = value;
+    }
+
     float degree = 0;
     String[] items = {"hide","stop","start","quick","slow"};
 
