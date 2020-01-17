@@ -30,7 +30,7 @@ public class FunctionActivity extends Activity{
                         .setId(System.currentTimeMillis())
                         .setEdge(mBallView.getWidth(), mBallView.getTopHeight())
                         .setInterpolator(BallInterpolatorFactory.getInterpolator(BallInterpolatorFactory.KEEP))
-                        .setSpecial(20)
+                        .setSpecial(1)
                         .build();
                 ballModel.setParams(88, "PS");
                 mBallView.add1Ball(ballModel);
@@ -38,7 +38,7 @@ public class FunctionActivity extends Activity{
                         .setId(System.currentTimeMillis())
                         .setEdge(mBallView.getWidth(), mBallView.getTopHeight())
                         .setInterpolator(BallInterpolatorFactory.getInterpolator(BallInterpolatorFactory.KEEP))
-                        .setSpecial(20)
+                        .setSpecial(2)
                         .build();
                 ballModel2.setParams(88, "BOOK");
                 mBallView.add1Ball(ballModel2);
@@ -48,7 +48,12 @@ public class FunctionActivity extends Activity{
         mBallView.setOnBallSeparateListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FunctionActivity.this, PsActivity.class));
+                int tag = (int) v.getTag();
+                if (tag == 1){
+                    startActivity(new Intent(FunctionActivity.this, PsActivity.class));
+                }else if (tag ==2 ){
+                    startActivity(new Intent(FunctionActivity.this, BookActivity.class));
+                }
             }
         });
         mBallView.setOnBallAddListener(new View.OnClickListener() {

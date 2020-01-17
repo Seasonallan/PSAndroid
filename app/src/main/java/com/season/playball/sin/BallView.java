@@ -98,8 +98,9 @@ public class BallView extends View {
         }
         for (int i = ballList.size() - 1; i>= 0; i--){
             Ball ball = ballList.get(i);
-            if (ball.clickSpecial == 20){
+            if (ball.clickSpecial > 0){
                 if (ball.special <= 0){
+                    setTag(ball.clickSpecial);
                     ballList.remove(ball);
                     if (listener != null){
                         listener.onClick(this);
@@ -258,35 +259,6 @@ public class BallView extends View {
         ballList.remove(ball);
     }
 
-    /**
-     * 添加一个球
-     *
-     */
-    public void add1RandomBall() {
-        String interpolatorFlag = BallInterpolatorFactory.LINEAR;
-        int special = -1;
-        if (ballList.size() == 0) {
-            interpolatorFlag = BallInterpolatorFactory.KEEP;
-            special = 10;
-        }
-        if (ballList.size() == 1) {
-            interpolatorFlag = BallInterpolatorFactory.KEEP;
-            special = 20;
-        }
-        IInterpolator interpolator = BallInterpolatorFactory.getInterpolator(interpolatorFlag);
-        Ball ballModel = new Ball.Builder()
-                .setId(System.currentTimeMillis())
-                .setEdge(getWidth(), getHeight())
-                .setInterpolator(interpolator)
-                .setSpecial(special)
-                .build();
-        ballModel.randomSetUp();
-        add1Ball(ballModel);
-        ballList.add(ballModel);
-        if (!running){
-            start();
-        }
-    }
 
     /**
      * 添加一个球

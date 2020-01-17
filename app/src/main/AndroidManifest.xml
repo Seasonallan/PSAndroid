@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.season.myapplication">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:name="com.season.example.BaseApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -18,6 +21,8 @@
         <activity android:name="com.season.example.PsActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.season.example.CropActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.season.example.FunctionActivity" android:screenOrientation="portrait"/>
+
+        <activity android:name="com.season.example.BookActivity" android:screenOrientation="portrait"/>
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
@@ -31,6 +36,9 @@
         <meta-data
             android:name="xposedminversion"
             android:value="30" />
+        <provider
+            android:name="com.season.bookreader.provider.DataProvider"
+            android:authorities="com.season.bookreader.provider.DataProvider" />
     </application>
 
 </manifest>

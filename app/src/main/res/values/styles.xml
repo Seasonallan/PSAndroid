@@ -47,4 +47,36 @@
         <item name="android:overScrollMode">never</item>
         <item name="android:scrollbars">none</item>
     </style>
+
+
+
+    <style name="button_bookdigests" parent="android:style/Widget.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18dip</item>
+        <item name="android:paddingLeft">8dip</item>
+        <item name="android:paddingTop">4dip</item>
+        <item name="android:paddingBottom">4dip</item>
+        <item name="android:paddingRight">8dip</item>
+
+        <item name="android:layout_width">68dip</item>
+        <item name="android:layout_height">wrap_content</item>
+
+
+    </style>
+
+    <item type="id" name="statusbarutil_fake_status_bar_view" />
+    <item type="id" name="statusbarutil_translucent_view" />
+
+    <declare-styleable name="PullActivateLayout">
+        <attr name="actionViewId" format="reference" />
+        <attr name="toolViewId" format="reference" />
+    </declare-styleable>
+
+    <style name="remark_Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/dialog_bg</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>

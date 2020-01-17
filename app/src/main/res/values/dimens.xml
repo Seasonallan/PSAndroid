@@ -1,5 +1,15 @@
 <resources>
 
+    <!-- 统一视觉规范字体大小,请严格遵照！！ -->
+    <dimen name="font_common_num0">20dip</dimen>
+    <dimen name="font_common_num1">18dip</dimen>
+    <dimen name="font_common_num2">17dip</dimen>
+    <dimen name="font_common_num3">16dip</dimen>
+    <dimen name="font_common_num4">15dip</dimen>
+    <dimen name="font_common_num5">14dip</dimen>
+    <dimen name="font_common_num6">13dip</dimen>
+    <dimen name="font_common_num7">12dip</dimen>
+
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
