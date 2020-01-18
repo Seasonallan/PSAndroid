@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">module_ps</string>
+
+
+    <color name="horizontal_vertical">#8f8f8f</color>
+
+    <color name="seekbar_gray">#d7d7d7</color>
+    <color name="diy_text_anim">#797979</color>
+    <color name="seekbar_blue">#9ad3ff</color>
+
+    <color name="horizontal_divider">#8f8f8f</color>
+</resources>

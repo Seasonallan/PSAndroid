@@ -8,7 +8,7 @@
         <attr name="diameter_Progress_Width" format="dimension|reference" />
         <attr name="small_pause" format="dimension|reference" />
         <attr name="big_pause" format="dimension|reference" />
-        <!--<attr name="left_text_color" format="color|reference" />-->
+        <!--<attr name="left_text_color" format="color.xml|reference" />-->
         <!--<attr name="action_type">-->
         <!--<enum name="LEFT_IMG" value="0" />-->
         <!--<enum name="LEFT_IMG_RIGHT_IMG" value="1" />-->
@@ -57,17 +57,5 @@
         <attr name="scroll_ball" format="reference" />
         <attr name="scroll_ball_radius" format="dimension" />
     </declare-styleable>
-    <declare-styleable name="EmojiconStyle">
-        <attr name="emojiconGridViewStyle" format="reference"/>
-    </declare-styleable>
-    <declare-styleable name="Emojicon">
-        <attr name="emojiconSize" format="dimension" />
-        <attr name="emojiconAlignment" format="enum">
-            <enum name="bottom" value="0" />
-            <enum name="baseline" value="1" />
-        </attr>
-        <attr name="emojiconTextStart" format="integer" />
-        <attr name="emojiconTextLength" format="integer" />
-        <attr name="emojiconUseSystemDefault" format="boolean" />
-    </declare-styleable>
+
 </resources>

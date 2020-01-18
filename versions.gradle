@@ -1,0 +1,16 @@
+ext {
+    //app version
+    _versionCode = 1
+    _versionName = "3.0.0"
+    //android
+    _minSdkVersion = 15
+    _targetSdkVersion = 29
+    _compileSdkVersion = 29
+    _buildToolsVersion = "29.0.2"
+    supportLibraryVersion = "29.0.2"
+
+
+    arouterapi = "com.alibaba:arouter-api:1.4.0"
+    aroutercompiler = "com.alibaba:arouter-compiler:1.2.1"
+}
+

@@ -1,0 +1,95 @@
+apply from: versions
+if (isIndependent()) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+android {
+    compileSdkVersion _compileSdkVersion
+    buildToolsVersion _buildToolsVersion
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+    defaultConfig {
+        if (isIndependent()) {
+            if (this.name.equals("app")) {
+                applicationId "com.season.myapplication"
+            } else if (this.name.equals("library")) {
+                applicationId "com.example.library"
+                println("this == ${this.name} , applicationId")
+            } else {
+                applicationId "com.example.${this.name}"
+                println("this == ${this.name} , applicationId")
+            }
+        }
+        minSdkVersion _minSdkVersion
+        targetSdkVersion _targetSdkVersion
+        versionCode _versionCode
+        versionName _versionName
+
+
+        renderscriptTargetApi 23
+        renderscriptSupportModeEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    //    multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            if (isModule && this.name.startsWith("module")) {
+                manifest.srcFile 'src/debug/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                java {
+                    //全部Module一起编译的时候剔除debug目录
+                    exclude '**/debug/**'
+                }
+            }
+        }
+    }
+
+}
+ 
+def isIndependent() {
+    //是app module ，独立编译
+    if (this.name.startsWith("app")) {
+        println("this module's name is not startsWith [module] , this.name = ${this.name}")
+        return true
+    }
+    //是library module
+    if (this.name.startsWith("library")) {
+        println("this module's name is library , this.name = ${this.name}")
+        return false
+    }
+
+    //没有开启独立编译选项，所以为library
+    if (!isModule) {
+        println("not independent!")
+        return false
+    }
+
+    //开启了独立编译选项，但是模块名称不是module_ 开头，所以为 library
+    if (!this.name.startsWith("module")) {
+        println("this module's name is not startsWith [module] , this.name = ${this.name}")
+        return false
+    }
+    println("this module is independent!")
+    return true
+}
