@@ -15,7 +15,7 @@
         android:padding="24dp"
         android:src="@mipmap/img_tuya"/>
 
-    <com.season.lib.ps.view.VerticalSeekBar
+    <com.season.lib.view.VerticalSeekBar
         android:id="@+id/paint_sb"
         android:layout_width="14dp"
         android:layout_height="match_parent"

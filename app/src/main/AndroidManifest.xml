@@ -20,9 +20,6 @@
         </activity>
         <activity android:name="com.season.example.FunctionActivity" android:screenOrientation="portrait"/>
 
-        <provider
-            android:name="com.example.book.bookreader.provider.DataProvider"
-            android:authorities="com.example.book.bookreader.provider.DataProvider" />
     </application>
 
 </manifest>

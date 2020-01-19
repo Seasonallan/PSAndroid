@@ -6,7 +6,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.ps.R;
-import com.season.lib.ps.animation.AnimationProvider;
+import com.season.lib.animation.AnimationProvider;
 
 /**
  * 字体动画
