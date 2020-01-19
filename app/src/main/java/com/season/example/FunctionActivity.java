@@ -1,7 +1,6 @@
 package com.season.example;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -9,11 +8,9 @@ import android.view.WindowManager;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.lib.RoutePath;
 import com.season.myapplication.R;
-import com.season.playball.LogConsole;
-import com.season.playball.sin.Ball;
-import com.season.playball.sin.BallView;
-import com.season.playball.sin.interpolator.BallInterpolatorFactory;
-import com.season.ps.PsActivity;
+import com.season.playball.Ball;
+import com.season.playball.BallView;
+import com.season.playball.interpolator.BallInterpolatorFactory;
 
 public class FunctionActivity extends Activity{
 
@@ -53,10 +50,8 @@ public class FunctionActivity extends Activity{
             @Override
             public void onClick(View v) {
                 int tag = (int) v.getTag();
-                LogConsole.log("--->>"+ tag);
                 if (tag == 1){
                     ARouter.getInstance().build(RoutePath.PS).navigation();
-                    //startActivity(new Intent(FunctionActivity.this, PsActivity.class));
                 }else if (tag ==2 ){
                     ARouter.getInstance().build(RoutePath.BOOK).navigation();
                 }
@@ -79,6 +74,12 @@ public class FunctionActivity extends Activity{
                 mBallView.add1Ball(ballModel);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBallView.destroy();
     }
 
     @Override

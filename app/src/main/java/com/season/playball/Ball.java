@@ -1,4 +1,4 @@
-package com.season.playball.sin;
+package com.season.playball;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -6,8 +6,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.text.TextPaint;
 
-import com.season.playball.sin.interpolator.IInterpolator;
-import com.season.playball.sin.interpolator.KeepInterpolator;
+import com.season.playball.interpolator.IInterpolator;
+import com.season.playball.interpolator.KeepInterpolator;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

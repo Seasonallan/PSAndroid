@@ -114,7 +114,7 @@ public class TxtPlugin extends TxtUmdBasePlugin {
  
 	@Override
 	public String getCurrentChapterName(){ 
-		if(mPageEnd > start){//目录未解析完毕
+		if(mPageEnd > start || mChapterControll == null){//目录未解析完毕
 			return ChapterControll.DEFAULT_CHAPTER;
 		}
 		mChapterControll.setCurrentCHapterIndex(mChapterControll.getChapterIndexByPosition(mPageEnd));

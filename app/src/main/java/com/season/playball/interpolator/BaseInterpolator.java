@@ -1,6 +1,4 @@
-package com.season.playball.sin.interpolator;
-
-import com.season.playball.LogConsole;
+package com.season.playball.interpolator;
 
 import java.util.Random;
 
@@ -10,7 +8,7 @@ import java.util.Random;
  * Time: 2017-06-08 15:58
  */
 public abstract class BaseInterpolator implements IInterpolator {
-    float speed = 6;
+    float speed = 4;
 
     @Override
     public void randomSet(){

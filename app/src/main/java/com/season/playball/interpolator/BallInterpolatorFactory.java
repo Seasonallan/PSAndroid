@@ -1,4 +1,4 @@
-package com.season.playball.sin.interpolator;
+package com.season.playball.interpolator;
 
 import java.util.Random;
 

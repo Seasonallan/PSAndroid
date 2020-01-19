@@ -1,4 +1,4 @@
-package com.season.playball.sin;
+package com.season.playball;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

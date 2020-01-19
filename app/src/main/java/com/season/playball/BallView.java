@@ -1,4 +1,4 @@
-package com.season.playball.sin;
+package com.season.playball;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -10,14 +10,11 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.Nullable;
 
-import com.season.playball.LogConsole;
-import com.season.playball.sin.interpolator.BallInterpolatorFactory;
-import com.season.playball.sin.interpolator.IInterpolator;
+import com.season.playball.interpolator.BallInterpolatorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +30,6 @@ public class BallView extends View {
 
     Paint paint;
     List<Ball> ballList;
-
-
-    private boolean running = true;
-    int time = 10;
-
 
     public BallView(Context context) {
         super(context);
@@ -55,31 +47,72 @@ public class BallView extends View {
 
     private void init(){
         ballList = new ArrayList<>();
-        paint = new Paint();
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStrokeWidth(10);
-        init2();
+        initBottomPaint();
     }
 
+    private boolean mStop = true;
     public void stop() {
-        running = false;
-        handler.removeMessages(1);
+        pause = true;
     }
 
-    public void start() {
-        running = false;
-        if (touchBall != null && touchBall.isTouched) {
-            running = true;
+    public void destroy() {
+        mStop = true;
+        synchronized (mSync) {
+            mSync.notify();
         }
-        for (Ball ballModel : ballList) {
-            if (ballModel.hasSpeed()){
-                ballModel.move();
-                running = true;
+        mRefreshThread = null;
+    }
+
+    private boolean pause = false;
+    public void start() {
+        if (touchBall != null && touchBall.isTouched) {
+
+        }
+        mStop = false;
+        pause = false;
+        if (mRefreshThread == null){
+            mRefreshThread = new RefreshThread();
+            mRefreshThread.start();
+        }else{
+            synchronized (mSync) {
+                mSync.notify();
             }
         }
-        crashCheck();
-        invalidate();
-        handler.sendEmptyMessageDelayed(1, time);
     }
+
+    private RefreshThread mRefreshThread;
+    private int[] mSync = new int[0];
+    private class RefreshThread extends Thread {
+        @Override
+        public void run() {
+            while (!mStop) {
+                for (Ball ballModel : ballList) {
+                    if (ballModel.hasSpeed()){
+                        ballModel.move();
+                    }
+                }
+                crashCheck();
+                postInvalidate();
+
+                if(!pause) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    continue;
+                }
+                synchronized (mSync) {
+                    try {
+                        mSync.wait();
+                    }catch(InterruptedException ignore){}
+                }
+            }
+        }
+    }
+
 
     void crashCheck() {
         for (Ball currentBall : ballList) {
@@ -142,7 +175,6 @@ public class BallView extends View {
                 }
                 touchBall = null;
                 touchBall = getTouchBall(x, y);
-                LogConsole.log("ACTION_DOWN " + touchBall);
                 if (touchBall != null) {
                     ballTouchExpand = new BallTouchExpand();
                     ballTouchExpand.ball = touchBall;
@@ -166,7 +198,6 @@ public class BallView extends View {
                 if (isBottomTouched){
                     release();
                 }else{
-                    LogConsole.log("ACTION_CANCEL " + touchBall);
                     if (touchBall != null) {
                         int index = getTouchIndex();
                         if (index < 0){
@@ -234,18 +265,6 @@ public class BallView extends View {
     }
 
 
-    private Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            if (running) {
-                start();
-            }
-        }
-
-        ;
-    };
-
-
-
     public int getTouchIndex(){
         if (ballTouchExpand != null){
             return ballTouchExpand.getTouchIndex();
@@ -269,9 +288,6 @@ public class BallView extends View {
      */
     public void add1Ball(Ball ball) {
         ballList.add(ball);
-        if (!running){
-            start();
-        }
     }
 
     /**
@@ -311,7 +327,7 @@ public class BallView extends View {
                             int color = 0xff000000 | new Random().nextInt(0x00ffffff);
                             mCirclePaint.setColor(color);
                             mCirclePointX = getWidth()/2;
-                            mCirclePointY = getTopHeight()  - mCircleRadius;
+                            mCirclePointY = getTopHeight();
                             invalidate();
                         }else{
                             setProgress(newProgress * recordProgressX / recordProgressY, newProgress, false);
@@ -344,35 +360,37 @@ public class BallView extends View {
     private ValueAnimator valueAnimator;//释放动画
 
 
-    private void init2() {
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setAntiAlias(true);//抗锯齿
-        paint.setDither(true);//防抖动
-        paint.setStyle(Paint.Style.FILL);//填充方式
+    private void initBottomPaint() {
+        mCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCirclePaint.setAntiAlias(true);//抗锯齿
+        mCirclePaint.setDither(true);//防抖动
+        mCirclePaint.setStyle(Paint.Style.FILL);//填充方式
         int color = 0xff000000 | new Random().nextInt(0x00ffffff);
-        paint.setColor(color);
-        mCirclePaint = paint;
+        mCirclePaint.setColor(color);
 
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);//初始化路径部分画笔
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        paint.setStyle(Paint.Style.FILL); ;
-        paint.setColor(Color.WHITE);
-        mPathPaint = paint;
+        mPathPaint = new Paint(Paint.ANTI_ALIAS_FLAG);//初始化路径部分画笔
+        mPathPaint.setAntiAlias(true);
+        mPathPaint.setDither(true);
+        mPathPaint.setStyle(Paint.Style.FILL); ;
+        mPathPaint.setColor(Color.WHITE);
 
         bgPaint.setColor(0xAAC9C9C9);
         mCircleRadius = 6;
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        updatePathLayout(false);
     }
 
     private void updatePathLayout(boolean bigger) {
         if (bigger){
             mCircleRadius = (int) Math.sqrt(mProgressX * mProgressX + mProgressY * mProgressY)/4;
         }
-        LogConsole.log("updatePathLayout : "+ mProgressX+", "+mProgressY);
-        LogConsole.log("updatePathLayout : "+ mCircleRadius);
         mCircleRadius = Math.min(80, mCircleRadius);
         mCirclePointX = getWidth()/2 + mProgressX;
-        mCirclePointY = getTopHeight() + mProgressY - mCircleRadius;
+        mCirclePointY = getTopHeight() + mProgressY;
         //重置
         mPath.reset();
         mPath.moveTo(0, getTopHeight());
