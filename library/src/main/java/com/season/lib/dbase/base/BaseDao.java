@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.season.lib.dbase.base.iterface.Column;
 import com.season.lib.dbase.base.iterface.Json;
 import com.season.lib.dbase.base.iterface.Table;
-import com.season.lib.util.IProguardFilterOnlyPublic;
+import com.season.lib.dbase.IProguardFilterOnlyPublic;
 
 /** 
  *  实体基类, 需要存在默认构造函数 用以反射

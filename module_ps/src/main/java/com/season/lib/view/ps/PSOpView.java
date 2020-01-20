@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.season.lib.ToolBitmapCache;
-import com.season.lib.util.Util;
-import com.season.lib.util.AutoUtils;
+import com.season.lib.util.PsUtil;
+import com.season.lib.dimen.AutoUtils;
 
 
 /**
@@ -340,7 +340,7 @@ public class PSOpView {
         path.lineTo(fixPoints[6], fixPoints[7]);
         path.close();
 
-        return Util.isTouchPointInPath(path, x, y);
+        return PsUtil.isTouchPointInPath(path, x, y);
     }
 
 

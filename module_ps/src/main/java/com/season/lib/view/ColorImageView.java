@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.season.lib.util.AutoUtils;
+import com.season.lib.dimen.AutoUtils;
 
 /**
  * Created by Administrator on 2017/10/13.

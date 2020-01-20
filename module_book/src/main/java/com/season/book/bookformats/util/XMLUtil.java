@@ -8,7 +8,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 /** XML辅助工具类
  * @author mingkg21

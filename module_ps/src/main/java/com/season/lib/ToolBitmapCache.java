@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.example.ps.R;
-import com.season.lib.util.AutoUtils;
-import com.season.lib.util.Util;
+import com.season.lib.dimen.AutoUtils;
+import com.season.lib.util.PsUtil;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -37,7 +37,7 @@ public class ToolBitmapCache {
         Set<String> keySet = bitmapHashMap.keySet();
         for (String key: keySet) {
             Bitmap bitmap = bitmapHashMap.get(key);
-            Util.recycleBitmaps(bitmap);
+            PsUtil.recycleBitmaps(bitmap);
         }
         bitmapHashMap.clear();
     }
@@ -59,21 +59,21 @@ public class ToolBitmapCache {
     public Bitmap getZoom(Context context){
         if (zoom == null || zoom.isRecycled()){
             zoom = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_zoom);
-            zoom = Util.scaleBitmap(zoom, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
+            zoom = PsUtil.scaleBitmap(zoom, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
         }
         return zoom;
     }
     public Bitmap getScaleX(Context context){
         if (scaleX == null || scaleX.isRecycled()){
             scaleX = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_zoom_h);
-            scaleX = Util.scaleBitmap(scaleX, AutoUtils.getPercentWidthSize(25), AutoUtils.getPercentWidthSize(60));
+            scaleX = PsUtil.scaleBitmap(scaleX, AutoUtils.getPercentWidthSize(25), AutoUtils.getPercentWidthSize(60));
         }
         return scaleX;
     }
     public Bitmap getClose(Context context){
         if (close == null || close.isRecycled()){
             close = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_delete);
-            close = Util.scaleBitmap(close, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
+            close = PsUtil.scaleBitmap(close, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
         }
         return close;
     }

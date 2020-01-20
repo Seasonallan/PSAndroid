@@ -16,7 +16,7 @@ import com.season.book.text.PatchParent;
 import com.season.book.text.SettingParam;
 import com.season.book.text.StyleText;
 import com.season.book.text.style.ImgPanelBGDrawableSpan;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 public class Page extends AbsPatch implements PatchParent{
 	private static final String TAG = Page.class.getSimpleName();

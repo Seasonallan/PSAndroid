@@ -24,7 +24,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.season.book.cartoon.photoview.PhotoViewAttacher;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 public class HorPageView extends ViewGroup implements
 		GestureDetector.OnGestureListener,

@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.dimen;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -11,6 +11,8 @@ import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
+
+import com.season.lib.log.Logger;
 
 /**
  * <pre>

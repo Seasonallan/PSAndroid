@@ -15,7 +15,7 @@ import android.database.Cursor;
 import com.season.example.BookContext;
 import com.season.lib.dbase.DBConfig;
 import com.season.lib.dbase.base.BaseDatabase;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 /**
  * 笔记数据库管理类

@@ -36,13 +36,13 @@ import android.view.ViewParent;
 import androidx.annotation.Nullable;
 
 import com.season.lib.bean.LayerItem;
-import com.season.lib.util.Util;
+import com.season.lib.util.PsUtil;
 import com.season.lib.animation.AnimationProvider;
-import com.season.lib.util.FileManager;
-import com.season.lib.util.ScreenUtils;
-import com.season.lib.util.ToolPaint;
-import com.season.lib.util.Logger;
-import com.season.lib.util.AutoUtils;
+import com.season.lib.file.FileManager;
+import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.dimen.ToolPaint;
+import com.season.lib.log.Logger;
+import com.season.lib.dimen.AutoUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -631,7 +631,7 @@ public class CustomTextView extends View implements ILayer {
     void drawBackground(Canvas canvas) {
         if (backgroudRes != 0) {
             if (preBackgroundInfo != backgroudRes) {
-                Util.recycleBitmaps(backgroundBitmap);
+                PsUtil.recycleBitmaps(backgroundBitmap);
                 backgroundBitmap = BitmapFactory.decodeResource(getResources(), backgroudRes);
             }
             if (backgroundBitmap != null && !backgroundBitmap.isRecycled()) {
@@ -829,7 +829,7 @@ public class CustomTextView extends View implements ILayer {
 
     @Override
     public void onRelease() {
-        Util.recycleBitmaps(backgroundBitmap);
+        PsUtil.recycleBitmaps(backgroundBitmap);
     }
 
     public float getTextSize() {
@@ -871,7 +871,7 @@ public class CustomTextView extends View implements ILayer {
     }
 
     public boolean setStrokecolor(String strokecolor) {
-        int colorNew = Util.getColor(strokecolor, paint.getColor());
+        int colorNew = PsUtil.getColor(strokecolor, paint.getColor());
         int color = strokepaint.getColor();
         if (color == colorNew) {
             return false;
@@ -915,11 +915,11 @@ public class CustomTextView extends View implements ILayer {
 //                Bitmap bitmap = Bitmap.createBitmap(8, getViewHeight(), Bitmap.Config.ARGB_8888);
 //                Canvas canvas = new Canvas(bitmap);
 //                canvas.drawRect(0, 0, bitmap.getWidth(), bitmap.getHeight(), paint);
-//                String startcolor = Util.getColorStr(bitmap.getPixel(0, 0));
-//                String endcolor = Util.getColorStr(bitmap.getPixel(bitmap.getWidth()-1 , getViewHeight()-1));
+//                String startcolor = PsUtil.getColorStr(bitmap.getPixel(0, 0));
+//                String endcolor = PsUtil.getColorStr(bitmap.getPixel(bitmap.getWidth()-1 , getViewHeight()-1));
 //                Logger.d("startcolor:"+startcolor+",endcolor:"+endcolor);
 //                setLinearGradient(startcolor,endcolor );
-//                Util.recycleBitmaps(bitmap);
+//                PsUtil.recycleBitmaps(bitmap);
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //                Logger.d("startcolor:"+e.toString());
@@ -1023,7 +1023,7 @@ public class CustomTextView extends View implements ILayer {
         endColorStr = "";
         int color = paint.getColor();
         if (!TextUtils.isEmpty(textcolor)) {
-            int colorNew = Util.getColor(textcolor, paint.getColor());
+            int colorNew = PsUtil.getColor(textcolor, paint.getColor());
             if (paint.getShader() != null) {
                 paint.setShader(null);
                 paint.setColor(colorNew);

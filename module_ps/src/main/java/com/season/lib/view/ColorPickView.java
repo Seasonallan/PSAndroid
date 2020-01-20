@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
-import com.season.lib.util.AutoUtils;
+import com.season.lib.dimen.AutoUtils;
 
 /**
  * 制作的背景

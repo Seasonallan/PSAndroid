@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.book;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -19,9 +19,9 @@ import com.season.book.os.SyncThreadPool;
 import com.season.book.text.html.CssProvider;
 import com.season.book.text.html.DataProvider;
 import com.season.book.text.html.ICssProvider;
-import com.season.lib.util.BitmapUtil;
-import com.season.lib.util.EncryptUtils;
-import com.season.lib.util.LogUtil;
+import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.book.EncryptUtils;
+import com.season.lib.log.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

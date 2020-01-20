@@ -22,12 +22,12 @@ import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerItem;
 import com.season.lib.bean.LayerEntity;
 import com.season.lib.util.Constant;
-import com.season.lib.util.FileManager;
-import com.season.lib.util.ScreenUtils;
+import com.season.lib.file.FileManager;
+import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.gif.GifMaker;
-import com.season.lib.util.Util;
-import com.season.lib.util.AreaAveragingScale;
-import com.season.lib.util.Logger;
+import com.season.lib.util.PsUtil;
+import com.season.lib.bitmap.AreaAveragingScale;
+import com.season.lib.log.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -144,8 +144,8 @@ public class PSCanvas extends RelativeLayout{
                         if (TextUtils.isEmpty(filePath)) {
                             continue;
                         }
-                        String fileType = Util.getFileType(filePath);
-                        if (Util.isGif(fileType)) {
+                        String fileType = PsUtil.getFileType(filePath);
+                        if (PsUtil.isGif(fileType)) {
                             return true;
                         }
                     }
@@ -155,8 +155,8 @@ public class PSCanvas extends RelativeLayout{
                         if (TextUtils.isEmpty(filePath)) {
                             continue;
                         }
-                        String fileType = Util.getFileType(filePath);
-                        if (Util.isGif(fileType)) {
+                        String fileType = PsUtil.getFileType(filePath);
+                        if (PsUtil.isGif(fileType)) {
                             return true;
                         }
                     }
@@ -435,7 +435,7 @@ public class PSCanvas extends RelativeLayout{
         } else {
             file = FileManager.getDiyFile(getContext(), ".png");
         }
-        String filePath = Util.saveBitmap(file, bitmap);
+        String filePath = PsUtil.saveBitmap(file, bitmap);
         if (filePath == null) {
             listener.onMakeGifFail();
             return;
@@ -1367,7 +1367,7 @@ public class PSCanvas extends RelativeLayout{
             if (bgOperate.visible1 == View.VISIBLE) {
                 int bgColor = bgOperate.color;
                 if (bgColor != Color.TRANSPARENT) {
-                    backInfoModel.setBackColorString(Util.getColorStr(bgColor));
+                    backInfoModel.setBackColorString(PsUtil.getColorStr(bgColor));
                 }
             } else if (bgOperate.visible2 == View.VISIBLE) {
                 backInfoModel.imageURLPathFile = bgOperate.imageFile;

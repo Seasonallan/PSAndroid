@@ -48,7 +48,7 @@ import com.season.book.text.html.HtmlParser.HtmlContentHandler;
 import com.season.book.text.html.HtmlParser.SizeInfo;
 import com.season.book.text.html.HtmlParser.TagHandler;
 import com.season.book.text.html.HtmlParser.TagInfo;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 public final class SurfingReaderHtmlParser extends HtmlParser{
 	SurfingReaderHtmlParser(ICssProvider cssProvider,

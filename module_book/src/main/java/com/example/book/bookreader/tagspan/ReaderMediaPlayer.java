@@ -23,7 +23,7 @@ import android.text.TextUtils;
 
 import com.season.book.text.html.DataProvider;
 import com.season.example.BookContext;
-import com.season.lib.util.FileUtil;
+import com.season.lib.file.FileUtil;
 import com.example.book.bookreader.model.Constants;
 import com.example.book.bookreader.media.BaseMediaPlayer;
 import com.example.book.bookreader.media.IMedia;

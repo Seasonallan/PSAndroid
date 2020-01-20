@@ -15,11 +15,11 @@ import android.widget.RelativeLayout;
 
 import com.example.ps.R;
 import com.season.lib.http.DownloadAPI;
-import com.season.lib.util.FileManager;
-import com.season.lib.util.ScreenUtils;
-import com.season.lib.util.Util;
+import com.season.lib.file.FileManager;
+import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.util.PsUtil;
 import com.season.lib.ToolBitmapCache;
-import com.season.lib.util.Logger;
+import com.season.lib.log.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -128,7 +128,7 @@ public class PSBackground {
     public void release() {
         if (list.size() > 0) {
             for (BgOperate op : list) {
-                Util.recycleBitmaps(op.bitmap);
+                PsUtil.recycleBitmaps(op.bitmap);
             }
             list.clear();
         }

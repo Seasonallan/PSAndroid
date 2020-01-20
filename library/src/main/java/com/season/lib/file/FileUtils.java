@@ -1,8 +1,11 @@
-package com.season.lib.util;
+package com.season.lib.file;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
+
+import com.season.lib.util.Constant;
+import com.season.lib.log.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

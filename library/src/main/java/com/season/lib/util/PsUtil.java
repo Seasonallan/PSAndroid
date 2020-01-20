@@ -22,7 +22,7 @@ import java.io.InputStream;
  *
  * @author chendong
  */
-public class Util {
+public class PsUtil {
 
     public static boolean isTouchPointInPath(Path path, int x, int y) {
         if (path == null) {

@@ -20,8 +20,8 @@ import com.season.book.text.layout.Layout;
 import com.season.book.text.layout.Page;
 import com.season.book.bookformats.PaserExceptionInfo;
 import com.season.book.os.LayoutThreadPool;
-import com.season.lib.util.ContextUtil;
-import com.season.lib.util.LogUtil;
+import com.season.lib.dimen.DimenUtil;
+import com.season.lib.log.LogUtil;
 
 /**
  * 页管理器
@@ -94,7 +94,7 @@ public class PageManager implements PatchParent{
 	 * @param layoutAll 是否整本排版(如果为非只排版当前章节的前后两章)
 	 */
 	public PageManager(Context context,PageManagerCallback callback,boolean layoutAll){
-		ContextUtil.init(context.getApplicationContext());
+		DimenUtil.init(context.getApplicationContext());
 		mCallback = callback;
 		mChapterList = new ArrayList<ChapterTask>();
 		mBindPageList = new LinkedList<Page>();

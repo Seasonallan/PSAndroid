@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.season.lib.util;
+package com.season.lib.book;
 
 import java.lang.reflect.Array;
 

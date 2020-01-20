@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
 
 import com.season.book.text.layout.Page;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 public class PageBitmapPicture implements IPagePicture{
 	private int mPageIndex;

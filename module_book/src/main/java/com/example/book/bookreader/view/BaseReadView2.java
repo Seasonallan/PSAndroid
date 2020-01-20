@@ -51,8 +51,8 @@ import com.season.book.text.style.AsyncDrawableSpan;
 import com.season.book.text.style.ClickActionSpan;
 import com.season.book.text.style.ClickAsyncDrawableSpan;
 import com.season.book.text.style.UrlSpna;
-import com.season.lib.util.ContextUtil;
-import com.season.lib.util.LogUtil;
+import com.season.lib.dimen.DimenUtil;
+import com.season.lib.log.LogUtil;
 
 /**
  * 1.管理控制翻页动画.
@@ -62,12 +62,12 @@ import com.season.lib.util.LogUtil;
 public class BaseReadView2 extends View implements PageManagerCallback,PageAnimController.PageCarver, ReadSetting.SettingListener
 	,ClickSpanHandler, ReaderMediaPlayer.PlayerListener {
 	private static final String TAG = BaseReadView2.class.getSimpleName();
-	private static final int PADDING_LEFT = ContextUtil.DIPToPX(25);
-	private static final int PADDING_RIGHT = ContextUtil.DIPToPX(25);
-	private static final int PADDING_TOP = ContextUtil.DIPToPX(10);
-	private static final int PADDING_BOTTOM = ContextUtil.DIPToPX(10);
-	private static final int PADDING_CONTENT_TOP = ContextUtil.DIPToPX(10);
-	private static final int PADDING_CONTENT_BOTTOM = ContextUtil.DIPToPX(10);
+	private static final int PADDING_LEFT = DimenUtil.DIPToPX(25);
+	private static final int PADDING_RIGHT = DimenUtil.DIPToPX(25);
+	private static final int PADDING_TOP = DimenUtil.DIPToPX(10);
+	private static final int PADDING_BOTTOM = DimenUtil.DIPToPX(10);
+	private static final int PADDING_CONTENT_TOP = DimenUtil.DIPToPX(10);
+	private static final int PADDING_CONTENT_BOTTOM = DimenUtil.DIPToPX(10);
 	/** 代表初始界面*/
 	private static final int INDEX_INITIAL_CONTENT = Integer.MIN_VALUE - 1;
 	private static final int REQUEST_INDEX_INITIAL_CONTENT = -Integer.MIN_VALUE;
@@ -575,7 +575,7 @@ public class BaseReadView2 extends View implements PageManagerCallback,PageAnimC
 				mMaxBatteryProgress.right,
 				mMaxBatteryProgress.bottom, mTempTextPaint);
 		Rect batteryRect = mBatteryDrawable.getBounds();
-		int clockX = batteryRect.right + ContextUtil.DIPToPX(5);
+		int clockX = batteryRect.right + DimenUtil.DIPToPX(5);
 		mReaderClockDrawable.setTextSize(mReadSetting.getMinFontSize());
 		mReaderClockDrawable.setTextColor(mReadSetting.getThemeDecorateTextColor());
 		mReaderClockDrawable.setBounds(clockX

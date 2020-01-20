@@ -2,7 +2,7 @@ package com.example.book.bookreader.model;
 
 import java.io.File;
 
-import com.season.lib.util.FileUtil;
+import com.season.lib.file.FileUtil;
 
 public class Constants {
 	public static final String bookStoredDiretory = FileUtil.getExternalStorageDirectory()

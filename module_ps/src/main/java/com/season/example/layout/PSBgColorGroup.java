@@ -8,8 +8,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.ps.R;
-import com.season.lib.util.AutoUtils;
-import com.season.lib.util.Logger;
+import com.season.lib.dimen.AutoUtils;
+import com.season.lib.log.Logger;
 import com.season.lib.view.ColorPickView;
 import com.season.lib.view.ps.PSBackground;
 import com.season.lib.view.ps.PSCanvas;

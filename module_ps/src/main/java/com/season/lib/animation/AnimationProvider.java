@@ -4,8 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 
-import com.season.lib.util.Logger;
-import com.season.lib.util.AutoUtils;
+import com.season.lib.log.Logger;
+import com.season.lib.dimen.AutoUtils;
 
 /**
  * Disc: 文字动效 模型伪抽象工厂类

@@ -1,7 +1,9 @@
-package com.season.lib.util;
+package com.season.lib.dimen;
 
 import android.content.Context;
 import android.content.res.Configuration;
+
+import com.season.lib.log.Logger;
 
 
 /**

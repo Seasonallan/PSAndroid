@@ -19,8 +19,8 @@ import android.widget.TextView;
 import com.example.book.R;
 import com.season.book.bookformats.BookInfo;
 import com.season.book.bookformats.Catalog;
-import com.season.lib.util.ContextUtil;
-import com.season.lib.util.LogUtil;
+import com.season.lib.dimen.DimenUtil;
+import com.season.lib.log.LogUtil;
 
 public class CatalogView extends FrameLayout{
 	private static final String TAG = CatalogView.class.getSimpleName();
@@ -266,11 +266,11 @@ public class CatalogView extends FrameLayout{
 				viewHolder.titileTV.setTextColor(getContext().getResources().getColor(R.color.common_black_6));
 				viewHolder.titileIndexTV.setTextColor(getContext().getResources().getColor(R.color.common_black_6));
 			}
-			float textSize = ContextUtil.DIPToPX(11);
+			float textSize = DimenUtil.DIPToPX(11);
 			for (int i = 1; i < catalog.getLayer(); i++) {
 				textSize *= 0.85f;
 			}
-			int paddingLeft = ContextUtil.DIPToPX(10) * catalog.getLayer();
+			int paddingLeft = DimenUtil.DIPToPX(10) * catalog.getLayer();
 			viewHolder.titileTV.setPadding(paddingLeft, convertView.getPaddingTop()
 					, convertView.getPaddingRight(), convertView.getPaddingBottom());
 			viewHolder.titileTV.setText(catalog.getText());

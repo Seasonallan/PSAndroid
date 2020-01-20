@@ -18,9 +18,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.season.lib.util.Util;
-import com.season.lib.util.Logger;
-import com.season.lib.util.FileManager;
+import com.season.lib.util.PsUtil;
+import com.season.lib.log.Logger;
+import com.season.lib.file.FileManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -400,7 +400,7 @@ public class CustomCanvas extends View{
         if (file == null){
             return null;
         }
-        String tuya1url = Util.saveBitmap(file, bitmap);
+        String tuya1url = PsUtil.saveBitmap(file, bitmap);
         return tuya1url;
     }
 

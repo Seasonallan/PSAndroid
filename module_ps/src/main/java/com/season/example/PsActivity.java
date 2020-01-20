@@ -26,10 +26,10 @@ import com.season.example.support.MosaicUtil;
 import com.season.lib.RoutePath;
 import com.season.lib.bean.LayerItem;
 import com.season.lib.gif.GifMaker;
+import com.season.lib.util.PsUtil;
 import com.season.lib.view.ps.CustomGifFrame;
-import com.season.lib.util.Util;
 import com.season.lib.view.ps.ILayer;
-import com.season.lib.util.Logger;
+import com.season.lib.log.Logger;
 import com.season.lib.http.DownloadAPI;
 import com.season.example.layout.PopInputLayout;
 import com.season.lib.view.ps.CustomGifMovie;
@@ -37,9 +37,9 @@ import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerEntity;
 import com.season.lib.view.ps.PSLayer;
 import com.season.lib.util.Constant;
-import com.season.lib.util.FileManager;
-import com.season.lib.util.FileUtils;
-import com.season.lib.util.ScreenUtils;
+import com.season.lib.file.FileManager;
+import com.season.lib.file.FileUtils;
+import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.view.ps.PSCanvas;
 import com.season.example.layout.TopDeleteLayout;
 import com.season.lib.view.ps.PSCoverView;
@@ -47,7 +47,7 @@ import com.season.lib.view.ps.CustomImageView;
 import com.season.lib.view.ps.CustomTextView;
 import com.season.lib.view.ps.CustomCanvas;
 import com.example.ps.R;
-import com.season.lib.util.AutoUtils;
+import com.season.lib.dimen.AutoUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -264,7 +264,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mPsCanvas.showBackground(Util.getColor(colorStr, 0x000000));
+                        mPsCanvas.showBackground(PsUtil.getColor(colorStr, 0x000000));
                         resetStatus();
                     }
                 });
@@ -292,7 +292,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     String url = item.getImageURL();
                     File file = new File(path);
                     if (file.isFile() && file.length() > 0) {
-                        String fileType = Util.getFileType(path);
+                        String fileType = PsUtil.getFileType(path);
                         Logger.d("fileType=" + fileType);
                         switch (item.getContentViewType()) {
                             //本地素材 绘图 要上传图片
@@ -300,7 +300,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                             case Constant.contentViewType.ContentViewTypeLocaImage://贴纸图层
                                 int imageWidth;
                                 int imageHeight;
-                                if (Util.isGif(fileType)) {//图片是Gif
+                                if (PsUtil.isGif(fileType)) {//图片是Gif
                                     CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
                                     boolean res = customGifMovie.setMovieResource(path);
                                     if (res) {//sometimes movie decode gif error url duration = 0
@@ -689,7 +689,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }
         Bitmap srcBitmap = mPsCanvas.getCacheBitmap();
         Bitmap bit = MosaicUtil.getMosaic(srcBitmap);
-        Util.recycleBitmaps(srcBitmap);
+        PsUtil.recycleBitmaps(srcBitmap);
         customCanvas.setMosaic(bit);
     }
 
@@ -855,7 +855,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         if (TextUtils.isEmpty(url)) {
             return;
         }
-        final File file = FileManager.getDiyMaterialFile(this,url.hashCode() + "", Util.getFileTri(url));
+        final File file = FileManager.getDiyMaterialFile(this,url.hashCode() + "", PsUtil.getFileTri(url));
         if (file == null) {
             return;
         }
@@ -891,9 +891,9 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     }
 
     public void addImageOrGifFromFile(boolean saveHistory, String url, String filePath) {
-        String fileType = Util.getFileType(filePath);
+        String fileType = PsUtil.getFileType(filePath);
         Logger.d("fileType>> " + fileType);
-        if (Util.isGif(fileType)) {
+        if (PsUtil.isGif(fileType)) {
             CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
             boolean res = customGifMovie.setMovieResource(filePath);
             if (res) {//sometimes movie decode gif error url duration = 0

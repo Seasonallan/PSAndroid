@@ -9,6 +9,8 @@ import java.util.Date;
 
 import android.text.TextUtils;
 
+import com.season.lib.file.FileUtil;
+
 /**
  * 捕捉程序异常保存到指定的文件
  * 

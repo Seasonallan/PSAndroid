@@ -12,32 +12,14 @@ import android.view.WindowManager;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2018-09-13 20:14
  */
-public class ScreenUtil {
+public class NavigationBarUtil {
 
     private final Activity mActivity;
-    private final Handler mHandler;
-    public ScreenUtil(Activity activity){
+    public NavigationBarUtil(Activity activity){
         this.mActivity = activity;
-        mHandler = new Handler(Looper.getMainLooper());
     }
 
     public void hideNavigationBar() {
-//        mActivity.   getWindow().getDecorView().setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_LOW_PROFILE
-//                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
-//        WindowManager.LayoutParams attrs = mActivity.getWindow().getAttributes();
-//        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN
-//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-//        mActivity.getWindow().setAttributes(attrs);
-//
-//        mHandler.removeCallbacks(mFullScreenRunnable);
-//        mHandler.postDelayed(mFullScreenRunnable,500);
-
 
         WindowManager.LayoutParams attrs = mActivity.getWindow().getAttributes();
         attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
@@ -85,28 +67,11 @@ public class ScreenUtil {
     }
 
     public void showNavigationBar() {
-//        mActivity.  getWindow().getDecorView().setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//        );
-
 
         WindowManager.LayoutParams attrs = mActivity.getWindow().getAttributes();
         attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
         mActivity.getWindow().setAttributes(attrs);
 
-//        View decorView = mActivity.getWindow().getDecorView();
-//        int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
-//        decorView.setSystemUiVisibility(uiOptions);
     }
 
-    private Runnable mFullScreenRunnable = new Runnable() {
-        @Override
-        public void run() {
-            WindowManager.LayoutParams attrs = mActivity.getWindow().getAttributes();
-            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-            mActivity.getWindow().setAttributes(attrs);
-        }
-    };
 }

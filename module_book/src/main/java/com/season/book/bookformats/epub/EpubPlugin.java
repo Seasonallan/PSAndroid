@@ -24,8 +24,8 @@ import com.season.book.bookformats.Catalog;
 import com.season.book.bookformats.Chapter;
 import com.season.book.bookformats.FormatPlugin;
 import com.season.book.bookformats.NoSupportBookFormatException;
-import com.season.lib.util.EncryptUtils;
-import com.season.lib.util.LogUtil;
+import com.season.lib.book.EncryptUtils;
+import com.season.lib.log.LogUtil;
 
 /** EPUB格式书籍的解析
  * @author mingkg21

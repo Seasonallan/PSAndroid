@@ -2,7 +2,7 @@ package com.season.lib.animation;
 
 import android.graphics.Canvas;
 
-import com.season.lib.util.Logger;
+import com.season.lib.log.Logger;
 
 
 /**

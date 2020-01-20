@@ -2,7 +2,7 @@ package com.example.book.bookreader.view;
 
 import java.util.Calendar;
 
-import com.season.lib.util.ContextUtil;
+import com.season.lib.dimen.DimenUtil;
 
 import android.content.Context;
 import android.database.ContentObserver;
@@ -42,7 +42,7 @@ public class ReaderClockDrawable extends Drawable{
 		}
 		setFormat();
 		mTextPaint = new TextPaint();
-		mTextPaint.setTextSize(ContextUtil.DIPToPX(12));
+		mTextPaint.setTextSize(DimenUtil.DIPToPX(12));
 		mTextPaint.setColor(Color.BLACK);
 		mTextPaint.setAntiAlias(true);
 	}

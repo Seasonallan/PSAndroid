@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 
 import com.season.book.text.PageManager;
 import com.season.book.text.SettingParam;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 /** 
  *  

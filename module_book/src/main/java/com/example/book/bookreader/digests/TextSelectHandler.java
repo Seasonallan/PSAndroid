@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 
 import com.example.book.R;
 import com.season.example.BookContext;
-import com.season.lib.util.BitmapUtil;
+import com.season.lib.bitmap.BitmapUtil;
 
 import java.util.ArrayList;
 

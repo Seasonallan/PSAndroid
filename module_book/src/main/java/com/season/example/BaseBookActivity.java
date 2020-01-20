@@ -40,9 +40,9 @@ import com.season.book.bookformats.FormatPlugin;
 import com.season.book.bookformats.PluginManager;
 import com.season.book.os.SyncThreadPool;
 import com.season.lib.RoutePath;
-import com.season.lib.util.FileUtil;
-import com.season.lib.util.LogUtil;
-import com.season.lib.util.ScreenUtil;
+import com.season.lib.file.FileUtil;
+import com.season.lib.log.LogUtil;
+import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.StatusBarUtil;
 import com.season.lib.util.ToastUtil;
 
@@ -88,7 +88,7 @@ public class BaseBookActivity extends Activity implements
 			finish();
 			return;
 		}
-        new ScreenUtil(this).hideNavigationBar();
+        new NavigationBarUtil(this).hideNavigationBar();
         StatusBarUtil.setColor(this, 0xff30302E);
        // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
 

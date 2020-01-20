@@ -9,10 +9,10 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import com.season.lib.util.Util;
+import com.season.lib.util.PsUtil;
 import com.season.lib.ToolBitmapCache;
 import com.season.lib.view.ps.PSLayer;
-import com.season.lib.util.AutoUtils;
+import com.season.lib.dimen.AutoUtils;
 
 /**
  * Disc: 裁剪操作框，区别于图层操作框是没有删除功能
@@ -247,7 +247,7 @@ public class CropOpView {
         path.lineTo(fixPoints[6], fixPoints[7]);
         path.close();
 
-        return Util.isTouchPointInPath(path, x, y);
+        return PsUtil.isTouchPointInPath(path, x, y);
     }
 
 }

@@ -14,7 +14,7 @@ import android.view.WindowManager;
 
 import com.example.book.bookreader.anim.PageAnimController;
 import com.season.book.pdf.PdfReaderView;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 
 /**

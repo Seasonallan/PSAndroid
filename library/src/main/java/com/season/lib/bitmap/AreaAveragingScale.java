@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.bitmap;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 

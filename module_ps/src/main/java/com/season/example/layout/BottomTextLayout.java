@@ -10,7 +10,6 @@ import com.season.lib.animation.AnimationProvider;
 
 /**
  * 字体动画
- * author：Create lzx on 17/5/9 19:37
  */
 public abstract class BottomTextLayout extends FrameLayout {
 

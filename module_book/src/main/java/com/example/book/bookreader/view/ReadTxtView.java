@@ -34,7 +34,7 @@ import com.season.book.text.PagePicture;
 import com.season.book.txtumd.TxtUmdBasePlugin;
 import com.season.book.txtumd.txt.TxtPlugin;
 import com.season.book.txtumd.umd.UMDPlugin;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 import com.season.lib.util.PreferencesUtil;
 
 import java.text.DecimalFormat;

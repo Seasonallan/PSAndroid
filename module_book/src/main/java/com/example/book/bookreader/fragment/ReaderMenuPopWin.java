@@ -34,7 +34,7 @@ import com.example.book.bookreader.model.MenuItem;
 import com.example.book.bookreader.adapter.MenuItemAdapter;
 import com.example.book.bookreader.model.ReadSetting;
 import com.example.book.bookreader.tagspan.ReaderMediaPlayer;
-import com.season.lib.util.ScreenUtil;
+import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 import com.example.book.bookreader.view.CheckedGridView;
 import com.example.book.bookreader.view.CheckedGridView.OnItemCheckedStateChangeListener;
@@ -75,11 +75,11 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 	private ImageButton mVoiceStateBut;
 	private boolean isVoicePlay;
 	private AudioManager mAudioManager;
-    private ScreenUtil mScreenUtil;
+    private NavigationBarUtil mNavigationBarUtil;
 	public ReaderMenuPopWin(View parent,Activity activity,Book book,IActionCallback callback) {
 		super(parent, LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		mActivity = activity;
-        mScreenUtil = new ScreenUtil(activity);
+        mNavigationBarUtil = new NavigationBarUtil(activity);
 		mReadSetting = ReadSetting.getInstance(mActivity);
 		mBook = book;
 		mActionCallback = callback;
@@ -567,7 +567,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 	protected void onPreShow() {
 		hideAllViews();
 
-        mScreenUtil.showNavigationBar();
+        mNavigationBarUtil.showNavigationBar();
 
 		if(!ReaderMediaPlayer.getInstance().isPlayerStop()){
 			mVoiceLayout.setVisibility(View.GONE);
@@ -583,7 +583,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 	@Override
 	protected void onDismiss() {
 		super.onDismiss();
-        mScreenUtil.hideNavigationBar();
+        mNavigationBarUtil.hideNavigationBar();
 	}
 
 	@Override

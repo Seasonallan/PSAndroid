@@ -14,7 +14,7 @@ import android.graphics.RectF;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 /**
  * txt umd解码基类

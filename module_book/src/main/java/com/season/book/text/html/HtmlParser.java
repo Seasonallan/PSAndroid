@@ -20,7 +20,7 @@ import android.text.style.CharacterStyle;
 import com.season.book.text.html.css.PropertyValue;
 import com.season.book.text.style.Border;
 import com.season.book.text.StyleText;
-import com.season.lib.util.ContextUtil;
+import com.season.lib.dimen.DimenUtil;
 import com.season.book.text.PageManager;
 
 public abstract class HtmlParser {
@@ -127,11 +127,11 @@ public abstract class HtmlParser {
 			Integer s = handleSize(string);
 			if(s == null){
 				if("thin".equals(string)){
-					s = ContextUtil.DIPToPX(1);
+					s = DimenUtil.DIPToPX(1);
 				}else if("medium".equals(string)){
-					s = ContextUtil.DIPToPX(2);
+					s = DimenUtil.DIPToPX(2);
 				}else if("thick".equals(string)){
-					s = ContextUtil.DIPToPX(3);
+					s = DimenUtil.DIPToPX(3);
 				}
 			}
 			return s;

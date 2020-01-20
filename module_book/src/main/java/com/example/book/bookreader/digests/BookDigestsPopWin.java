@@ -15,7 +15,7 @@ import android.widget.PopupWindow;
 
 import com.example.book.R;
 import com.season.example.BookContext;
-import com.season.lib.util.DimensionsUtil;
+import com.season.lib.dimen.DimenUtil;
 import com.season.lib.util.ToastUtil;
 
 import java.util.Date;
@@ -25,7 +25,7 @@ public class BookDigestsPopWin extends PopupWindow {
 	public final static int VIEW_TYPE_MAGNIFIER = 1;
 	public final static int VIEW_TYPE_MENU_1 = VIEW_TYPE_MAGNIFIER + 1;
 	public final static int VIEW_TYPE_MENU_2 = VIEW_TYPE_MAGNIFIER + 2;
-	private final static int SHOW_WIN_HIGHT = DimensionsUtil.dip2px(50, BookContext.getInstance());//游标和view的距离，可依据需要调整
+	private final static int SHOW_WIN_HIGHT = DimenUtil.dip2px(BookContext.getInstance(), 50);//游标和view的距离，可依据需要调整
 	
 	private Activity mContext;
 	private AbsTextSelectHandler mTextSelectHandler;

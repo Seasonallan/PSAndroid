@@ -10,8 +10,8 @@ import android.util.Log;
 
 import com.season.lib.gif.extend.LZWEncoderOrderHolder;
 import com.season.lib.gif.extend.ThreadGifEncoder;
-import com.season.lib.util.Util;
-import com.season.lib.util.Logger;
+import com.season.lib.util.PsUtil;
+import com.season.lib.log.Logger;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -240,7 +240,7 @@ public class GifMaker {
 
           mEncodeOrders.add(holder);
         }
-        Util.recycleBitmaps(mBitmap);
+        PsUtil.recycleBitmaps(mBitmap);
         workDone();
       } catch (Exception e) {
         e.printStackTrace();

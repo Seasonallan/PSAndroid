@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.season.book.bookformats.epub.Resource;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 
 /** 读取电子书内容基类，具体的书籍格式解析需继承此类实现具体的解析。

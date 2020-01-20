@@ -12,7 +12,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 import com.season.book.text.html.DataProvider;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 /**
  * 异步图片样式

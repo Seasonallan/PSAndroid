@@ -9,7 +9,7 @@ import com.season.book.text.style.Border;
 import com.season.book.text.style.FloatSpan;
 import com.season.book.text.style.ImgPanelBGDrawableSpan;
 import com.season.book.text.style.SpannableStringBuilder;
-import com.season.lib.util.ArrayMap;
+import com.season.lib.book.ArrayMap;
 
 public final class StyleText{
 	public static final int PANLE_TYPE_P = 0;

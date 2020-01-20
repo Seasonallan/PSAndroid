@@ -17,17 +17,17 @@ import com.example.book.bookreader.model.ReadSetting;
 import com.season.example.BookContext;
 import com.example.book.bookreader.anim.AutoAnimController;
 import com.example.book.bookreader.anim.PageAnimController;
-import com.season.lib.util.DimensionsUtil;
-import com.season.lib.util.LogUtil;
+import com.season.lib.dimen.DimenUtil;
+import com.season.lib.log.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener {
 	protected static final String TAG = AbsReadView.class.getSimpleName();
-	protected static final int PADDING_LEFT = DimensionsUtil.dip2px(15, BookContext.getInstance());
-	protected static final int PADDING_RIGHT = DimensionsUtil.dip2px(15, BookContext.getInstance());
-	protected static final int PADDING_TOP = DimensionsUtil.dip2px(10, BookContext.getInstance());
-	protected static final int PADDING_BOTTOM = DimensionsUtil.dip2px(8, BookContext.getInstance());
-	protected static final int PADDING_CONTENT_TOP = DimensionsUtil.dip2px(15, BookContext.getInstance());
-	protected static final int PADDING_CONTENT_BOTTOM = DimensionsUtil.dip2px(2, BookContext.getInstance());
+	protected static final int PADDING_LEFT = DimenUtil.dip2px(15, BookContext.getInstance());
+	protected static final int PADDING_RIGHT = DimenUtil.dip2px(15, BookContext.getInstance());
+	protected static final int PADDING_TOP = DimenUtil.dip2px(10, BookContext.getInstance());
+	protected static final int PADDING_BOTTOM = DimenUtil.dip2px(8, BookContext.getInstance());
+	protected static final int PADDING_CONTENT_TOP = DimenUtil.dip2px(15, BookContext.getInstance());
+	protected static final int PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(2, BookContext.getInstance());
 	/** 代表初始界面*/
 	protected static final int INDEX_INITIAL_CONTENT = Integer.MIN_VALUE - 1;
 	protected static final int REQUEST_INDEX_INITIAL_CONTENT = -Integer.MIN_VALUE;

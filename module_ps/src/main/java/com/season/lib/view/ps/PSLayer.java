@@ -16,10 +16,10 @@ import android.widget.RelativeLayout;
 import com.season.lib.bean.LayerItem;
 import com.season.lib.animation.MatrixAnimation;
 import com.season.lib.util.Constant;
-import com.season.lib.util.MathUtil;
-import com.season.lib.util.ScreenUtils;
-import com.season.lib.util.ToolPaint;
-import com.season.lib.util.Logger;
+import com.season.lib.dimen.MathUtil;
+import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.dimen.ToolPaint;
+import com.season.lib.log.Logger;
 
 
 /**

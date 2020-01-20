@@ -15,7 +15,7 @@ import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.TreeMap;

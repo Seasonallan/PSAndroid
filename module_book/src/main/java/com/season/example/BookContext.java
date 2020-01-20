@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 
-import com.season.lib.util.ContextUtil;
+import com.season.lib.dimen.DimenUtil;
 
 public class BookContext extends Application {
 	private static Context sContext;
@@ -17,12 +17,12 @@ public class BookContext extends Application {
 		if (context == null){
 			sContext = null;
 			mHandler = null;
-			ContextUtil.init(null);
+			DimenUtil.init(null);
 			return;
 		}
 		sContext = context;
 		mHandler = new Handler(context.getMainLooper());
-        ContextUtil.init(context);
+        DimenUtil.init(context);
 	}
 
 	@Override

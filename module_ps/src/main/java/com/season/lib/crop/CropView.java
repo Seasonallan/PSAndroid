@@ -14,11 +14,11 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.util.Util;
+import com.season.lib.util.PsUtil;
 import com.season.lib.view.ps.ScaleDetector;
 import com.season.lib.view.ps.PSLayer;
-import com.season.lib.util.Logger;
-import com.season.lib.util.FileManager;
+import com.season.lib.log.Logger;
+import com.season.lib.file.FileManager;
 
 import java.io.File;
 
@@ -117,8 +117,8 @@ public class CropView extends View{
             screenCanvas.drawBitmap(bitmap, mViewMatrix, null);
         }
         try {
-            Util.recycleBitmaps(preViewBitmap);
-            preViewBitmap = Util.cutBitmap(screenBitmap, widthPreview, widthPreview, currentPosition[0], currentPosition[1], false);
+            PsUtil.recycleBitmaps(preViewBitmap);
+            preViewBitmap = PsUtil.cutBitmap(screenBitmap, widthPreview, widthPreview, currentPosition[0], currentPosition[1], false);
             canvas.drawBitmap(preViewBitmap, 0, 0, null);
             canvas.drawLine(0, widthPreview/2, widthPreview, widthPreview/2, whitePaint);
             canvas.drawLine(widthPreview/2, 0, widthPreview/2, widthPreview, whitePaint);
@@ -286,7 +286,7 @@ public class CropView extends View{
             if (cropTool != null) {
                 cropTool.onTouchUp(ev);
             }
-            Util.recycleBitmaps(screenBitmap);
+            PsUtil.recycleBitmaps(screenBitmap);
             screenBitmap = null;
             invalidate();
             if (listener != null){
@@ -331,7 +331,7 @@ public class CropView extends View{
         if (bitmap == null){
             return;
         }
-        Util.recycleBitmaps(bitmap, screenBitmap, preViewBitmap);
+        PsUtil.recycleBitmaps(bitmap, screenBitmap, preViewBitmap);
         if (cropTool != null){
             cropTool.release();
         }

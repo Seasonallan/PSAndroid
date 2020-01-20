@@ -45,7 +45,7 @@ import com.season.book.text.style.AsyncDrawableSpan;
 import com.season.book.text.style.ClickActionSpan;
 import com.season.book.text.style.ClickAsyncDrawableSpan;
 import com.season.book.text.style.UrlSpna;
-import com.season.lib.util.LogUtil;
+import com.season.lib.log.LogUtil;
 import com.season.lib.util.PreferencesUtil;
 
 import java.text.SimpleDateFormat;

@@ -71,7 +71,7 @@ public class BookDigestsRemarksDialog extends Dialog {
 		}
 		preColorView();
 
-       // ScreenUtil.hideNavigationBar(this);
+       // NavigationBarUtil.hideNavigationBar(this);
 	
 	}
 

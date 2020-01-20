@@ -15,7 +15,7 @@ import com.season.example.BookContext;
 import com.season.book.text.style.ReplacementSpan;
 import com.season.book.text.style.ResourceSpan;
 import com.example.book.bookreader.tagspan.ReaderMediaPlayer.Frame;
-import com.season.lib.util.ContextUtil;
+import com.season.lib.dimen.DimenUtil;
 
 public class VideoSpan extends ReplacementSpan implements ResourceSpan,IMediaSpan {
 	private String mSrc;
@@ -88,7 +88,7 @@ public class VideoSpan extends ReplacementSpan implements ResourceSpan,IMediaSpa
 		int maxW = right - left;
 		int maxH = bottom - top;
 		canvas.save();
-		int strokeWidth = ContextUtil.DIPToPX(1);
+		int strokeWidth = DimenUtil.DIPToPX(1);
 		int strokeDW = strokeWidth * 2;
 		canvas.clipRect(left - strokeDW, top - strokeDW, right + strokeDW, bottom + strokeDW);
 		canvas.drawColor(Color.BLACK);

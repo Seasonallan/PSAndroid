@@ -13,7 +13,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.season.lib.gif.movie.DelayDecoder;
-import com.season.lib.util.Logger;
+import com.season.lib.log.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;

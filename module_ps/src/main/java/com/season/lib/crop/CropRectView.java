@@ -11,11 +11,11 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-import com.season.lib.util.Util;
+import com.season.lib.util.PsUtil;
 import com.season.lib.view.ps.ScaleDetector;
 import com.season.lib.view.ps.PSLayer;
-import com.season.lib.util.Logger;
-import com.season.lib.util.MathUtil;
+import com.season.lib.log.Logger;
+import com.season.lib.dimen.MathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,12 +63,12 @@ public class CropRectView extends CropTool {
 
     @Override
     public void release() {
-        Util.recycleBitmaps(cropBitmap);
+        PsUtil.recycleBitmaps(cropBitmap);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        Util.recycleBitmaps(cropLayer);
+        PsUtil.recycleBitmaps(cropLayer);
         cropLayer = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvasCrop = new Canvas(cropLayer);
         canvasCrop.drawARGB(200, 0 , 0, 0);
@@ -286,8 +286,8 @@ public class CropRectView extends CropTool {
 //            paintResult.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
 //            canvasBefore.drawBitmap(cropBitmap, mOpMatrix, paintResult);
 //
-//            Util.saveBitmap(new File(filePath), Util.cutBitmap(beforeBitmap,  right - left, bottom - top, left, top));
-//            Util.recycleBitmaps(beforeBitmap);
+//            PsUtil.saveBitmap(new File(filePath), PsUtil.cutBitmap(beforeBitmap,  right - left, bottom - top, left, top));
+//            PsUtil.recycleBitmaps(beforeBitmap);
 
            Bitmap beforeBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvasBefore = new Canvas(beforeBitmap);
@@ -304,8 +304,8 @@ public class CropRectView extends CropTool {
             paintResult.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawBitmap(beforeBitmap, 0, 0, paintResult);
 
-            Util.saveBitmap(new File(filePath), Util.cutBitmap(result,  right - left, bottom - top, left, top));
-            Util.recycleBitmaps(beforeBitmap, result);
+            PsUtil.saveBitmap(new File(filePath), PsUtil.cutBitmap(result,  right - left, bottom - top, left, top));
+            PsUtil.recycleBitmaps(beforeBitmap, result);
         }
     }
 }

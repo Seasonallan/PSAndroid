@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.file;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,6 +16,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
+
+import com.season.lib.log.LogUtil;
 
 /**
  * 文件操作工具
@@ -198,7 +200,6 @@ public final class FileUtil {
 	}
 	/**
 	 * 检测目录是否存在，不存在就尝试创建目录
-	 * @param path 文件目录
 	 * @return 目录是否可用
 	 */
 	public static boolean checkDir(String dirPath){

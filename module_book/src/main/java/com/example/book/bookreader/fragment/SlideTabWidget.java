@@ -1,6 +1,6 @@
 package com.example.book.bookreader.fragment;
 
-import com.season.lib.util.ContextUtil;
+import com.season.lib.dimen.DimenUtil;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -43,8 +43,8 @@ public class SlideTabWidget extends TabWidget {
 
 	private void init(){
 		mCotentId = android.R.id.title;
-		mDrawHeight = ContextUtil.DIPToPX(3);
-		mPaddingWidth = ContextUtil.DIPToPX(10);
+		mDrawHeight = DimenUtil.DIPToPX(3);
+		mPaddingWidth = DimenUtil.DIPToPX(10);
 		mOffSetY = 0;
 		mOffSetX = 0;
 		onInit();
@@ -163,7 +163,7 @@ public class SlideTabWidget extends TabWidget {
 			}else{
 				if(mDrawHeight < 0){
 					if(mDrawHeight == LayoutParams.WRAP_CONTENT){
-						mDrawHeight = ContextUtil.DIPToPX(3);
+						mDrawHeight = DimenUtil.DIPToPX(3);
 						mDrawWidth = minCotentWidth - mPaddingWidth * 2;
 					}else{
 						mDrawHeight = currentView.getHeight();

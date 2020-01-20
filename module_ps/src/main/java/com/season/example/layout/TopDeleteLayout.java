@@ -12,10 +12,6 @@ import android.widget.TextView;
 import com.example.ps.R;
 
 
-/**
- * Created by Administrator on 2017/10/31.
- */
-
 public class TopDeleteLayout {
     ImageView del_iv;
     TextView del_tv;

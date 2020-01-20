@@ -23,8 +23,8 @@ import com.season.book.text.style.ClickActionSpan;
 import com.season.book.text.style.FloatSpan;
 import com.season.book.text.style.ReplacementSpan;
 import com.season.book.text.style.ResourceSpan;
-import com.season.lib.util.ContextUtil;
-import com.season.lib.util.LogUtil;
+import com.season.lib.dimen.DimenUtil;
+import com.season.lib.log.LogUtil;
 
 public class Line extends Patch{
 	private static final String TAG = Line.class.getSimpleName();;
@@ -468,7 +468,7 @@ public class Line extends Patch{
 			RectF clickRectF = new RectF();
 			for(int i = getStart();i <= getEnd();i++){
 				RectF rect = textSizeMap.get(i);
-				int errorBand = ContextUtil.DIPToPX(5);
+				int errorBand = DimenUtil.DIPToPX(5);
 				int left = (int) (rect.left - errorBand);
 				int right = (int) (rect.right + errorBand);
 				if(rect != null && left <= x && right >= x){

@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.bitmap;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -27,6 +27,9 @@ import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+
+import com.season.lib.file.FileUtil;
+import com.season.lib.log.LogUtil;
 
 public class BitmapUtil {
 

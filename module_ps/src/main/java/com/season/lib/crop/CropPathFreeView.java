@@ -12,7 +12,7 @@ import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 import android.view.MotionEvent;
 
-import com.season.lib.util.Util;
+import com.season.lib.util.PsUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -130,7 +130,7 @@ public class CropPathFreeView extends CropTool{
         if (itemPath != null){
             canvas.drawPath(itemPath, paintPath);
         }else{
-            Util.recycleBitmaps(cropLayer);
+            PsUtil.recycleBitmaps(cropLayer);
             cropLayer = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvasCrop = new Canvas(cropLayer);
             canvasCrop.drawARGB(180, 0, 0, 0);
@@ -228,8 +228,8 @@ public class CropPathFreeView extends CropTool{
             paintResult.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawBitmap(beforeBitmap, 0, 0, paintResult);
 
-            Util.saveBitmap(new File(filePath), Util.cutBitmap(result, right - left, bottom - top, left, top));
-            Util.recycleBitmaps(beforeBitmap, result);
+            PsUtil.saveBitmap(new File(filePath), PsUtil.cutBitmap(result, right - left, bottom - top, left, top));
+            PsUtil.recycleBitmaps(beforeBitmap, result);
         }
     }
 

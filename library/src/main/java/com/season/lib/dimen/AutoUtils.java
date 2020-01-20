@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.dimen;
 
 import android.app.Activity;
 import android.content.Context;

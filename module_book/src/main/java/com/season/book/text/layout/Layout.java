@@ -12,8 +12,8 @@ import com.season.book.text.StyleText;
 import com.season.book.text.Util;
 import com.season.book.text.style.BlockquoteSpan;
 import com.season.book.text.style.FloatSpan;
-import com.season.lib.util.ArrayMap;
-import com.season.lib.util.LogUtil;
+import com.season.lib.book.ArrayMap;
+import com.season.lib.log.LogUtil;
 import com.season.book.text.PageManager;
 
 /**

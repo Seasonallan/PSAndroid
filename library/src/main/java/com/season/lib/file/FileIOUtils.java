@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.file;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

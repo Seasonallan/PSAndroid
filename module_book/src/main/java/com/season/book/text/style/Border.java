@@ -7,7 +7,7 @@ import android.graphics.Paint;
 import android.text.TextUtils;
 
 import com.season.book.text.StyleText;
-import com.season.lib.util.ContextUtil;
+import com.season.lib.dimen.DimenUtil;
 
 public class Border {
 	/** 定义无边框*/
@@ -35,7 +35,7 @@ public class Border {
 	
 	public Border(){
 		this(TYPE_NONE);
-		setWidth(ContextUtil.DIPToPX(2));
+		setWidth(DimenUtil.DIPToPX(2));
 		setCorol(Color.BLACK);
 	}
 	
@@ -56,7 +56,7 @@ public class Border {
 		setRightType(rightType);
 		setTopType(topType);
 		setBottomType(bottomType);
-		setWidth(ContextUtil.DIPToPX(2));
+		setWidth(DimenUtil.DIPToPX(2));
 		setCorol(Color.BLACK);
 	}
 	

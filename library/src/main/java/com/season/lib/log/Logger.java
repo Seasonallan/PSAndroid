@@ -1,4 +1,4 @@
-package com.season.lib.util;
+package com.season.lib.log;
 
 import android.util.Log;
 

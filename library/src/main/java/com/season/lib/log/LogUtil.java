@@ -1,10 +1,12 @@
-package com.season.lib.util;
+package com.season.lib.log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.season.lib.file.FileUtil;
 
 /**
  * LOG日志工具类；如果需要指定是否需要输入，指定的TAG，知道的输出目录，调用之前需要调用init()方法
