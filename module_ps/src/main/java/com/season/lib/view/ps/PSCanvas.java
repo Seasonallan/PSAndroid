@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -63,17 +62,12 @@ public class PSCanvas extends RelativeLayout{
     private float left = Float.MAX_VALUE, top = Float.MAX_VALUE, right = Float.MIN_VALUE, bottom = Float.MIN_VALUE;
     private int makeType = 1; //1是默认静图720 动图360   2是微信分享静图300 动图240   3是本地，文件保存地址修正
     private int finalGifWidthHeight = 480;
-    public static final int DEFAULT = 1;
     public static final int WEIXIN = 2;
     public static final int LOCAL = 3;
     public static final int ONLY_LAYER = 4;//不绘制底图，只绘制图层
-    public static final int Type_VIDEO_TO_GIF = 5;//不绘制底图，只绘制图层
-    public static final int Type_VIDEO_TO_IMAGE_BG_LAYER_IS_ANIME_GIF = 6;//生成表情包，地图是静态图，图片是动图
     int maxCount = 100;
     int resortCount = 1;//由于数量太多缩小合成的数量倍数
     private boolean isPreview;
-    private Bitmap bitmapPreview;
-    private RefreshListener refreshListener;
     private GifMaker.OnGifMakerListener onGifMakerListener;
     int position = -1;
     //所有的操作列表
@@ -81,30 +75,10 @@ public class PSCanvas extends RelativeLayout{
     //背景控制
     public PSBackground backgroundView;
     private List<Bitmap> bitmapListVideoToGif;
-    private boolean isTexttureSeek;
-    private int defaultDealy = 100;
-    private Bitmap videoToGif_Static_Image_Bitmap;
-
-    public boolean isPreview() {
-        return isPreview;
-    }
-
-    public void setPreview(boolean preview) {
-        isPreview = preview;
-    }
-
-    public int getOffsetX() {
-        return offsetX;
-    }
 
     public void setOffsetX(int offsetX) {
         this.offsetX = offsetX;
     }
-
-    public int getOffsetY() {
-        return offsetY;
-    }
-
     public void setOffsetY(int offsetY) {
         this.offsetY = offsetY;
     }
@@ -112,12 +86,7 @@ public class PSCanvas extends RelativeLayout{
     //获取当前画布的截图，用于涂鸦中的马赛克功能
     public Bitmap getCacheBitmap() {
         Bitmap bitmap;
-        if (backgroundView.currentOperate.visible3 == View.VISIBLE) {
-            //bitmap = backgroundView.videoView.getBitmap();
-            bitmap = backgroundView.currentOperate.bitmap;
-        } else {
-            bitmap = backgroundView.currentOperate.bitmap;
-        }
+        bitmap = backgroundView.currentOperate.bitmap;
         if (bitmap != null && !bitmap.isRecycled()) {
             Bitmap bitmapResult = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.RGB_565);
             bitmap = scaleBitmap(bitmap, getWidth(), getHeight());
@@ -300,15 +269,6 @@ public class PSCanvas extends RelativeLayout{
         int duration = relyView.getDuration();
         int delay = relyView.getDelay();
         int count = 1;
-        if (makeType == PSCanvas.ONLY_LAYER && isVideo) {
-            //由于新需求，需要上传合成结果的视频，且这个视频的原速的。
-            //ONLY_LAYER模式下，生成和视频一样的长的gif，不受速度影响
-            PSBackground.BgOperate bgOperate = backgroundView.currentOperate;
-            if (bgOperate.rate != 0) {
-                duration *= bgOperate.rate;
-                delay *= bgOperate.rate;
-            }
-        }
         /**
          * 根据总时长和间隔时间，确定出总帧数
          * Gifmaker中添加的帧数等于总帧数，就结束添加帧了。
@@ -404,12 +364,11 @@ public class PSCanvas extends RelativeLayout{
     //确定合成最终的尺寸
     void makeSize(boolean isGif) {
         if (isGif) {
-            finalGifWidthHeight = makeType == WEIXIN ? Constant.Camerasettings.SHARE_WECHAT_GIF_RESOLUTION : ((makeType ==
-                    PSCanvas.ONLY_LAYER) ? Constant.Camerasettings.IDEAL_VIDEO_RESOLUTION : Constant.Camerasettings
-                    .IDEAL_GIF_RESOLUTION);//正好gif分辨率和照片分辨率相等
+            finalGifWidthHeight = makeType == WEIXIN ? Constant.SHARE_WECHAT_GIF_RESOLUTION : ((makeType ==
+                    PSCanvas.ONLY_LAYER) ? Constant.IDEAL_VIDEO_RESOLUTION : Constant.IDEAL_GIF_RESOLUTION);//正好gif分辨率和照片分辨率相等
         } else {
-            finalGifWidthHeight = makeType == WEIXIN ? Constant.Camerasettings.PHOTO_RESOLUTION_WECHAT_SHARE : Constant
-                    .Camerasettings.PHOTO_RESOLUTION;
+            finalGifWidthHeight = makeType == WEIXIN ? Constant.PHOTO_RESOLUTION_WECHAT_SHARE : Constant
+                    .PHOTO_RESOLUTION;
         }
     }
 
@@ -464,7 +423,7 @@ public class PSCanvas extends RelativeLayout{
     }
 
     private Bitmap getImageBitmap() {
-        return isPreview && bitmapPreview != null ? bitmapPreview : backgroundView.currentOperate.bitmap;
+        return backgroundView.currentOperate.bitmap;
     }
 
 
@@ -615,93 +574,6 @@ public class PSCanvas extends RelativeLayout{
 
     boolean isDrawing = false;
 
-    private void drawVideo() {
-        try {
-            isDrawing = true;
-            Bitmap bitmap = null;
-            Bitmap tBitmap;
-            if (makeType == PSCanvas.ONLY_LAYER) {
-                tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.ARGB_8888);
-            } else {
-                tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.RGB_565);
-             //   bitmap = ((VideoTextureView) relyView).getBitmap();
-            }
-            Canvas canvas = new Canvas(tBitmap);
-            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-            if (makeType != PSCanvas.ONLY_LAYER) {
-                canvas.drawBitmap(bitmap, null, new RectF(0, 0, finalGifWidthHeight, finalGifWidthHeight), null);
-                Util.recycleBitmaps(bitmap);
-            }
-            drawItem(canvas, videoWidthHeight, offsetX, offsetY);
-            mGifMaker.addBitmap(tBitmap);
-            isDrawing = false;
-        } catch (Exception e) {
-            //PAD必须在主线程中调用TextureView.getBitmap
-            //否则出现错误java.lang.IllegalStateException: Hardware acceleration can only be used url a single UI thread.
-            e.printStackTrace();
-            if (PSCanvas.this != null) {
-                PSCanvas.this.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        drawVideo();
-                    }
-                }, 300);
-            }
-        }
-        if (Looper.getMainLooper() != Looper.myLooper()) {
-            while (isDrawing) {
-                Logger.d("drawVideo delay");
-                delay(10);
-            }
-        }
-    }
-
-    private void drawVideoToGIf() {
-        try {
-            isDrawing = true;
-            Bitmap bitmap = null;
-            Bitmap tBitmap;
-//            if (makeType == ContainerView.ONLY_LAYER) {
-//                tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.ARGB_8888);
-//            } else {
-            tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.RGB_565);
-            if (isTexttureSeek) {
-             //   bitmap = videoComposeFramePlayer.getBitmap();
-            } else {
-                bitmap = bitmapListVideoToGif.get(mGifMaker.getFrameCountNow());
-            }
-//            }
-            Canvas canvas = new Canvas(tBitmap);
-            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-//            if (makeType != ContainerView.ONLY_LAYER) {
-            canvas.drawBitmap(bitmap, null, new RectF(0, 0, finalGifWidthHeight, finalGifWidthHeight), null);
-//            Util.recycleBitmaps(bitmap);
-//            bitmapListVideoToGif.set(mGifMaker.getFrameCountNow(), null);
-//            }
-            drawItem(canvas, videoWidthHeight, offsetX, offsetY);
-            mGifMaker.addBitmap(tBitmap);
-            isDrawing = false;
-        } catch (Exception e) {
-            //PAD必须在主线程中调用TextureView.getBitmap
-            //否则出现错误java.lang.IllegalStateException: Hardware acceleration can only be used url a single UI thread.
-            e.printStackTrace();
-            if (PSCanvas.this != null) {
-                PSCanvas.this.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        drawVideoToGIf();
-                    }
-                }, 300);
-            }
-        }
-        if (Looper.getMainLooper() != Looper.myLooper()) {
-            while (isDrawing) {
-                Logger.d("drawVideo delay");
-                delay(10);
-            }
-        }
-    }
-
     private void drawGif() {
         try {
             //一种是Gif作为底图，或者是静态图作为底图，图层是动态的Gif
@@ -711,9 +583,6 @@ public class PSCanvas extends RelativeLayout{
                 }
                 return;
             }
-//            int width=finalGifWidthHeight;
-//            int height=finalGifWidthHeight;
-//            if (backgroundView.isGif()) {
             int width = backgroundView.getGifWidth();
             int height = backgroundView.getGifHeight();
             if (width == 0 || height == 0) {
@@ -723,13 +592,7 @@ public class PSCanvas extends RelativeLayout{
             Bitmap tBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(tBitmap);
             canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-//            //
-//            if (backgroundView.isPhoto()){
-//                Bitmap imageBitmap = getImageBitmap();
-//                canvas.drawBitmap(imageBitmap, null, new RectF(0, 0, finalGifWidthHeight, finalGifWidthHeight),
-//                        null);
-//            }
-//            //
+
             canvas.save();
             Matrix matrix = new Matrix();
             float scale = 1f;
@@ -811,27 +674,6 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-    public void addBitmapVideoToGif(int index, int thumbCount, Bitmap bitmap) {
-        Logger.d("addBitmapVideoToGif","index:"+index+",count:"+thumbCount);
-        if (index == 0) {
-            bitmapListVideoToGif = new ArrayList<>(thumbCount);
-            Logger.d("addBitmapVideoToGif","index:"+index+",count:"+thumbCount+"，new bitmapListVideoToGif()");
-            for (int i = 0; i < thumbCount; i++) {
-                bitmapListVideoToGif.add(null);
-            }
-        }
-        if (bitmapListVideoToGif != null)
-            bitmapListVideoToGif.set(index, bitmap);
-    }
-
-    interface RefreshListener {
-        void Refresh();
-    }
-
-    void setRefreshListener(RefreshListener refreshListener) {
-        this.refreshListener = refreshListener;
-    }
-
     class RefreshRecordThread extends Thread {
         @Override
         public void run() {
@@ -860,18 +702,6 @@ public class PSCanvas extends RelativeLayout{
                                     }, 300);
                                 }
                             }
-                        }  else if (makeType == Type_VIDEO_TO_IMAGE_BG_LAYER_IS_ANIME_GIF) {
-                            int time = mGifMaker.getFrameCountNow() * relyView.getDelay();
-                            recordView(time);
-                            Bitmap bitmap = videoToGif_Static_Image_Bitmap;
-                            Bitmap tBitmap = Bitmap.createBitmap(finalGifWidthHeight, finalGifWidthHeight, Bitmap.Config.RGB_565);
-                            Canvas canvas = new Canvas(tBitmap);
-                            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint
-                                    .FILTER_BITMAP_FLAG));
-                            canvas.drawBitmap(bitmap, null, new RectF(0, 0, finalGifWidthHeight, finalGifWidthHeight),
-                                    null);
-                            drawItem(canvas, videoWidthHeight, offsetX, offsetY);
-                            if (mGifMaker != null) mGifMaker.addBitmap(tBitmap);
                         } else if (backgroundView != null && backgroundView.isGif()) {
                             int time = mGifMaker.getFrameCountNow() * relyView.getDelay() * resortCount;
 
@@ -1357,14 +1187,6 @@ public class PSCanvas extends RelativeLayout{
         backgroundView = new PSBackground(parentView);
     }
 
-    public void showVideoView(String url, String videoPath, float rate) {
-        if (backgroundView == null) {
-            return;
-        }
-        if (backgroundView != null && backgroundView.showVideoView(url, videoPath, rate))
-            addEvent(new Operate(IType.BACKGROUND));
-    }
-
     public void showImage(String url, String path) {
         if (backgroundView != null) {
             if (backgroundView.showImage(url, path)) addEvent(new Operate(IType.BACKGROUND));
@@ -1531,17 +1353,6 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-    //记录ID，用于改图的时候记录之前的数据
-    public long originId;
-    public long originalId;
-    public long relateType;
-    public long audioId;
-    public long faceId;
-    public int type;
-    public String textPublishDescribe;
-    public String orignalVideoUrl;
-    public String orignalImageUrl;
-    public String orignalGifUrl;
 
     //获取当前的所有图层信息
     public LayerEntity getLayerMessage() {
@@ -1549,50 +1360,23 @@ public class PSCanvas extends RelativeLayout{
 
         layerEntity.setWidth(getWidth());
         layerEntity.setHeight(getHeight());
-        layerEntity.setProportionType(1);
-
-        layerEntity.originalId = originalId;
-        layerEntity.originId = originId;
-        layerEntity.relateType = relateType;
-        layerEntity.faceId = faceId;
-        layerEntity.type = type;
-        layerEntity.setTextPublishDescribe(textPublishDescribe);
-
 
         LayerBackground backInfoModel = new LayerBackground();
-        backInfoModel.orignalVideoUrl = orignalVideoUrl;
-        backInfoModel.orignalImageUrl = orignalImageUrl;
-        backInfoModel.orignalGIfUrl = orignalGifUrl;
         PSBackground.BgOperate bgOperate = backgroundView.currentOperate;
-        long oneAudio = audioId;
         if (bgOperate != null) {
             if (bgOperate.visible1 == View.VISIBLE) {
-                oneAudio = 0;
                 int bgColor = bgOperate.color;
                 if (bgColor != Color.TRANSPARENT) {
                     backInfoModel.setBackColorString(Util.getColorStr(bgColor));
                 }
             } else if (bgOperate.visible2 == View.VISIBLE) {
-                oneAudio = 0;
                 backInfoModel.imageURLPathFile = bgOperate.imageFile;
                 backInfoModel.setImgURLPath(bgOperate.url);
             } else {
-                //视频或者gif
-                String videoPath = bgOperate.videoFile;
-                if (TextUtils.isEmpty(videoPath)) {
-                    //GIf
-                    oneAudio = 0;
-                    backInfoModel.setGifFilePath(bgOperate.gifFile);
-                    backInfoModel.setGifURLPath(bgOperate.url);
-                } else {
-                    //VIDEO
-                    backInfoModel.assetPathFile = videoPath;
-                    backInfoModel.setAssetPath(bgOperate.url);
-                    backInfoModel.setRate(bgOperate.rate);
-                }
+                backInfoModel.gifURLPathFile = bgOperate.gifFile;
+                backInfoModel.setGifURLPath(bgOperate.url);
             }
         }
-        layerEntity.audioId = (int) oneAudio;
         layerEntity.setBackInfoModel(backInfoModel);
 
         List<LayerItem> list = new ArrayList<>();

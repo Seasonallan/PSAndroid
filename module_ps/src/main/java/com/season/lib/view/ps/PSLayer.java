@@ -948,10 +948,8 @@ public class PSLayer extends RelativeLayout {
         layerItem.setYScale(mPSOpView.scale[1]);
 
         if (mPSOpView.scale[0] < 0) {
-            layerItem.setHMoveBtnPositionType(Constant.ToolViewsType.ButtonPositionTypeLeft);
             layerItem.setTurnOverH(true);
         } else {
-            layerItem.setHMoveBtnPositionType(Constant.ToolViewsType.ButtonPositionTypeRight);
             layerItem.setTurnOverH(false);
         }
 

@@ -134,7 +134,6 @@ public class CustomTextView extends View implements ILayer {
 
     public boolean setTextEntry(LayerItem item, float width) {
         int opViewWidth = ScreenUtils.getScreenWidth(getContext());
-        //TODO 如果需要对旧版本单行超过8字符文字进行8个字符换行，在这里修改。
         this.text = item.getText();
         fixEmoji();
         this.fontName = item.getTextFontName();

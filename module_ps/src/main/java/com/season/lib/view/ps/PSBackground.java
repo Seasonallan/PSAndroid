@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.MediaMetadataRetriever;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -15,11 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.example.ps.R;
+import com.season.lib.http.DownloadAPI;
+import com.season.lib.util.FileManager;
 import com.season.lib.util.ScreenUtils;
 import com.season.lib.util.Util;
 import com.season.lib.ToolBitmapCache;
 import com.season.lib.util.Logger;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,22 +147,9 @@ public class PSBackground {
     }
 
     private void init() {
-        BgOperate op = new BgOperate(View.VISIBLE, View.GONE, View.GONE, Color.TRANSPARENT, null, null, null);
+        BgOperate op = new BgOperate(View.VISIBLE, View.GONE,  Color.TRANSPARENT, null, null);
         reset(op);
         addEvent(op);
-    }
-
-    public boolean showVideoView(String url, String videoPath, float rate) {
-        if (currentOperate != null) {
-            if (currentOperate.visible3 == View.VISIBLE && videoPath.equals(currentOperate.videoFile)) {
-                return false;
-            }
-        }
-        BgOperate op = new BgOperate(url, videoPath, rate);
-        op.videoFile = videoPath;
-        reset(op);
-        addEvent(op);
-        return true;
     }
 
     public interface decoderGifDoneListener {
@@ -185,24 +174,31 @@ public class PSBackground {
         return true;
     }
 
-    public boolean showImage(String url, String path) {
-        Logger.d("addLocalMessage,showImage1:" + System.currentTimeMillis());
+    public boolean showImage(final String url, String path) {
         if (currentOperate != null) {
             if (currentOperate.visible2 == View.VISIBLE && path.equals(currentOperate.imageFile)) {
                 return false;
             }
         }
-        Logger.d("addLocalMessage,showImage2:" + System.currentTimeMillis());
         BgOperate op = new BgOperate(url, path, false);
-        Logger.d("addLocalMessage,showImage3:" + System.currentTimeMillis());
-        //TODO 不知道为什么这里显示的特别慢，调用到reset()方法太慢了，这里暂时用Glide来加速显示
         if (context != null && picture != null && !TextUtils.isEmpty(url)) {
             picture.post(new Runnable() {
                 @Override
                 public void run() {
                     picture.setVisibility(View.VISIBLE);
-                    Logger.d("addLocalMessage,Glide:" + System.currentTimeMillis());
-                 //   Glide.with(context).load(url).into(picture);
+                    final File file = FileManager.getDiyFile(context, ".png");
+                    DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
+                        @Override
+                        public void onCompleted() {
+                            currentOperate.bitmap = BitmapFactory.decodeFile(file.toString());
+                            picture.setImageBitmap(currentOperate.bitmap);
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
                 }
             });
         }
@@ -302,8 +298,6 @@ public class PSBackground {
                 });
             }
         }
-//        String gifFile = op.gifFile;
-//        boolean b = op.visibleGif == View.VISIBLE;
         if (!TextUtils.isEmpty(op.gifFile) && op.visibleGif == View.VISIBLE) {
             if (customGifMovie != null) {
                 customGifMovie.post(new Runnable() {
@@ -360,39 +354,29 @@ public class PSBackground {
             }
         } else {
         }
-        if (!TextUtils.isEmpty(op.videoFile) && op.visible3 == View.VISIBLE) {
-
-        }
-        if (op.visible3 != View.VISIBLE) {
-
-        }
-        return op.visible3 != View.VISIBLE;
+        return true;
     }
 
     public void reset() {
-        BgOperate op = new BgOperate(View.VISIBLE, View.GONE, View.GONE, Color.TRANSPARENT, null, null, null);
+        BgOperate op = new BgOperate(View.VISIBLE,  View.GONE, Color.TRANSPARENT, null, null);
         reset(op);
         addEvent(op);
     }
 
     public static class BgOperate {
-        //visible1 表示选了颜色背景，2代表图片，3代表视频,4代表Gif
-        public int visible1 = View.GONE, visible2 = View.GONE, visible3 = View.GONE, visibleGif = View.GONE;
+        //visible1 表示选了颜色背景，2代表图片，,4代表Gif
+        public int visible1 = View.GONE, visible2 = View.GONE, visibleGif = View.GONE;
         public int color = -1;
         public String imageFile;
         public String gifFile;
-        public String videoFile;
         public String url;
         public Bitmap bitmap;
-        public float rate;
 
-        public BgOperate(int visible1, int visible2, int visible3, int color, String imageFile, String videoFile, String gifFile) {
+        public BgOperate(int visible1, int visible2, int color, String imageFile, String gifFile) {
             this.visible1 = visible1;
             this.visible2 = visible2;
-            this.visible3 = visible3;
             this.color = color;
             this.imageFile = imageFile;
-            this.videoFile = videoFile;
             this.gifFile = gifFile;
         }
 
@@ -410,36 +394,6 @@ public class PSBackground {
                 //图片或者Gif
                 bitmap = BitmapFactory.decodeFile(imagePath);
             }
-        }
-
-//        public BgOperate(String imagePath) {
-//            if (!TextUtils.isEmpty(imagePath)) {
-//                this.visible2 = View.VISIBLE;
-//                this.imageFile = imagePath;
-//                bitmap = ToolBitmapCache.getDefault().getBitmapFromFile(imagePath);
-//            }
-//        }
-
-        public BgOperate(String url, String videoPath, float rate) {
-            this.url = url;
-            this.rate = rate;
-            if (!TextUtils.isEmpty(videoPath)) {
-                this.visible3 = View.VISIBLE;
-                this.videoFile = videoPath;
-                try {
-                    MediaMetadataRetriever media = new MediaMetadataRetriever();
-                    media.setDataSource(videoPath);
-                    bitmap = media.getFrameAtTime();
-                    media.release();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-//            if (!TextUtils.isEmpty(gifPath)){//这个需求暂时没有，背景只有视频
-//                this.visible3 = View.VISIBLE;
-//                this.gifFile = gifPath;
-//                bitmap = new FrameDecoder(videoPath).getFrame();
-//            }
         }
 
         public BgOperate(int color) {

@@ -3,7 +3,6 @@ package com.season.example;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -14,8 +13,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
@@ -24,6 +21,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.season.example.layout.BottomPaintLayout;
 import com.season.example.layout.BottomTextLayout;
+import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
 import com.season.lib.RoutePath;
 import com.season.lib.bean.LayerItem;
@@ -37,26 +35,24 @@ import com.season.example.layout.PopInputLayout;
 import com.season.lib.view.ps.CustomGifMovie;
 import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerEntity;
-import com.season.lib.view.ps.PSBackground;
 import com.season.lib.view.ps.PSLayer;
 import com.season.lib.util.Constant;
 import com.season.lib.util.FileManager;
 import com.season.lib.util.FileUtils;
 import com.season.lib.util.ScreenUtils;
-import com.season.lib.view.ColorPickView;
 import com.season.lib.view.ps.PSCanvas;
 import com.season.example.layout.TopDeleteLayout;
 import com.season.lib.view.ps.PSCoverView;
 import com.season.lib.view.ps.CustomImageView;
 import com.season.lib.view.ps.CustomTextView;
 import com.season.lib.view.ps.CustomCanvas;
-import com.example.ps.BuildConfig;
 import com.example.ps.R;
 import com.season.lib.util.AutoUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 @Route(path= RoutePath.PS)
 public class PsActivity extends FragmentActivity implements View.OnClickListener {
@@ -64,7 +60,9 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     PSCoverView mPsCoverView;//最外部覆盖
     PSCanvas mPsCanvas;//ps画布
     CustomCanvas customCanvas;//涂鸦
+    TopDeleteLayout topDeleteLayout;
 
+    PSBgColorGroup mPsbgColorGroup;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,34 +72,73 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
         setContentView(R.layout.activity_ps);
 
-        mPsCoverView = findViewById(R.id.layout_container);
-        mPsCanvas = findViewById(R.id.layout_stickLayout);
-        customCanvas = findViewById(R.id.tuya);
+        initView();
+        initBottomLayout();
 
+        mPsbgColorGroup = new PSBgColorGroup(this, mPsCanvas) {
+            @Override
+            public void onBgChanged() {
+                resetStatus();
+            }
+        };
 
-        del_container = findViewById(R.id.del_container);
+        mPsCoverView.setOnActionUpListener(new PSCoverView.OnUpListener() {
+            @Override
+            public boolean onActionUp(float x, float y) {
+                //如果选择背景是展开的，关闭它
+                return mPsbgColorGroup.closeIfOpened(x, y);
+            }
+        });
 
-        iv_redo = findViewById(R.id.iv_redo);
-        iv_undo = findViewById(R.id.iv_undo);
-        iv_delete = findViewById(R.id.iv_delete);
-        rgAutoBg = findViewById(R.id.rg_auto_bg);
-        vColor = findViewById(R.id.v_color);
-        rb_vid_pic = findViewById(R.id.rb_vid_pic);
+        mPsCanvas.bindBgView(findViewById(R.id.opview));
+        topDeleteLayout = new TopDeleteLayout(del_container, iv_back, iv_next);
+        mPsCanvas.setOnMoveListener(new PSCanvas.IOnMoveListener() {
+            @Override
+            public boolean onMove(MotionEvent event) {
+                return topDeleteLayout.checkPosition(event);
+            }
 
-        iv_back = findViewById(R.id.iv_back);
-        iv_next = findViewById(R.id.iv_next);
-        iv_close = findViewById(R.id.iv_close);
-        iv_confirm = findViewById(R.id.iv_confirm);
-        iv_lable = findViewById(R.id.iv_lable);
+            @Override
+            public void onMoveEnd() {
+                topDeleteLayout.hide();
+            }
+        });
+        mPsCanvas.setClickListener(new PSLayer.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextView(view);
+            }
 
-        initListener();
-        initBg();
-        initStickerLayout();
+            @Override
+            public void onDoubleClick(View view) {
+                editTextView(view);
+            }
+
+            @Override
+            public void onDelete(View view) {
+            }
+        });
+        mPsCanvas.setFocusChangeListener(new PSCanvas.IFocusChangeListener() {
+            @Override
+            public void onFocusLose(ViewGroup view) {
+            }
+
+            @Override
+            public void onFocusGet(ViewGroup parent) {
+                resetBottomStatus();
+            }
+
+            @Override
+            public void onFocusClear() {
+                resetBottomStatus();
+            }
+        });
+
         mPsCoverView.post(new Runnable() {
             @Override
             public void run() {
-                initUI();
-                initData();
+                fixCanvasHeight();
+                bindData2Canvas();
             }
         });
     }
@@ -111,16 +148,42 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     ImageView iv_close;
     ImageView iv_confirm;
 
-    int videoWidthHeight, offsetX, offsetY;
     LinearLayout del_container;
 
     ImageView iv_redo;
     ImageView iv_undo;
     ImageView iv_delete;
-    RadioGroup rgAutoBg;
-    ImageView vColor;View iv_lable;
-    ColorPickView rb_vid_pic;
-    private void initUI() {
+    private void initView(){
+        mPsCoverView = findViewById(R.id.layout_container);
+        mPsCanvas = findViewById(R.id.layout_stickLayout);
+        customCanvas = findViewById(R.id.tuya);
+
+        del_container = findViewById(R.id.del_container);
+
+        iv_redo = findViewById(R.id.iv_redo);
+        iv_undo = findViewById(R.id.iv_undo);
+        iv_delete = findViewById(R.id.iv_delete);
+
+        iv_back = findViewById(R.id.iv_back);
+        iv_next = findViewById(R.id.iv_next);
+        iv_close = findViewById(R.id.iv_close);
+        iv_confirm = findViewById(R.id.iv_confirm);
+
+        iv_close.setOnClickListener(this);
+        iv_confirm.setOnClickListener(this);
+
+        iv_back.setOnClickListener(this);
+        iv_next.setOnClickListener(this);
+        iv_undo.setOnClickListener(this);
+        iv_redo.setOnClickListener(this);
+        iv_delete.setOnClickListener(this);
+        findViewById(R.id.bt_paint).setOnClickListener(this);
+        findViewById(R.id.bt_text).setOnClickListener(this);
+        findViewById(R.id.bt_image).setOnClickListener(this);
+    }
+
+    int videoWidthHeight, offsetX, offsetY;
+    private void fixCanvasHeight() {
         View canvasArea = findViewById(R.id.opview);
         int height = canvasArea.getHeight();
         int screenWidth = ScreenUtils.getScreenWidth(this);
@@ -166,16 +229,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         Logger.LOG(""+ offsetX +"----"+ offsetY);
     }
 
-    private void initData() {
-        initViewFromData(false, false, true);
-    }
-
     private Handler handler = new Handler();
-
-    //图层信息转化为画布视图
-    //来自预览界面就copyfile,saveHistory，但是不saveOrignal
-    private void initViewFromData(boolean copyFile, boolean saveHistory,
-                                  boolean saveOrignal) {
+    private void bindData2Canvas() {
 
         try {
             LayerEntity  layerEntity = null;
@@ -186,25 +241,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             if (layerEntity != null){
                 LayerBackground backgroundInfo = layerEntity.getBackInfoModel();
                 List<LayerItem> items = layerEntity.getItemArray();
-//            filePath = backgroundInfo.assetPathFile;
-//            String bgUrl = backgroundInfo.getAssetPath();
-                /**
-                 * 把TAG保存到Container类中，跳转到发布的时候，需要重新构造LayerEntity
-                 */
-                mPsCanvas.relateType = layerEntity.relateType;
-                mPsCanvas.audioId = layerEntity.audioId;
-                mPsCanvas.type = layerEntity.type;
-                //保存文字描述
-                mPsCanvas.textPublishDescribe = layerEntity.getTextPublishDescribe();
-                if (saveOrignal) {
-                    mPsCanvas.orignalImageUrl = backgroundInfo.getImgURLPath();
-                    mPsCanvas.orignalVideoUrl = backgroundInfo.getAssetPath();
-                    mPsCanvas.orignalGifUrl = backgroundInfo.getOrignalGIfUrl();
-                    mPsCanvas.originalId = layerEntity.originalId;
-                    mPsCanvas.originId = layerEntity.originId;
-                }
                 showLayers(layerEntity, items);
-                showBg(copyFile, saveHistory, backgroundInfo);
+                showBg(backgroundInfo);
             }else{
                 addImageOrGifFromUrl(false, "https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
                 addImageOrGifFromUrl(false, "http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
@@ -217,90 +255,36 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }
 }
 
-    private void showBg(boolean copyFile, boolean saveHistory, LayerBackground backgroundInfo) {
-        if (!TextUtils.isEmpty(backgroundInfo.assetPathFile)) {
-            //背景是视频
-            String videoFilePath = backgroundInfo.assetPathFile;
-            String url = backgroundInfo.getAssetPath();
-            if (copyFile) {//此处代表是否拷贝视频到新地址，因为拍摄的视频filePath都是一样的，所以要拷贝用于历史记录
-                File desFile = FileManager.getDiyBackgroundFile(this, null, "mp4");
-                if (desFile != null) {
-                    Util.copyFile(videoFilePath, desFile.toString());
-                    addLocalMessageUio(url, desFile.toString(), true, backgroundInfo.getRate(), saveHistory);
-                } else {
-                    addLocalMessageUio(url, videoFilePath, true, backgroundInfo.getRate(), saveHistory);
-                }
-                //ProgressDialogUtils.Show(PsActivity.this, "视频处理中，请稍候");
-                //addKeyFrameMp4(bgUrl, filePath, true, backgroundInfo.getRate(), saveHistory);
-            } else {
-                addLocalMessageUio(url, videoFilePath, true, backgroundInfo.getRate(), saveHistory);
+    private void showBg(LayerBackground backgroundInfo) {
+        if (TextUtils.isEmpty(backgroundInfo.imageURLPathFile) && TextUtils
+                .isEmpty(backgroundInfo.gifURLPathFile)) {
+            //背景是透明图层
+            final String colorStr = backgroundInfo.getBackColorString();
+            if (!TextUtils.isEmpty(colorStr)) {//背景是纯色
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPsCanvas.showBackground(Util.getColor(colorStr, 0x000000));
+                        resetStatus();
+                    }
+                });
             }
         } else {
-            //背景不是视频
-            if (TextUtils.isEmpty(backgroundInfo.imageURLPathFile) && TextUtils
-                    .isEmpty(backgroundInfo.gifFilePath)) {
-                //背景是透明图层,底图为null
-                final String colorStr = backgroundInfo.getBackColorString();
-                if (!TextUtils.isEmpty(colorStr)) {//背景是纯色
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mPsCanvas.showBackground(Util.getColor(colorStr, 0x000000));
-                            resetStatus();
-                        }
-                    });
-                }
-
+            if (!TextUtils.isEmpty(backgroundInfo.getImgURLPath()) ||
+                    !TextUtils.isEmpty(backgroundInfo.imageURLPathFile)) {
+                //背景是图片
+                addLocalMessage(backgroundInfo.getImgURLPath(), backgroundInfo.imageURLPathFile);
             } else {
-                //来自预览界面，
-                if (!TextUtils.isEmpty(backgroundInfo.imageURLPathFile)) {
-                    //背景是图片
-                    String imagepath = backgroundInfo.imageURLPathFile;
-                    if (copyFile) {//此处代表是否拷贝图片到新地址，因为相册选取的图片filePath都是一样的，所以要拷贝用于历史记录
-                        File desFile = FileManager
-                                .getDiyBackgroundFile(this, null, Util.getFileTri(backgroundInfo.imageURLPathFile));
-                        if (desFile != null) {
-                            Util.copyFile(imagepath, desFile.toString());
-                            addLocalMessageUio("", desFile.toString(), false, backgroundInfo.getRate(),
-                                    saveHistory);
-//                            addLocalMessageUio(bgUrl, desFile.toString(), false, backgroundInfo.getRate(), saveHistory);
-                        } else {
-                            addLocalMessageUio("", imagepath, false, backgroundInfo.getRate(), saveHistory);
-//                            addLocalMessageUio(bgUrl, filePath, false, backgroundInfo.getRate(), saveHistory);
-                        }
-                    } else {
-                        //解决 改图重复上传本地资源bug，因为把视频bgurl给了图片，使得网络url变成""
-                        addLocalMessageUio(backgroundInfo.getImgURLPath(), imagepath, false,
-                                backgroundInfo.getRate(), saveHistory);
-                    }
-                } else {
-                    //背景是GIf
-                    String gifFilePath = backgroundInfo.getGifFilePath();
-                    if (copyFile) {//此处代表是否拷贝图片到新地址，因为相册选取的图片filePath都是一样的，所以要拷贝用于历史记录
-                        File desFile = FileManager.getDiyBackgroundFile(this, null, Util.getFileTri(gifFilePath));
-                        if (desFile != null) {
-                            Util.copyFile(gifFilePath, desFile.toString());
-                            addLocalMessageUio("", desFile.toString(), false, backgroundInfo.getRate(),
-                                    saveHistory);
-//                            addLocalMessageUio(bgUrl, desFile.toString(), false, backgroundInfo.getRate(), saveHistory);
-                        } else {
-                            addLocalMessageUio("", gifFilePath, false, backgroundInfo.getRate(), saveHistory);
-//                            addLocalMessageUio(bgUrl, filePath, false, backgroundInfo.getRate(), saveHistory);
-                        }
-                    } else {
-                        addLocalMessageUio(backgroundInfo.getGifURLPath(), gifFilePath, false,
-                                backgroundInfo.getRate(), saveHistory);
-                    }
-                }
-
+                //背景是GIf
+                addLocalMessage(backgroundInfo.getGifURLPath(), backgroundInfo.gifURLPathFile);
             }
+
         }
     }
 
     private void showLayers(LayerEntity layerEntity, List<LayerItem> items) {
         if (items.size() > 0) {//图层信息转化
             for (int i = 0; i < items.size(); i++) {
-                int position = i;
                 LayerItem item = items.get(i);
                 PSLayer PSLayer = new PSLayer(this, handler);
                 if (item.getContentViewType() != Constant.contentViewType.ContentViewTypeTextbox) {//不是文字图层
@@ -416,53 +400,24 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }, delay);
     }
 
-    private void addLocalMessageUio(String url, String filePath, boolean isMp4, float rate,
-                                    boolean saveLocal) {
-        if (BuildConfig.DEBUG) {
-            Logger.d("addLocalMessageUio:" + System.currentTimeMillis());
-        }
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-        addLocalMessage(url, filePath, isMp4, rate, saveLocal);
-//            }
-//        });
-    }
-
-    //背景视频或图片 添加
-    private void addLocalMessage(final String url, final String filePath, final boolean isMp4, final float rate,
-                                 final boolean saveLocal) {
+    //背景图片 添加
+    private void addLocalMessage(final String url, final String filePath) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (BuildConfig.DEBUG) {
-                    Logger.d("addLocalMessage,url:" + url + ",filePath:" + filePath);
-                    Logger.d("addLocalMessage,1:" + System.currentTimeMillis());
-                }
                 if (!TextUtils.isEmpty(filePath)) {
                     File file = new File(filePath);
                     if (file.isFile() && file.length() > 0) {
-                        int lastDot = filePath.lastIndexOf(".");
-                        String name = filePath.substring(lastDot + 1).toUpperCase();
-                        if (isMp4 || name.equals("MP4") || FileUtils.isMp4File(filePath)) {
-//                if (name.equals("MP4")) {
-                            mPsCanvas.showVideoView(url, filePath, rate);
-                            resetStatus();
+                        String fileHeader = FileUtils.getFileHeader(filePath);
+                        if (fileHeader.equals(Constant.FileSuffix.PNG) || fileHeader
+                                .equals(Constant.FileSuffix.JPG)) {
+                            mPsCanvas.showImage(url, filePath);
                         } else {
-                            // 暂时没有GIF背景需求
-                            String fileHeader = FileUtils.getFileHeader(filePath);
-                            if (fileHeader.equals(Constant.FileSuffix.PNG) || fileHeader
-                                    .equals(Constant.FileSuffix.JPG)) {
-                                mPsCanvas.showImage(url, filePath);
-                                Logger.d("addLocalMessage,2:" + System.currentTimeMillis());
+                            //格式异常了
+                            if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
+                                mPsCanvas.showGIf(url, filePath);
                             } else {
-                                Logger.d("addLocalMessage,3:" + System.currentTimeMillis());
-                                //格式异常了
-                                if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
-                                    mPsCanvas.showGIf(url, filePath);
-                                } else {
-                                    mPsCanvas.showImage(url, filePath);
-                                }
+                                mPsCanvas.showImage(url, filePath);
                             }
                         }
                     } else {
@@ -479,91 +434,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }).start();
     }
 
-    private void initBg() {
-        mPsCoverView.setOnActionUpListener(new PSCoverView.OnUpListener() {
-            @Override
-            public boolean onActionUp(float x, float y) {
-                //如果选择背景是展开的，关闭它
-                if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                    int[] location = new int[2];
-                    rgAutoBg.getLocationOnScreen(location);
-                    int left = location[0];
-                    int top = location[1];
-                    int right = left + rgAutoBg.getMeasuredWidth();
-                    int bottom = top + rgAutoBg.getMeasuredHeight();
-                    if (y >= top && y <= bottom && x >= 0 && x <= right) {
-                        Logger.LOG("N ");
-                    } else {
-                        vColor.setVisibility(View.VISIBLE);
-                        rgAutoBg.setVisibility(View.GONE);
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-        rgAutoBg.getLayoutParams().height = AutoUtils.getPercentWidthSize(47);
-        rgAutoBg.requestLayout();
-        //改背景
-        rgAutoBg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                setCanvaBackGround(checkedId);
-                resetStatus();
-            }
-        });
-    }
-
-    TopDeleteLayout topDeleteLayout;
-    private void initStickerLayout() {
-        mPsCanvas.bindBgView(findViewById(R.id.opview));
-        topDeleteLayout = new TopDeleteLayout(del_container, iv_back, iv_next);
-        mPsCanvas.setOnMoveListener(new PSCanvas.IOnMoveListener() {
-            @Override
-            public boolean onMove(MotionEvent event) {
-                return topDeleteLayout.checkPosition(event);
-            }
-
-            @Override
-            public void onMoveEnd() {
-                topDeleteLayout.hide();
-            }
-        });
-        initStickerlayoutOnClick();
-    }
-
-    private void initStickerlayoutOnClick() {
-        mPsCanvas.setClickListener(new PSLayer.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editTextView(view);
-            }
-
-            @Override
-            public void onDoubleClick(View view) {
-                editTextView(view);
-            }
-
-            @Override
-            public void onDelete(View view) {
-            }
-        });
-        mPsCanvas.setFocusChangeListener(new PSCanvas.IFocusChangeListener() {
-            @Override
-            public void onFocusLose(ViewGroup view) {
-            }
-
-            @Override
-            public void onFocusGet(ViewGroup parent) {
-                resetBottomStatus();
-            }
-
-            @Override
-            public void onFocusClear() {
-                resetBottomStatus();
-            }
-        });
-    }
 
     private boolean editTextView(View view) {
         if (view != null && view instanceof CustomTextView) {
@@ -646,25 +516,12 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         resetStatus();
     }
 
-    public void addGifFromFile(String filePath) {
-        CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
-        boolean res = customGifMovie.setMovieResource(filePath);
-        if (res) {
-            addView(customGifMovie, getInitScale(customGifMovie));
-        } else {
-            CustomGifFrame customGifFrame = new CustomGifFrame(PsActivity.this);
-            customGifFrame.setMovieResource(filePath);
-            addView(customGifFrame, getInitScale(customGifFrame));
-        }
-    }
-
-    //TODO
     private float getInitScale(ILayer scaleView) {
         float width = scaleView.getViewWidth() * 1.0f;
-        if (width >= Constant.Camerasettings.DIY_STICKER_BASE_SIZE) {
+        if (width >= Constant.DIY_STICKER_BASE_SIZE) {
             return videoWidthHeight / width;
         } else {
-            return videoWidthHeight / Constant.Camerasettings.DIY_STICKER_BASE_SIZE;
+            return videoWidthHeight / Constant.DIY_STICKER_BASE_SIZE;
         }
     }
 
@@ -681,7 +538,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
     private void addView(View view) {
         PSLayer PSLayer = new PSLayer(this);
-//        scaleView.setBackgroundColor(getResources().getColor(R.color.xml.colorPrimary));
         PSLayer.addView(view,
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
                         .WRAP_CONTENT));
@@ -707,12 +563,12 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 }
 
                 iv_delete.setImageResource(
-                        isDelete() ? R.drawable.selector_crop_clear : R.mipmap.icon_top_delete_sel);
+                        isCanvasEmpty() ? R.drawable.selector_crop_clear : R.mipmap.icon_top_delete_sel);
                 iv_undo.setImageResource(
                         mPsCanvas.canPre() ? R.drawable.selector_crop_pre : R.mipmap.icon_op_pre_sel);
                 iv_redo.setImageResource(
                         mPsCanvas.canPro() ? R.drawable.selector_crop_pro : R.mipmap.icon_op_pro_sel);
-                resetRgAutoBg();
+                mPsbgColorGroup.resetRgAutoBg();
                 resetBottomStatus();
             }
         });
@@ -731,79 +587,11 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }
     }
 
-    private void resetRgAutoBg() {
-        PSBackground.BgOperate op = mPsCanvas.backgroundView.currentOperate;
-        if (op != null) {
-            int checkId = R.id.rb_vid_pic;
-            if (op.visible1 == View.VISIBLE) {
-                int color = op.color;
-                checkId = R.id.rb_translate;
-                if (color == Color.WHITE) {
-                    checkId = R.id.rb_white;
-                } else if (color == Color.TRANSPARENT) {
-                    checkId = R.id.rb_translate;
-                } else if (color == Color.GRAY) {
-                    checkId = R.id.rb_hui;
-                } else if (color == Color.BLACK) {
-                    checkId = R.id.rb_black;
-                }
-            } else {
-                if (rgAutoBg.getCheckedRadioButtonId() == checkId) {
-                    setCanvaBackGround(checkId);
-                }
-            }
-            ((RadioButton) rgAutoBg.findViewById(checkId)).setChecked(true);
-        }
-    }
 
-    private void setCanvaBackGround(int i) {
-        if (i == R.id.rb_white) {
-            vColor.setImageResource(R.mipmap.icon_color_white);
-            //setBrushColor(Color.WHITE, false);
-            if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mPsCanvas.showBackground(Color.WHITE);
-            }
-
-        } else if (i == R.id.rb_translate) {
-            vColor.setImageResource(R.mipmap.icon_color_transparent);
-            //setBrushColor(Color.TRANSPARENT, false);
-            if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mPsCanvas.showBackground(Color.TRANSPARENT);
-            }
-
-        } else if (i == R.id.rb_hui) {
-            vColor.setImageResource(R.mipmap.icon_color_gray);
-            //setBrushColor(Color.GRAY, false);
-            if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mPsCanvas.showBackground(Color.GRAY);
-            }
-
-        } else if (i == R.id.rb_black) {
-            vColor.setImageResource(R.mipmap.icon_color_black);
-            //setBrushColor(Color.BLACK, false);
-            if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mPsCanvas.showBackground(Color.BLACK);
-            }
-
-        } else if (i == R.id.rb_vid_pic) {
-            if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                mPsCanvas.showVideoOrImage();
-            }
-            if (mPsCanvas.backgroundView.currentOperate != null) {
-                if (mPsCanvas.backgroundView.currentOperate.bitmap != null) {
-                    rb_vid_pic.setDrawImage(mPsCanvas.backgroundView.currentOperate.bitmap);
-                    vColor.setImageBitmap(mPsCanvas.backgroundView.currentOperate.bitmap);
-                    rb_vid_pic.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-        vColor.setVisibility(View.VISIBLE);
-        rgAutoBg.setVisibility(View.GONE);
-    }
     /**
-     * 是否允许删除
+     * 是否允许删除, 画布是否是空的
      */
-    public boolean isDelete() {
+    public boolean isCanvasEmpty() {
         try {
             ImageView picture = mPsCanvas.backgroundView.picture;
             if (mPsCanvas.getChildCount() == 0 && (
@@ -824,11 +612,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         Logger.d("diy>> onDestroy");
         try {
             if (mPsCanvas != null) {
-                LayerEntity layerEntity = mPsCanvas.getLayerMessage();
-                if (!TextUtils.isEmpty(getIntent().getStringExtra(mPsCanvas.textPublishDescribe))) {
-                    layerEntity.setTextPublishDescribe(mPsCanvas.textPublishDescribe);
-                }
-                FileUtils.saveSerialData(this, "layerInfo", layerEntity);
+                FileUtils.saveSerialData(this, "layerInfo", mPsCanvas.getLayerMessage());
                 mPsCanvas.release();
             }
         } catch (Exception e) {
@@ -844,17 +628,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
     private BottomPaintLayout bottomPaintLayout;
     private BottomTextLayout bottomTextLayout;
-    private void initListener() {
-        iv_close.setOnClickListener(this);
-        iv_confirm.setOnClickListener(this);
-        vColor.setOnClickListener(this);
-        iv_lable.setOnClickListener(this);
-
-        iv_back.setOnClickListener(this);
-        iv_next.setOnClickListener(this);
-        iv_undo.setOnClickListener(this);
-        iv_redo.setOnClickListener(this);
-        iv_delete.setOnClickListener(this);
+    private void initBottomLayout() {
 
         bottomTextLayout = new BottomTextLayout(this) {
             @Override
@@ -901,8 +675,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 customCanvas.setPaintSize(size);
             }
         };
-        findViewById(R.id.bt_paint).setOnClickListener(this);
-        findViewById(R.id.bt_text).setOnClickListener(this);
     }
 
     //橡皮擦模式开启
@@ -938,6 +710,11 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         } else if (i == R.id.bt_paint) {
             startTuya();
             bottomPaintLayout.show();
+        }else if (i == R.id.bt_image) {
+            int poi = new Random().nextInt(2);
+            if (poi == 1) addImageOrGifFromUrl(false, "https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
+            else    addImageOrGifFromUrl(false, "http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
+
         }  else if (i == R.id.bt_text) {
             View view = mPsCanvas.getFocusView();
             if (view != null && view instanceof CustomTextView) {
@@ -949,20 +726,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         } else if (i == R.id.iv_confirm) {
             finishTuya();
             bottomPaintLayout.hide();
-        } else if (i == R.id.iv_lable || i == R.id.v_color) {
-            if (rgAutoBg.getVisibility() == View.VISIBLE) {
-                rgAutoBg.setVisibility(View.GONE);
-                vColor.setVisibility(View.VISIBLE);
-                //                    ivCanvasSize.setVisibility(View.VISIBLE);
-            } else {
-                rgAutoBg.setVisibility(View.VISIBLE);
-                for (int ci = 0;ci < rgAutoBg.getChildCount();ci++){
-                    rgAutoBg.getChildAt(ci).invalidate();
-                }
-                vColor.setVisibility(View.GONE);
-                //                    ivCanvasSize.setVisibility(View.GONE);
-            }
-
         } else if (i == R.id.iv_back) {
             back();
 
@@ -980,9 +743,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 type = Constant.ShareOriginalType.Gif;
             } else {
                 type = Constant.ShareOriginalType.Photo;
-            }
-            if (BuildConfig.DEBUG) {
-                Logger.d("sharetype==" + type);
             }
             mPsCanvas.start(type, new GifMaker.OnGifMakerListener() {
                 @Override
@@ -1006,7 +766,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         } else if (i == R.id.iv_redo) {
             redo();
         } else if (i == R.id.iv_delete) {
-            if (!isDelete()) {
+            if (!isCanvasEmpty()) {
                 return;
             }
             if (customCanvas.isEnable()) {

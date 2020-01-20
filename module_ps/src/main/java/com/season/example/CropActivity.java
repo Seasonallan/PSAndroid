@@ -21,21 +21,18 @@ import com.example.ps.R;
 import com.season.example.support.TextModeUtil;
 import com.season.lib.RoutePath;
 import com.season.lib.crop.CropView;
-import com.season.lib.util.Constant;
 import com.season.lib.view.ps.CustomGifFrame;
 import com.season.lib.view.ps.CustomGifMovie;
 
 import java.util.List;
 
-/**
- * Created by Administrator on 2017/11/1.
- */
+
 @Route(path= RoutePath.PS_CROP)
 public class CropActivity extends Activity {
 
     public static void start(Context context, String filePath){
         Intent intent = new Intent(context, CropActivity.class);
-        intent.putExtra(Constant.IntentTag.Diy.CropActivity_File, filePath);
+        intent.putExtra("path", filePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
     }
@@ -60,7 +57,7 @@ public class CropActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        filePath = getIntent().getStringExtra(Constant.IntentTag.Diy.CropActivity_File);
+        filePath = getIntent().getStringExtra("path");
 
         if (filePath.endsWith("gif")){
             findViewById(R.id.gif_cot).setVisibility(View.VISIBLE);

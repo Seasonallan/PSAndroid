@@ -309,6 +309,7 @@
                     android:layout_weight="1"
                     android:src="@mipmap/img_text"/>
                 <ImageView
+                    android:id="@+id/bt_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="24dp"
