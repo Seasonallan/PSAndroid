@@ -306,7 +306,7 @@ public class ReadTxtView extends BaseReadView implements TxtUmdBasePlugin.IScree
 		if(mPlugin == null || !mPlugin.isInit()){
 			return false;
 		}
-        LogUtil.i("onDrawPage  " +chapterIndex + "......" + pageIndex);
+        //LogUtil.i("onDrawPage  " +chapterIndex + "......" + pageIndex);
 		if (isCurrentPage) {
             if(mTextSelectHandler != null && mTextSelectHandler.isSelect()){
                 mTextSelectHandler.handlerDrawPre();
@@ -594,6 +594,7 @@ public class ReadTxtView extends BaseReadView implements TxtUmdBasePlugin.IScree
                 public void setBookDigestsSpan(BookDigestsSpan span, int start, int end) {
                     LogUtil.i("setBookDigestsSpan >> "+start+", "+end);
                     mCurrentPage = null;
+                    if (mPlugin != null)
                     mPlugin.setSpan(mCurrentChapterIndex,span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 

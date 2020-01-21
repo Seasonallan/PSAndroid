@@ -607,16 +607,13 @@ public abstract class TxtUmdBasePlugin {
 			}
 		} else {
 			int end = containStartId(mPageStart);
-            log("wtf>> end= "+ end);
 			if(end >= 0){//缓存存在
 				mPageEnd = end;
 				return;
 			} 
 			if (isUmdDecode() || mand) {
-                log("wtf>> end=.0.  "+ end);
 				mPageEnd = pageDown(getCurrentChapterIndex(false), mPageEnd);
 			} else {
-                log("wtf>> --end= "+ end);
 				byte[] paraBuf = readParagraphBack(mPageStart);
 				mPageStart -= paraBuf.length;
 				// byte[] paraBuf = readParagraphForward(mPageEnd);
@@ -649,7 +646,7 @@ public abstract class TxtUmdBasePlugin {
 	 * 读取下一页文字数组
 	 */
 	private int pageDown(int requestChapterId, int startId) {
-		log("pageDown", "startId:"+startId);
+	//	log("pageDown", "startId:"+startId);
 		int endId = startId;
 		String strParagraph = "";
 		Vector<String> resVector = new Vector<String>();
@@ -676,7 +673,7 @@ public abstract class TxtUmdBasePlugin {
 			} catch (UnsupportedEncodingException e) {
 				break;
 			}
-            log("pageDown", endId+  ">>> changeLineLength:"+changeLineLength);
+         //   log("pageDown", endId+  ">>> changeLineLength:"+changeLineLength);
 
 			if (strParagraph.length() == 0) {
 				// lines.add(strParagraph);

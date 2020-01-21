@@ -145,7 +145,6 @@ public class BaseBookActivity extends Activity implements
         mTimeText.setText(R.string.note_not_update);
         mActionText.setText(R.string.note_pull_down);
     }
-    private AbsVerGestureAnimController mAbsVerGestureAnimController = new AbsVerGestureAnimController();
 
 	@Override
 	protected void onDestroy() {
@@ -418,7 +417,6 @@ public class BaseBookActivity extends Activity implements
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
         LogUtil.e("key>>"+ "11" );
-
 		if (!isInit) {
 			return false;
 		}
@@ -447,6 +445,7 @@ public class BaseBookActivity extends Activity implements
 
     }
 
+	private AbsVerGestureAnimController mAbsVerGestureAnimController = new AbsVerGestureAnimController();
     @Override
 	public boolean onTouchEvent(MotionEvent ev) {
         LogUtil.e("key>>onTouchEvent  " + "66");

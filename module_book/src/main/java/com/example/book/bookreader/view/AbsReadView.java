@@ -62,7 +62,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		super(context);
 		init();
 	}
-	
+
 	private void init(){
 		PADDING_LEFT = DimenUtil.dip2px(15);
 		PADDING_RIGHT = DimenUtil.dip2px(15);
