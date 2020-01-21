@@ -83,7 +83,7 @@ public class BaseBookActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		BaseContext.onCreate(getApplicationContext());
+		BaseContext.init(getApplicationContext());
 		Intent intent = getIntent();
 		if (intent == null) {
 			finish();

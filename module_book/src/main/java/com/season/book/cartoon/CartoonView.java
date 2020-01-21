@@ -385,20 +385,20 @@ public abstract class CartoonView extends FrameLayout implements PageManager.Pag
 	
 	@Override
 	public void saveDataDB(String contentId, String key, String data) {
-		// ReaderLayoutDB.getInstance(getContext()).saveData(contentId, key,
+		// ReaderLayoutDB.getInstance(getInstance()).saveData(contentId, key,
 		// data);
 	}
 
 	@Override
 	public String getDataDB(String contentId, String key) {
 		return null;
-		// return ReaderLayoutDB.getInstance(getContext()).getData(contentId,
+		// return ReaderLayoutDB.getInstance(getInstance()).getData(contentId,
 		// key);
 	}
 
 	@Override
 	public boolean hasDataDB(String contentId, String key) {
-		// return ReaderLayoutDB.getInstance(getContext()).hasData(contentId,
+		// return ReaderLayoutDB.getInstance(getInstance()).hasData(contentId,
 		// key);
 		return false;
 	}

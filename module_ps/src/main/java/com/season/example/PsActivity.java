@@ -73,7 +73,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
         setContentView(R.layout.activity_ps);
 
-        BaseContext.onCreate(getApplicationContext());
+        BaseContext.init(getApplicationContext());
         initView();
         initBottomLayout();
 

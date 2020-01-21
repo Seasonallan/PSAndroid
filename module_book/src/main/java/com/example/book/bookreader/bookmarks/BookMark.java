@@ -9,7 +9,6 @@ import com.season.lib.dbase.base.IDbHelper;
 import com.season.lib.dbase.base.JsonArrayList;
 import com.season.lib.dbase.base.iterface.Column;
 import com.season.lib.dbase.base.iterface.Table;
-import com.season.lib.util.PreferencesUtil;
 
 
 @Table(name = "bookmark")
@@ -64,7 +63,7 @@ public class BookMark extends BaseDao {
 
     // 分组ID
     @Column(name = "groupId",type = "Integer")
-    public int groupId = PreferencesUtil.getInstance(BaseContext.getInstance()).getBookMarkGroupId();
+    public int groupId;
 
 	// 自增长的表ID
 	public int id;

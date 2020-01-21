@@ -9,7 +9,7 @@ public class ToastUtil {
 
 	public static void show(String contentId){
 		if(mToast == null){
-			mToast = Toast.makeText(BaseContext.getContext(), contentId, Toast.LENGTH_SHORT);
+			mToast = Toast.makeText(BaseContext.getInstance(), contentId, Toast.LENGTH_SHORT);
 		}else{
 			mToast.setText(contentId);
 		}
@@ -17,12 +17,12 @@ public class ToastUtil {
 	}
 
 	public static void showToast(int contentId){
-		showToast(BaseContext.getContext().getString(contentId));
+		showToast(BaseContext.getInstance().getString(contentId));
 	}
 
 	public static void showToast(String contentId){
 		if(mToast == null){
-			mToast = Toast.makeText(BaseContext.getContext(), contentId, Toast.LENGTH_SHORT);
+			mToast = Toast.makeText(BaseContext.getInstance(), contentId, Toast.LENGTH_SHORT);
 		}else{
 			mToast.setText(contentId);
 		}

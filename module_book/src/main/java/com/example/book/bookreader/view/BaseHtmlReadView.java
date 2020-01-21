@@ -46,7 +46,6 @@ import com.season.book.text.style.ClickActionSpan;
 import com.season.book.text.style.ClickAsyncDrawableSpan;
 import com.season.book.text.style.UrlSpna;
 import com.season.lib.log.LogUtil;
-import com.season.lib.util.PreferencesUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +53,6 @@ import java.util.Date;
 
 
 public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMediaPlayer.PlayerListener, PageManager.PageManagerCallback, ClickSpanHandler {
-	protected PreferencesUtil mPreferencesUtil;
 	protected PageManager mPageManager;
 	private int mRequestCharIndex;
 	private Integer mChapterSize;
@@ -78,7 +76,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	public void onCreate(Bundle savedInstanceState) {
 		ReaderMediaPlayer.init(getDataProvider());
 		mPageManager = new PageManager(getContext(),this, isLayoutAll());
-		mPreferencesUtil = PreferencesUtil.getInstance(getContext());
 		setDrawingCacheEnabled(false);
 		mCurrentPageIndex = INDEX_INITIAL_CONTENT;
 		mRequestPageIndex = REQUEST_INDEX_INITIAL_CONTENT;
@@ -899,18 +896,18 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	public void saveDataDB(String contentId, String key, String data) {
-//		ReaderLayoutDB.getInstance(getContext()).saveData(contentId, key, data);
+//		ReaderLayoutDB.getInstance(getInstance()).saveData(contentId, key, data);
 	}
 
 	@Override
 	public String getDataDB(String contentId, String key) {
 		return null;
-//		return ReaderLayoutDB.getInstance(getContext()).getData(contentId, key);
+//		return ReaderLayoutDB.getInstance(getInstance()).getData(contentId, key);
 	}
 
 	@Override
 	public boolean hasDataDB(String contentId, String key) {
-//		return ReaderLayoutDB.getInstance(getContext()).hasData(contentId, key);
+//		return ReaderLayoutDB.getInstance(getInstance()).hasData(contentId, key);
 		return false;
 	}
 	

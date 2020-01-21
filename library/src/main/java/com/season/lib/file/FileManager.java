@@ -14,7 +14,7 @@ public class FileManager{
      * @return
      */
     public static File getPsDir() {
-        File mediaStorageDir =  new File(BaseContext.getContext().getCacheDir(), "ps");
+        File mediaStorageDir =  new File(BaseContext.getInstance().getCacheDir(), "ps");
         if (!mediaStorageDir.exists()){
             mediaStorageDir.mkdir();
         }

@@ -922,18 +922,18 @@ public class BaseReadView2 extends View implements PageManagerCallback,PageAnimC
 	
 	@Override
 	public void saveDataDB(String contentId, String key, String data) {
-//		ReaderLayoutDB.getInstance(getContext()).saveData(contentId, key, data);
+//		ReaderLayoutDB.getInstance(getInstance()).saveData(contentId, key, data);
 	}
 
 	@Override
 	public String getDataDB(String contentId, String key) {
 		return null;
-//		return ReaderLayoutDB.getInstance(getContext()).getData(contentId, key);
+//		return ReaderLayoutDB.getInstance(getInstance()).getData(contentId, key);
 	}
 
 	@Override
 	public boolean hasDataDB(String contentId, String key) {
-//		return ReaderLayoutDB.getInstance(getContext()).hasData(contentId, key);
+//		return ReaderLayoutDB.getInstance(getInstance()).hasData(contentId, key);
 		return false;
 	}
 	

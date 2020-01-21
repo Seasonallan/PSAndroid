@@ -210,7 +210,7 @@ public final class FileUtils {
         FileOutputStream fileOutputStream=null;
         ObjectOutputStream objectOutputStream =null;
         try {
-            File file = new File(BaseContext.getContext().getCacheDir(), key);
+            File file = new File(BaseContext.getInstance().getCacheDir(), key);
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -247,7 +247,7 @@ public final class FileUtils {
         FileInputStream fileInputStream = null;
         ObjectInputStream objectInputStream = null;
         try {
-            File file = new File(BaseContext.getContext().getCacheDir(), key);
+            File file = new File(BaseContext.getInstance().getCacheDir(), key);
             fileInputStream = new FileInputStream(file.toString());
             objectInputStream = new ObjectInputStream(fileInputStream);
 

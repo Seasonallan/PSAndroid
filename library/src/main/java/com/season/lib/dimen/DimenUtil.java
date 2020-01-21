@@ -97,7 +97,7 @@ public class DimenUtil {
 	}
 
 	public static float getDimension(int resId) {
-		return BaseContext.getContext().getResources().getDimension(resId);
+		return BaseContext.getInstance().getResources().getDimension(resId);
 	}
 
 	public static int PXToDIP(float pxValue){ 

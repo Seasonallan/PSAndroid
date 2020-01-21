@@ -34,7 +34,6 @@ import com.season.book.txtumd.TxtUmdBasePlugin;
 import com.season.book.txtumd.txt.TxtPlugin;
 import com.season.book.txtumd.umd.UMDPlugin;
 import com.season.lib.log.LogUtil;
-import com.season.lib.util.PreferencesUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -45,7 +44,6 @@ public class ReadTxtView extends BaseReadView implements TxtUmdBasePlugin.IScree
 	private TxtUmdBasePlugin mPlugin;
 	protected IPagePicture mCurrentPage;
 	protected IPagePicture mRequestPage;
-	private PreferencesUtil mPreferencesUtil;
 	
 	public ReadTxtView(Context context, Book book, IReadCallback readCallback) {
 		super(context,book,readCallback);
@@ -56,8 +54,7 @@ public class ReadTxtView extends BaseReadView implements TxtUmdBasePlugin.IScree
 		mCurrentPageIndex = INDEX_INITIAL_CONTENT;
 		mRequestPageIndex = REQUEST_INDEX_INITIAL_CONTENT;
 		mCurrentChapterIndex = INDEX_INITIAL_CONTENT;
-		mRequestChapterIndex = INDEX_INITIAL_CONTENT; 
-		mPreferencesUtil = PreferencesUtil.getInstance(getContext());
+		mRequestChapterIndex = INDEX_INITIAL_CONTENT;
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
 			setLayerType(LAYER_TYPE_SOFTWARE, null);
 		}
