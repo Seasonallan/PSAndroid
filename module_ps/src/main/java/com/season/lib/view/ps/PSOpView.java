@@ -12,8 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.season.lib.ToolBitmapCache;
-import com.season.lib.util.PsUtil;
-import com.season.lib.dimen.AutoUtils;
+import com.season.lib.dimen.MathUtil;
 
 
 /**
@@ -50,7 +49,7 @@ public class PSOpView {
         fixPoints = new float[8];
         minScale = new float[2];
         padding = (int) (padding * context.getResources().getDisplayMetrics().density);
-        minWidth = AutoUtils.getPercentWidthSize(138);//通过影响最小scalex,scaley的临界值，影响到是否校正外面的白色框大小，
+        minWidth = 138;//通过影响最小scalex,scaley的临界值，影响到是否校正外面的白色框大小，
 
         bitmapPaint.setAntiAlias(true);
 
@@ -143,7 +142,7 @@ public class PSOpView {
         //获取到中心点位置 可得到位移X,Y
         center = new float[]{desPoints[0] + (desPoints[4] - desPoints[0]) / 2, desPoints[1] + (desPoints[5] - desPoints[1]) / 2};
         //获取旋转的角度0-360
-        degree = PSLayer.getRotationBetweenLines(desPoints[6], desPoints[7], desPoints[0], desPoints[1]);
+        degree = MathUtil.getRotationBetweenLines(desPoints[6], desPoints[7], desPoints[0], desPoints[1]);
 
         double oriX = (srcPoints[2] - srcPoints[0]) * (srcPoints[2] - srcPoints[0]) + (srcPoints[3] - srcPoints[1]) * (srcPoints[3]
                 - srcPoints[1]);
@@ -340,7 +339,7 @@ public class PSOpView {
         path.lineTo(fixPoints[6], fixPoints[7]);
         path.close();
 
-        return PsUtil.isTouchPointInPath(path, x, y);
+        return MathUtil.isTouchPointInPath(path, x, y);
     }
 
 

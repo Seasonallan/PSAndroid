@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
 import com.example.book.bookreader.model.ReadSetting;
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.example.book.bookreader.anim.AutoAnimController;
 import com.example.book.bookreader.anim.PageAnimController;
 import com.season.lib.dimen.DimenUtil;
@@ -22,12 +22,12 @@ import com.season.lib.log.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener {
 	protected static final String TAG = AbsReadView.class.getSimpleName();
-	protected static final int PADDING_LEFT = DimenUtil.dip2px(15, BookContext.getInstance());
-	protected static final int PADDING_RIGHT = DimenUtil.dip2px(15, BookContext.getInstance());
-	protected static final int PADDING_TOP = DimenUtil.dip2px(10, BookContext.getInstance());
-	protected static final int PADDING_BOTTOM = DimenUtil.dip2px(8, BookContext.getInstance());
-	protected static final int PADDING_CONTENT_TOP = DimenUtil.dip2px(15, BookContext.getInstance());
-	protected static final int PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(2, BookContext.getInstance());
+	protected static int PADDING_LEFT;
+	protected static int PADDING_RIGHT;
+	protected static int PADDING_TOP;
+	protected static int PADDING_BOTTOM;
+	protected static int PADDING_CONTENT_TOP;
+	protected static int PADDING_CONTENT_BOTTOM;
 	/** 代表初始界面*/
 	protected static final int INDEX_INITIAL_CONTENT = Integer.MIN_VALUE - 1;
 	protected static final int REQUEST_INDEX_INITIAL_CONTENT = -Integer.MIN_VALUE;
@@ -64,6 +64,13 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	}
 	
 	private void init(){
+		PADDING_LEFT = DimenUtil.dip2px(15);
+		PADDING_RIGHT = DimenUtil.dip2px(15);
+		PADDING_TOP = DimenUtil.dip2px(10);
+		PADDING_BOTTOM = DimenUtil.dip2px(8);
+		PADDING_CONTENT_TOP = DimenUtil.dip2px(15);
+		PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(2);
+
 		mHandler = new Handler(Looper.getMainLooper());
 		setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		setDrawingCacheEnabled(false);

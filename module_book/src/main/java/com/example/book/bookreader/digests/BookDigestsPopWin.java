@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 
 import com.example.book.R;
-import com.season.example.BookContext;
 import com.season.lib.dimen.DimenUtil;
 import com.season.lib.util.ToastUtil;
 
@@ -25,7 +24,7 @@ public class BookDigestsPopWin extends PopupWindow {
 	public final static int VIEW_TYPE_MAGNIFIER = 1;
 	public final static int VIEW_TYPE_MENU_1 = VIEW_TYPE_MAGNIFIER + 1;
 	public final static int VIEW_TYPE_MENU_2 = VIEW_TYPE_MAGNIFIER + 2;
-	private final static int SHOW_WIN_HIGHT = DimenUtil.dip2px(BookContext.getInstance(), 50);//游标和view的距离，可依据需要调整
+	private final static int SHOW_WIN_HIGHT = DimenUtil.dip2px(50);//游标和view的距离，可依据需要调整
 	
 	private Activity mContext;
 	private AbsTextSelectHandler mTextSelectHandler;
@@ -217,7 +216,7 @@ public class BookDigestsPopWin extends PopupWindow {
 			if(id == R.id.copy){
 				cm =(ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
 				cm.setText(mTextSelectHandler.getData(mBookDigests));
-				ToastUtil.showToast(mContext, "复制成功");
+				ToastUtil.showToast("复制成功");
 				mTextSelectHandler.closeEdit();
 			}else if(id == R.id.beizhu){
 				mDialog=new BookDigestsRemarksDialog(mContext,R.style.remark_Dialog,mTextSelectHandler,mBookDigests);
@@ -239,7 +238,7 @@ public class BookDigestsPopWin extends PopupWindow {
 				cm =(ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
 				cm.setText(mTextSelectHandler.getData(bookDigests));
 				mTextSelectHandler.setSelect(false);
-				ToastUtil.showToast(mContext, "复制成功");
+				ToastUtil.showToast("复制成功");
 			}else if(id == R.id.digest){
 				bookDigests.setDate(new Date().getTime());
 				bookDigests.setContent(mTextSelectHandler.getData(bookDigests));

@@ -14,10 +14,9 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.util.PsUtil;
+import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.dimen.MathUtil;
 import com.season.lib.view.ps.ScaleDetector;
-import com.season.lib.view.ps.PSLayer;
-import com.season.lib.log.Logger;
 import com.season.lib.file.FileManager;
 
 import java.io.File;
@@ -117,8 +116,8 @@ public class CropView extends View{
             screenCanvas.drawBitmap(bitmap, mViewMatrix, null);
         }
         try {
-            PsUtil.recycleBitmaps(preViewBitmap);
-            preViewBitmap = PsUtil.cutBitmap(screenBitmap, widthPreview, widthPreview, currentPosition[0], currentPosition[1], false);
+            BitmapUtil.recycleBitmaps(preViewBitmap);
+            preViewBitmap = BitmapUtil.cutBitmap(screenBitmap, widthPreview, widthPreview, currentPosition[0], currentPosition[1], false);
             canvas.drawBitmap(preViewBitmap, 0, 0, null);
             canvas.drawLine(0, widthPreview/2, widthPreview, widthPreview/2, whitePaint);
             canvas.drawLine(widthPreview/2, 0, widthPreview/2, widthPreview, whitePaint);
@@ -206,15 +205,14 @@ public class CropView extends View{
                     }
                 }
 
-                float preDegree = PSLayer.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
-                float newDegree = PSLayer.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
+                float preDegree = MathUtil.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
+                float newDegree = MathUtil.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
 
                 float degree = newDegree - preDegree;
                 //  mViewMatrix.postRotate(degree, (detector.preX2 + detector.preX1) / 2, (detector.preY2 + detector.preY1) / 2);
                 if (Math.abs(degree) < 18){
                     mViewMatrix.postRotate(degree, center[0], center[1]);
                 }else{
-                    Logger.d("degree error >> "+ degree);
                 }
 
                 float scaleFactor = detector.getScaleFactor();
@@ -286,7 +284,7 @@ public class CropView extends View{
             if (cropTool != null) {
                 cropTool.onTouchUp(ev);
             }
-            PsUtil.recycleBitmaps(screenBitmap);
+            BitmapUtil.recycleBitmaps(screenBitmap);
             screenBitmap = null;
             invalidate();
             if (listener != null){
@@ -310,7 +308,7 @@ public class CropView extends View{
      */
     public String getCropImage() {
         try {
-            File cropFile = FileManager.getDiyCropFile(getContext());
+            File cropFile = FileManager.getPsFile(null, "png");
             if (cropFile == null){
                 return null;
             }
@@ -331,7 +329,7 @@ public class CropView extends View{
         if (bitmap == null){
             return;
         }
-        PsUtil.recycleBitmaps(bitmap, screenBitmap, preViewBitmap);
+        BitmapUtil.recycleBitmaps(bitmap, screenBitmap, preViewBitmap);
         if (cropTool != null){
             cropTool.release();
         }

@@ -1,40 +1,15 @@
 package com.season.lib.dimen;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Point;
-import android.os.Build;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.View;
-import android.view.View.MeasureSpec;
-import android.view.WindowManager;
+import com.season.lib.BaseContext;
 
-import java.lang.reflect.Method;
 
 /**
  * 尺寸计算工具类
- * @author linyiwei
- * @email 21551594@qq.com
- * @date 2012-07-27
  */
 public class DimenUtil {
-	private static Context mContext;
-	public static void init(Context context){
-		mContext = context;
-	} 
-	
-	private static Context getContext(){
-		return mContext;
-	}
-	
-	private static Resources getResources(){
-		return getContext().getResources();
-	}
 	
 	public static int DIPToPX(float dipValue){ 
-        final float scale = getResources().getDisplayMetrics().density; 
+        final float scale = BaseContext.getDisplayMetrics().density;
         return (int)(dipValue * scale);
 	}
 
@@ -45,86 +20,14 @@ public class DimenUtil {
 	 * @param dpValue
 	 * @return
 	 */
-	public static int dip2px(Context context, float dpValue) {
+	public static int dip2px(float dpValue) {
 		try {
-			final float scale = context.getResources().getDisplayMetrics().density;
+			final float scale = BaseContext.getDisplayMetrics().density;
 			return (int) (dpValue * scale + 0.5f);
 		} catch (Exception e) {
 			return 0;
 		}
 	}
-	public static int dip2px(float dpValue, Context context) {
-		return dip2px(context, dpValue);
-	}
-
-	private static DisplayMetrics mDisplayMetrics;
-
-	public static int getVirtualBarHeight(Context context) {
-		int vh = 0;
-		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-		Display display = windowManager.getDefaultDisplay();
-		DisplayMetrics dm = new DisplayMetrics();
-		try {
-			@SuppressWarnings("rawtypes")
-			Class c = Class.forName("android.view.Display");
-			@SuppressWarnings("unchecked") Method method = c.getMethod("getRealMetrics", DisplayMetrics.class);
-			method.invoke(display, dm);
-			vh = dm.heightPixels - display.getHeight();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
-		return vh;
-	}
-
-	/**
-	 * 获取屏幕的宽度
-	 *
-	 * @return
-	 */
-	public static int getScreenWidth(Context context) {
-		if (mDisplayMetrics == null) {
-			mDisplayMetrics = context.getResources().getDisplayMetrics();
-		}
-		return mDisplayMetrics.widthPixels;
-	}
-
-	/**
-	 * 获取屏幕的高度
-	 *
-	 * @return
-	 */
-	public static int getScreenHeight(Context context) {
-		if (mDisplayMetrics == null) {
-			mDisplayMetrics = context.getResources().getDisplayMetrics();
-		}
-		return mDisplayMetrics.heightPixels;
-	}
-
-	public static int getScreenRealHeight(Activity activity) {
-		if (Build.VERSION.SDK_INT >= 17) {
-			Display display = activity.getWindowManager().getDefaultDisplay();
-			DisplayMetrics metrics = new DisplayMetrics();
-			display.getMetrics(metrics);
-			Point size = new Point();
-			display.getRealSize(size);
-			return size.y;
-		}
-		return getScreenHeight(activity);
-	}
-
-	public static float getScreenScale(Activity activity) {
-		return getScreenRealHeight(activity) * 1.0f / getScreenWidth(activity);
-	}
-
-//    public static boolean getIs18_9() {
-//        //???已经扣掉虚拟按键高度
-//        int screenHeight1 = com.blankj.utilcode.utils.ScreenUtils.getScreenHeight();
-//        int screenWidth1 = com.blankj.utilcode.utils.ScreenUtils.getScreenWidth();
-//        float screenHeight = getScreenHeight();
-//        float screenWidth = getScreenWidth();
-//        return   screenHeight/ screenWidth == 18f / 9f;//18:9
-//    }
 
 
 	/**
@@ -133,9 +36,9 @@ public class DimenUtil {
 	 * @param pxValue
 	 * @return
 	 */
-	public static int px2dip(Context context, float pxValue) {
+	public static int px2dip(float pxValue) {
 		try {
-			final float scale = context.getResources().getDisplayMetrics().density;
+			final float scale = BaseContext.getDisplayMetrics().density;
 			return (int) (pxValue / scale + 0.5f);
 		} catch (Exception e) {
 			return 0;
@@ -148,8 +51,8 @@ public class DimenUtil {
 	 * @param pxValue
 	 * @return
 	 */
-	public static int px2sp(Context context, float pxValue) {
-		final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+	public static int px2sp( float pxValue) {
+		final float fontScale = BaseContext.getDisplayMetrics().scaledDensity;
 		return (int) (pxValue / fontScale + 0.5f);
 	}
 
@@ -159,8 +62,8 @@ public class DimenUtil {
 	 * @param spValue
 	 * @return
 	 */
-	public static int sp2px(Context context, float spValue) {
-		final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+	public static int sp2px(float spValue) {
+		final float fontScale = BaseContext.getDisplayMetrics().scaledDensity;
 		return (int) (spValue * fontScale + 0.5f);
 	}
 
@@ -193,20 +96,13 @@ public class DimenUtil {
 		return (int) ((float) refSize * resultRadio / refRatio);
 	}
 
-	public static float getDimension(Context context, int resId) {
-		return context.getResources().getDimension(resId);
+	public static float getDimension(int resId) {
+		return BaseContext.getContext().getResources().getDimension(resId);
 	}
 
 	public static int PXToDIP(float pxValue){ 
-        final float scale = getResources().getDisplayMetrics().density; 
+        final float scale = BaseContext.getDisplayMetrics().density;
         return (int)(pxValue / scale); 
 	}
-	
-	public static void measureView(View view){
-		final int widthMeasureSpec =
-			    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-		final int heightMeasureSpec =
-		    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-		view.measure(widthMeasureSpec, heightMeasureSpec);
-	}
+
 }

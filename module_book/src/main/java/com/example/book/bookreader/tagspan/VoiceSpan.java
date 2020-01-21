@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.example.book.R;
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.book.text.style.ReplacementSpan;
 import com.season.book.text.style.ResourceSpan;
 
@@ -52,20 +52,20 @@ public class VoiceSpan extends ReplacementSpan implements ResourceSpan,IMediaSpa
 		int state = ReaderMediaPlayer.getInstance().getState(mSrc);
 		if(state == ReaderMediaPlayer.STATE_START){
 			if(mPlayDrawable == null){
-				mPlayDrawable = BookContext.getInstance().getResources().getDrawable(R.drawable.ic_reader_voice_play);
+				mPlayDrawable = BaseContext.getInstance().getResources().getDrawable(R.drawable.ic_reader_voice_play);
 			}
 			mPlayDrawable.setBounds(left, top, right, bottom);
 			mPlayDrawable.draw(canvas);
 		}else{
 			if(state != ReaderMediaPlayer.STATE_PREPAREING){
 				if(mPauseDrawable == null){
-					mPauseDrawable = BookContext.getInstance().getResources().getDrawable(R.drawable.ic_reader_voice_pause);
+					mPauseDrawable = BaseContext.getInstance().getResources().getDrawable(R.drawable.ic_reader_voice_pause);
 				}
 				mPauseDrawable.setBounds(left, top, right, bottom);
 				mPauseDrawable.draw(canvas);
 			}else{
 				if(mPrepareingDrawable == null){
-					mPrepareingDrawable = BookContext.getInstance().getResources().getDrawable(R.drawable.ic_reader_voice_prepareing);
+					mPrepareingDrawable = BaseContext.getInstance().getResources().getDrawable(R.drawable.ic_reader_voice_prepareing);
 				}
 				mPrepareingDrawable.setBounds(left, top, right, bottom);
 				mPrepareingDrawable.draw(canvas);

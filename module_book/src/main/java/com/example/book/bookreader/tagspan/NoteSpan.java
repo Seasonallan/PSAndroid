@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.example.book.R;
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.book.text.style.ClickActionSpan;
 import com.season.book.text.style.ReplacementSpan;
 import com.season.book.text.style.ResourceSpan;
@@ -45,7 +45,7 @@ public class NoteSpan extends ReplacementSpan implements ResourceSpan,ClickActio
 	public void draw(Canvas canvas, CharSequence text, int start, int end,
 			int left, int top, int right, int bottom, int maxW,int maxH,Paint paint) {
 		if(mDrawable == null){
-			mDrawable = BookContext.getInstance().getResources().getDrawable(R.drawable.note);
+			mDrawable = BaseContext.getInstance().getResources().getDrawable(R.drawable.note);
 		}
 		mDrawable.setBounds(left, top, right, bottom);
 		mDrawable.draw(canvas);

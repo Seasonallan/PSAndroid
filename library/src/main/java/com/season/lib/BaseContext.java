@@ -1,12 +1,11 @@
-package com.season.example;
+package com.season.lib;
 
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 
-import com.season.lib.dimen.DimenUtil;
-
-public class BookContext extends Application {
+public class BaseContext extends Application {
 	private static Context sContext;
 	private static Handler mHandler;
 	public static Context getInstance() {
@@ -14,15 +13,16 @@ public class BookContext extends Application {
 	}
 
 	public static void onCreate(Context context) {
-		if (context == null){
-			sContext = null;
-			mHandler = null;
-			DimenUtil.init(null);
-			return;
-		}
 		sContext = context;
 		mHandler = new Handler(context.getMainLooper());
-        DimenUtil.init(context);
+	}
+
+	public static Context getContext(){
+		return sContext;
+	}
+
+	public static DisplayMetrics getDisplayMetrics(){
+		return sContext.getResources().getDisplayMetrics();
 	}
 
 	@Override

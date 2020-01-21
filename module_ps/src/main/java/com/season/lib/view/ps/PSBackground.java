@@ -14,12 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.example.ps.R;
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.http.DownloadAPI;
 import com.season.lib.file.FileManager;
 import com.season.lib.dimen.ScreenUtils;
-import com.season.lib.util.PsUtil;
 import com.season.lib.ToolBitmapCache;
-import com.season.lib.log.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -128,7 +127,7 @@ public class PSBackground {
     public void release() {
         if (list.size() > 0) {
             for (BgOperate op : list) {
-                PsUtil.recycleBitmaps(op.bitmap);
+                BitmapUtil.recycleBitmaps(op.bitmap);
             }
             list.clear();
         }
@@ -186,7 +185,7 @@ public class PSBackground {
                 @Override
                 public void run() {
                     picture.setVisibility(View.VISIBLE);
-                    final File file = FileManager.getDiyFile(context, ".png");
+                    final File file = FileManager.getPsFile(null, ".png");
                     DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
                         @Override
                         public void onCompleted() {
@@ -325,14 +324,13 @@ public class PSBackground {
                             width = customGifFrameview.getViewWidth();
                             height = customGifFrameview.getViewHeight();
                         }
-                        Logger.d("showGif,isSuccess:" + isSuccess + ",width:" + width + ",height:" + height);
                         if (layoutParams == null) {
                             return;
                         }
                         if (height == 0 || width == 0) {
                             return;
                         }
-                        int screenWidth = ScreenUtils.getScreenWidth(context);
+                        int screenWidth = ScreenUtils.getScreenWidth();
                         if (width >= height) {
                             int newH = screenWidth * height / width;
                             layoutParams.width = screenWidth;

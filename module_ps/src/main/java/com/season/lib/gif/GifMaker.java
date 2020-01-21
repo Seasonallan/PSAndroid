@@ -8,10 +8,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.gif.extend.LZWEncoderOrderHolder;
 import com.season.lib.gif.extend.ThreadGifEncoder;
-import com.season.lib.util.PsUtil;
-import com.season.lib.log.Logger;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,8 +78,6 @@ public class GifMaker {
     this.mTotalWorkSize = count;
     this.mCurrentWorkSize = mTotalWorkSize;
 
-    Logger.d("record>> GifMaker  count=" + count + "  delayTime=" + delayTime + "  mTotalWorkSize>>"
-        + mTotalWorkSize);
     mHandler = new Handler(Looper.getMainLooper()) {
       @Override
       public void handleMessage(final Message msg) {
@@ -188,7 +185,6 @@ public class GifMaker {
 
     @Override
     public void run() {
-      Logger.d("easyView,run,order:" + mOrder + ",timeStart:" + System.currentTimeMillis());
       try {
         if (repeatCount <= 1) {
           ByteArrayOutputStream currentStream = new ByteArrayOutputStream();
@@ -240,7 +236,7 @@ public class GifMaker {
 
           mEncodeOrders.add(holder);
         }
-        PsUtil.recycleBitmaps(mBitmap);
+        BitmapUtil.recycleBitmaps(mBitmap);
         workDone();
       } catch (Exception e) {
         e.printStackTrace();
@@ -259,11 +255,9 @@ public class GifMaker {
     if (mCurrentWorkSize == 0) {
       Collections.sort(mEncodeOrders);
       if (repeatCount <= 1) {
-        Logger.d("easyView,Write,timeStart:" + System.currentTimeMillis());
         for (int i = 0; i < mEncodeOrders.size(); i++) {
           mFinalOutputStream.write(mEncodeOrders.get(i).getByteArrayOutputStream().toByteArray());
         }
-        Logger.d("easyView,Write,timeEnd:" + System.currentTimeMillis());
       } else {
         for (int index = 0; index < repeatCount; index++) {
           if (index == 0) {
@@ -297,7 +291,6 @@ public class GifMaker {
       bosToFile.flush();
       bosToFile.close();
       mHandler.sendEmptyMessage(200);
-      Logger.d("easyViewTime,timeEnd:" + System.currentTimeMillis());
     }
   }
 

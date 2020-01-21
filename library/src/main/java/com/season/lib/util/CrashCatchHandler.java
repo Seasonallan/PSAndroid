@@ -9,7 +9,7 @@ import java.util.Date;
 
 import android.text.TextUtils;
 
-import com.season.lib.file.FileUtil;
+import com.season.lib.file.FileUtils;
 
 /**
  * 捕捉程序异常保存到指定的文件
@@ -71,7 +71,7 @@ public class CrashCatchHandler implements UncaughtExceptionHandler {
 		sb.append("\n\n\n");
 
 		String filePath = getFilePath();
-		if (FileUtil.outCrashToFile(sb.toString(), filePath, MAX_SIZE)) {
+		if (FileUtils.writeStr2File(sb.toString(), filePath, MAX_SIZE)) {
 			return filePath;
 		}
 		return null;

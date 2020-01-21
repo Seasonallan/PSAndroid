@@ -11,10 +11,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-import com.season.lib.util.PsUtil;
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.view.ps.ScaleDetector;
-import com.season.lib.view.ps.PSLayer;
-import com.season.lib.log.Logger;
 import com.season.lib.dimen.MathUtil;
 
 import java.io.File;
@@ -63,12 +61,12 @@ public class CropRectView extends CropTool {
 
     @Override
     public void release() {
-        PsUtil.recycleBitmaps(cropBitmap);
+        BitmapUtil.recycleBitmaps(cropBitmap);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        PsUtil.recycleBitmaps(cropLayer);
+        BitmapUtil.recycleBitmaps(cropLayer);
         cropLayer = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvasCrop = new Canvas(cropLayer);
         canvasCrop.drawARGB(200, 0 , 0, 0);
@@ -181,14 +179,13 @@ public class CropRectView extends CropTool {
                 mOpMatrix.mapPoints(centerCrop);
             }
 
-            float preDegree = PSLayer.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
-            float newDegree = PSLayer.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
+            float preDegree = MathUtil.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
+            float newDegree = MathUtil.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector.currentY1);
 
             float degree = newDegree - preDegree;
             if (Math.abs(degree) < 18){
                 mOpMatrix.postRotate(degree, centerCrop[0], centerCrop[1]);
             }else{
-                Logger.d("degree error >> "+ degree);
             }
 
             float scaleFactor = detector.getScaleFactor();
@@ -208,8 +205,8 @@ public class CropRectView extends CropTool {
                 mOpMatrix.mapPoints(centerCrop);
             }
             //   mCurrentScale *= scaleFactor;
-            float preDegree = PSLayer.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX() + distanceX, currentEvent.getY() + distanceY);
-            float newDegree = PSLayer.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX(), currentEvent.getY());
+            float preDegree = MathUtil.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX() + distanceX, currentEvent.getY() + distanceY);
+            float newDegree = MathUtil.getRotationBetweenLines(centerCrop[0], centerCrop[1], currentEvent.getX(), currentEvent.getY());
 
             float degree = newDegree - preDegree;
             mOpMatrix.postRotate(degree, centerCrop[0], centerCrop[1]);
@@ -304,8 +301,8 @@ public class CropRectView extends CropTool {
             paintResult.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawBitmap(beforeBitmap, 0, 0, paintResult);
 
-            PsUtil.saveBitmap(new File(filePath), PsUtil.cutBitmap(result,  right - left, bottom - top, left, top));
-            PsUtil.recycleBitmaps(beforeBitmap, result);
+            BitmapUtil.saveBitmap(new File(filePath), BitmapUtil.cutBitmap(result,  right - left, bottom - top, left, top));
+            BitmapUtil.recycleBitmaps(beforeBitmap, result);
         }
     }
 }

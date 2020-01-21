@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.season.lib.dimen.AutoUtils;
 
 /**
  * Created by Administrator on 2017/10/13.
@@ -30,7 +29,7 @@ public class ColorImageView extends AppCompatImageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(AutoUtils.getPercentWidthSize(47), AutoUtils.getPercentWidthSize(47));
+        setMeasuredDimension(47,47);
     }
 
     float stroke;
@@ -39,8 +38,8 @@ public class ColorImageView extends AppCompatImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (paint == null){
-            radius = AutoUtils.getPercentWidthSize(8);
-            stroke = AutoUtils.getPercentWidthSize(4);
+            radius = 8;
+            stroke = 4;
             paint = new Paint();
             paint.setAntiAlias(true);
             paint.setStyle(Paint.Style.STROKE);

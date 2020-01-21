@@ -25,7 +25,6 @@ import com.example.book.bookreader.digests.BookDigestsSpan;
 import com.example.book.bookreader.digests.SelectorControlView;
 import com.example.book.bookreader.digests.TextSelectHandler;
 import com.example.book.bookreader.model.Book;
-import com.example.book.bookreader.model.Constants;
 import com.season.lib.dbase.DBConfig;
 import com.season.book.bookformats.BookInfo;
 import com.season.book.bookformats.Catalog;
@@ -503,7 +502,7 @@ public class ReadTxtView extends BaseReadView implements TxtUmdBasePlugin.IScree
             };
         }
         try {
-            mPlugin.openBook(mBook.getPath(), Constants.BOOKS_TEMP);
+            mPlugin.openBook(mBook.getPath(), getContext().getCacheDir()+"/chapter/");
         } catch (Exception e) {
             e.printStackTrace();
             mPlugin = null;

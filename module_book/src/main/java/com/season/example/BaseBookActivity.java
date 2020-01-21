@@ -39,8 +39,9 @@ import com.season.book.bookformats.Catalog;
 import com.season.book.bookformats.FormatPlugin;
 import com.season.book.bookformats.PluginManager;
 import com.season.book.os.SyncThreadPool;
+import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
-import com.season.lib.file.FileUtil;
+import com.season.lib.file.FileUtils;
 import com.season.lib.log.LogUtil;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.StatusBarUtil;
@@ -82,7 +83,7 @@ public class BaseBookActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		BookContext.onCreate(this);
+		BaseContext.onCreate(getApplicationContext());
 		Intent intent = getIntent();
 		if (intent == null) {
 			finish();
@@ -149,7 +150,6 @@ public class BaseBookActivity extends Activity implements
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		BookContext.onCreate(null);
         LogUtil.e("status  onDestroy");
 		if(mSyncThreadPool != null){
 			mSyncThreadPool.destroy();
@@ -491,7 +491,7 @@ public class BaseBookActivity extends Activity implements
 				try {
 					InputStream is = getResources().openRawResource(R.drawable.booktxt);
 					mBook.setPath(getBookFielPath());
-					if(!FileUtil.copyFileToFile(mBook.getPath(), is)){
+					if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
                         LogUtil.e("status  error");
 			        	finish();
 			        	return;
@@ -545,7 +545,7 @@ public class BaseBookActivity extends Activity implements
                 try {
                     InputStream is = getResources().openRawResource(R.drawable.book);
                     mBook.setPath(getBookFielPath2());
-                    if(!FileUtil.copyFileToFile(mBook.getPath(), is)){
+                    if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
                         LogUtil.e("status  error");
                         finish();
                         return;
@@ -610,12 +610,12 @@ public class BaseBookActivity extends Activity implements
 
 	@Override
 	public void onNotPreContent() {
-		ToastUtil.showToast(this, "已经是第一页了");// TODO
+		ToastUtil.showToast("已经是第一页了");// TODO
 	}
 	
 	@Override
 	public void onNotNextContent() {
-		ToastUtil.showToast(this, "已经是最后一页了");// TODO
+		ToastUtil.showToast("已经是最后一页了");// TODO
 	}
 
     @Override
@@ -753,7 +753,7 @@ public class BaseBookActivity extends Activity implements
     private void addBookLabel(){
         BookMark userMark = mReadView.newUserBookmark();
         if(BookMarkDatas.getInstance().addBookMark(userMark)){
-            ToastUtil.showToast(this_, R.string.book_label_add_success);
+            ToastUtil.showToast(R.string.book_label_add_success);
             mReadView.getContentView().invalidate();
         }
         dataLoaded();
@@ -765,7 +765,7 @@ public class BaseBookActivity extends Activity implements
     private void delBookLabel(){
         BookMark userMark = mReadView.newUserBookmark();
         if(BookMarkDatas.getInstance().deleteBookMark(userMark)){
-            ToastUtil.showToast(this_, R.string.book_label_del_success);
+            ToastUtil.showToast(R.string.book_label_del_success);
             mReadView.getContentView().invalidate();
         }
         dataLoaded();

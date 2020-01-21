@@ -23,20 +23,22 @@ import com.season.example.layout.BottomPaintLayout;
 import com.season.example.layout.BottomTextLayout;
 import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
+import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.bean.LayerItem;
+import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.dimen.ColorUtil;
 import com.season.lib.gif.GifMaker;
-import com.season.lib.util.PsUtil;
+import com.season.lib.log.LogUtil;
+import com.season.lib.util.ToastUtil;
 import com.season.lib.view.ps.CustomGifFrame;
 import com.season.lib.view.ps.ILayer;
-import com.season.lib.log.Logger;
 import com.season.lib.http.DownloadAPI;
 import com.season.example.layout.PopInputLayout;
 import com.season.lib.view.ps.CustomGifMovie;
 import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerEntity;
 import com.season.lib.view.ps.PSLayer;
-import com.season.lib.util.Constant;
 import com.season.lib.file.FileManager;
 import com.season.lib.file.FileUtils;
 import com.season.lib.dimen.ScreenUtils;
@@ -47,7 +49,6 @@ import com.season.lib.view.ps.CustomImageView;
 import com.season.lib.view.ps.CustomTextView;
 import com.season.lib.view.ps.CustomCanvas;
 import com.example.ps.R;
-import com.season.lib.dimen.AutoUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +73,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
         setContentView(R.layout.activity_ps);
 
+        BaseContext.onCreate(getApplicationContext());
         initView();
         initBottomLayout();
 
@@ -186,7 +188,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     private void fixCanvasHeight() {
         View canvasArea = findViewById(R.id.opview);
         int height = canvasArea.getHeight();
-        int screenWidth = ScreenUtils.getScreenWidth(this);
+        int screenWidth = ScreenUtils.getScreenWidth();
         videoWidthHeight = Math.min(height, screenWidth);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) canvasArea.getLayoutParams();
         params.width = videoWidthHeight;
@@ -220,13 +222,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
         RelativeLayout.LayoutParams delParams = (RelativeLayout.LayoutParams) del_container
                 .getLayoutParams();
-        delParams.height = Math.max(offsetY, AutoUtils.getPercentWidthSize(128));
+        delParams.height = Math.max(offsetY, 128);
         del_container.requestLayout();
 
         mPsCanvas.videoWidthHeight = videoWidthHeight;
         mPsCanvas.setOffsetX(offsetX);
         mPsCanvas.setOffsetY(offsetY);
-        Logger.LOG(""+ offsetX +"----"+ offsetY);
+        LogUtil.LOG(""+ offsetX +"----"+ offsetY);
     }
 
     private Handler handler = new Handler();
@@ -234,7 +236,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
         try {
             LayerEntity  layerEntity = null;
-            Object localData = FileUtils.getSerialData(this, "layerInfo");
+            Object localData = FileUtils.getSerialData("layerInfo");
             if (localData instanceof  LayerEntity){
                 layerEntity = (LayerEntity) localData;
             }
@@ -244,14 +246,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 showLayers(layerEntity, items);
                 showBg(backgroundInfo);
             }else{
-                addImageOrGifFromUrl(false, "https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-                addImageOrGifFromUrl(false, "http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
+                addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
+                addImageOrGifFromUrl("http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
                 addTextView("新年快乐");
             }
         } catch (Exception e) {
             e.printStackTrace();
             String s = e.toString();
-            Logger.d("diy_error:" + s);
         }
 }
 
@@ -264,7 +265,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mPsCanvas.showBackground(PsUtil.getColor(colorStr, 0x000000));
+                        mPsCanvas.showBackground(ColorUtil.getColor(colorStr, 0x000000));
                         resetStatus();
                     }
                 });
@@ -287,20 +288,18 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             for (int i = 0; i < items.size(); i++) {
                 LayerItem item = items.get(i);
                 PSLayer PSLayer = new PSLayer(this, handler);
-                if (item.getContentViewType() != Constant.contentViewType.ContentViewTypeTextbox) {//不是文字图层
+                if (item.getContentViewType() != LayerItem.ILayerType.ContentViewTypeTextbox) {//不是文字图层
                     String path = item.filePath;
                     String url = item.getImageURL();
                     File file = new File(path);
                     if (file.isFile() && file.length() > 0) {
-                        String fileType = PsUtil.getFileType(path);
-                        Logger.d("fileType=" + fileType);
                         switch (item.getContentViewType()) {
                             //本地素材 绘图 要上传图片
-                            case Constant.contentViewType.ContentViewTypeImage:
-                            case Constant.contentViewType.ContentViewTypeLocaImage://贴纸图层
+                            case LayerItem.ILayerType.ContentViewTypeImage:
+                            case LayerItem.ILayerType.ContentViewTypeLocaImage://贴纸图层
                                 int imageWidth;
                                 int imageHeight;
-                                if (PsUtil.isGif(fileType)) {//图片是Gif
+                                if (!FileUtils.isStaticImageFile(path)) {//图片是Gif
                                     CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
                                     boolean res = customGifMovie.setMovieResource(path);
                                     if (res) {//sometimes movie decode gif error url duration = 0
@@ -335,7 +334,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                                         layerEntity.getWidth(),
                                         layerEntity.getHeight(), imageWidth, imageHeight);
                                 break;
-                            case Constant.contentViewType.ContentViewTypeDraw://图层是涂鸦，静图，设置标志位isTuya=true
+                            case LayerItem.ILayerType.ContentViewTypeDraw://图层是涂鸦，静图，设置标志位isTuya=true
                                 CustomImageView customImageView = new CustomImageView(this);
                                 customImageView.setImageFile(path);
                                 customImageView.url = url;
@@ -351,7 +350,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                         }
                         addViewPost(PSLayer, i * 100, i == items.size() - 1);
                     } else {
-                        Logger.d("file missed");
                     }
                 } else {
                     //图层是文字
@@ -408,9 +406,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 if (!TextUtils.isEmpty(filePath)) {
                     File file = new File(filePath);
                     if (file.isFile() && file.length() > 0) {
-                        String fileHeader = FileUtils.getFileHeader(filePath);
-                        if (fileHeader.equals(Constant.FileSuffix.PNG) || fileHeader
-                                .equals(Constant.FileSuffix.JPG)) {
+                        if (FileUtils.isStaticImageFile(filePath)) {
                             mPsCanvas.showImage(url, filePath);
                         } else {
                             //格式异常了
@@ -424,7 +420,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                              //  ToastUtil.show("文件丢失");
+                               ToastUtil.showToast("文件丢失");
                             }
                         });
                     }
@@ -516,12 +512,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         resetStatus();
     }
 
+    int DIY_STICKER_BASE_SIZE = 480;//贴纸缩放比例尺寸
     private float getInitScale(ILayer scaleView) {
         float width = scaleView.getViewWidth() * 1.0f;
-        if (width >= Constant.DIY_STICKER_BASE_SIZE) {
+        if (width >= DIY_STICKER_BASE_SIZE) {
             return videoWidthHeight / width;
         } else {
-            return videoWidthHeight / Constant.DIY_STICKER_BASE_SIZE;
+            return videoWidthHeight / DIY_STICKER_BASE_SIZE;
         }
     }
 
@@ -609,10 +606,9 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Logger.d("diy>> onDestroy");
         try {
             if (mPsCanvas != null) {
-                FileUtils.saveSerialData(this, "layerInfo", mPsCanvas.getLayerMessage());
+                FileUtils.saveSerialData("layerInfo", mPsCanvas.getLayerMessage());
                 mPsCanvas.release();
             }
         } catch (Exception e) {
@@ -689,7 +685,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }
         Bitmap srcBitmap = mPsCanvas.getCacheBitmap();
         Bitmap bit = MosaicUtil.getMosaic(srcBitmap);
-        PsUtil.recycleBitmaps(srcBitmap);
+        BitmapUtil.recycleBitmaps(srcBitmap);
         customCanvas.setMosaic(bit);
     }
 
@@ -712,8 +708,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             bottomPaintLayout.show();
         }else if (i == R.id.bt_image) {
             int poi = new Random().nextInt(2);
-            if (poi == 1) addImageOrGifFromUrl(false, "https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-            else    addImageOrGifFromUrl(false, "http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
+            if (poi == 1) addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
+            else    addImageOrGifFromUrl("http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
 
         }  else if (i == R.id.bt_text) {
             View view = mPsCanvas.getFocusView();
@@ -733,32 +729,26 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             if (mPsCanvas.getChildCount() == 0) {
                 if (mPsCanvas.backgroundView.currentOperate != null) {
                     if (mPsCanvas.backgroundView.currentOperate.visible1 == View.VISIBLE) {
-                        //ToastUtil.show("画板上没有东西");
+                        ToastUtil.show("画板上没有东西");
                         return;
                     }
                 }
             }
-            int type;
-            if (mPsCanvas.hasGif()) {
-                type = Constant.ShareOriginalType.Gif;
-            } else {
-                type = Constant.ShareOriginalType.Photo;
-            }
-            mPsCanvas.start(type, new GifMaker.OnGifMakerListener() {
+            mPsCanvas.start(2, new GifMaker.OnGifMakerListener() {
                 @Override
                 public void onMakeProgress(int index, int count) {
-                    Logger.LOG("onMakeProgress" + index);
+                    LogUtil.LOG("onMakeProgress" + index);
                 }
 
                 @Override
                 public void onMakeGifSucceed(String outPath) {
-                    Logger.LOG(outPath);
+                    LogUtil.LOG(outPath);
                     CropActivity.start(PsActivity.this, outPath);
                 }
 
                 @Override
                 public void onMakeGifFail() {
-                    Logger.LOG("onMakeGifFail");
+                    LogUtil.LOG("onMakeGifFail");
                 }
             });
         }  else if (i == R.id.iv_undo) {//我们得知道最后的状态，然后对StickerLayer进行相应对处理
@@ -851,29 +841,26 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }
     }
 
-    public void addImageOrGifFromUrl(boolean saveHistory, final String url) {
+    public void addImageOrGifFromUrl(final String url) {
         if (TextUtils.isEmpty(url)) {
             return;
         }
-        final File file = FileManager.getDiyMaterialFile(this,url.hashCode() + "", PsUtil.getFileTri(url));
+        final File file = FileManager.getPsFile(url.hashCode() + "", FileUtils.getFileType(url));
         if (file == null) {
             return;
         }
-        Logger.d("1--->"+ file.length());
         if (file.length() > 0) {
-            addImageOrGifFromFile(false, url, file.toString());
+            addImageOrGifFromFile(url, file.toString());
         } else {
-            Logger.d("下载素材中，请稍候"+ file.length());
-           // ToastUtil.show("下载素材中，请稍候");
+            ToastUtil.show("下载素材中，请稍候");
             DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
                 @Override
                 public void onCompleted() {
-                    Logger.d("2--->"+ file.length());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (file.length() > 0) {
-                                addImageOrGifFromFile(false, url, file.toString());
+                                addImageOrGifFromFile(url, file.toString());
                             }
                         }
                     });
@@ -881,19 +868,16 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
                 @Override
                 public void onError() {
-                    Logger.d("onError--->"+ file.length());
                     file.deleteOnExit();
-                   // ToastUtil.show("下载失败，请稍候重试");
+                    ToastUtil.show("下载失败，请稍候重试");
                 }
 
             });
         }
     }
 
-    public void addImageOrGifFromFile(boolean saveHistory, String url, String filePath) {
-        String fileType = PsUtil.getFileType(filePath);
-        Logger.d("fileType>> " + fileType);
-        if (PsUtil.isGif(fileType)) {
+    public void addImageOrGifFromFile(String url, String filePath) {
+        if (!FileUtils.isStaticImageFile(filePath)) {
             CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
             boolean res = customGifMovie.setMovieResource(filePath);
             if (res) {//sometimes movie decode gif error url duration = 0

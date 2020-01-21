@@ -3,7 +3,7 @@ package com.example.book.bookreader.bookmarks;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.lib.dbase.base.BaseDao;
 import com.season.lib.dbase.base.IDbHelper;
 import com.season.lib.dbase.base.JsonArrayList;
@@ -40,7 +40,7 @@ public class BookMark extends BaseDao {
         }
         /*if(!BaseDBHelper.contains(db, "bookmark", "groupId")){
             db.execSQL("ALTER TABLE bookmark ADD COLUMN groupId INTEGER DEFAULT "+
-                    PreferencesUtil.getInstance(BookContext.getInstance()).getBookMarkGroupId() +";");
+                    PreferencesUtil.getInstance(BaseContext.getInstance()).getBookMarkGroupId() +";");
         }
         if(!BaseDBHelper.contains(db, "bookmark", "max")){
             db.execSQL("ALTER TABLE bookmark ADD COLUMN max INTEGER DEFAULT -1;");
@@ -64,7 +64,7 @@ public class BookMark extends BaseDao {
 
     // 分组ID
     @Column(name = "groupId",type = "Integer")
-    public int groupId = PreferencesUtil.getInstance(BookContext.getInstance()).getBookMarkGroupId();
+    public int groupId = PreferencesUtil.getInstance(BaseContext.getInstance()).getBookMarkGroupId();
 
 	// 自增长的表ID
 	public int id;

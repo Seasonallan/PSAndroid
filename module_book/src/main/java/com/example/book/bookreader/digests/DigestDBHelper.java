@@ -1,7 +1,7 @@
 package com.example.book.bookreader.digests;
 
 
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.lib.dbase.BaseDBHelper;
 
 /**
@@ -15,7 +15,7 @@ public class DigestDBHelper extends BaseDBHelper {
     private static final int DB_VERSION = 3;
 	
 	public DigestDBHelper() {
-		super(BookContext.getInstance(), DB_NAME, DB_VERSION);
+		super(BaseContext.getInstance(), DB_NAME, DB_VERSION);
 	} 
 
 	private static DigestDBHelper sDbHelper;

@@ -1,10 +1,10 @@
 package com.season.example;
 
-import android.app.Application;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.season.lib.BaseContext;
 
-public class SeasonApplication extends Application {
+public class SeasonApplication extends BaseContext {
 
 	
 	@Override

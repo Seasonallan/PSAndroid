@@ -17,14 +17,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
 import com.season.book.text.html.DataProvider;
-import com.season.example.BookContext;
-import com.season.lib.file.FileUtil;
-import com.example.book.bookreader.model.Constants;
+import com.season.lib.BaseContext;
 import com.example.book.bookreader.media.BaseMediaPlayer;
 import com.example.book.bookreader.media.IMedia;
 
@@ -103,7 +102,6 @@ public class ReaderMediaPlayer extends BaseMediaPlayer {
 	}
 	/**
 	 * 查询指定音频的播放状态
-	 * @param voiceSpan
 	 * @return 是否正在播放
 	 */
 	public boolean getPlayState(String voiceSrc){
@@ -432,10 +430,9 @@ public class ReaderMediaPlayer extends BaseMediaPlayer {
 	private String getVoiceFielPath(){
 		String path = null;
 		String pathDir = null;
-		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)
-			    && FileUtil.getStorageSize() > PLAYSIZE){
+		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)){
 			// 有SD卡
-			pathDir = Constants.BOOKS_TEMP;
+			pathDir = Environment.getExternalStorageDirectory()+ File.separator + "BookCoreTest";
 			path = pathDir + "downloadingMedia.dat";
 		} else if (getAvailMemory() > PLAYSIZE) {
 			// 没有SD卡
@@ -457,11 +454,11 @@ public class ReaderMediaPlayer extends BaseMediaPlayer {
 	}
 	
 	private Context getContext(){
-		return BookContext.getInstance();
+		return BaseContext.getInstance();
 	}
 	
 	private Handler getHandler(){
-		return BookContext.getHandler();
+		return BaseContext.getHandler();
 	}
 	
 	private static void check(){

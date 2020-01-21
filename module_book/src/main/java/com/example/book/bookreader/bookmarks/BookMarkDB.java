@@ -12,7 +12,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.lib.dbase.DBConfig;
 import com.season.lib.dbase.base.BaseDatabase;
 import com.season.lib.log.LogUtil;
@@ -45,7 +45,7 @@ public class BookMarkDB{
     }
 
     private ContentResolver getDatabase() {
-		return BookContext.getInstance().getContentResolver();
+		return BaseContext.getInstance().getContentResolver();
 	}
 
     /**

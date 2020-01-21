@@ -6,18 +6,14 @@ import java.util.Date;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.season.lib.file.FileUtil;
+import com.season.lib.file.FileUtils;
 
 /**
  * LOG日志工具类；如果需要指定是否需要输入，指定的TAG，知道的输出目录，调用之前需要调用init()方法
- * 
- * @author mingkg21
- * @email mingkg21@gmail.com
- * @date 2011-10-8
  */
 public class LogUtil {
 
-	private static String TAG = "Lectek";
+	private static String TAG = "Season";
 	public static boolean DEBUG = true;
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss.ms");
 	private static String LOG_FILE = "";
@@ -26,6 +22,10 @@ public class LogUtil {
 		TAG = tag;
 		DEBUG = debug;
 		LOG_FILE = logFile;
+	}
+
+	public static void LOG(String s) {
+		Log.e(TAG, s);
 	}
 
 	public static void i(String msg) {
@@ -92,7 +92,7 @@ public class LogUtil {
 			sb.append(Log.getStackTraceString(tr));
 			sb.append("\n");
 		}
-		FileUtil.outPutToFile(sb.toString(), LOG_FILE);
+		FileUtils.writeStr2File(sb.toString(), LOG_FILE);
 	}
 
 }

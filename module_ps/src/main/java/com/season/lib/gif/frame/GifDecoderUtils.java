@@ -4,9 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Movie;
 import android.text.TextUtils;
 
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.gif.movie.DelayDecoder;
 import com.season.lib.gif.movie.FrameDecoder;
-import com.season.lib.util.PsUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -81,7 +81,7 @@ public class GifDecoderUtils {
             gifDecoder.destroy();
             gifDecoder = null;
         }
-        if (firstFrame != null) PsUtil.recycleBitmaps(firstFrame);
+        if (firstFrame != null) BitmapUtil.recycleBitmaps(firstFrame);
     }
 
     private void stopDecodeThread() {

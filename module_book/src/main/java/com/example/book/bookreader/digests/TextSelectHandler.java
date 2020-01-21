@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.example.book.R;
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.lib.bitmap.BitmapUtil;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class TextSelectHandler extends AbsTextSelectHandler {
 
 	@Override
 	protected Context getContext() {
-		return BookContext.getInstance();
+		return BaseContext.getInstance();
 	}
 
 	@Override

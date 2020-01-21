@@ -445,7 +445,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 						temtFontProgress = 10;
 					}
 					if(temtFontProgress == 10){
-						ToastUtil.showToast(mActivity, R.string.reader_menu_item_font_size_max_tip);
+						ToastUtil.showToast(R.string.reader_menu_item_font_size_max_tip);
 						v.setEnabled(false);
 					}
 					mReadSetting.setFontLevel(temtFontProgress);
@@ -460,7 +460,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 					int temtFontProgress = mReadSetting.getFontLevel();
 					temtFontProgress -= FONT_INCREASE_UNIT;
 					if(temtFontProgress < 0){
-						ToastUtil.showToast(mActivity, R.string.reader_menu_item_font_size_min_tip);
+						ToastUtil.showToast(R.string.reader_menu_item_font_size_min_tip);
 						temtFontProgress = 0;
 					}
 					if(temtFontProgress == 0){
@@ -643,7 +643,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 			ToastUtil.dismissToast();
 			switch(item.id){
 			case MenuItem.MENU_ITEM_ID_BRIGHTNESS:
-				ToastUtil.showToast(getContext(), R.string.reader_menu_automatic_brightness_tip);
+				ToastUtil.showToast(R.string.reader_menu_automatic_brightness_tip);
 				showBrightessSettingView();
 				break;
 			case MenuItem.MENU_ITEM_ID_FONT:

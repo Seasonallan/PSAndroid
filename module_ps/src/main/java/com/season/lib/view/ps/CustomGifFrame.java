@@ -9,9 +9,9 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.gif.frame.GifDecoder;
 import com.season.lib.gif.frame.GifFrame;
-import com.season.lib.util.PsUtil;
 import com.season.lib.gif.movie.FrameDecoder;
 
 import java.util.List;
@@ -89,7 +89,7 @@ public class CustomGifFrame extends View implements ILayer {
             gifDecoder.destroy();
             gifDecoder = null;
         }
-        if (firstFrame != null) PsUtil.recycleBitmaps(firstFrame);
+        if (firstFrame != null) BitmapUtil.recycleBitmaps(firstFrame);
     }
 
     @Override

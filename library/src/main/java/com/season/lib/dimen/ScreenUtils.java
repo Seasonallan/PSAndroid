@@ -12,31 +12,33 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.season.lib.log.Logger;
+import com.season.lib.BaseContext;
 
 /**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2016/8/2
- *     desc  : 屏幕相关工具类
- * </pre>
+ * 屏幕相关工具类
  */
 public final class ScreenUtils {
 
-    private ScreenUtils()
-    {
-        throw new UnsupportedOperationException("u can't instantiate me...");
+
+    /**
+     * 判断当前设备是手机还是平板，代码来自 Google I/O App for Android
+     * @return 平板返回 True，手机返回 False
+     */
+    public static boolean isPad() {
+        return (BaseContext.getContext().getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
+
 
     /**
      * 获取屏幕的宽度（单位：px）
      *
      * @return 屏幕宽px
      */
-    public static int getScreenWidth(Context context)
+    public static int getScreenWidth()
     {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) BaseContext.getContext().getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();// 创建了一张白纸
         windowManager.getDefaultDisplay().getMetrics(dm);// 给白纸设置宽高
         return dm.widthPixels;
@@ -47,9 +49,9 @@ public final class ScreenUtils {
      *
      * @return 屏幕高px
      */
-    public static int getScreenHeight(Context context)
+    public static int getScreenHeight()
     {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) BaseContext.getContext().getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();// 创建了一张白纸
         windowManager.getDefaultDisplay().getMetrics(dm);// 给白纸设置宽高
         return dm.heightPixels;
@@ -87,9 +89,9 @@ public final class ScreenUtils {
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isLandscape(Context context)
+    public static boolean isLandscape()
     {
-        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        return BaseContext.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     /**
@@ -97,9 +99,9 @@ public final class ScreenUtils {
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isPortrait(Context context)
+    public static boolean isPortrait()
     {
-        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+        return BaseContext.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
     /**
@@ -150,9 +152,9 @@ public final class ScreenUtils {
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isScreenLock(Context context)
+    public static boolean isScreenLock()
     {
-        KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        KeyguardManager km = (KeyguardManager) BaseContext.getContext().getSystemService(Context.KEYGUARD_SERVICE);
         return km.inKeyguardRestrictedInputMode();
     }
 
@@ -163,9 +165,9 @@ public final class ScreenUtils {
      * @param duration
      *         时长
      */
-    public static void setSleepDuration(Context context, int duration)
+    public static void setSleepDuration(int duration)
     {
-        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, duration);
+        Settings.System.putInt(BaseContext.getContext().getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, duration);
     }
 
     /**
@@ -173,31 +175,14 @@ public final class ScreenUtils {
      *
      * @return 进入休眠时长，报错返回-123
      */
-    public static int getSleepDuration(Context context)
+    public static int getSleepDuration()
     {
         try {
-            return Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT);
+            return Settings.System.getInt(BaseContext.getContext().getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT);
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
             return -123;
         }
-    }
-
-    /**
-     * 先增碎片化控制尺寸工具 lizhongxin:
-     */
-    public static int getPercentWidthSize(Context context, int px)
-    {
-        int screenWidth = ScreenUtils.getScreenWidth(context);
-        int designW = 750;
-        Logger.d("screenUtils_W:"+screenWidth+"");
-        Logger.d("screenUtils_H:"+screenWidth+"");
-        return(int) (1.0f *px / designW * screenWidth);
-    }
-
-    public static int getPercentHeightSize(Context context, int px)
-    {
-        return (int)(1.0f *px * ScreenUtils.getScreenHeight(context) / 1334);
     }
 
 

@@ -18,8 +18,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.season.lib.util.PsUtil;
-import com.season.lib.log.Logger;
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.file.FileManager;
 
 import java.io.File;
@@ -210,13 +209,11 @@ public class CustomCanvas extends View{
         if (!TextUtils.isEmpty(getColorStatus)) {
             if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
                 int color = 0xffffff;
-                Logger.d(color);
                 try {
                     if (tBitmap != null) {
                         color = tBitmap.getPixel((int) x, (int) y);
                         tBitmap.recycle();
                         tBitmap = null;
-                        Logger.d(color);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -396,11 +393,11 @@ public class CustomCanvas extends View{
             height = cacheBitmap.getHeight() - y;
         }
         Bitmap bitmap = Bitmap.createBitmap(cacheBitmap, x, y, width, height);
-        File file = FileManager.getDiyLayerFile(getContext(), null, "png");
+        File file = FileManager.getPsFile(null, "png");
         if (file == null){
             return null;
         }
-        String tuya1url = PsUtil.saveBitmap(file, bitmap);
+        String tuya1url = BitmapUtil.saveBitmap(file, bitmap);
         return tuya1url;
     }
 

@@ -8,8 +8,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.ps.R;
-import com.season.lib.dimen.AutoUtils;
-import com.season.lib.log.Logger;
+import com.season.lib.log.LogUtil;
 import com.season.lib.view.ColorPickView;
 import com.season.lib.view.ps.PSBackground;
 import com.season.lib.view.ps.PSCanvas;
@@ -39,7 +38,7 @@ public abstract class PSBgColorGroup implements View.OnClickListener {
         vColor.setOnClickListener(this);
         iv_lable.setOnClickListener(this);
 
-        rgAutoBg.getLayoutParams().height = AutoUtils.getPercentWidthSize(47);
+        rgAutoBg.getLayoutParams().height = 47;
         rgAutoBg.requestLayout();
         //改背景
         rgAutoBg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -132,7 +131,7 @@ public abstract class PSBgColorGroup implements View.OnClickListener {
             int right = left + rgAutoBg.getMeasuredWidth();
             int bottom = top + rgAutoBg.getMeasuredHeight();
             if (y >= top && y <= bottom && x >= 0 && x <= right) {
-                Logger.LOG("N ");
+                LogUtil.LOG("N ");
             } else {
                 vColor.setVisibility(View.VISIBLE);
                 rgAutoBg.setVisibility(View.GONE);

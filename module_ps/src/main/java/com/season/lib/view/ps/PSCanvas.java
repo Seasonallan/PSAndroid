@@ -21,13 +21,13 @@ import android.widget.RelativeLayout;
 import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerItem;
 import com.season.lib.bean.LayerEntity;
-import com.season.lib.util.Constant;
+import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.dimen.ColorUtil;
+import com.season.lib.file.FileUtils;
 import com.season.lib.file.FileManager;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.gif.GifMaker;
-import com.season.lib.util.PsUtil;
 import com.season.lib.bitmap.AreaAveragingScale;
-import com.season.lib.log.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,10 +64,8 @@ public class PSCanvas extends RelativeLayout{
     private int finalGifWidthHeight = 480;
     public static final int WEIXIN = 2;
     public static final int LOCAL = 3;
-    public static final int ONLY_LAYER = 4;//不绘制底图，只绘制图层
     int maxCount = 100;
     int resortCount = 1;//由于数量太多缩小合成的数量倍数
-    private boolean isPreview;
     private GifMaker.OnGifMakerListener onGifMakerListener;
     int position = -1;
     //所有的操作列表
@@ -140,23 +138,19 @@ public class PSCanvas extends RelativeLayout{
                 if (view != null) {
                     if (view instanceof CustomGifMovie) {
                         String filePath = ((CustomGifMovie) view).file;
-                        Logger.d("hasGif1:" + filePath);
                         if (TextUtils.isEmpty(filePath)) {
                             continue;
                         }
-                        String fileType = PsUtil.getFileType(filePath);
-                        if (PsUtil.isGif(fileType)) {
+                        if (!FileUtils.isStaticImageFile(filePath)) {
                             return true;
                         }
                     }
                     if (view instanceof CustomGifFrame) {
                         String filePath = ((CustomGifFrame) view).file;
-                        Logger.d("hasGif2:" + filePath);
                         if (TextUtils.isEmpty(filePath)) {
                             continue;
                         }
-                        String fileType = PsUtil.getFileType(filePath);
-                        if (PsUtil.isGif(fileType)) {
+                        if (!FileUtils.isStaticImageFile(filePath)) {
                             return true;
                         }
                     }
@@ -175,8 +169,6 @@ public class PSCanvas extends RelativeLayout{
         }
         //遍历图层，判断有没有动态图层
         boolean LayerhasGif = LayerhasGif();
-//        boolean hasLayer = getChildCount() > 0;
-        Logger.d("LayerhasGif:" + LayerhasGif);
         relyView = backgroundView.getBackgroundView();
         if (false) {//背景是视频,且是gif图层或者没有图层
 
@@ -231,7 +223,7 @@ public class PSCanvas extends RelativeLayout{
                 get1PngImage(listener);
                 return;
             }
-            startGifMaker(listener, false);
+            startGifMaker(listener);
         }
     }
 
@@ -254,12 +246,12 @@ public class PSCanvas extends RelativeLayout{
 
 
     //启动合成GIF
-    private void startGifMaker(GifMaker.OnGifMakerListener listener, boolean isVideo) {
+    private void startGifMaker(GifMaker.OnGifMakerListener listener) {
         File outFile;
         if (makeType == LOCAL) {
-            outFile = FileManager.getShareLocalFile(".gif");
+            outFile = FileManager.getPsFile(null, ".gif");
         } else {
-            outFile = FileManager.getDiyFile(getContext(), ".gif");
+            outFile = FileManager.getPsFile(null, ".gif");
         }
         if (outFile == null) {
             listener.onMakeGifFail();
@@ -284,11 +276,9 @@ public class PSCanvas extends RelativeLayout{
             }
 
         }
-        if (!isVideo) {
-            if (count <= 1) {//校验，如果duration小于delay的话，表示只有一帧，直接合成PNG图片，跳过
-                get1PngImage(listener);
-                return;
-            }
+        if (count <= 1) {//校验，如果duration小于delay的话，表示只有一帧，直接合成PNG图片，跳过
+            get1PngImage(listener);
+            return;
         }
         //不是视频的情况下，有长gif的情况下：
         if (count > maxCount) {
@@ -309,34 +299,6 @@ public class PSCanvas extends RelativeLayout{
             repeatCount++;
         }
         long maxTime = 0;
-        if (makeType == PSCanvas.ONLY_LAYER && isVideo) {
-            repeatCount = 1;
-            //relyView不是视频，是最长的图层，如果图层时间比视频时长还长，那就用视频的长度
-            for (int i = 0; i < getChildCount(); i++) {
-                View scaleView = getChildAt(i);
-                if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
-                    //((ScaleView) scaleView).startRecord();
-                    View view = ((PSLayer) scaleView).getChildAt(0);
-                    if (view instanceof ILayer) {//找到时长最长的那个图层
-                        int layerduration = ((ILayer) view).getDuration();
-                        if (maxTime < layerduration) {
-                            //找出最长的图层的时长
-                            maxTime = layerduration;
-                        }
-                    }
-                }
-            }
-            if (relyView.getDuration() < maxTime) {
-                maxTime = relyView.getDuration();
-            }
-            if (delay != 0) {
-                count = (int) (maxTime / delay);
-                if (duration % delay != 0) {
-                    count++;
-                }
-            }
-
-        }
         //TODO 120毫秒对于文字动画有点卡顿，但是缩小帧间隔，意味着要画更多的帧，这时候我们要绘制的是480*480分辨率的argb8888的bitmap，
         //TODO 内存压力比较大， 如果平衡内存的问题 是否可以对文字类采用类似videoview 画完一帧，再seek到下一帧进行绘制？
        // Logger.t(TAG).e("diy_gifmake_makeType:" + makeType + ",duration:" + duration + ",delay" + delay + ",count:" + count);
@@ -344,10 +306,6 @@ public class PSCanvas extends RelativeLayout{
         //确定合成总帧数和帧与帧之间的延迟时间
         mGifMaker = new GifMaker(count / resortCount, delay * resortCount, Executors.newCachedThreadPool()).setOutputPath
                 (absolutePath);
-        if (makeType == PSCanvas.ONLY_LAYER) {
-            //4 only gif
-            mGifMaker.setRepeatCount(repeatCount);
-        }
         if (mGifMaker != null) {
             if (mGifMaker.isGifMaded) {
                 listener.onMakeGifSucceed(mGifMaker.mOutputPath);
@@ -364,11 +322,9 @@ public class PSCanvas extends RelativeLayout{
     //确定合成最终的尺寸
     void makeSize(boolean isGif) {
         if (isGif) {
-            finalGifWidthHeight = makeType == WEIXIN ? Constant.SHARE_WECHAT_GIF_RESOLUTION : ((makeType ==
-                    PSCanvas.ONLY_LAYER) ? Constant.IDEAL_VIDEO_RESOLUTION : Constant.IDEAL_GIF_RESOLUTION);//正好gif分辨率和照片分辨率相等
+            finalGifWidthHeight = makeType == WEIXIN ? 240 : 300;//正好gif分辨率和照片分辨率相等
         } else {
-            finalGifWidthHeight = makeType == WEIXIN ? Constant.PHOTO_RESOLUTION_WECHAT_SHARE : Constant
-                    .PHOTO_RESOLUTION;
+            finalGifWidthHeight = makeType == WEIXIN ? 300 : 480;
         }
     }
 
@@ -431,11 +387,11 @@ public class PSCanvas extends RelativeLayout{
     private void saveAndNotify(Bitmap bitmap, GifMaker.OnGifMakerListener listener) {
         File file;
         if (makeType == LOCAL) {
-            file = FileManager.getShareLocalFile(".png");
+            file = FileManager.getPsFile("share", ".png");
         } else {
-            file = FileManager.getDiyFile(getContext(), ".png");
+            file = FileManager.getPsFile("sha",".png");
         }
-        String filePath = PsUtil.saveBitmap(file, bitmap);
+        String filePath = BitmapUtil.saveBitmap(file, bitmap);
         if (filePath == null) {
             listener.onMakeGifFail();
             return;
@@ -615,14 +571,12 @@ public class PSCanvas extends RelativeLayout{
             //PAD必须在主线程中调用TextureView.getBitmap
             //否则出现错误java.lang.IllegalStateException: Hardware acceleration can only be used url a single UI thread.
             e.printStackTrace();
-            Logger.d("drawGIf_e:" + e.toString());
             if (onGifMakerListener != null) {
                 onGifMakerListener.onMakeGifFail();
             }
         }
         if (Looper.getMainLooper() != Looper.myLooper()) {
             while (isDrawing) {
-                Logger.d("drawGIf delay");
                 delay(10);
             }
         }
@@ -686,7 +640,6 @@ public class PSCanvas extends RelativeLayout{
                     refreshGifBg();
                 }
                 if (running == 1 && isMakingGifOrNot) {
-                    Logger.d("cur:" + System.currentTimeMillis());
                     if (mGifMaker != null && !mGifMaker.isBitmapFull()) {
                         //最大合成时间控制
                         if (System.currentTimeMillis() - startTime > mGifMaker.getTotalSize() * 1000) {
@@ -784,7 +737,7 @@ public class PSCanvas extends RelativeLayout{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-        videoWidthHeight = ScreenUtils.getScreenWidth(getContext());//正中画布的宽高
+        videoWidthHeight = ScreenUtils.getScreenWidth();//正中画布的宽高
         running = 1;
         refreshThread = new RefreshRecordThread();
         refreshThread.start();
@@ -1367,7 +1320,7 @@ public class PSCanvas extends RelativeLayout{
             if (bgOperate.visible1 == View.VISIBLE) {
                 int bgColor = bgOperate.color;
                 if (bgColor != Color.TRANSPARENT) {
-                    backInfoModel.setBackColorString(PsUtil.getColorStr(bgColor));
+                    backInfoModel.setBackColorString(ColorUtil.getColorStr(bgColor));
                 }
             } else if (bgOperate.visible2 == View.VISIBLE) {
                 backInfoModel.imageURLPathFile = bgOperate.imageFile;

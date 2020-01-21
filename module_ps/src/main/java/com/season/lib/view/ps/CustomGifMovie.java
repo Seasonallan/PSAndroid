@@ -13,7 +13,6 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.season.lib.gif.movie.DelayDecoder;
-import com.season.lib.log.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -98,7 +97,6 @@ public class CustomGifMovie extends View implements ILayer {
         try {
             byte[] bytes = getGiftBytes(new FileInputStream(path));
             mMovie = Movie.decodeByteArray(bytes, 0, bytes.length);
-            Logger.d("gif>> delay="+ getDelay() +"  getVideoDuration="+ getDuration());
             requestLayout();
             return mMovie.duration() > 0;
         }catch (Exception e){

@@ -224,7 +224,7 @@ public class EpubReadView extends BaseHtmlReadView {
                         return;
                     }
                     try {
-                        bitmap = BitmapUtil.clipScreenBoundsBitmap(getResources(), getDataStream(source));
+                        bitmap = BitmapUtil.clipScreenBoundsBitmap(getDataStream(source));
                     } catch (Exception e) {
                     }
                     runOnUiThread(new Runnable() {

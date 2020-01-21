@@ -11,8 +11,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.view.MotionEvent;
 
-import com.season.lib.util.PsUtil;
-import com.season.lib.log.Logger;
+import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.dimen.MathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -117,7 +117,6 @@ public class CropPathView extends CropTool{
             if (x >= point.x - radius*2 && x <= point.x + radius *2 && y >= point.y - radius *2 && y <= point.y + radius *2){
                 //形成闭环
                 isClose = true;
-                Logger.d("CropView 形成闭环");
                 x = point.x;
                 y = point.y;
                 points.add(new Point(x - (x - pointLast.x)/2, y - (y - pointLast.y)/2).isArc().position(points.size()));
@@ -350,7 +349,7 @@ public class CropPathView extends CropTool{
     @Override
     public void onDraw(Canvas canvas) {
         if (isClose){
-            PsUtil.recycleBitmaps(cropLayer);
+            BitmapUtil.recycleBitmaps(cropLayer);
             cropLayer = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvasCrop = new Canvas(cropLayer);
             canvasCrop.drawARGB(180, 0 , 0, 0);
@@ -392,7 +391,7 @@ public class CropPathView extends CropTool{
         if (!isClose){
             return;
         }
-        isFocus = PsUtil.isTouchPointInPath(path, (int)x, (int)y);
+        isFocus = MathUtil.isTouchPointInPath(path, (int)x, (int)y);
     }
 
     @Override
@@ -495,8 +494,8 @@ public class CropPathView extends CropTool{
             paintResult.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawBitmap(beforeBitmap, 0, 0, paintResult);
 
-            PsUtil.saveBitmap(new File(filePath), PsUtil.cutBitmap(result,  right - left, bottom - top, left, top));
-            PsUtil.recycleBitmaps(beforeBitmap, result);
+            BitmapUtil.saveBitmap(new File(filePath), BitmapUtil.cutBitmap(result,  right - left, bottom - top, left, top));
+            BitmapUtil.recycleBitmaps(beforeBitmap, result);
         }
     }
 

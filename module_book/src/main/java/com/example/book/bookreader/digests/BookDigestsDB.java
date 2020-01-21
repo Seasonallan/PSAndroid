@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 
 
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.lib.dbase.DBConfig;
 import com.season.lib.dbase.base.JsonArrayList;
 
@@ -51,7 +51,7 @@ public class BookDigestsDB{
     }
 
     private ContentResolver getDatabase() {
-		return BookContext.getInstance().getContentResolver();
+		return BaseContext.getInstance().getContentResolver();
 	}
 
 

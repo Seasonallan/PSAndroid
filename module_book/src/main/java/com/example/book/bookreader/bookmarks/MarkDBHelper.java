@@ -1,6 +1,6 @@
 package com.example.book.bookreader.bookmarks;
 
-import com.season.example.BookContext;
+import com.season.lib.BaseContext;
 import com.season.lib.dbase.BaseDBHelper;
 import com.season.lib.dbase.DBConfig;
 
@@ -12,7 +12,7 @@ import com.season.lib.dbase.DBConfig;
 public class MarkDBHelper extends BaseDBHelper {
  
 	public MarkDBHelper() {
-		super(BookContext.getInstance(), DBConfig.DB_NAME, DBConfig.DB_VERSION);
+		super(BaseContext.getInstance(), DBConfig.DB_NAME, DBConfig.DB_VERSION);
 	} 
 
 	private static MarkDBHelper sDbHelper;

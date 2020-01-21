@@ -3,8 +3,11 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 
 /**
- * 区域平均算法缩放图片，500x500的图，缩放成小图时；若使用安卓提供的api，无论怎么抗锯齿，缩放出的图片也是带有较明显锯齿的。此缩放效果提升
+ * 区域平均算法缩放图片，500x500的图，缩放成小图时；若使用安卓提供的api，
+ * 无论怎么抗锯齿，缩放出的图片也是带有较明显锯齿的。此缩放效果提升
+ * 效率不够，暂时弃用
  */
+@Deprecated
 public class AreaAveragingScale {
     protected int[] colorArray;
     private int srcWidth;

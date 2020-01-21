@@ -4,8 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 
-import com.season.lib.log.Logger;
-import com.season.lib.dimen.AutoUtils;
+import com.season.lib.log.LogUtil;
 
 /**
  * Disc: 文字动效 模型伪抽象工厂类
@@ -15,7 +14,7 @@ import com.season.lib.dimen.AutoUtils;
 public class AnimationProvider {
 
     protected int delayDefault = 80;//默认的帧延迟
-    protected float transMax = AutoUtils.getPercentWidthSize(24);
+    protected float transMax = 24;
     protected int stayTime = 500;//动效最后保留时间
     protected String[] textRows;//动效最后保留时间
     protected int position;
@@ -319,7 +318,6 @@ public class AnimationProvider {
 //        }
         delay = 60;
         this.delayDefault = delay;
-        Logger.d("textanime,duration:"+duration+",delay:"+delay);
     }
 
     protected int totalSize = 3;

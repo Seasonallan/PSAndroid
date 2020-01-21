@@ -2,8 +2,6 @@ package com.season.lib.animation;
 
 import android.graphics.Canvas;
 
-import com.season.lib.log.Logger;
-
 
 /**
  * Disc: 动效：上下颠簸
@@ -54,7 +52,6 @@ public class TranslateUpDownProvider extends AnimationProvider {
         int duration = getDuration();
         if (record){
             time = time % duration;
-            Logger.d("record>> time="+ time);
         }
         if (time < duration/2){
             float percent = time * 1.0f/ (duration/2);
@@ -62,9 +59,6 @@ public class TranslateUpDownProvider extends AnimationProvider {
         }else{
             float percent = (time - duration/2) * 1.0f/ (duration/2);
             dy = - transMax + percent * transMax * 2;
-        }
-        if (record){
-            Logger.d("record>> dx="+ dy);
         }
         return super.setTime(time, record);
     }

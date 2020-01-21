@@ -1,17 +1,28 @@
 package com.season.lib.util;
 
-import android.content.Context;
 import android.widget.Toast;
+
+import com.season.lib.BaseContext;
 
 public class ToastUtil {
 	static Toast mToast;
-	public static void showToast(Context context, int contentId){
-		showToast(context, context.getString(contentId));
-	}
-	
-	public static void showToast(Context context, String contentId){
+
+	public static void show(String contentId){
 		if(mToast == null){
-			mToast = Toast.makeText(context.getApplicationContext(), contentId, Toast.LENGTH_SHORT);
+			mToast = Toast.makeText(BaseContext.getContext(), contentId, Toast.LENGTH_SHORT);
+		}else{
+			mToast.setText(contentId);
+		}
+		mToast.show();
+	}
+
+	public static void showToast(int contentId){
+		showToast(BaseContext.getContext().getString(contentId));
+	}
+
+	public static void showToast(String contentId){
+		if(mToast == null){
+			mToast = Toast.makeText(BaseContext.getContext(), contentId, Toast.LENGTH_SHORT);
 		}else{
 			mToast.setText(contentId);
 		}

@@ -15,11 +15,9 @@ import android.widget.RelativeLayout;
 
 import com.season.lib.bean.LayerItem;
 import com.season.lib.animation.MatrixAnimation;
-import com.season.lib.util.Constant;
 import com.season.lib.dimen.MathUtil;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.dimen.ToolPaint;
-import com.season.lib.log.Logger;
 
 
 /**
@@ -41,9 +39,6 @@ import com.season.lib.log.Logger;
  * Time: 2017-12-12 21:44
  */
 public class PSLayer extends RelativeLayout {
-
-
-
 
     public PSLayer(Context context) {
         super(context);
@@ -78,8 +73,6 @@ public class PSLayer extends RelativeLayout {
     public Matrix mCurrentMatrix;
     private OnClickListener mClickListener;
     boolean copy = false;
-    public boolean isPreview = false;//是否是预览界面
-    public boolean isPreviewEdit = false;//是否是预览界面,编辑文字
 
     public void bindMatrix(LayerItem item, int opViewWidthEx, int offsetX, int offsetY, float width, float height, boolean scale) {
 //        Logger.d("itemArrayBean:  width=" + width+", height="+height +", sizeW="+ item.getSizeWidth() +"  ,sizeH="+item
@@ -87,7 +80,7 @@ public class PSLayer extends RelativeLayout {
         if (height <= 1) {
             height = width * 4 / 3;
         }
-        int opViewWidth = ScreenUtils.getScreenWidth(getContext());
+        int opViewWidth = ScreenUtils.getScreenWidth();
         float centerX = (float) (item.getCenterX() * opViewWidth / width);
         float centerY = (float) ((item.getCenterY() - (height - width) / 2) * opViewWidth / width);
         centerX += offsetX;
@@ -126,22 +119,16 @@ public class PSLayer extends RelativeLayout {
         if (height <= 1) {
             height = width * 4 / 3;
         }
-        int opViewWidth = ScreenUtils.getScreenWidth(getContext());
+        int opViewWidth = ScreenUtils.getScreenWidth();
         float viewWidth = (float) (item.getSizeWidth() * item.getXScale() * opViewWidth / width);
         float viewHeight = (float) (item.getSizeHeight() * item.getYScale() * opViewWidth / width);
 
 
-        Logger.d("initViewFromData  item.getCenterX()=" + item.getCenterX() + ", opViewWidth=" + opViewWidth + ", width=" + width);
-
-        Logger.LOG(""+ item.getCenterX() +"---->>>>"+ item.getCenterY());
         float centerX = (float) (item.getCenterX() * opViewWidth / width);
         float centerY = (float) ((item.getCenterY() - (height - width) / 2) * opViewWidth / width);
-        Logger.LOG(""+ centerX +"---->"+ centerY);
         //TODO PAD需要减掉原来图层宽高差
         centerX += offsetX;
         centerY += offsetY;
-
-        Logger.LOG(""+ offsetX +"----"+ offsetY);
 
 
         float transX = centerX - imageWidth / 2;
@@ -157,9 +144,6 @@ public class PSLayer extends RelativeLayout {
         }
         //mPSOpView.isRight = (item.getXScale() >= 0 ? true:false);
         mCurrentMatrix.postScale(scaleX, scaleY, centerX, centerY);
-
-        Logger.d("initViewFromData  centerX=" + centerX + ", centerY=" + centerY + ", viewWidth=" + viewWidth + "  ,viewHeight=" +
-                viewHeight + ", scaleX=" + scaleX + "  ,scaleY=" + scaleY);
 
         float degree = (float) (item.getAngle() * 180 / Math.PI);//(float) (rotation * Math.PI / 180);
         if (!mPSOpView.isRight) {
@@ -199,37 +183,12 @@ public class PSLayer extends RelativeLayout {
     public void disableHardWareWhenText2Long(CustomTextView view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (view.isText2Long()) {
-                Logger.d("硬件disableHardWareWhenText2Long");
                 //取消硬件加速
-//                this.setLayerType(View.LAYER_TYPE_HARDWARE, null);
                 this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             }
         }
     }
 
-    public static float getRotationBetweenLines(float centerX, float centerY, float xInView, float yInView) {
-        float rotation = 0;
-
-        float k1 = (centerY - centerY) / (centerX * 2 - centerX);
-        float k2 = (yInView - centerY) / (xInView - centerX);
-        float tmpDegree = (float) (Math.atan((Math.abs(k1 - k2)) / (1 + k1 * k2)) / Math.PI * 180);
-
-        if (xInView > centerX && yInView < centerY) {
-            rotation = 90 - tmpDegree;
-        } else if (xInView > centerX && yInView > centerY) {
-            rotation = 90 + tmpDegree;
-        } else if (xInView < centerX && yInView > centerY) {
-            rotation = 270 - tmpDegree;
-        } else if (xInView < centerX && yInView < centerY) {
-            rotation = 270 + tmpDegree;
-        } else if (xInView == centerX && yInView < centerY) {
-            rotation = 0;
-        } else if (xInView == centerX && yInView > centerY) {
-            rotation = 180;
-        }
-
-        return rotation;
-    }
 
     boolean isViewOffseted = false;
 
@@ -238,83 +197,19 @@ public class PSLayer extends RelativeLayout {
             return false;
         }
         isViewOffseted = true;
-        boolean isTuyaAttach = false;
-        boolean isDiyBottom4Text = false;
         if (!copy) {
             if (parentWidth > 0) {
-
                 int offsetX = parentWidth / 2;
                 int offsetY = parentHeight / 2;
-                int halfHText = 0;
-                boolean isPreviewBottom = false;
-                if (getChildCount() > 0) {
-                    View child = getChildAt(0);
-                    if (child instanceof CustomImageView) {
-                        if (((CustomImageView) child).changeCenter) {
-                            offsetX = (int) ((CustomImageView) child).getCenterX();
-                            offsetY = (int) ((CustomImageView) child).getCenterY();
-                            isTuyaAttach = true;
-                        }
-                    }
-                    if (child instanceof ILayer) {
-                        CustomTextView mText = null;
-                        if (child instanceof CustomTextView) {
-                            mText = (CustomTextView) child;
-                            isDiyBottom4Text = mText.isDiyBottom();
-                            isPreviewBottom = mText.isPreViewBottom();
-                        }
-                        if (isDiyBottom4Text) {
-                            //校正文字大小
-                            if (getChildAt(0) instanceof CustomTextView) {
-                                CustomTextView customTextView = (CustomTextView) getChildAt(0);
-                                int singleLinemaxCount = getSingleLinemaxCount(customTextView.getText());
-                                scale = ToolPaint.getDefault().getScale(getContext(), singleLinemaxCount);
-                                float v = customTextView.getisDiyBottomHeightPercent();
-                                halfHText = ((ILayer) child).getViewHeight() / 2;
-                                int offsetY4Diy = customTextView.getOffsetY4Diy();
-                                int lineWidth = 0;
-                                if (mPSOpView != null) {
-                                    lineWidth = mPSOpView.getLineWidth();
-                                }
-                                offsetY = (int) (parentHeight * v - halfHText * 2);
-                            } else {
-                                offsetY = (int) (parentHeight * 3 / 4 - scale * ((ILayer) child).getViewHeight() / 2);
-                            }
-                            offsetX = offsetX - ((ILayer) child).getViewWidth() / 2;
-                            if (mText != null) mText.setisDiyBottom(false);
-                        } else {
-                            offsetX = offsetX - ((ILayer) child).getViewWidth() / 2;
-                            offsetY = offsetY - ((ILayer) child).getViewHeight() / 2;
-                        }
-                    } else {
-                        offsetX = offsetX - child.getMeasuredWidth() / 2;
-                        offsetY = offsetY - child.getMeasuredHeight() / 2;
-                    }
-                }
-                if (!isPreviewBottom) {
-                    //TODO
-                    float minScaleY = 0.7f;//暂时写死 0.7046263
-                    if (isDiyBottom4Text){
-                        mCurrentMatrix.postTranslate(offsetX, offsetY);
-                        mCurrentMatrix.postScale(scale, scale, parentWidth / 2, offsetY+halfHText);
-                        mCurrentMatrix.postTranslate(0, scale<minScaleY?((1f-minScaleY)/2*2*halfHText):((1f-scale)*halfHText));
-//                        ((ScaleView) getParent()).rebindOpView(2*halfHText, scale);
-                    }else {
-                        mCurrentMatrix.postTranslate(offsetX, offsetY);
-                        mCurrentMatrix.postScale(scale, scale, parentWidth / 2, parentHeight / 2);
-                    }
-                }
+                mCurrentMatrix.postTranslate(offsetX, offsetY);
+                mCurrentMatrix.postScale(scale, scale, parentWidth / 2, parentHeight / 2);
             }
         }
         isFocusNow = true;
-        //mPSOpView.bindRect(this, mViewMatrix, true);
         if (getParent() instanceof PSCanvas) {
             ((PSCanvas) getParent()).addEvent(PSCanvas.IType.ADD, this, mCurrentMatrix);
         }
         invalidate();
-        if (isTuyaAttach) {
-            return false;
-        }
         return !copy;
     }
 
@@ -400,7 +295,7 @@ public class PSLayer extends RelativeLayout {
             scale = defaultScale;
         } else {
             int singleLinemaxCount = getSingleLinemaxCount(text);
-            scale = ToolPaint.getDefault().getScale(getContext(), singleLinemaxCount);
+            scale = ToolPaint.getDefault().getScale(singleLinemaxCount);
         }
         if (mPSOpView != null) {
 //            offsetY =mPSOpView.getOpViewBitmapWidth()-mPSOpView.getPadding();
@@ -418,12 +313,6 @@ public class PSLayer extends RelativeLayout {
             mCurrentMatrix.postScale(scale, scale, centerX, centerY);
             mCurrentMatrix.postTranslate(0, (1 - scale) * 0.5f * height);
         }
-//        9-03 15:26:54.291 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:height474,mPSOpView.getMinWidth():227
-//        09-03 15:26:54.291 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:左边一个mua~
-//                09-03 15:26:54.291 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:getHeight():1080,
-// height:474,offsetY:6
-//        09-03 15:26:54.297 30614-30614/com.biaoqing.BiaoQingShuoShuo D/PRETTY_LOGGER: │ scaleView:rebindOpView486
-
         invalidate();
         return scale;
     }
@@ -454,30 +343,20 @@ public class PSLayer extends RelativeLayout {
     public void changeOffset(String text, float x, float y) {
         value = text;
         //边界限制
-//        if (isPreview) {
-//            Logger.d("isPreviewEdit,changeOffset");
-//            zeropositionControl(-x, -y);
-//        } else {
         mCurrentMatrix.postTranslate(x, y);
-//        }
         invalidate();
     }
 
     public void changeOffsetWithScale(String text, float x, float y) {
         value = text;
         //边界限制
-//        if (isPreview) {
-//            Logger.d("isPreviewEdit,changeOffset");
-//            zeropositionControl(-x, -y);
-//        } else {
         float scale = 1;
         if (!TextUtils.isEmpty(text)) {
             int singleLinemaxCount = getSingleLinemaxCount(text);
-            scale = ToolPaint.getDefault().getScale(getContext(), singleLinemaxCount);
+            scale = ToolPaint.getDefault().getScale(singleLinemaxCount);
             mCurrentMatrix.postScale(scale, scale, getOffset()[0], getOffset()[1]);
         }
         mCurrentMatrix.postTranslate(x, y);
-//        }
         invalidate();
     }
 
@@ -485,7 +364,6 @@ public class PSLayer extends RelativeLayout {
         if (mPSOpView != null) {
             float[] res = mPSOpView.bindRect(this, mCurrentMatrix, true);
             float minScaleY = mPSOpView.getMinScaleY();
-            Logger.d("scaleView:rebindOpView,minScaleY:" + minScaleY);
             invalidate();
             return res;
         }
@@ -504,7 +382,6 @@ public class PSLayer extends RelativeLayout {
 
             //opView线条框校正的情况下，需要做位移补偿。
             float minScaleY = mPSOpView.getMinScaleY();
-            Logger.d("scaleView:rebindOpView,minScaleY:" + minScaleY + ",scale:" + scale+",height："+height);
             if (scale < minScaleY) {
                 mCurrentMatrix.postTranslate(0, (scale - minScaleY) * 0.5f * height);
             }
@@ -551,7 +428,7 @@ public class PSLayer extends RelativeLayout {
     public PSOpView mPSOpView;
 
     public void init() {
-        ZeroValue = ScreenUtils.getScreenWidth(getContext()) * 1f;
+        ZeroValue = ScreenUtils.getScreenWidth() * 1f;
         init(null);
     }
 
@@ -578,8 +455,8 @@ public class PSLayer extends RelativeLayout {
                     mCurrentMatrix.mapPoints(center);
                 }
 
-                float preDegree = getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
-                float newDegree = getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector
+                float preDegree = MathUtil.getRotationBetweenLines(detector.preX2, detector.preY2, detector.preX1, detector.preY1);
+                float newDegree = MathUtil.getRotationBetweenLines(detector.currentX2, detector.currentY2, detector.currentX1, detector
                         .currentY1);
 
                 float degree = newDegree - preDegree;
@@ -587,7 +464,6 @@ public class PSLayer extends RelativeLayout {
                 if (Math.abs(degree) < 18) {
                     mCurrentMatrix.postRotate(degree, center[0], center[1]);
                 } else {
-                    Logger.d("degree error >> " + degree);
                 }
 
                 float scaleFactor = detector.getScaleFactor();
@@ -656,9 +532,9 @@ public class PSLayer extends RelativeLayout {
                         //   mCurrentScale *= scaleFactor;
 
 
-                        float preDegree = getRotationBetweenLines(center[0], center[1], currentEvent.getX() + distanceX,
+                        float preDegree = MathUtil.getRotationBetweenLines(center[0], center[1], currentEvent.getX() + distanceX,
                                 currentEvent.getY() + distanceY);
-                        float newDegree = getRotationBetweenLines(center[0], center[1], currentEvent.getX(), currentEvent.getY());
+                        float newDegree = MathUtil.getRotationBetweenLines(center[0], center[1], currentEvent.getX(), currentEvent.getY());
 
                         float degree = newDegree - preDegree;
                         float degreeBefore = mPSOpView.degree;
@@ -749,53 +625,15 @@ public class PSLayer extends RelativeLayout {
             childAt = getChildAt(0);
             float[] floats = new float[9];
             mCurrentMatrix.getValues(floats);
-//                        for (int i=0;i<9;i++){
-//                            Logger.d("matrix,i:"+floats[i]);
-//                        }
-            //scale不影响边界数值
-            float xscale = floats[0];
             float yscale = floats[4];
-            float xtranslate = floats[2];
             float ytranslate = floats[5];
-            int width = childAt.getWidth();
             int height = childAt.getHeight();
             //这里代码服务于位置校正，和位移操作
             //预览界面控制中心点不超过边界
             if (distanceY > 0 || (distanceY < 0 && (ytranslate - distanceY) < (ZeroValue - yscale * height / 2))) {
-                if (isPreviewEdit) {
-                    if (ytranslate > (ZeroValue - yscale * height)) {
-                        floats[5] = ZeroValue - yscale * height;
-                        floats[2] = xtranslate - distanceX;
-                        mCurrentMatrix.setValues(floats);
-                    } else {
-                        mCurrentMatrix.postTranslate(-distanceX, -distanceY);
-                    }
-                    isPreviewEdit = false;
-                } else {
-                    //在边界以上
-                    mCurrentMatrix.postTranslate(-distanceX, -distanceY);
-                }
+                mCurrentMatrix.postTranslate(-distanceX, -distanceY);
             } else {
-                if (isPreview) {
-                    Logger.d("isPreviewEdit:" + isPreviewEdit);
-                    //如果是编辑文字重绘制
-                    if (isPreviewEdit) {
-                        if (ytranslate > (ZeroValue - yscale * height)) {
-                            floats[5] = ZeroValue - yscale * height;
-                            floats[2] = xtranslate - distanceX;
-                            mCurrentMatrix.setValues(floats);
-                        } else {
-                            //正常偏移量
-                            mCurrentMatrix.postTranslate(-distanceX, -distanceY);
-                        }
-                        isPreviewEdit = false;
-                    } else {
-                        //针对预览位移操作
-                        mCurrentMatrix.postTranslate(-distanceX, 0);
-                    }
-                } else {
-                    mCurrentMatrix.postTranslate(-distanceX, -distanceY);
-                }
+                mCurrentMatrix.postTranslate(-distanceX, -distanceY);
             }
             invalidate();
         }
@@ -961,7 +799,7 @@ public class PSLayer extends RelativeLayout {
             //该字段应该是文字的宽高
             layerItem.setSizeWidth(view.getWidth());
             layerItem.setSizeHeight(view.getHeight());
-            layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeTextbox);
+            layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeTextbox);
             layerItem.setText(((CustomTextView) view).getText());
             layerItem.setTextFontSize(((CustomTextView) view).getTextSize());
            // layerItem.setTextStyleModel(((TextStyleView) view).getTextEntry());
@@ -975,12 +813,12 @@ public class PSLayer extends RelativeLayout {
         } else if (view instanceof CustomImageView) {
             CustomImageView customImageView = (CustomImageView) view;
             if (customImageView.isTuya) {
-                layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeDraw);
+                layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeDraw);
             } else {
                 if (TextUtils.isEmpty(customImageView.url)) {
-                    layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeLocaImage);
+                    layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeLocaImage);
                 } else {
-                    layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeImage);
+                    layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeImage);
                 }
             }
             layerItem.filePath = customImageView.filePath;
@@ -988,9 +826,9 @@ public class PSLayer extends RelativeLayout {
         } else if (view instanceof CustomGifMovie) {
             CustomGifMovie customGifMovie = (CustomGifMovie) view;
             if (TextUtils.isEmpty(customGifMovie.url)) {
-                layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeLocaImage);
+                layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeLocaImage);
             } else {
-                layerItem.setContentViewType(Constant.contentViewType.ContentViewTypeImage);
+                layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeImage);
             }
             layerItem.filePath = customGifMovie.file;
             layerItem.setImageURL(customGifMovie.url);

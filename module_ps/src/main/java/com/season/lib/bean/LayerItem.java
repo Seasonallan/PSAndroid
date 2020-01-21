@@ -5,6 +5,14 @@ import java.io.Serializable;
 
 
 public class LayerItem implements Serializable {
+
+    public interface ILayerType {
+        int ContentViewTypeImage = 0; //网络素材
+        int ContentViewTypeLocaImage = 1;//本地素材
+        int ContentViewTypeTextbox = 2;//文字
+        int ContentViewTypeDraw = 3;//涂鸦，绘图
+    }
+
     public int animationType;
     private double xScale;
     private int index;

@@ -5,8 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.example.ps.R;
-import com.season.lib.dimen.AutoUtils;
-import com.season.lib.util.PsUtil;
+import com.season.lib.bitmap.BitmapUtil;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -37,7 +36,7 @@ public class ToolBitmapCache {
         Set<String> keySet = bitmapHashMap.keySet();
         for (String key: keySet) {
             Bitmap bitmap = bitmapHashMap.get(key);
-            PsUtil.recycleBitmaps(bitmap);
+            BitmapUtil.recycleBitmaps(bitmap);
         }
         bitmapHashMap.clear();
     }
@@ -59,21 +58,21 @@ public class ToolBitmapCache {
     public Bitmap getZoom(Context context){
         if (zoom == null || zoom.isRecycled()){
             zoom = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_zoom);
-            zoom = PsUtil.scaleBitmap(zoom, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
+            zoom = BitmapUtil.scale(zoom, 50, 50);
         }
         return zoom;
     }
     public Bitmap getScaleX(Context context){
         if (scaleX == null || scaleX.isRecycled()){
             scaleX = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_zoom_h);
-            scaleX = PsUtil.scaleBitmap(scaleX, AutoUtils.getPercentWidthSize(25), AutoUtils.getPercentWidthSize(60));
+            scaleX = BitmapUtil.scale(scaleX, 25, 60);
         }
         return scaleX;
     }
     public Bitmap getClose(Context context){
         if (close == null || close.isRecycled()){
             close = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_delete);
-            close = PsUtil.scaleBitmap(close, AutoUtils.getPercentWidthSize(50), AutoUtils.getPercentWidthSize(50));
+            close = BitmapUtil.scale(close, 50, 50);
         }
         return close;
     }

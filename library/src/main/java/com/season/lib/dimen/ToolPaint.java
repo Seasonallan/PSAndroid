@@ -1,17 +1,8 @@
 package com.season.lib.dimen;
 
-import android.content.Context;
-import android.content.res.Configuration;
 
-import com.season.lib.log.Logger;
-
-
-/**
- * Created by Administrator on 2017/11/22.
- */
 
 public class ToolPaint {
-
     private static ToolPaint defaultInstance;
     public static ToolPaint getDefault() {
         if (defaultInstance == null) {
@@ -31,10 +22,10 @@ public class ToolPaint {
 
 
     public int paintWidth = -1;
-    public int getPaintWidth(Context context){
+    public int getPaintWidth(){
         if (paintWidth <= 0){
-            paintWidth = AutoUtils.getPercentWidthSize(32);
-            if (isPad(context)){
+            paintWidth = 32;
+            if (ScreenUtils.isPad()){
                 paintWidth = paintWidth/2;
             }
         }
@@ -44,60 +35,46 @@ public class ToolPaint {
     public int strokeWidth = -1;
     public int getStrokeWidth(){
         if (strokeWidth <= 0){
-            strokeWidth = AutoUtils.getPercentWidthSize(18);
+            strokeWidth = 18;
         }
         return strokeWidth;
     }
 
 
     private float maxTextLength = -1;
-    public float getMaxTextLength(Context context){
+    public float getMaxTextLength(){
         if (maxTextLength <= 0){
-            maxTextLength = ScreenUtils.getScreenWidth(context) * 2.75f;
+            maxTextLength = ScreenUtils.getScreenWidth() * 2.75f;
         }
         return maxTextLength;
     }
 
-    /**
-     * 判断当前设备是手机还是平板，代码来自 Google I/O App for Android
-     * @param context
-     * @return 平板返回 True，手机返回 False
-     */
-    public static boolean isPad(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-    }
-
-    public float getScale(Context context, int singleLinemaxCount){
-        int paintSize = getPaintSize(context);
+    public float getScale(int singleLinemaxCount){
+        int paintSize = getPaintSize();
         int showWidth = paintSize * singleLinemaxCount;
-        int screenWidth = ScreenUtils.getScreenWidth(context);
+        int screenWidth = ScreenUtils.getScreenWidth();
 
         if (singleLinemaxCount<=9){
-//        if (singleLinemaxCount<=10||showWidth < screenWidth){
             return 0.5f;
         }else{
             return (screenWidth*10/11) * 1.0f/showWidth;
-//            return (screenWidth-paintSize) * 1.0f/showWidth;
         }
     }
+
     int paintSize = -1;
-    String tag=ToolPaint.this.getClass().getName();
-    public int getPaintSize(Context context){
+    public int getPaintSize(){
         if (paintSize <= 0){
             //参照line，这个数值一行最大显示10个字,还有留下间距
             /**
              * 默认多放大一倍，再缩小下来
              */
-            paintSize = ScreenUtils.getScreenWidth(context)*2/12;
+            paintSize = ScreenUtils.getScreenWidth()*2/12;
 //            paintSize = ScreenUtils.getScreenWidth()*225/1000;
-            if (isPad(context)){
+            if (ScreenUtils.isPad()){
                 //PAD字体太大会出现描边错位的问题
                 paintSize = paintSize/2;
             }
         }
-        Logger.d(tag+":getPaintSize==>"+paintSize);
         return paintSize;
     }
 }

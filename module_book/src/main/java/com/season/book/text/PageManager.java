@@ -94,7 +94,6 @@ public class PageManager implements PatchParent{
 	 * @param layoutAll 是否整本排版(如果为非只排版当前章节的前后两章)
 	 */
 	public PageManager(Context context,PageManagerCallback callback,boolean layoutAll){
-		DimenUtil.init(context.getApplicationContext());
 		mCallback = callback;
 		mChapterList = new ArrayList<ChapterTask>();
 		mBindPageList = new LinkedList<Page>();
@@ -290,7 +289,6 @@ public class PageManager implements PatchParent{
 	}
 	/**
 	 * 请求上一页
-	 * @param chapterIndex
 	 * @param pageIndex
 	 * @return 第一个位置是章节下标，第二个位置是页下标，如果返回空说明没有内容或者出错，如果放回-1说明还在等待排版
 	 */
@@ -784,8 +782,6 @@ public class PageManager implements PatchParent{
 	}
 	/**
 	 * 刷新绑定页
-	 * @param canvas
-	 * @param pageIndex
 	 * @return
 	 */
 	public void invalidateCachePage() {

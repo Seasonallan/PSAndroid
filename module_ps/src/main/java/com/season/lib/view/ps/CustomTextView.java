@@ -36,13 +36,12 @@ import android.view.ViewParent;
 import androidx.annotation.Nullable;
 
 import com.season.lib.bean.LayerItem;
-import com.season.lib.util.PsUtil;
+import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.dimen.ColorUtil;
 import com.season.lib.animation.AnimationProvider;
 import com.season.lib.file.FileManager;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.dimen.ToolPaint;
-import com.season.lib.log.Logger;
-import com.season.lib.dimen.AutoUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -133,7 +132,7 @@ public class CustomTextView extends View implements ILayer {
 
 
     public boolean setTextEntry(LayerItem item, float width) {
-        int opViewWidth = ScreenUtils.getScreenWidth(getContext());
+        int opViewWidth = ScreenUtils.getScreenWidth();
         this.text = item.getText();
         fixEmoji();
         this.fontName = item.getTextFontName();
@@ -190,12 +189,12 @@ public class CustomTextView extends View implements ILayer {
 
     //外部描边百分比得到描边宽度
     private float getStrokePaintStrokeWidth(double paintSizeParams, double strokePaintSizeParams) {
-        return (float) (strokePaintSizeParams * ToolPaint.getDefault().getPaintWidth(getContext()) + getPaintStrokeWidth(paintSizeParams));
+        return (float) (strokePaintSizeParams * ToolPaint.getDefault().getPaintWidth() + getPaintStrokeWidth(paintSizeParams));
     }
 
     //描边宽度得到外部描边百分比
     public float getStrokePaintStrokeWidthParam(float paintSizeParams) {
-        return (strokepaint.getStrokeWidth() - getPaintStrokeWidth(paintSizeParams)) / ToolPaint.getDefault().getPaintWidth(getContext());
+        return (strokepaint.getStrokeWidth() - getPaintStrokeWidth(paintSizeParams)) / ToolPaint.getDefault().getPaintWidth();
     }
 
     //内部描边百分比得到描边宽度
@@ -240,12 +239,11 @@ public class CustomTextView extends View implements ILayer {
         }
 
         drawingCacheSize = ViewConfiguration.get(context).getScaledMaximumDrawingCacheSize();
-        Logger.d(tag + drawingCacheSize);//onePlus:8294400;honor:3686400
-        textSpacing = AutoUtils.getPercentWidthSize(4);
-        lineSpacing = AutoUtils.getPercentWidthSize(16);
-        paddingLeft = AutoUtils.getPercentWidthSize(24);
-        paddingTop = AutoUtils.getPercentWidthSize(24);
-        offsetY = AutoUtils.getPercentWidthSize(10);
+        textSpacing = 4;
+        lineSpacing = 16;
+        paddingLeft =24;
+        paddingTop = 24;
+        offsetY = 10;
 
         this.context = context;
         paint.setDither(true);//防抖
@@ -272,18 +270,18 @@ public class CustomTextView extends View implements ILayer {
         paint.setShader(null);
 
         //当前做法是字体尽量设计大一点，然后通过scaleView对其进行缩小，以达成放大文字不会锯齿的效果
-        paint.setTextSize(ToolPaint.getDefault().getPaintSize(getContext()));
-        strokepaint.setTextSize(ToolPaint.getDefault().getPaintSize(getContext()));
+        paint.setTextSize(ToolPaint.getDefault().getPaintSize());
+        strokepaint.setTextSize(ToolPaint.getDefault().getPaintSize());
     }
 
     //获取最大放大倍数，超过的话文字会显示锯齿
     public float getMaxScale() {
         if (paint == null) {
             paint = new Paint();
-            paint.setTextSize(ToolPaint.getDefault().getPaintSize(getContext()));
+            paint.setTextSize(ToolPaint.getDefault().getPaintSize());
         }
         int width = (int) paint.measureText("情");
-        return ScreenUtils.getScreenWidth(getContext()) / 2 * 1.0f / width;
+        return ScreenUtils.getScreenWidth() / 2 * 1.0f / width;
     }
 
     private int finalWidth = 0, finalHeight = 0, lineHeight = 1;
@@ -344,8 +342,6 @@ public class CustomTextView extends View implements ILayer {
                 }
             }
         }
-        Logger.d("第0行：" + xoffsetCenter + "，widest：" + widest + "，currentRowleng:" + currentRowleng + ",offset:" + offset);
-        //******为了让文字居中end
         finalHeight = paddingTop;
         int size = textEmojiList.size();
         lineHeight = paddingTop + emojiWidth + paddingTop + lineSpacing;
@@ -359,7 +355,7 @@ public class CustomTextView extends View implements ILayer {
                 emoji.setSize(emojiWidth);
                 offsetX += (emoji.width + textSpacing);//x坐标加一个字符宽度和文件间隙
                 //这里做自动换行
-                if (offsetX >= ToolPaint.getDefault().getMaxTextLength(getContext()) && i < size - 1) {//fix problem: OpenGLRenderer: Bitmap too
+                if (offsetX >= ToolPaint.getDefault().getMaxTextLength() && i < size - 1) {//fix problem: OpenGLRenderer: Bitmap too
                     // large to be uploaded into a texture 宽度太大无法绘制问题
                     EmojiconHandler.TextEmoji emojiNext = textEmojiList.get(i + 1);
                     if (emojiNext.text == null || !emojiNext.text.equals("\n")) {
@@ -397,8 +393,6 @@ public class CustomTextView extends View implements ILayer {
                                 offsetX += xoffsetCenter;//校正居中偏移量
                             }
                         }
-                        Logger.d("第" + row + "行：" + xoffsetCenter + "，widest：" + widest + "，currentRowleng:" + currentRowleng + ","
-                                + "offset:" + offset);
                     }
                 } else {
                     emoji.row = row;//设置行
@@ -488,7 +482,6 @@ public class CustomTextView extends View implements ILayer {
                         } else {
                             //文字长度变化的时候，对位置进行矫正
                             if (resetPosition) {
-                                Logger.d("对位置进行矫正");
                                 ((PSLayer) getParent()).changeOffset(getText(), offset[0], offset[1]);
                             }
                             resetPosition = true;
@@ -631,7 +624,7 @@ public class CustomTextView extends View implements ILayer {
     void drawBackground(Canvas canvas) {
         if (backgroudRes != 0) {
             if (preBackgroundInfo != backgroudRes) {
-                PsUtil.recycleBitmaps(backgroundBitmap);
+                BitmapUtil.recycleBitmaps(backgroundBitmap);
                 backgroundBitmap = BitmapFactory.decodeResource(getResources(), backgroudRes);
             }
             if (backgroundBitmap != null && !backgroundBitmap.isRecycled()) {
@@ -648,7 +641,6 @@ public class CustomTextView extends View implements ILayer {
     private int delay = 80;
 
     public boolean setTextAnimationType(int type, int duration, int delay, float speed) {
-        Logger.d("textviewAnime:" + type);
         if (currentType == type) {
             return false;
         }
@@ -809,7 +801,7 @@ public class CustomTextView extends View implements ILayer {
 
     public Typeface getTypeface(Typeface typefaceDefault) {
         if (!TextUtils.isEmpty(fontName)) {
-            File fontfile = FileManager.getDiyFontFile(getContext(), fontName);
+            File fontfile = FileManager.getPsFile(fontName, "ttf");
             if (fontfile != null && fontfile.exists()) {
                 try {
                     Typeface typeface = Typeface.createFromFile(fontfile);
@@ -820,7 +812,6 @@ public class CustomTextView extends View implements ILayer {
                     e.printStackTrace();
                     //把错误的字体文件删除，以便重新下载
                     boolean delete = fontfile.delete();
-                    Logger.d("deletefile:" + delete);
                 }
             }
         }
@@ -829,7 +820,7 @@ public class CustomTextView extends View implements ILayer {
 
     @Override
     public void onRelease() {
-        PsUtil.recycleBitmaps(backgroundBitmap);
+        BitmapUtil.recycleBitmaps(backgroundBitmap);
     }
 
     public float getTextSize() {
@@ -871,7 +862,7 @@ public class CustomTextView extends View implements ILayer {
     }
 
     public boolean setStrokecolor(String strokecolor) {
-        int colorNew = PsUtil.getColor(strokecolor, paint.getColor());
+        int colorNew = ColorUtil.getColor(strokecolor, paint.getColor());
         int color = strokepaint.getColor();
         if (color == colorNew) {
             return false;
@@ -927,7 +918,6 @@ public class CustomTextView extends View implements ILayer {
 //        }
         addEvent();
         boolean hardwareAccelerated = this.isHardwareAccelerated();
-        Logger.d("硬件加速2：" + hardwareAccelerated);
         requestLayout();
         invalidate();
         return finalWidth;
@@ -947,7 +937,6 @@ public class CustomTextView extends View implements ILayer {
         resetAnimationParams();
 
         boolean hardwareAccelerated = this.isHardwareAccelerated();
-        Logger.d("硬件加速2：" + hardwareAccelerated);
 
         addEvent();
         requestLayout();
@@ -983,7 +972,6 @@ public class CustomTextView extends View implements ILayer {
 
 
     public boolean setTextcolor(int textcolor) {
-        Logger.d("textcolor:" + textcolor);
         if (paint.getShader() != null) {
 //            paint.setShader(null);
             startColorStr="";
@@ -1023,7 +1011,7 @@ public class CustomTextView extends View implements ILayer {
         endColorStr = "";
         int color = paint.getColor();
         if (!TextUtils.isEmpty(textcolor)) {
-            int colorNew = PsUtil.getColor(textcolor, paint.getColor());
+            int colorNew = ColorUtil.getColor(textcolor, paint.getColor());
             if (paint.getShader() != null) {
                 paint.setShader(null);
                 paint.setColor(colorNew);

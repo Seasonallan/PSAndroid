@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
-import com.season.lib.dimen.AutoUtils;
 
 /**
  * 制作的背景
@@ -36,7 +35,7 @@ public class ColorPickView extends AppCompatRadioButton {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(AutoUtils.getPercentWidthSize(47), AutoUtils.getPercentWidthSize(47));
+        setMeasuredDimension(47,47);
     }
 
     float radius;
@@ -46,8 +45,8 @@ public class ColorPickView extends AppCompatRadioButton {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (paint == null){
-            radius = AutoUtils.getPercentWidthSize(8);
-            stroke = AutoUtils.getPercentWidthSize(4);
+            radius = 8;
+            stroke = 4;
             paint = new Paint();
             paint.setAntiAlias(true);
             paint.setStyle(Paint.Style.STROKE);
