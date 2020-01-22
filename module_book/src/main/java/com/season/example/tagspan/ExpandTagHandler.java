@@ -6,16 +6,16 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.style.BackgroundColorSpan;
 
-import com.season.lib.text.Constant;
-import com.season.lib.text.html.DataProvider;
-import com.season.lib.text.html.HtmlParser.TagHandler;
-import com.season.lib.text.html.HtmlParser.TagInfo;
-import com.season.lib.text.style.AlignSpan;
-import com.season.lib.text.style.AsyncDrawableSpan;
-import com.season.lib.text.style.ClickAsyncDrawableSpan;
+import com.season.lib.epub.page.Constant;
+import com.season.lib.epub.paser.html.DataProvider;
+import com.season.lib.epub.paser.html.tag.TagHandler;
+import com.season.lib.epub.paser.html.tag.TagInfo;
+import com.season.lib.epub.span.AlignSpan;
+import com.season.lib.epub.span.AsyncDrawableSpan;
+import com.season.lib.epub.span.ClickAsyncDrawableSpan;
 
 
-public class ExpandTagHandler implements TagHandler{
+public class ExpandTagHandler implements TagHandler {
 	private HashMap<String, Object> mSpanIDMap;
 	private DataProvider mDataProvider;
 	private boolean isNoteA;
@@ -34,7 +34,7 @@ public class ExpandTagHandler implements TagHandler{
 	}
 	
 	@Override
-	public boolean handleTag(TagInfo tagInfo,Editable editable,boolean isStart) {
+	public boolean handleTag(TagInfo tagInfo, Editable editable, boolean isStart) {
 		if(isStart){
 			if("true".equalsIgnoreCase(tagInfo.getAttributes().getValue("data-audioRef"))){
 				String id = tagInfo.getAttributes().getValue("href");

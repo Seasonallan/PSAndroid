@@ -7,7 +7,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 public abstract class BaseViewPagerTabHostAdapter extends ViewPagerTabHost.AbsPagerTabHostAdapter {
 	private static final String TAG = BaseViewPagerTabHostAdapter.class.getSimpleName();

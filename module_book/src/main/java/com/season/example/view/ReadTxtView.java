@@ -26,18 +26,17 @@ import com.season.example.digests.SelectorControlView;
 import com.season.example.digests.TextSelectHandler;
 import com.season.example.model.Book;
 import com.season.lib.dbase.DBConfig;
-import com.season.lib.bookformats.BookInfo;
-import com.season.lib.bookformats.Catalog;
-import com.season.lib.text.IPagePicture;
-import com.season.lib.text.PagePicture;
+import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.epub.bean.Catalog;
+import com.season.lib.epub.page.IPagePicture;
+import com.season.lib.epub.page.PagePicture;
 import com.season.lib.txtumd.TxtUmdBasePlugin;
-import com.season.lib.txtumd.txt.TxtPlugin;
-import com.season.lib.txtumd.umd.UMDPlugin;
-import com.season.lib.log.LogUtil;
+import com.season.lib.txtumd.TxtPlugin;
+import com.season.lib.txtumd.UMDPlugin;
+import com.season.lib.util.LogUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Vector;
 
 
 public class ReadTxtView extends BaseReadView implements TxtUmdBasePlugin.IScreenParam {
@@ -460,43 +459,9 @@ public class ReadTxtView extends BaseReadView implements TxtUmdBasePlugin.IScree
 		mRequestChapterIndex = fRequestCatalogIndex;
 		mCurrentPageIndex = fRequestPageCharIndex;
         if(mBook.getPath().endsWith("umd")){
-            mPlugin = new UMDPlugin(this){
-                public Vector<String> getCurrentPageStringVector(){
-                    Vector<String> res = super.getCurrentPageStringVector();
-                    if (res != null && res.size() > 0){
-                        if (!mReadSetting.isSimplified()){
-                            Vector<String> tras = new Vector<String>(res.size());
-                            try {
-                                for (String str : res){
-                                   // tras.add(JChineseConvertor.getInstance().s2t(str));
-                                }
-                                return tras;
-                            } catch (Exception e) {
-                            }
-                        }
-                    }
-                    return res;
-                }
-            };
+            mPlugin = new UMDPlugin(this);
         }else{
-            mPlugin = new TxtPlugin(this){
-                public Vector<String> getCurrentPageStringVector(){
-                    Vector<String> res = super.getCurrentPageStringVector();
-                    if (res != null && res.size() > 0){
-                        if (!mReadSetting.isSimplified()){
-                            Vector<String> tras = new Vector<String>(res.size());
-                            try {
-                                for (String str : res){
-                                   // tras.add(JChineseConvertor.getInstance().s2t(str));
-                                }
-                                return tras;
-                            } catch (Exception e) {
-                            }
-                        }
-                    }
-                    return res;
-                }
-            };
+            mPlugin = new TxtPlugin(this);
         }
         try {
             mPlugin.openBook(mBook.getPath(), getContext().getCacheDir()+"/chapter/");

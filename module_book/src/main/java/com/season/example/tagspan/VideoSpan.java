@@ -12,8 +12,8 @@ import android.text.TextUtils;
 
 import com.example.book.R;
 import com.season.lib.BaseContext;
-import com.season.lib.text.style.ReplacementSpan;
-import com.season.lib.text.style.ResourceSpan;
+import com.season.lib.epub.span.ReplacementSpan;
+import com.season.lib.epub.span.ResourceSpan;
 import com.season.example.tagspan.ReaderMediaPlayer.Frame;
 import com.season.lib.dimen.DimenUtil;
 

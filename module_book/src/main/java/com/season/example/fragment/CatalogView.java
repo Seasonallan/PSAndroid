@@ -17,10 +17,10 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 
 import com.example.book.R;
-import com.season.lib.bookformats.BookInfo;
-import com.season.lib.bookformats.Catalog;
+import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.epub.bean.Catalog;
 import com.season.lib.dimen.DimenUtil;
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 public class CatalogView extends FrameLayout{
 	private static final String TAG = CatalogView.class.getSimpleName();

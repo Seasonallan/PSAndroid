@@ -13,8 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.season.example.anim.PageAnimController;
-import com.season.lib.pdf.PdfReaderView;
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 
 /**
@@ -48,8 +47,6 @@ public class ReadSetting{
     private static final String SETTING_TYPE_USER_THEME = "SETTING_TYPE_USER_THEME";
     /** 横竖屏切换*/
     public static final String SETTING_TYPE_ORIENTATION = "SETTING_TYPE_ORIENTATION";
-    /** pdf的布局类型*/
-    public static final String SETTING_TYPE_PDF_LAYOUT_TYPE = "SETTING_TYPE_PDF_LAYOUT_TYPE";
     /*		自动播放类型		*/
     public static final int AUTO_TYPE_NU = 0;
     public static final int AUTO_TYPE_UD = 1;
@@ -91,7 +88,6 @@ public class ReadSetting{
     private boolean isAutoPause;
     private boolean isShakeSwitch;
     private int mOrientationType;
-    private int mPdfLayoutType;
 
     public static ReadSetting getInstance(Context context){
         if(this_ == null){
@@ -113,7 +109,6 @@ public class ReadSetting{
         mAutoDelayedUD = loadAutoDelayed(SETTING_TYPE_AUTO_DELAYED_UD);
         mAutoDelayedLR = loadAutoDelayed(SETTING_TYPE_AUTO_DELAYED_LR);
         mOrientationType = loadOrientationType();
-        mPdfLayoutType = loadPdfLayoutType();
         mAutoType = AUTO_TYPE_NU;
         mSettingListenerList = new LinkedList<WeakReference<SettingListener>>();
         mHandler = new Handler(Looper.getMainLooper());
@@ -692,26 +687,6 @@ public class ReadSetting{
         notify(SETTING_TYPE_ORIENTATION);
     }
 
-    public int getPdfLayoutType() {
-        return mPdfLayoutType;
-    }
-
-    public void setPdfLayoutType(int layoutType) {
-        if(mPdfLayoutType == layoutType) {
-            return;
-        }
-        mPdfLayoutType = layoutType;
-        savePdfLayoutType(layoutType);
-    }
-
-    private int loadPdfLayoutType() {
-        return mSharedPreferences.getInt(SETTING_TYPE_PDF_LAYOUT_TYPE, PdfReaderView.LAYOUT_TYPE_FITSCREEN);
-    }
-
-    private void savePdfLayoutType(int layoutType) {
-        mSharedPreferences.edit().putInt(SETTING_TYPE_PDF_LAYOUT_TYPE, layoutType);
-        notify(SETTING_TYPE_PDF_LAYOUT_TYPE);
-    }
 
     private final void runOnUiThread(Runnable action) {
         mHandler.post(action);

@@ -22,7 +22,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.season.lib.text.html.DataProvider;
+import com.season.lib.epub.paser.html.DataProvider;
 import com.season.lib.BaseContext;
 import com.season.example.media.BaseMediaPlayer;
 import com.season.example.media.IMedia;

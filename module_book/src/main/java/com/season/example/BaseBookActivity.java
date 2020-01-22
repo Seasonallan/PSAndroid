@@ -34,13 +34,12 @@ import com.season.example.view.EpubReadView;
 import com.season.example.view.IReaderView;
 import com.season.example.view.PullRefreshLayout;
 import com.season.example.view.ReadTxtView;
-import com.season.lib.bookformats.BookInfo;
-import com.season.lib.bookformats.Catalog;
-import com.season.lib.os.SyncThreadPool;
+import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.epub.bean.Catalog;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.file.FileUtils;
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.StatusBarUtil;
 import com.season.lib.util.ToastUtil;
@@ -63,7 +62,6 @@ public class BaseBookActivity extends Activity implements
 	private CatalogView mCatalogView;
 	private RelativeLayout mCatalogLay;
 	private Book mBook;
-	private SyncThreadPool mSyncThreadPool;
 	private ReaderMenuPopWin mReaderMenuPopWin;
 	private int toolbarLP;
 	private int toolbarRP;
@@ -92,7 +90,6 @@ public class BaseBookActivity extends Activity implements
 
 		mBook = new Book();
 		mBook.setBookId("00000");
-		mSyncThreadPool = new SyncThreadPool();
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		screenWidth = dm.widthPixels;
 		screenHeight = dm.heightPixels;
@@ -147,8 +144,7 @@ public class BaseBookActivity extends Activity implements
 	protected void onDestroy() {
 		super.onDestroy();
         LogUtil.e("status  onDestroy");
-		if(mSyncThreadPool != null){
-			mSyncThreadPool.destroy();
+		if(mReadView != null){
 			mReadView.onDestroy();
 		}
 	}

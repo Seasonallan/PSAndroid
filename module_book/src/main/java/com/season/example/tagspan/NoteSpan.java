@@ -9,9 +9,9 @@ import android.text.TextUtils;
 
 import com.example.book.R;
 import com.season.lib.BaseContext;
-import com.season.lib.text.style.ClickActionSpan;
-import com.season.lib.text.style.ReplacementSpan;
-import com.season.lib.text.style.ResourceSpan;
+import com.season.lib.epub.span.ClickActionSpan;
+import com.season.lib.epub.span.ReplacementSpan;
+import com.season.lib.epub.span.ResourceSpan;
 
 public class NoteSpan extends ReplacementSpan implements ResourceSpan,ClickActionSpan{
 	private String mNote;

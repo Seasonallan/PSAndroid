@@ -9,18 +9,18 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.season.example.model.Book;
-import com.season.lib.bookformats.BookInfo;
-import com.season.lib.bookformats.Catalog;
-import com.season.lib.bookformats.Chapter;
-import com.season.lib.bookformats.epub.EpubPlugin;
-import com.season.lib.bookformats.epub.Resource;
-import com.season.lib.os.SyncThreadPool;
-import com.season.lib.text.html.CssProvider;
-import com.season.lib.text.html.DataProvider;
-import com.season.lib.text.html.ICssProvider;
+import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.epub.bean.Catalog;
+import com.season.lib.epub.bean.Chapter;
+import com.season.lib.epub.EpubPlugin;
+import com.season.lib.epub.paser.epub.Resource;
+import com.season.lib.os.SinThreadPool;
+import com.season.lib.epub.paser.html.CssProvider;
+import com.season.lib.epub.paser.html.DataProvider;
+import com.season.lib.epub.paser.html.ICssProvider;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.book.EncryptUtils;
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -216,7 +216,7 @@ public class EpubReadView extends BaseHtmlReadView {
 		@Override
 		public Drawable getDrawable(final String source,final DrawableContainer drawableContainer) {
 			Drawable drawable = new ColorDrawable(Color.TRANSPARENT);
-            new SyncThreadPool().addTask(new Runnable() {
+            new SinThreadPool().addTask(new Runnable() {
                 Bitmap bitmap = null;
 
                 @Override

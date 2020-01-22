@@ -9,8 +9,8 @@ import android.view.View;
 import com.season.example.bookmarks.BookMark;
 import com.season.example.digests.AbsTextSelectHandler;
 import com.season.example.digests.TextSelectHandler;
-import com.season.lib.bookformats.BookInfo;
-import com.season.lib.bookformats.Catalog;
+import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.epub.bean.Catalog;
 
 import java.util.ArrayList;
 

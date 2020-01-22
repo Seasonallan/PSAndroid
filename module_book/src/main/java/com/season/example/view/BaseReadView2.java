@@ -38,21 +38,20 @@ import com.season.example.tagspan.ReaderMediaPlayer;
 import com.season.example.tagspan.VideoSpan;
 import com.season.example.tagspan.VideoWindow;
 import com.season.example.anim.PageAnimController;
-import com.season.lib.bookformats.PaserExceptionInfo;
-import com.season.lib.text.ClickSpanHandler;
-import com.season.lib.text.PageManager;
-import com.season.lib.text.PageManager.PageManagerCallback;
-import com.season.lib.text.SettingParam;
-import com.season.lib.text.html.DataProvider;
-import com.season.lib.text.html.HtmlParser;
-import com.season.lib.text.html.HtmlParser.TagHandler;
-import com.season.lib.text.html.ICssProvider;
-import com.season.lib.text.style.AsyncDrawableSpan;
-import com.season.lib.text.style.ClickActionSpan;
-import com.season.lib.text.style.ClickAsyncDrawableSpan;
-import com.season.lib.text.style.UrlSpna;
+import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.epub.page.ClickSpanHandler;
+import com.season.lib.epub.page.PageManager;
+import com.season.lib.epub.page.PageManager.PageManagerCallback;
+import com.season.lib.epub.page.SettingParam;
+import com.season.lib.epub.paser.html.DataProvider;
+import com.season.lib.epub.paser.html.ICssProvider;
+import com.season.lib.epub.paser.html.tag.TagHandler;
+import com.season.lib.epub.span.AsyncDrawableSpan;
+import com.season.lib.epub.span.ClickActionSpan;
+import com.season.lib.epub.span.ClickAsyncDrawableSpan;
+import com.season.lib.epub.span.UrlSpna;
 import com.season.lib.dimen.DimenUtil;
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 /**
  * 1.管理控制翻页动画.
@@ -701,7 +700,7 @@ public class BaseReadView2 extends View implements PageManagerCallback,PageAnimC
 	private void createPageManager(){
 		if(mChapterSize != null && !mPageManager.isInit()){
 			Rect fullPageRect = new Rect(getLeft(), getTop(), getRight(), getBottom());
-			SettingParam settingParam = new SettingParam(HtmlParser.PARSER_TYPE_SURFINGREADER,mContentId,mTextPaint
+			SettingParam settingParam = new SettingParam(mContentId,mTextPaint
 					,newPageContenRect()
 					,fullPageRect,mReadSetting.getLineSpaceSize(),mReadSetting.getParagraphSpaceSize(),this);
 			mPageManager.init(settingParam, mChapterSize, mCurrentChapterIndex);
@@ -1101,14 +1100,13 @@ public class BaseReadView2 extends View implements PageManagerCallback,PageAnimC
 		/**
 		 * 检测是否需要购买
 		 * @param catalogIndex
-		 * @param requestPageIndex
 		 * @return
 		 */
 		public boolean checkNeedBuy(int catalogIndex);
 	}
 	
 	@Override
-	public PaserExceptionInfo getPaserExceptionInfo() {
-		return new PaserExceptionInfo(mContentId, mCallback.getBookName(), mChapterSize);
+	public BookInfo getPaserExceptionInfo() {
+		return new BookInfo(mContentId, mCallback.getBookName(), mChapterSize);
 	}
 }

@@ -14,7 +14,7 @@ import android.graphics.RectF;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 /**
  * txt umd解码基类
@@ -197,6 +197,7 @@ public abstract class TxtUmdBasePlugin {
 
 	/**
 	 * 获取当前页码内容
+	 * 需要简体繁体切换可以在这里进行转化JChineseConvertor.getInstance().s2t(str)
 	 * @return
 	 */
 	public Vector<String> getCurrentPageStringVector(){
@@ -429,8 +430,6 @@ public abstract class TxtUmdBasePlugin {
 
     /**
      * 刷新绑定页
-     * @param canvas
-     * @param pageIndex
      * @return
      */
     public void invalidateCachePage() {

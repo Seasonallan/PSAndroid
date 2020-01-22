@@ -17,7 +17,7 @@ import com.season.example.model.ReadSetting;
 import com.season.example.anim.AutoAnimController;
 import com.season.example.anim.PageAnimController;
 import com.season.lib.dimen.DimenUtil;
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener {
 	protected static final String TAG = AbsReadView.class.getSimpleName();

@@ -1,6 +1,6 @@
 package com.season.example.tagspan;
 
-import com.season.lib.text.style.ClickActionSpan;
+import com.season.lib.epub.span.ClickActionSpan;
 import com.season.example.media.IMedia;
 
 public interface IMediaSpan extends ClickActionSpan,ReaderMediaPlayer.PlayerListener,IMedia {

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.season.lib.bookformats.Catalog;
+import com.season.lib.epub.bean.Catalog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

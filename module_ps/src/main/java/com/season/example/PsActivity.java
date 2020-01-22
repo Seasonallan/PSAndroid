@@ -29,7 +29,7 @@ import com.season.lib.bean.LayerItem;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.dimen.ColorUtil;
 import com.season.lib.gif.GifMaker;
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
 import com.season.lib.view.ps.CustomGifFrame;
 import com.season.lib.view.ps.ILayer;

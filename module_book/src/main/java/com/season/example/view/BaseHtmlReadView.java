@@ -35,17 +35,17 @@ import com.season.example.tagspan.ReaderMediaPlayer;
 import com.season.example.tagspan.VideoSpan;
 import com.season.example.tagspan.VideoWindow;
 import com.season.lib.dbase.DBConfig;
-import com.season.lib.bookformats.Catalog;
-import com.season.lib.bookformats.PaserExceptionInfo;
-import com.season.lib.text.ClickSpanHandler;
-import com.season.lib.text.PageManager;
-import com.season.lib.text.SettingParam;
-import com.season.lib.text.html.HtmlParser;
-import com.season.lib.text.style.AsyncDrawableSpan;
-import com.season.lib.text.style.ClickActionSpan;
-import com.season.lib.text.style.ClickAsyncDrawableSpan;
-import com.season.lib.text.style.UrlSpna;
-import com.season.lib.log.LogUtil;
+import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.epub.bean.Catalog;
+import com.season.lib.epub.page.ClickSpanHandler;
+import com.season.lib.epub.page.PageManager;
+import com.season.lib.epub.page.SettingParam;
+import com.season.lib.epub.paser.html.tag.TagHandler;
+import com.season.lib.epub.span.AsyncDrawableSpan;
+import com.season.lib.epub.span.ClickActionSpan;
+import com.season.lib.epub.span.ClickAsyncDrawableSpan;
+import com.season.lib.epub.span.UrlSpna;
+import com.season.lib.util.LogUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -255,7 +255,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	private void createPageManager(){
 		if(mChapterSize != null && !mPageManager.isInit()){
 			Rect fullPageRect = new Rect(getLeft(), getTop(), getRight(), getBottom());
-			SettingParam settingParam = new SettingParam(HtmlParser.PARSER_TYPE_SURFINGREADER,mBook.getBookId(),mTextPaint
+			SettingParam settingParam = new SettingParam(mBook.getBookId(),mTextPaint
 					,newPageContenRect()
 					,fullPageRect,mReadSetting.getLineSpaceSize(),mReadSetting.getParagraphSpaceSize(),this);
 			mPageManager.init(settingParam, mChapterSize, mCurrentChapterIndex);
@@ -846,7 +846,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	}
 
 	@Override
-	public HtmlParser.TagHandler getTagHandler() {
+	public TagHandler getTagHandler() {
 		return new ExpandTagHandler(getDataProvider());
 	}
 
@@ -921,8 +921,8 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	}
 
 	@Override
-	public PaserExceptionInfo getPaserExceptionInfo() {
-		return new PaserExceptionInfo(mBook.getBookId(), mBook.getBookName(), mCurrentChapterIndex);
+	public BookInfo getPaserExceptionInfo() {
+		return new BookInfo(mBook.getBookId(), mBook.getBookName(), mCurrentChapterIndex);
 	}
 	
 	@Override

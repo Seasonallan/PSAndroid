@@ -4,8 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 
-import com.season.lib.log.LogUtil;
-
 /**
  * Disc: 文字动效 模型伪抽象工厂类
  * User: SeasonAllan(451360508@qq.com)

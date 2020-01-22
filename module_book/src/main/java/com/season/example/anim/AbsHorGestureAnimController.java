@@ -6,7 +6,7 @@ import android.graphics.PointF;
 import android.view.MotionEvent;
 import android.widget.Scroller;
 
-import com.season.lib.log.LogUtil;
+import com.season.lib.util.LogUtil;
 
 /**
  * 水分平滑翻页动画
