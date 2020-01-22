@@ -9,7 +9,7 @@ import com.season.lib.epub.page.Constant;
 import com.season.lib.epub.support.LinkedList;
 import com.season.lib.epub.page.PageManager;
 import com.season.lib.epub.page.SettingParam;
-import com.season.lib.epub.bean.layout.StyleText;
+import com.season.lib.epub.StyleText;
 import com.season.lib.epub.support.Util;
 import com.season.lib.epub.span.BlockquoteSpan;
 import com.season.lib.epub.span.FloatSpan;

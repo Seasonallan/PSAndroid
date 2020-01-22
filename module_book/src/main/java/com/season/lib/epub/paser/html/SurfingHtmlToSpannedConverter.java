@@ -34,7 +34,7 @@ import com.season.lib.epub.span.AlignSpan;
 import com.season.lib.epub.span.AsyncDrawableSpan;
 import com.season.lib.epub.span.BaseAsyncDrawableSpan;
 import com.season.lib.epub.span.BlockquoteSpan;
-import com.season.lib.epub.bean.layout.Border;
+import com.season.lib.epub.Border;
 import com.season.lib.epub.span.ClickAsyncDrawableSpan;
 import com.season.lib.epub.span.FloatSpan;
 import com.season.lib.epub.span.GroupsAsyncDrawableSpan;
@@ -45,8 +45,8 @@ import com.season.lib.epub.span.UrlSpna;
 import com.season.lib.epub.page.Constant;
 import com.season.lib.epub.support.LinkedList;
 import com.season.lib.epub.page.PageManager.TaskListener;
-import com.season.lib.epub.bean.layout.StyleText;
-import com.season.lib.epub.bean.layout.StyleText.Intervalo;
+import com.season.lib.epub.StyleText;
+import com.season.lib.epub.StyleText.Intervalo;
 import com.season.lib.epub.support.Util;
 
 
@@ -68,7 +68,7 @@ public class SurfingHtmlToSpannedConverter implements ContentHandler {
 	private boolean isScript;
 	private SizeInfo mSizeInfo;
 	public SurfingHtmlToSpannedConverter(ICssProvider cssProvider,DataProvider imageGetter
-			, XMLReader parser,TaskListener task,TagHandler tagHandler,SizeInfo sizeInfo) {
+			, XMLReader parser,TaskListener task,SizeInfo sizeInfo) {
 		mRootStyleText = StyleText.createRoot();
 		mSpannableStringBuilder = mRootStyleText.getDataSource();
 		mImageGetter = imageGetter;
@@ -79,7 +79,7 @@ public class SurfingHtmlToSpannedConverter implements ContentHandler {
 		mCssPaths = new ArrayList<String>();
 		mCharContainer = new StringBuilder(100);
 		mTask = task;
-		mTagHandler = tagHandler;
+		mTagHandler = new VideoTagConverter(imageGetter);
 		mSizeInfo = sizeInfo;
 	}
 

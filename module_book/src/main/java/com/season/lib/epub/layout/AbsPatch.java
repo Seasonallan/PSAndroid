@@ -9,7 +9,7 @@ import android.view.View;
 
 import com.season.lib.epub.page.PatchParent;
 import com.season.lib.epub.page.SettingParam;
-import com.season.lib.epub.bean.layout.StyleText;
+import com.season.lib.epub.StyleText;
 
 public abstract class AbsPatch implements SpanWatcher{
 	/** 数据源*/

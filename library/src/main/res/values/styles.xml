@@ -1,0 +1,9 @@
+<resources>
+
+    <declare-styleable name="PullActivateLayout">
+        <attr name="actionViewId" format="reference" />
+        <attr name="toolViewId" format="reference" />
+    </declare-styleable>
+    <item type="id" name="action_view" />
+    <item type="id" name="tool_view" />
+</resources>

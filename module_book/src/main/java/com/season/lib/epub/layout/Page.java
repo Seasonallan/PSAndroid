@@ -14,7 +14,7 @@ import com.season.lib.epub.page.DrawCallback;
 import com.season.lib.epub.support.LinkedList;
 import com.season.lib.epub.page.PatchParent;
 import com.season.lib.epub.page.SettingParam;
-import com.season.lib.epub.bean.layout.StyleText;
+import com.season.lib.epub.StyleText;
 import com.season.lib.epub.span.ImgPanelBGDrawableSpan;
 import com.season.lib.util.LogUtil;
 

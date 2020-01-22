@@ -12,13 +12,12 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.season.lib.epub.bean.BookInfo;
-import com.season.lib.epub.bean.layout.StyleText;
+import com.season.lib.bean.BookInfo;
+import com.season.lib.epub.StyleText;
 import com.season.lib.epub.paser.html.DataProvider;
 import com.season.lib.epub.paser.HtmlParser;
 import com.season.lib.epub.paser.html.ICssProvider;
 import com.season.lib.epub.paser.html.tag.SizeInfo;
-import com.season.lib.epub.paser.html.tag.TagHandler;
 import com.season.lib.epub.support.LinkedList;
 import com.season.lib.epub.layout.AbsPatch;
 import com.season.lib.epub.layout.Layout;
@@ -1014,8 +1013,8 @@ public class PageManager implements PatchParent{
 			mCurrentRunChapterTask = this;
 			final TaskListener taskListener = new TaskListener(PageManager.this, mTaskID);
 //			mTaskListener = taskListener;
-			final HtmlParser htmlParser = HtmlParser.create(mCallback.getCssProvider()
-					,mCallback.getDataProvider(),taskListener,mCallback.getTagHandler(),mSizeInfo);
+			final HtmlParser htmlParser = new HtmlParser(mCallback.getCssProvider()
+					,mCallback.getDataProvider(),taskListener, mSizeInfo);
 			final Layout layout;
 			if(!isLayout){
 				long lastTiem = System.currentTimeMillis();
@@ -1290,11 +1289,7 @@ public class PageManager implements PatchParent{
 		 * @param max
 		 */
 		public void onLayoutChapterFinish(int chapterIndex,int progress,int max);
-		/**
-		 * 获取html扩展者
-		 * @return
-		 */
-		public TagHandler getTagHandler();
+
 		/**
 		 * 获取章节数据
 		 * @param chapterIndex

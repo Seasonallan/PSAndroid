@@ -4,8 +4,8 @@ import android.graphics.Canvas;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 
-import com.season.lib.epub.bean.layout.StyleText;
-import com.season.lib.epub.bean.layout.Border;
+import com.season.lib.epub.StyleText;
+import com.season.lib.epub.Border;
 import com.season.lib.epub.span.ImgPanelBGDrawableSpan;
 
 

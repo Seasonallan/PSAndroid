@@ -15,7 +15,7 @@ import android.view.View;
 import com.season.lib.epub.page.Constant;
 import com.season.lib.epub.page.PatchParent;
 import com.season.lib.epub.page.SettingParam;
-import com.season.lib.epub.bean.layout.StyleText;
+import com.season.lib.epub.StyleText;
 import com.season.lib.epub.support.Util;
 import com.season.lib.epub.span.AlignSpan;
 import com.season.lib.epub.span.AsyncDrawableSpan;

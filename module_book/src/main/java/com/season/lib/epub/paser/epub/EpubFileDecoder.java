@@ -9,7 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.text.TextUtils;
 
-import com.season.lib.epub.bean.BookInfo;
+import com.season.lib.bean.BookInfo;
 
 /** ??opf??
  * @author mingkg21

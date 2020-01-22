@@ -4,8 +4,8 @@ import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 
 import com.season.lib.dimen.DimenUtil;
-import com.season.lib.epub.bean.layout.Border;
-import com.season.lib.epub.bean.layout.StyleText;
+import com.season.lib.epub.Border;
+import com.season.lib.epub.StyleText;
 import com.season.lib.epub.paser.html.css.PropertyValue;
 import com.season.lib.epub.span.EmptySpan;
 

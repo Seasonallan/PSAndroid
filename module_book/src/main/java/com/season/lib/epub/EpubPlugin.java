@@ -21,9 +21,9 @@ import com.season.lib.epub.paser.epub.CatalogNCXDecoder;
 import com.season.lib.epub.paser.epub.EpubFileDecoder;
 import com.season.lib.file.IOUtil;
 import com.season.lib.file.XMLUtil;
-import com.season.lib.epub.bean.BookInfo;
-import com.season.lib.epub.bean.Catalog;
-import com.season.lib.epub.bean.Chapter;
+import com.season.lib.bean.BookInfo;
+import com.season.lib.bean.Catalog;
+import com.season.lib.bean.Chapter;
 import com.season.lib.book.EncryptUtils;
 import com.season.lib.util.LogUtil;
 

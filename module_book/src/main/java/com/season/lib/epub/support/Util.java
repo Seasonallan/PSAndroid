@@ -14,7 +14,7 @@ import android.text.style.MetricAffectingSpan;
 import android.util.SparseArray;
 
 import com.season.lib.epub.page.Constant;
-import com.season.lib.epub.bean.layout.StyleText;
+import com.season.lib.epub.StyleText;
 import com.season.lib.epub.span.ReplacementSpan;
 
 /**

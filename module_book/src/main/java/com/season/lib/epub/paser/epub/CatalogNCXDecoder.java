@@ -10,7 +10,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.text.TextUtils;
 
 import com.season.lib.epub.support.LinkedList;
-import com.season.lib.epub.bean.Catalog;
+import com.season.lib.bean.Catalog;
 
 public class CatalogNCXDecoder extends DefaultHandler{
 	private static final String TAG_NAV_MAP = "navMap";

@@ -13,11 +13,6 @@
 
     </style>
 
-    <declare-styleable name="PullActivateLayout">
-    <attr name="actionViewId" format="reference" />
-    <attr name="toolViewId" format="reference" />
-    </declare-styleable>
-
     <style name="remark_Dialog" parent="@android:style/Theme.Dialog">
     <item name="android:windowFrame">@null</item>
     <item name="android:windowNoTitle">true</item>

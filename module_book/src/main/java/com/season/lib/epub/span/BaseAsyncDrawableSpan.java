@@ -34,7 +34,6 @@ public class BaseAsyncDrawableSpan extends ReplacementSpan implements ResourceSp
 	private InteriorDrawableContainer mDrawableContainer;
 
     /**
-     * @param verticalAlignment one of {@link #ALIGN_BOTTOM} or {@link #ALIGN_BASELINE}.
      */
     public BaseAsyncDrawableSpan(String src,float presetWidth,float presetHeight,DataProvider dataProvider) {
         mDataProvider = dataProvider;

@@ -2,9 +2,14 @@ package com.season.example;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Browser;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,20 +27,33 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.example.book.R;
-import com.season.example.anim.AbsVerGestureAnimController;
-import com.season.example.bookmarks.BookMark;
-import com.season.example.bookmarks.BookMarkDatas;
-import com.season.example.digests.AbsTextSelectHandler;
-import com.season.example.fragment.CatalogView;
-import com.season.example.fragment.ReaderMenuPopWin;
+import com.season.lib.anim.AbsVerGestureAnimController;
+import com.season.lib.bean.BookMark;
+import com.season.lib.db.BookMarkDB;
+import com.season.lib.AbsTextSelectHandler;
+import com.season.lib.ReadSetting;
+import com.season.example.popwindow.CatalogView;
+import com.season.example.popwindow.ImgViewerPopWin;
+import com.season.example.popwindow.NotePopWin;
+import com.season.example.popwindow.ReaderMenuPopWin;
 import com.season.example.model.Book;
-import com.season.example.view.BaseReadView;
-import com.season.example.view.EpubReadView;
-import com.season.example.view.IReaderView;
-import com.season.example.view.PullRefreshLayout;
-import com.season.example.view.ReadTxtView;
-import com.season.lib.epub.bean.BookInfo;
-import com.season.lib.epub.bean.Catalog;
+import com.season.example.support.SelectorControlView;
+import com.season.lib.epub.span.media.IMediaSpan;
+import com.season.lib.epub.span.NoteSpan;
+import com.season.lib.epub.span.media.ReaderMediaPlayer;
+import com.season.lib.epub.span.media.VideoSpan;
+import com.season.example.popwindow.VideoWindow;
+import com.season.lib.epub.span.AsyncDrawableSpan;
+import com.season.lib.epub.span.ClickActionSpan;
+import com.season.lib.epub.span.ClickAsyncDrawableSpan;
+import com.season.lib.epub.span.UrlSpna;
+import com.season.lib.view.BaseReadView;
+import com.season.lib.view.EpubReadView;
+import com.season.lib.view.IReaderView;
+import com.season.lib.view.PullRefreshLayout;
+import com.season.lib.view.TextUmdReadView;
+import com.season.lib.bean.BookInfo;
+import com.season.lib.bean.Catalog;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.file.FileUtils;
@@ -89,7 +107,6 @@ public class BaseBookActivity extends Activity implements
        // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
 
 		mBook = new Book();
-		mBook.setBookId("00000");
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		screenWidth = dm.widthPixels;
 		screenHeight = dm.heightPixels;
@@ -332,7 +349,6 @@ public class BaseBookActivity extends Activity implements
 	}
 
 	protected void showReaderCatalogView() {
-		mReadView.onHideContentView();
 		if (mCatalogView != null && mCatalogView.isShowing == false) {
 			if (mCatalogView.getParent() == null) {
 				mCatalogLay.addView(mCatalogView);
@@ -482,6 +498,7 @@ public class BaseBookActivity extends Activity implements
 			public void run() {
 				try {
 					InputStream is = getResources().openRawResource(R.raw.text_book);
+					mBook.setBookId("00000");
 					mBook.setPath(getBookFielPath());
 					if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
                         LogUtil.e("status  error");
@@ -496,7 +513,7 @@ public class BaseBookActivity extends Activity implements
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-                            mReadView = new ReadTxtView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+                            mReadView = new TextUmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                          //   mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;
@@ -526,6 +543,8 @@ public class BaseBookActivity extends Activity implements
             public void run() {
                 try {
                     InputStream is = getResources().openRawResource(R.raw.epub_book);
+					mBook.setBookId("00001");
+					BookMarkDB.getInstance().loadBookMarks(mBook.getBookId());
                     mBook.setPath(getBookFielPath2());
                     if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
                         LogUtil.e("status  error");
@@ -577,15 +596,19 @@ public class BaseBookActivity extends Activity implements
 
     }
 
+	@Override
+	public AbsTextSelectHandler.ISelectorListener getSelecter(){
+    	return new SelectorControlView(mReadView, this);
+	}
 
 	@Override
 	public void onNotPreContent() {
-		ToastUtil.showToast("已经是第一页了");// TODO
+		ToastUtil.showToast("已经是第一页了");
 	}
 	
 	@Override
 	public void onNotNextContent() {
-		ToastUtil.showToast("已经是最后一页了");// TODO
+		ToastUtil.showToast("已经是最后一页了");
 	}
 
     @Override
@@ -605,7 +628,7 @@ public class BaseBookActivity extends Activity implements
 
     @Override
     public boolean hasShowBookMark(int chapterId, int pageStart, int pageEnd) {
-        return BookMarkDatas.getInstance().isPageMarked(chapterId, pageStart, pageEnd);
+        return BookMarkDB.getInstance().isPageMarked(chapterId, pageStart, pageEnd);
     }
 
     @Override
@@ -624,13 +647,76 @@ public class BaseBookActivity extends Activity implements
     }
 
 
+	private ImgViewerPopWin mImgViewerPopWin;
+	private NotePopWin mNotePopWin;
+	private VideoWindow mVideoWindow;
+    @Override
+	public boolean onSpanClicked(ClickActionSpan clickableSpan, RectF localRect,
+							  int x, int y) {
+		if(!clickableSpan.isClickable()){
+			return false;
+		}
+		try {
+			if(clickableSpan instanceof ClickAsyncDrawableSpan){
+				if(mImgViewerPopWin == null){
+					mImgViewerPopWin = new ImgViewerPopWin(this);
+				}
+				mImgViewerPopWin.showImgViewer(((AsyncDrawableSpan)clickableSpan).getDrawable(), new Rect(
+						(int)localRect.left,
+						(int)localRect.top,
+						(int)localRect.right,
+						(int)localRect.bottom),mReadView);
+				return true;
+			}else if(clickableSpan instanceof NoteSpan){
+				if(mNotePopWin == null){
+					mNotePopWin = new NotePopWin(mReadView);
+				}
+				mNotePopWin.showNote(((NoteSpan) clickableSpan).getNote(),localRect, ReadSetting.getInstance(this).getMinFontSize());
+				return true;
+			}else if(clickableSpan instanceof UrlSpna){
+				String urlStr = ((UrlSpna) clickableSpan).getUrl();
+				if(!TextUtils.isEmpty(urlStr)){
+					Uri uri = Uri.parse(urlStr);
+					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+					intent.putExtra(Browser.EXTRA_APPLICATION_ID, getPackageName());
+					startActivity(intent);
+					return true;
+				}
+			}else if(clickableSpan instanceof IMediaSpan){
+				if(clickableSpan instanceof VideoSpan){
+					if(mVideoWindow == null && ReaderMediaPlayer.getInstance() != null){
+						mVideoWindow = new VideoWindow(this);
+					}
+					if(mVideoWindow != null){
+						mVideoWindow.handlerPlayVideo((VideoSpan) clickableSpan, localRect);
+					}
+				}
+				return true;
+			}
+		} catch (Exception e) {}
+		return false;
+	}
+
+	public void closeVideo(){
+		if(mVideoWindow != null){
+			mVideoWindow.dismiss();
+		}
+	}
+
+	public boolean dispatchVideoKeyEvent(KeyEvent event){
+		return mVideoWindow != null && mVideoWindow.dispatchKeyEvent(event);
+	}
+
+	public boolean dispatchVideoTouchEvent(MotionEvent ev){
+		return mVideoWindow != null && mVideoWindow.dispatchTouchEvent(ev);
+	}
 
 
     /**
      * 当前页面是否书签
      */
     private boolean isCurrentBookMarked(){
-        return BookMarkDatas.getInstance().findBookMarkPosition(mReadView.newUserBookmark()) != -1 ;
+        return BookMarkDB.getInstance().findBookMarkPosition(mReadView.newUserBookmark()) != -1 ;
     }
 
     private boolean mInLoading = false;
@@ -722,7 +808,7 @@ public class BaseBookActivity extends Activity implements
      */
     private void addBookLabel(){
         BookMark userMark = mReadView.newUserBookmark();
-        if(BookMarkDatas.getInstance().addBookMark(userMark)){
+        if(BookMarkDB.getInstance().addBookMark(userMark)){
             ToastUtil.showToast(R.string.book_label_add_success);
             mReadView.getContentView().invalidate();
         }
@@ -734,7 +820,7 @@ public class BaseBookActivity extends Activity implements
      */
     private void delBookLabel(){
         BookMark userMark = mReadView.newUserBookmark();
-        if(BookMarkDatas.getInstance().deleteBookMark(userMark)){
+        if(BookMarkDB.getInstance().deleteBookMark(userMark)){
             ToastUtil.showToast(R.string.book_label_del_success);
             mReadView.getContentView().invalidate();
         }
