@@ -5,7 +5,7 @@
                 xmlns:tonlin="http://schemas.android.com/apk/res-auto"
                 android:orientation="vertical">
 
-    <com.example.book.bookreader.view.PullRefreshLayout
+    <com.season.example.view.PullRefreshLayout
         android:id="@+id/pull_container"
         android:layout_width="match_parent" android:layout_height="match_parent"
         tonlin:actionViewId="@+id/action_view" tonlin:toolViewId="@+id/tool_view"
@@ -22,7 +22,7 @@
             android:id="@+id/read_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </com.example.book.bookreader.view.PullRefreshLayout>
+    </com.season.example.view.PullRefreshLayout>
 	<RelativeLayout
 		android:id="@+id/content_lay" 
 		android:layout_width="match_parent"

@@ -8,7 +8,7 @@ public class DBConfig {
 	public static final int DATABASE_VERSION13 = 14;//乐阅新版本
 	
 	 /** 主机名，匹配Manifest.xml中注册provider的 android:authorities*/
-    public static final String AUTHORITIES = "com.example.book.bookreader.provider.DataProvider";
+    public static final String AUTHORITIES = "com.season.example.provider.DataProvider";
 
     /**  SharedPreferences存储*/
     public static final String PATH_PREFRENCE = "pref_user";

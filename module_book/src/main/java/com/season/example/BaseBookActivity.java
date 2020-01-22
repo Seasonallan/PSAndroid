@@ -22,23 +22,21 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.example.book.R;
-import com.example.book.bookreader.anim.AbsVerGestureAnimController;
-import com.example.book.bookreader.bookmarks.BookMark;
-import com.example.book.bookreader.bookmarks.BookMarkDatas;
-import com.example.book.bookreader.digests.AbsTextSelectHandler;
-import com.example.book.bookreader.fragment.CatalogView;
-import com.example.book.bookreader.fragment.ReaderMenuPopWin;
-import com.example.book.bookreader.model.Book;
-import com.example.book.bookreader.view.BaseReadView;
-import com.example.book.bookreader.view.EpubReadView;
-import com.example.book.bookreader.view.IReaderView;
-import com.example.book.bookreader.view.PullRefreshLayout;
-import com.example.book.bookreader.view.ReadTxtView;
-import com.season.book.bookformats.BookInfo;
-import com.season.book.bookformats.Catalog;
-import com.season.book.bookformats.FormatPlugin;
-import com.season.book.bookformats.PluginManager;
-import com.season.book.os.SyncThreadPool;
+import com.season.example.anim.AbsVerGestureAnimController;
+import com.season.example.bookmarks.BookMark;
+import com.season.example.bookmarks.BookMarkDatas;
+import com.season.example.digests.AbsTextSelectHandler;
+import com.season.example.fragment.CatalogView;
+import com.season.example.fragment.ReaderMenuPopWin;
+import com.season.example.model.Book;
+import com.season.example.view.BaseReadView;
+import com.season.example.view.EpubReadView;
+import com.season.example.view.IReaderView;
+import com.season.example.view.PullRefreshLayout;
+import com.season.example.view.ReadTxtView;
+import com.season.lib.bookformats.BookInfo;
+import com.season.lib.bookformats.Catalog;
+import com.season.lib.os.SyncThreadPool;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.file.FileUtils;
@@ -57,8 +55,7 @@ import java.util.Calendar;
 public class BaseBookActivity extends Activity implements
         IReaderView.IReadCallback, AbsTextSelectHandler.ITouchEventDispatcher,
         PullRefreshLayout.OnPullListener, PullRefreshLayout.OnPullStateListener, AbsVerGestureAnimController.IVertialTouchEventDispatcher {
-	/**内容密钥*/
-	private String secretKey = null;
+
 	private static final String TAG = BaseBookActivity.class.getSimpleName();
 	private BaseBookActivity this_ = this;
     private FrameLayout mReadContainerView;
@@ -111,7 +108,7 @@ public class BaseBookActivity extends Activity implements
 		initReaderCatalogView();
 		showReaderContentView();
 		initClickDetector();
-		init3();
+		init();
         initPullView();
 
         overridePendingTransition(0, 0);
@@ -463,7 +460,7 @@ public class BaseBookActivity extends Activity implements
 
     private String getBookFielPath2(){
         String pathDir = getCacheDir() + File.separator;
-        String path =pathDir + "book.epub";
+        String path =pathDir + "epub_book.epub";
         File fileDir = new File(pathDir);
         if(!fileDir.exists()){
             fileDir.mkdirs();
@@ -488,21 +485,13 @@ public class BaseBookActivity extends Activity implements
 			@Override
 			public void run() {
 				try {
-					InputStream is = getResources().openRawResource(R.drawable.booktxt);
+					InputStream is = getResources().openRawResource(R.raw.text_book);
 					mBook.setPath(getBookFielPath());
 					if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
                         LogUtil.e("status  error");
 			        	finish();
 			        	return;
 					}
-//                    FormatPlugin mPlugin = PluginManager.instance().getPlugin(
-//							mBook.getPath(),secretKey);
-//				// 书籍信息
-//					final BookInfo bookInfo = mPlugin.getBookInfo();
-//					bookInfo.id = mBook.getBookId();
-//					mBook.setAuthor(bookInfo.author);
-//					mBook.setBookName(bookInfo.title);
-//                    mCatalogView.setBookInfo(bookInfo.title, bookInfo.author);
 					requestCatalogIndex = 0;
 					if(requestCatalogIndex == 0 && requestPageCharIndex == 0){
 						requestPageCharIndex = 0;
@@ -522,7 +511,7 @@ public class BaseBookActivity extends Activity implements
                             new Thread() {
                                 @Override
                                 public void run() {
-                                    mReadView.onInitReaderInBackground(requestCatalogIndex, requestPageCharIndex, secretKey);
+                                    mReadView.onInitReaderInBackground(requestCatalogIndex, requestPageCharIndex, "");
                                 }
                             }.start();
 						}
@@ -537,36 +526,22 @@ public class BaseBookActivity extends Activity implements
 
     private void init() {
         new Thread() {
-            int requestPageCharIndex = 0;
-            int requestCatalogIndex = 0;
             @Override
             public void run() {
                 try {
-                    InputStream is = getResources().openRawResource(R.drawable.book);
+                    InputStream is = getResources().openRawResource(R.raw.epub_book);
                     mBook.setPath(getBookFielPath2());
                     if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
                         LogUtil.e("status  error");
                         finish();
                         return;
                     }
-                    FormatPlugin mPlugin = PluginManager.instance().getPlugin(
-							mBook.getPath(),secretKey);
-				// 书籍信息
-					final BookInfo bookInfo = mPlugin.getBookInfo();
-					bookInfo.id = mBook.getBookId();
-					mBook.setAuthor(bookInfo.author);
-					mBook.setBookName(bookInfo.title);
-                    mCatalogView.setBookInfo(bookInfo.title, bookInfo.author);
-                    requestCatalogIndex = 0;
-                    if(requestCatalogIndex == 0 && requestPageCharIndex == 0){
-                        requestPageCharIndex = 0;
-                    }
                     // 读章节信息
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             //mReadView = new ReadTxtView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-                               mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;
                             mReadView.onCreate(null);
@@ -576,7 +551,7 @@ public class BaseBookActivity extends Activity implements
                             new Thread() {
                                 @Override
                                 public void run() {
-                                    mReadView.onInitReaderInBackground(requestCatalogIndex, requestPageCharIndex, secretKey);
+                                    mReadView.onInitReaderInBackground(0, 0, "");
                                 }
                             }.start();
                         }
