@@ -10,16 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Browser;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -38,6 +35,7 @@ import com.season.example.popwindow.NotePopWin;
 import com.season.example.popwindow.ReaderMenuPopWin;
 import com.season.example.model.Book;
 import com.season.example.support.SelectorControlView;
+import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.epub.span.media.IMediaSpan;
 import com.season.lib.epub.span.NoteSpan;
 import com.season.lib.epub.span.media.ReaderMediaPlayer;
@@ -47,6 +45,7 @@ import com.season.lib.epub.span.AsyncDrawableSpan;
 import com.season.lib.epub.span.ClickActionSpan;
 import com.season.lib.epub.span.ClickAsyncDrawableSpan;
 import com.season.lib.epub.span.UrlSpna;
+import com.season.lib.util.SimpleAnimationListener;
 import com.season.lib.view.BaseReadView;
 import com.season.lib.view.EpubReadView;
 import com.season.lib.view.IReaderView;
@@ -73,7 +72,6 @@ public class BaseBookActivity extends Activity implements
         IReaderView.IReadCallback, AbsTextSelectHandler.ITouchEventDispatcher,
         PullRefreshLayout.OnPullListener, PullRefreshLayout.OnPullStateListener, AbsVerGestureAnimController.IVertialTouchEventDispatcher {
 
-	private static final String TAG = BaseBookActivity.class.getSimpleName();
 	private BaseBookActivity this_ = this;
     private FrameLayout mReadContainerView;
     private BaseReadView mReadView;
@@ -81,17 +79,9 @@ public class BaseBookActivity extends Activity implements
 	private RelativeLayout mCatalogLay;
 	private Book mBook;
 	private ReaderMenuPopWin mReaderMenuPopWin;
-	private int toolbarLP;
-	private int toolbarRP;
-	private int toolbarTP;
-	private int toolbarBP;
-	private int screenWidth;
-	private int screenHeight;
-	private int toolTouchAreaW;
-	private int toolTouchAreaH;
 	private boolean isInit;
-	private boolean hasAddBookMark = false;
 	private ClickDetector mClickDetector;
+	private RectF centerRect;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,15 +97,12 @@ public class BaseBookActivity extends Activity implements
        // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
 
 		mBook = new Book();
-		DisplayMetrics dm = getResources().getDisplayMetrics();
-		screenWidth = dm.widthPixels;
-		screenHeight = dm.heightPixels;
-		toolTouchAreaW = screenWidth >> 1;
-		toolTouchAreaH = screenHeight >> 1;
-		toolbarLP = toolTouchAreaW >> 1;
-		toolbarRP = screenWidth - toolbarLP;
-		toolbarTP = toolTouchAreaH >> 1;
-		toolbarBP = screenHeight - toolbarTP;
+		centerRect = new RectF();
+		centerRect.left = ScreenUtils.getScreenWidth()/4;
+		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
+		centerRect.top = ScreenUtils.getScreenHeight()/4;
+		centerRect.bottom = ScreenUtils.getScreenHeight()*3/4;
+
 		setContentView(R.layout.activity_reader_lay);
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
@@ -181,8 +168,7 @@ public class BaseBookActivity extends Activity implements
 				if (mReadView.dispatchClickEvent(ev)) {
                     LogUtil.e("key>> onClickCallBack "+ "22" );
 					return true;
-				} else if (x > toolbarLP && x < toolbarRP && 
-						y > toolbarTP && y < toolbarBP) {
+				} else if (centerRect.contains(x, y)) {
                     LogUtil.e("key>> onClickCallBack "+ "44" );
 					showMenu();
 					return true;
@@ -349,61 +335,24 @@ public class BaseBookActivity extends Activity implements
 	}
 
 	protected void showReaderCatalogView() {
-		if (mCatalogView != null && mCatalogView.isShowing == false) {
+		if (mCatalogView != null) {
 			if (mCatalogView.getParent() == null) {
 				mCatalogLay.addView(mCatalogView);
 			}
-			mCatalogView.setVisibility(View.VISIBLE);
-			mCatalogView.isShowing = true;
 			mCatalogLay.setVisibility(View.VISIBLE);
-		//	mCatalogView.setCatalogData(mPlugin.getCatalog());
-			Animation trans1 = new TranslateAnimation(
-					Animation.ABSOLUTE, -screenWidth, Animation.ABSOLUTE,
-					0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-					Animation.RELATIVE_TO_SELF, 0.0f);
-			trans1.setDuration(600);
-			trans1.setAnimationListener(new AnimationListener() {
-				
-				@Override
-				public void onAnimationStart(Animation animation) {}
-				
-				@Override
-				public void onAnimationRepeat(Animation animation) {}
-				
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					mCatalogView.setAnimation(null);
-					mCatalogView.isShowing = false;
-				}
-			});
-			mCatalogView.startAnimation(trans1);	
+			mCatalogView.show();
 		}
 	}
 	
 	protected void dismissReaderCatalogView() {
-		if (mCatalogView != null && mCatalogView.isDismissing == false) {
-			mCatalogView.isDismissing = true;
-			mCatalogView.setVisibility(View.INVISIBLE);
-			Animation trans1 = new TranslateAnimation(Animation.ABSOLUTE,
-					0.0f, Animation.ABSOLUTE, -screenWidth,
-					Animation.RELATIVE_TO_SELF, 0.0f,
-					Animation.RELATIVE_TO_SELF, 0.0f);
-			trans1.setDuration(350);
-			trans1.setAnimationListener(new AnimationListener() {
-				@Override
-				public void onAnimationStart(Animation animation) {}
-
-				@Override
-				public void onAnimationRepeat(Animation animation) {}
-
+		if (mCatalogView != null) {
+			mCatalogView.dismiss(new SimpleAnimationListener(){
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					mCatalogView.isDismissing = false;
 					mReadView.setVisibility(View.VISIBLE);
 					mCatalogLay.setVisibility(View.GONE);
 				}
 			});
-			mCatalogView.startAnimation(trans1);
 		}
 	}
 
@@ -470,71 +419,15 @@ public class BaseBookActivity extends Activity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
-    private String getBookFielPath2(){
+    private String getBookFielPath(String fend){
         String pathDir = getCacheDir() + File.separator;
-        String path =pathDir + "epub_book.epub";
+        String path =pathDir + "epub_book."+fend;
         File fileDir = new File(pathDir);
         if(!fileDir.exists()){
             fileDir.mkdirs();
         }
         return path;
     }
-
-    private String getBookFielPath(){
-        String pathDir = getCacheDir() + File.separator;
-        String path =pathDir + "text.txt";
-        File fileDir = new File(pathDir);
-        if(!fileDir.exists()){
-            fileDir.mkdirs();
-        }
-        return path;
-    }
-	
-	private void init3() {
-       new Thread() {
-			int requestPageCharIndex = 0;
-			int requestCatalogIndex = 0;
-			@Override
-			public void run() {
-				try {
-					InputStream is = getResources().openRawResource(R.raw.text_book);
-					mBook.setBookId("00000");
-					mBook.setPath(getBookFielPath());
-					if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
-                        LogUtil.e("status  error");
-			        	finish();
-			        	return;
-					}
-					requestCatalogIndex = 0;
-					if(requestCatalogIndex == 0 && requestPageCharIndex == 0){
-						requestPageCharIndex = 0;
-					}
-					// 读章节信息
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-                            mReadView = new TextUmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-                         //   mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-                            mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                            isInit = true;
-                            mReadView.onCreate(null);
-
-                            initMenu();
-
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    mReadView.onInitReaderInBackground(requestCatalogIndex, requestPageCharIndex, "");
-                                }
-                            }.start();
-						}
-					});
-				} catch (Exception e) {
-					LogUtil.e(TAG, e);
-				}
-			}
-		}.start();
-	}
 
 
     private void init() {
@@ -543,9 +436,10 @@ public class BaseBookActivity extends Activity implements
             public void run() {
                 try {
                     InputStream is = getResources().openRawResource(R.raw.epub_book);
+					//InputStream is = getResources().openRawResource(R.raw.text_book);
 					mBook.setBookId("00001");
 					BookMarkDB.getInstance().loadBookMarks(mBook.getBookId());
-                    mBook.setPath(getBookFielPath2());
+                    mBook.setPath(getBookFielPath(".epub"));
                     if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
                         LogUtil.e("status  error");
                         finish();
@@ -555,7 +449,7 @@ public class BaseBookActivity extends Activity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //mReadView = new ReadTxtView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							//mReadView = new TextUmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
 							mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;
@@ -566,13 +460,14 @@ public class BaseBookActivity extends Activity implements
                             new Thread() {
                                 @Override
                                 public void run() {
-                                    mReadView.onInitReaderInBackground(0, 0, "");
+									//mReadView.onInitReaderInBackground(requestCatalogIndex, requestPageCharIndex, "");
+									mReadView.onInitReaderInBackground(0, 0, "");
                                 }
                             }.start();
                         }
                     });
                 } catch (Exception e) {
-                    LogUtil.e(TAG, e);
+					e.printStackTrace();
                 }
             }
         }.start();

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TabHost.OnTabChangeListener;
@@ -15,7 +17,9 @@ import com.season.example.adapter.CatalogAdapter;
 import com.season.example.adapter.CatalogViewPagerAdapter;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
+import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.util.LogUtil;
+import com.season.lib.util.SimpleAnimationListener;
 
 public class CatalogView extends FrameLayout{
 	private static final String TAG = CatalogView.class.getSimpleName();
@@ -32,8 +36,8 @@ public class CatalogView extends FrameLayout{
 	protected ArrayList<Catalog> mCatalogList;
 	private ArrayList<String> mTags = new ArrayList<String>();
 	private IActionCallBack mCallBack;
-	public boolean isShowing = false;
-	public boolean isDismissing = false;
+	private boolean isShowing = false;
+	private boolean isDismissing = false;
 	private View mGotoReaderBut;
 	
 	public CatalogView(Activity context, IActionCallBack actionCallBack) {
@@ -128,6 +132,67 @@ public class CatalogView extends FrameLayout{
 		}
 	}
 
+	public boolean isShowing(){
+		return isShowing;
+	}
+	public boolean isDismissing(){
+		return isDismissing;
+	}
+
+	public void show(){
+		if (isShowing){
+			return;
+		}
+		setVisibility(View.VISIBLE);
+		isShowing = true;
+		//	setCatalogData(mPlugin.getCatalog());
+		Animation trans1 = new TranslateAnimation(
+				Animation.ABSOLUTE, -ScreenUtils.getScreenWidth(), Animation.ABSOLUTE,
+				0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+				Animation.RELATIVE_TO_SELF, 0.0f);
+		trans1.setDuration(600);
+		trans1.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				setAnimation(null);
+				isShowing = false;
+			}
+		});
+		startAnimation(trans1);
+	}
+	public void dismiss(final SimpleAnimationListener listener){
+		if (isDismissing){
+			return;
+		}
+		isDismissing = true;
+		setVisibility(View.INVISIBLE);
+		Animation trans1 = new TranslateAnimation(Animation.ABSOLUTE,
+				0.0f, Animation.ABSOLUTE, -ScreenUtils.getScreenWidth(),
+				Animation.RELATIVE_TO_SELF, 0.0f,
+				Animation.RELATIVE_TO_SELF, 0.0f);
+		trans1.setDuration(350);
+		trans1.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				isDismissing = false;
+				listener.onAnimationEnd(animation);
+			}
+		});
+		startAnimation(trans1);
+	}
 	
 	/**
 	 * 对外部操作的回调
