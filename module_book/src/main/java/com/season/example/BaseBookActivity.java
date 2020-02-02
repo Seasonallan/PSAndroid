@@ -364,37 +364,29 @@ public class BaseBookActivity extends Activity implements
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
-        LogUtil.e("key>>dispatchKeyEvent  "+ "11" );
 		if(mReadView.onActivityDispatchKeyEvent(event)){
 			return true;
 		}
-        LogUtil.e("key>>dispatchKeyEvent  "+ "22" );
 		return super.dispatchKeyEvent(event);
 	}
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-        LogUtil.e("key>>"+ "11" );
 		if (!isInit) {
 			return false;
 		}
-        LogUtil.e("key>>"+ "22" );
 		if(mReadView.onActivityDispatchTouchEvent(ev)){
 			return false;
 		}
-        LogUtil.e("key>>"+ "33" );
 		if(mCatalogLay.isShown()){
 			return super.dispatchTouchEvent(ev);
 		}
-        LogUtil.e("key>>"+ "44" );
         if(mReadView.handlerSelectTouchEvent(ev, this)){
             return false;
         }
-        LogUtil.e("key>>"+ "55" );
 		if(mClickDetector.onTouchEvent(ev, false)){
 			return false;
 		}
-        LogUtil.e("key>>"+ "66" );
 		return super.dispatchTouchEvent(ev);
 	}
 
@@ -406,7 +398,6 @@ public class BaseBookActivity extends Activity implements
 	private AbsVerGestureAnimController mAbsVerGestureAnimController = new AbsVerGestureAnimController();
     @Override
 	public boolean onTouchEvent(MotionEvent ev) {
-        LogUtil.log(getClass(),"key>>onTouchEvent  " + "66");
         if(isPullEnabled() && mAbsVerGestureAnimController.handlerTouch(ev, new  AbsVerGestureAnimController.IVertialTouchEventDispatcher (){
 			@Override
 			public void verticalTouchEventCallBack(MotionEvent ev) {
@@ -415,19 +406,12 @@ public class BaseBookActivity extends Activity implements
 
 			@Override
 			public void unVerticalTouchEventCallBack(MotionEvent ev) {
-				LogUtil.e("key>>unVerticalTouchEventCallBack  " + "66");
 				onTouchEvent(ev);
 			}
 		})){
             return false;
         }
 		return mReadView.handlerTouchEvent(ev);
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add("menu");// 必须创建一项
-		return super.onCreateOptionsMenu(menu);
 	}
 
     private String getBookFielPath(String fend){
@@ -673,7 +657,11 @@ public class BaseBookActivity extends Activity implements
                 mBookMarkSignImage.setImageResource(R.drawable.book_mark_sign);
                 mActionText.setText(R.string.book_label_add_pull_loading);
             }
-            mHandler.sendEmptyMessage(MSG_LOADING);
+            if(isCurrentBookMarked()){
+				delBookLabel();
+			}else{
+				addBookLabel();
+			}
             mTimeText.setText(this_.getString(R.string.note_update_at, getCurrentTimeByMDHM()));
         }
 
@@ -685,30 +673,6 @@ public class BaseBookActivity extends Activity implements
         return var0.format(var1.getTime());
     }
 
-    private final static int MSG_LOADING = 0x1;
-    private final static int MSG_LOADED = 0x2;
-    private Handler mHandler = new Handler(){
-        public void handleMessage(android.os.Message msg) {
-            int what = msg.what;
-            switch (what) {
-                case MSG_LOADING:
-                    //下拉后做的网路操作
-                    if(isCurrentBookMarked()){
-                        delBookLabel();
-                    }else{
-                        addBookLabel();
-                    }
-                    break;
-                case MSG_LOADED:
-                    dataLoaded();
-                    break;
-
-                default:
-                    break;
-            }
-        };
-    };
-
     /**
      * 添加书签
      */
@@ -716,7 +680,6 @@ public class BaseBookActivity extends Activity implements
         BookMark userMark = mReadView.newUserBookmark();
         if(BookMarkDB.getInstance().addBookMark(userMark)){
             ToastUtil.showToast(R.string.book_label_add_success);
-            mReadView.getContentView().invalidate();
         }
         dataLoaded();
     }
@@ -728,27 +691,32 @@ public class BaseBookActivity extends Activity implements
         BookMark userMark = mReadView.newUserBookmark();
         if(BookMarkDB.getInstance().deleteBookMark(userMark)){
             ToastUtil.showToast(R.string.book_label_del_success);
-            mReadView.getContentView().invalidate();
         }
         dataLoaded();
     }
     /**刷新加载结束*/
     private void dataLoaded() {
-        if (mInLoading) {
-            mInLoading = false;
-            mPullLayout.setEnableStopInActionView(false);
-            mPullLayout.hideActionView();
-            mActionImage.setVisibility(View.VISIBLE);
-            mProgress.setVisibility(View.GONE);
+    	new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				if (mInLoading) {
+					mInLoading = false;
+					mPullLayout.setEnableStopInActionView(false);
+					mPullLayout.hideActionView();
+					mActionImage.setVisibility(View.VISIBLE);
+					mProgress.setVisibility(View.GONE);
 
-            if (mPullLayout.isPullOut()) {
-                mActionText.setText(R.string.note_pull_refresh);
-                mActionImage.clearAnimation();
-                mActionImage.startAnimation(mRotateUpAnimation);
-            } else {
-                mActionText.setText(R.string.note_pull_down);
-            }
-        }
+					if (mPullLayout.isPullOut()) {
+						mActionText.setText(R.string.note_pull_refresh);
+						mActionImage.clearAnimation();
+						mActionImage.startAnimation(mRotateUpAnimation);
+					} else {
+						mActionText.setText(R.string.note_pull_down);
+					}
+				}
+				mReadView.getContentView().invalidate();
+			}
+		}, 300);
     }
     @Override
     public void onShow() {

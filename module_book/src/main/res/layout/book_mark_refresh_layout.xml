@@ -10,7 +10,7 @@
         android:id="@android:id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="20dip" 
         android:src="@drawable/ic_book_mark_pulldown_arrow"/>
 	
@@ -19,7 +19,7 @@
         style="@android:style/Widget.ProgressBar"
         android:layout_width="24dip"
         android:layout_height="24dip"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="20dip"
         android:visibility="gone" />
 
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center_horizontal"
+        android:layout_centerVertical="true"
         android:orientation="vertical"
         android:layout_centerHorizontal="true" >
 
@@ -62,7 +62,7 @@
         android:id="@+id/iv_book_mark_sign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="20dip" 
         android:src="@drawable/book_mark_unsign"
         android:layout_alignParentRight="true"

@@ -274,14 +274,14 @@ public class PullRefreshLayout extends FrameLayout {
 			View v = mToolView;
 			int t = b - (v.getBottom() - v.getTop());
 			v.layout(v.getLeft(), t, v.getRight(), b);
-			mToolViewHeight = ((v.getVisibility() == View.GONE) ? b - t : 0);
+			mToolViewHeight = b - t;
 			b = t;
 		}
 		if (mActionView != null) {
 			View v = mActionView;
 			int t = b - (v.getBottom() - v.getTop());
 			v.layout(v.getLeft(), t, v.getRight(), b);
-			mActionViewHeight = ((v.getVisibility() == View.GONE) ? b - t : 0);
+			mActionViewHeight =  b - t;
 		}
 	}
 
