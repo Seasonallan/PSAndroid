@@ -1,6 +1,7 @@
 package com.season.example.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,21 +9,21 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
+import com.example.book.R;
 import com.season.lib.bean.BookMark;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BookmarkItemAdapter extends BaseAdapter {
-	
-	private LayoutInflater inflater;
+
 	private ArrayList<BookMark> bookmarks;
 	private Context mContext;
-	public BookmarkItemAdapter(Context context, ArrayList<BookMark> bookmarks){
+	public BookmarkItemAdapter(Context context, List<BookMark> bookmarks){
 		super();
         this.mContext = context;
-		inflater = LayoutInflater.from(context);
-		this.bookmarks = bookmarks;
+		this.bookmarks = (ArrayList<BookMark>) bookmarks;
 	}
 
 	@Override
@@ -48,43 +49,30 @@ public class BookmarkItemAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		
-//		ViewHolder viewHolder;
-//		if(convertView == null){
-//			convertView = newView();
-//			viewHolder = new ViewHolder();
-//			viewHolder.nameTV = (TextView) convertView.findViewById(R.id.bookmark_name_tv);
-//			viewHolder.timeTV = (TextView) convertView.findViewById(R.id.bookmark_time_tv);
-//			viewHolder.TitleTV = (TextView) convertView.findViewById(R.id.bookmark_title_tv);
-//			convertView.setTag(viewHolder);
-//		}else{
-//			viewHolder = (ViewHolder) convertView.getTag();
-//		}
-//
-//		BookMark item = getItem(position);
-//        if (ReadSetting.getInstance(mContext).getThemeType() == ReadSetting.THEME_TYPE_NIGHT){
-//            viewHolder.TitleTV.setTextColor(mContext.getResources().getColor(R.color.xml.catalog_night_textcolor));
-//        }else{
-//            viewHolder.TitleTV.setTextColor(mContext.getResources().getColor(R.color.xml.catalog_day_textcolor));
-//        }
-//		viewHolder.nameTV.setText(item.getBookmarkName().replaceAll( "\\s", "" ));
-//		viewHolder.TitleTV.setLines(1);
-//		viewHolder.timeTV.setText(CommonUtil.getNowDay(item.getCreateTime()));
-//
-//        String catalog = item.getChapterName();
-//        if(TextUtils.isEmpty(catalog)){
-//            catalog = "第"+item.getChapterID() +"章";
-//        }
-//		viewHolder.TitleTV.setText(catalog);
+		ViewHolder viewHolder = null;
+		if(convertView == null){
+			viewHolder = new ViewHolder();
+			convertView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_item_leyue, null);
+			viewHolder.titileTV = (TextView)convertView.findViewById(R.id.catalog_title_tv);
+			viewHolder.titileIndexTV = (TextView)convertView.findViewById(R.id.catalog_title_index_tv);
+			convertView.setTag(viewHolder);
+		}else{
+			viewHolder = (ViewHolder) convertView.getTag();
+		}
+		BookMark item =  getItem(position);
+		String catalog = item.getChapterName();
+		if(TextUtils.isEmpty(catalog)){
+			catalog = "第"+item.getChapterID() +"章";
+		}
+		viewHolder.titileIndexTV.setText(String.valueOf(item.getChapterID()));
+		viewHolder.titileTV.setText(catalog);
 		return convertView;
 	}
 	
 
 	private class ViewHolder {
-
-		public TextView nameTV;
-		public TextView timeTV;
-		public TextView TitleTV;
+		TextView titileTV;
+		TextView titileIndexTV;
 		
 	}
 

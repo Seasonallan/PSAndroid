@@ -71,7 +71,7 @@ public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapt
 
     @Override
     public View getItemView(ViewGroup container, int position) {
-        String tag = getTab(position);
+        final String tag = getTab(position);
         View contentView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_tab_item_lay, null);
         final ListView mListView = (ListView) contentView.findViewById(R.id.reader_catalog_lv);
         final ImageView mListViewBG = (ImageView) contentView.findViewById(R.id.reader_catalog_lv_bg);
@@ -90,25 +90,21 @@ public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapt
                 view.destroyDrawingCache();
             }
         });
-        AdapterView.OnItemClickListener onItemClickListener = null;
-        if(tag.equals(CatalogView.TAG_CATALOG)){
-            mListView.setAdapter(getCatalogAdapter());
-            onItemClickListener = new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                   onItemClicked(mListView, position);
-                }
-            };
-        }
-        mListView.setOnItemClickListener(onItemClickListener);
+        mListView.setAdapter(getAdapter(tag));
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                onItemClicked(tag, mListView, position);
+            }
+        });
         return contentView;
     }
 
-    public abstract ListAdapter getCatalogAdapter();
+    public abstract ListAdapter getAdapter(String tag);
 
 
-    public abstract void onItemClicked(ListView mListView, int position);
+    public abstract void onItemClicked(String tag, ListView mListView, int position);
 
     public String getItemViewTag(int position){
         return ITEM_VIEW_TAG + "_" + position;

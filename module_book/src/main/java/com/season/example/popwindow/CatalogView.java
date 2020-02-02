@@ -8,15 +8,24 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.example.book.R;
+import com.season.example.adapter.BookDigestsItemAdapter;
+import com.season.example.adapter.BookmarkItemAdapter;
 import com.season.example.adapter.CatalogAdapter;
 import com.season.example.adapter.CatalogViewPagerAdapter;
+import com.season.example.model.Book;
+import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
+import com.season.lib.db.BookDigestsDB;
+import com.season.lib.db.BookMarkDB;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.util.LogUtil;
 import com.season.lib.util.SimpleAnimationListener;
@@ -39,8 +48,10 @@ public class CatalogView extends FrameLayout{
 	private boolean isShowing = false;
 	private boolean isDismissing = false;
 	private View mGotoReaderBut;
-	
-	public CatalogView(Activity context, IActionCallBack actionCallBack) {
+
+	private BookDigestsItemAdapter mBookDigestsAdapter;
+	private BookmarkItemAdapter mBookMarkAdapter;
+	public CatalogView(final Activity context, IActionCallBack actionCallBack) {
 		super(context);
 		mContext = context;
 		mCallBack = new ActionCallBack(actionCallBack);
@@ -58,11 +69,39 @@ public class CatalogView extends FrameLayout{
 			@Override
 			public void onTabChanged(String tabId) {
 				fillCatalogView(tabId);
-				LogUtil.i(TAG, "onTabChanged ==> tabId="+tabId);
+			}
+		});
+		mTabHost.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+				if (position == 2){
+					if (positionOffsetPixels >= 0){
+						count ++;
+						if (count > 20){
+							count = 0;
+							mCallBack.showReaderContentView();
+						}
+						return;
+					}
+				}
+				count = 0 ;
+			}
+
+			@Override
+			public void onPageSelected(int position) {
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+
 			}
 		});
 		mCatalogList = new ArrayList<Catalog>();
 		catalogAdapter = new CatalogAdapter(context, mCatalogList);
+		mBookDigestsAdapter = new BookDigestsItemAdapter(context);
+		mBookDigestsAdapter.setData(BookDigestsDB.getInstance().getListBookDigests(actionCallBack.getBookInfo().getBookId()));
+		mBookMarkAdapter = new BookmarkItemAdapter(context,
+				BookMarkDB.getInstance().getUserBookMark(actionCallBack.getBookInfo().getBookId()));
 		mGotoReaderBut = findViewById(R.id.left_suspension_but);
 		mGotoReaderBut.setOnClickListener(new OnClickListener() {
 			@Override
@@ -74,22 +113,32 @@ public class CatalogView extends FrameLayout{
 		mTags.add(TAG_DIGEST);
 		mTags.add(TAG_BOOKMARK);
 		mViewPagerAdapter = new CatalogViewPagerAdapter(context, mTags){
-			public void onItemClicked(ListView mListView, int position){
-				int catalogPosition = mCatalogList.indexOf(mCallBack.getCurrentCatalog());
-				if(mListView.getCheckedItemPosition() != catalogPosition){
-					mListView.setItemChecked(catalogPosition, true);
-					mCallBack.selectCatalog(mCatalogList.get(position));
-					mCallBack.showReaderContentView();
-				}else{
-					mCallBack.showReaderContentView();
+			public void onItemClicked(String tag, ListView mListView, int position){
+				if(tag.equals(CatalogView.TAG_CATALOG)){
+					int catalogPosition = mCatalogList.indexOf(mCallBack.getCurrentCatalog());
+					if(mListView.getCheckedItemPosition() != catalogPosition){
+						mListView.setItemChecked(catalogPosition, true);
+						mCallBack.selectCatalog(mCatalogList.get(position));
+						mCallBack.showReaderContentView();
+					}else{
+						mCallBack.showReaderContentView();
+					}
 				}
 			}
-			public CatalogAdapter getCatalogAdapter(){
-				return catalogAdapter;
+			public ListAdapter getAdapter(String tag){
+				if(tag.equals(CatalogView.TAG_CATALOG)){
+					return catalogAdapter;
+				}else if(tag.equals(CatalogView.TAG_DIGEST)){
+					return mBookDigestsAdapter;
+				}else if(tag.equals(CatalogView.TAG_BOOKMARK)){
+					return mBookMarkAdapter;
+				}
+				return null;
 			}
 		};
 		mTabHost.setAdapter(mViewPagerAdapter);
 	}
+	int count = 0;
 	
 	public void setBookInfo(String bookName,String authorName){
 		mBookNameTV.setText(bookName);
@@ -255,7 +304,7 @@ public class CatalogView extends FrameLayout{
 		}
 
 		@Override
-		public BookInfo getBookInfo() {
+		public Book getBookInfo() {
 			if(mActionCallBack != null){
 				return mActionCallBack.getBookInfo();
 			}
@@ -283,7 +332,7 @@ public class CatalogView extends FrameLayout{
 		
 		public boolean isHasNetWork();
 		
-		public BookInfo getBookInfo();
+		public Book getBookInfo();
 		
 		public void onEditModeChange(boolean isEdit);
 	}

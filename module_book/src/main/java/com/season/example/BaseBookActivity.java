@@ -106,7 +106,6 @@ public class BaseBookActivity extends Activity implements
 		setContentView(R.layout.activity_reader_lay);
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
-		initReaderCatalogView();
 		showReaderContentView();
 		initClickDetector();
 		init();
@@ -310,8 +309,8 @@ public class BaseBookActivity extends Activity implements
 			}
 
 			@Override
-			public BookInfo getBookInfo() {
-				return mReadView.getBookInfo();
+			public Book getBookInfo() {
+				return mBook;
 			}
 		});
 	}
@@ -450,6 +449,7 @@ public class BaseBookActivity extends Activity implements
                             isInit = true;
                             mReadView.onCreate(null);
 
+							initReaderCatalogView();
                             initMenu();
 
                             new Thread() {
