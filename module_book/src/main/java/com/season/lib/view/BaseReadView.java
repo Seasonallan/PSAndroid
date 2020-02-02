@@ -22,7 +22,6 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
 
     private int mLoadingPointSize;
     private long mLastDrawWaitTime;
-    private Drawable mInitBGDrawable;
     private Drawable mBookMarkTip;
 
     public BaseReadView(Context context,Book book,IReadCallback readCallback) {
@@ -38,7 +37,6 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
 
     @Override
     public void onDestroy() {
-        mInitBGDrawable = null;
         mBookMarkTip = null;
     }
 
@@ -84,20 +82,11 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
      */
     @Override
     protected void drawWaitPage(Canvas canvas,boolean isFirstDraw){
-        if(isFirstDraw){
-            drawBackground(canvas);
-            mTempTextPaint.setTextSize((float) (mReadSetting.getFontSize()));
-            mTempTextPaint.setColor(mReadSetting.getThemeTextColor());
-        }else{
-            if(mInitBGDrawable == null){
-                Options opts = new Options();
-                opts.inPreferredConfig = Config.RGB_565;
-                mInitBGDrawable = new BitmapDrawable(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.book_vers, opts));
-            }
-            mInitBGDrawable.setBounds(getLeft(), getTop(), getRight(), getBottom());
-            mInitBGDrawable.draw(canvas);
-            mTempTextPaint.setTextSize((float) (mReadSetting.getFontSize()));
-            mTempTextPaint.setColor(Color.BLACK);
+        drawBackground(canvas);
+        mTempTextPaint.setTextSize((float) (mReadSetting.getFontSize()));
+        mTempTextPaint.setColor(mReadSetting.getThemeTextColor());
+        if(!isFirstDraw){
+            //书籍还未解析完成
         }
         long timeDifference = System.currentTimeMillis() - mLastDrawWaitTime;
         if(timeDifference  > 200 || timeDifference < 0){
@@ -203,6 +192,5 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
     @Override
     protected void drawBackground(Canvas canvas){
         super.drawBackground(canvas);
-        mInitBGDrawable = null;
     }
 }

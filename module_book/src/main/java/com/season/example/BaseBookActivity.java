@@ -70,7 +70,7 @@ import java.util.Calendar;
 @Route(path= RoutePath.BOOK)
 public class BaseBookActivity extends Activity implements
         IReaderView.IReadCallback, AbsTextSelectHandler.ITouchEventDispatcher,
-        PullRefreshLayout.OnPullListener, PullRefreshLayout.OnPullStateListener, AbsVerGestureAnimController.IVertialTouchEventDispatcher {
+        PullRefreshLayout.OnPullListener, PullRefreshLayout.OnPullStateListener{
 
 	private BaseBookActivity this_ = this;
     private FrameLayout mReadContainerView;
@@ -406,8 +406,19 @@ public class BaseBookActivity extends Activity implements
 	private AbsVerGestureAnimController mAbsVerGestureAnimController = new AbsVerGestureAnimController();
     @Override
 	public boolean onTouchEvent(MotionEvent ev) {
-        LogUtil.e("key>>onTouchEvent  " + "66");
-        if(isPullEnabled() && mAbsVerGestureAnimController.handlerTouch(ev, this)){
+        LogUtil.log(getClass(),"key>>onTouchEvent  " + "66");
+        if(isPullEnabled() && mAbsVerGestureAnimController.handlerTouch(ev, new  AbsVerGestureAnimController.IVertialTouchEventDispatcher (){
+			@Override
+			public void verticalTouchEventCallBack(MotionEvent ev) {
+				mPullLayout.dispatchTouchEvent(ev);
+			}
+
+			@Override
+			public void unVerticalTouchEventCallBack(MotionEvent ev) {
+				LogUtil.e("key>>unVerticalTouchEventCallBack  " + "66");
+				onTouchEvent(ev);
+			}
+		})){
             return false;
         }
 		return mReadView.handlerTouchEvent(ev);
@@ -752,17 +763,6 @@ public class BaseBookActivity extends Activity implements
     @Override
     public boolean isPullEnabled() {
         return mReadView.getTextSelectHandler() != null;
-    }
-
-    @Override
-    public void verticalTouchEventCallBack(MotionEvent ev) {
-        mPullLayout.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public void unVerticalTouchEventCallBack(MotionEvent ev) {
-        LogUtil.e("key>>unVerticalTouchEventCallBack  " + "66");
-        onTouchEvent(ev);
     }
 
 }

@@ -12,12 +12,10 @@ public class AbsVerGestureAnimController {
 	
 	private MotionEvent mTempMotionEvent;
 	private int mTouchSlopSquare;
-	private int mLastMoveX;
 	protected PointF mDownTouchPoint;
 	private boolean mIsVertial = false;
 	private boolean mHasConsume = false;
 	private boolean isDown = false;
-	private boolean twiceReceive = true;
 	private boolean isPressInvalid;
 	
 	public AbsVerGestureAnimController() {
@@ -43,6 +41,10 @@ public class AbsVerGestureAnimController {
 				mHasConsume = false;
 				break;
 			}
+			if (mIsVertial){
+				touchEventDispatcher.verticalTouchEventCallBack(ev);
+				return true;
+			}
 			int moveX = (int) (mDownTouchPoint.x - ev.getX());
 			int moveY = (int) (mDownTouchPoint.y - ev.getY());
 			float move = PointF.length(ev.getX() - mDownTouchPoint.x, ev.getY() - mDownTouchPoint.y);
@@ -54,6 +56,7 @@ public class AbsVerGestureAnimController {
 				int distance = Math.abs(moveY) - Math.abs(moveX);
 				if(distance > 0){
 					//确认为纵向滑动
+					mIsVertial = true;
 					touchEventDispatcher.verticalTouchEventCallBack(ev);
 					return true;
 				}else{

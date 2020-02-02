@@ -32,7 +32,7 @@ public final class XMLUtil {
 			is.close();
 			return true;
 		} catch (Exception e) {
-			LogUtil.e("XMLUtil", e);
+			e.printStackTrace();
 		}
 		return false;
 	}

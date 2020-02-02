@@ -285,6 +285,10 @@ public class PullRefreshLayout extends FrameLayout {
 		}
 	}
 
+	public boolean isTouching(){
+		return mInTouch;
+	}
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
