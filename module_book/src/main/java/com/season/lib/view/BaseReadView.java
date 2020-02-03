@@ -1,30 +1,25 @@
 package com.season.lib.view;
 
 import android.content.Context;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 
 import com.example.book.R;
-import com.season.example.model.Book;
+import com.season.lib.bean.BookInfo;
 
 public abstract class BaseReadView extends AbsReadView implements IReaderView{
     protected IReadCallback mReadCallback;
-    protected Book mBook;
+    protected BookInfo mBook;
 
     private int mLoadingPointSize;
     private long mLastDrawWaitTime;
     private Drawable mBookMarkTip;
 
-    public BaseReadView(Context context,Book book,IReadCallback readCallback) {
+    public BaseReadView(Context context, BookInfo book, IReadCallback readCallback) {
         super(context);
         mBook = book;
         mReadCallback = readCallback;

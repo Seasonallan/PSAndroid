@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
-import com.season.example.model.Book;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
 import com.season.lib.bean.Chapter;
@@ -32,7 +31,7 @@ public class EpubReadView extends BaseHtmlReadView {
 	private BookInfo mBookInfo;
 
 
-	public EpubReadView(Context context, Book book, IReadCallback readCallback) {
+	public EpubReadView(Context context, BookInfo book, IReadCallback readCallback) {
 		super(context, book, readCallback);
 	}
 
@@ -47,19 +46,19 @@ public class EpubReadView extends BaseHtmlReadView {
         mSecretKey = secretKey;
 		try {
             try {
-                mPlugin = new EpubPlugin(mBook.getPath());
+                mPlugin = new EpubPlugin(mBook.path);
                 mPlugin.init(secretKey);
             }catch (Exception e){
             }
 			// 书籍信息
 			mBookInfo = mPlugin.getBookInfo();
-			mBookInfo.id = mBook.getBookId();
+			mBookInfo.id = mBook.id;
             mReadCallback.setFreeStart_Order_Price(Integer.MAX_VALUE , true, null, null);
 			// 读章节信息
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if(!mBook.isOrder() && getBuyIndex() != -1){
+					if(!mBook.isOrder && getBuyIndex() != -1){
 						if (fRequestCatalogIndex >= getBuyIndex()) {
 							initView(getBuyIndex() + 1, 0, fRequestPageCharIndex);
 						}else {
@@ -80,8 +79,8 @@ public class EpubReadView extends BaseHtmlReadView {
 	/** 获取购买点*/
 	private int getBuyIndex(){
 		int feeIndex = -1;
-		if (!TextUtils.isEmpty(mBook.getFeeStart())) {
-			String feeStart = String.valueOf(mBook.getFeeStart());
+		if (!TextUtils.isEmpty(mBook.feeStart)) {
+			String feeStart = String.valueOf(mBook.feeStart);
 			if(!TextUtils.isEmpty(feeStart) && !"null".equals(feeStart)){
 				try {
 					int start = feeStart.lastIndexOf("chapter") + 7;

@@ -8,8 +8,8 @@ import java.io.Serializable;
  * @date 2013-2-19
  */
 public class BookInfo implements Serializable {
-	public String title = "";
 	public String id = "";
+	public String title = "";
 	public String author = "";
 	public String publisher = "";
 	/**章节数*/
@@ -17,6 +17,13 @@ public class BookInfo implements Serializable {
 	public boolean isMediaDecode;
 	public boolean isCartoon = false;
 
+
+	public String bookType;
+	public String path;
+	public boolean isOrder;
+	public String feeStart;
+	public String price;
+	public String promotionPrice;
 
 	public BookInfo() {
 	}

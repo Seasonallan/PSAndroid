@@ -22,7 +22,6 @@ import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.epub.span.ColorSpan;
 import com.season.lib.TextSelectHandler;
-import com.season.example.model.Book;
 import com.season.lib.dbase.DBConfig;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
@@ -42,7 +41,7 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 	protected IPagePicture mCurrentPage;
 	protected IPagePicture mRequestPage;
 	
-	public TextUmdReadView(Context context, Book book, IReadCallback readCallback) {
+	public TextUmdReadView(Context context, BookInfo book, IReadCallback readCallback) {
 		super(context,book,readCallback);
 	}
 
@@ -192,13 +191,13 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 	}
 
 
-	private BookMark newBookMark(Book mBookInfo) {
+	private BookMark newBookMark(BookInfo mBookInfo) {
 		BookMark bookMark = null;
 		if(mBookInfo != null && mPlugin != null && mCurrentChapterIndex >= 0 && mCurrentChapterIndex < mPlugin.getChapterCount()){
 			bookMark = new BookMark();
-			bookMark.setAuthor(mBookInfo.getAuthor());
-			bookMark.setContentID(mBookInfo.getBookId());
-			bookMark.setBookmarkName(mBookInfo.getBookName());
+			bookMark.setAuthor(mBookInfo.author);
+			bookMark.setContentID(mBookInfo.id);
+			bookMark.setBookmarkName(mBookInfo.title);
 		//	bookMark.setUserID(mPreferencesUtil.getUserId());
 			bookMark.setSoftDelete(DBConfig.BOOKMARK_STATUS_SOFT_DELETE_NO);
 		}
@@ -456,13 +455,13 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 	public int onInitReaderInBackground(final int fRequestCatalogIndex,final int fRequestPageCharIndex, String secretKey) {
 		mRequestChapterIndex = fRequestCatalogIndex;
 		mCurrentPageIndex = fRequestPageCharIndex;
-        if(mBook.getPath().endsWith("umd")){
+        if(mBook.path.endsWith("umd")){
             mPlugin = new UMDPlugin(this);
         }else{
             mPlugin = new TxtPlugin(this);
         }
         try {
-            mPlugin.openBook(mBook.getPath(), getContext().getCacheDir()+"/chapter/");
+            mPlugin.openBook(mBook.path, getContext().getCacheDir()+"/chapter/");
         } catch (Exception e) {
             e.printStackTrace();
             mPlugin = null;
@@ -592,7 +591,9 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
             return;
         }
         if(mSelectTextsChapterIndex == null || mSelectTextsChapterIndex != requestChapterIndex){
-            mTextSelectHandler.updateSelectTexts(mBook.getBookId(), mRequestChapterIndex, mBook.getBookName(), getChapterName(mRequestChapterIndex), 0, mBook.getAuthor());
+            mTextSelectHandler.updateSelectTexts(mBook.id,
+					mRequestChapterIndex, mBook.title,
+					getChapterName(mRequestChapterIndex), 0, mBook.author);
             mTextSelectHandler.reLoadView();
             mSelectTextsChapterIndex = requestChapterIndex;
         }
@@ -625,9 +626,9 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 	@Override
 	public BookInfo getBookInfo() {
 		BookInfo info = new BookInfo();
-		info.author = mBook.getAuthor();
-		info.id = mBook.getBookId();
-		info.title = mBook.getBookName();
+		info.author = mBook.author;
+		info.id = mBook.id;
+		info.title = mBook.title;
 		return info;
 	}
 

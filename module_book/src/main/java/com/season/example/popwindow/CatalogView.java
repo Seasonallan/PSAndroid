@@ -20,14 +20,11 @@ import com.season.example.adapter.BookDigestsItemAdapter;
 import com.season.example.adapter.BookmarkItemAdapter;
 import com.season.example.adapter.CatalogAdapter;
 import com.season.example.adapter.CatalogViewPagerAdapter;
-import com.season.example.model.Book;
-import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
 import com.season.lib.db.BookDigestsDB;
 import com.season.lib.db.BookMarkDB;
 import com.season.lib.dimen.ScreenUtils;
-import com.season.lib.util.LogUtil;
 import com.season.lib.util.SimpleAnimationListener;
 
 public class CatalogView extends FrameLayout{
@@ -99,9 +96,10 @@ public class CatalogView extends FrameLayout{
 		mCatalogList = new ArrayList<Catalog>();
 		catalogAdapter = new CatalogAdapter(context, mCatalogList);
 		mBookDigestsAdapter = new BookDigestsItemAdapter(context);
-		mBookDigestsAdapter.setData(BookDigestsDB.getInstance().getListBookDigests(actionCallBack.getBookInfo().getBookId()));
+		mBookDigestsAdapter.setData(BookDigestsDB.getInstance().getListBookDigests(
+				actionCallBack.getBookInfo().id));
 		mBookMarkAdapter = new BookmarkItemAdapter(context,
-				BookMarkDB.getInstance().getUserBookMark(actionCallBack.getBookInfo().getBookId()));
+				BookMarkDB.getInstance().getUserBookMark(actionCallBack.getBookInfo().id));
 		mGotoReaderBut = findViewById(R.id.left_suspension_but);
 		mGotoReaderBut.setOnClickListener(new OnClickListener() {
 			@Override
@@ -304,7 +302,7 @@ public class CatalogView extends FrameLayout{
 		}
 
 		@Override
-		public Book getBookInfo() {
+		public BookInfo getBookInfo() {
 			if(mActionCallBack != null){
 				return mActionCallBack.getBookInfo();
 			}
@@ -332,7 +330,7 @@ public class CatalogView extends FrameLayout{
 		
 		public boolean isHasNetWork();
 		
-		public Book getBookInfo();
+		public BookInfo getBookInfo();
 		
 		public void onEditModeChange(boolean isEdit);
 	}

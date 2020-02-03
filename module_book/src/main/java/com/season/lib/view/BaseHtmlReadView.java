@@ -22,7 +22,6 @@ import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.epub.span.ColorSpan;
 import com.season.lib.TextSelectHandler;
-import com.season.example.model.Book;
 import com.season.lib.epub.span.media.ReaderMediaPlayer;
 import com.season.lib.dbase.DBConfig;
 import com.season.lib.bean.BookInfo;
@@ -50,7 +49,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	private int mRequestDrawResult;
 	private Integer mSelectTextsChapterIndex;
 	
-	public BaseHtmlReadView(Context context, Book book, IReadCallback readCallback) {
+	public BaseHtmlReadView(Context context, BookInfo book, IReadCallback readCallback) {
 		super(context, book, readCallback);
         mTextSelectHandler = new TextSelectHandler(0, 0);
 	}
@@ -218,7 +217,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	private void createPageManager(){
 		if(mChapterSize != null && !mPageManager.isInit()){
 			Rect fullPageRect = new Rect(getLeft(), getTop(), getRight(), getBottom());
-			SettingParam settingParam = new SettingParam(mBook.getBookId(),mTextPaint
+			SettingParam settingParam = new SettingParam(mBook.id,mTextPaint
 					,newPageContenRect()
 					,fullPageRect,mReadSetting.getLineSpaceSize(),mReadSetting.getParagraphSpaceSize(),this);
 			mPageManager.init(settingParam, mChapterSize, mCurrentChapterIndex);
@@ -376,9 +375,9 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		BookMark bookMark = null;
 		if(mChapterSize != null && mBook != null && mCurrentChapterIndex >= 0 && mCurrentChapterIndex <= mChapterSize - 1){
 			bookMark = new BookMark();
-			bookMark.setAuthor(mBook.getAuthor());
-			bookMark.setContentID(mBook.getBookId());
-			bookMark.setBookmarkName(mBook.getBookName());
+			bookMark.setAuthor(mBook.author);
+			bookMark.setContentID(mBook.id);
+			bookMark.setBookmarkName(mBook.title);
 			bookMark.setSoftDelete(DBConfig.BOOKMARK_STATUS_SOFT_DELETE_NO);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = new Date();
@@ -410,7 +409,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
             bookMark.setChapterID(getCurChapterIndex());
             bookMark.setChapterName(getChapterName(getCurChapterIndex()));
             bookMark.setPosition(start);
-            bookMark.setContentID(mBook.getBookId());
+            bookMark.setContentID(mBook.id);
             String subString = mPageManager.subSequence(chapterIndex, start, end);
             bookMark.setBookmarkName(subString);
         }
@@ -588,7 +587,8 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 			return;
 		}
 		if(mSelectTextsChapterIndex == null || mSelectTextsChapterIndex != requestChapterIndex){
-			mTextSelectHandler.updateSelectTexts(mBook.getBookId(), mRequestChapterIndex, mBook.getBookName(), getChapterName(mRequestChapterIndex), 0, mBook.getAuthor());
+			mTextSelectHandler.updateSelectTexts(mBook.id, mRequestChapterIndex, mBook.title
+					, getChapterName(mRequestChapterIndex), 0, mBook.author);
 			mTextSelectHandler.reLoadView();
 			mSelectTextsChapterIndex = requestChapterIndex;
 		}
@@ -763,7 +763,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	public void onPostDrawContent(Canvas canvas, int chapterIndex,int pageIndex, boolean isFullScreen) {
 		if(!isFullScreen){
 			if(pageIndex == 0){
-				drawBookName(canvas,mBook.getBookName());
+				drawBookName(canvas,mBook.title);
 			}else{
 				drawChapterName(canvas,getChapterName(chapterIndex));
 			}
@@ -826,7 +826,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	public BookInfo getPaserExceptionInfo() {
-		return new BookInfo(mBook.getBookId(), mBook.getBookName(), mCurrentChapterIndex);
+		return new BookInfo(mBook.id, mBook.title, mCurrentChapterIndex);
 	}
 
     protected boolean isLayoutAll(){

@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.provider.Browser;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import com.season.example.popwindow.CatalogView;
 import com.season.example.popwindow.ImgViewerPopWin;
 import com.season.example.popwindow.NotePopWin;
 import com.season.example.popwindow.ReaderMenuPopWin;
-import com.season.example.model.Book;
 import com.season.example.support.SelectorControlView;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.epub.span.media.IMediaSpan;
@@ -50,7 +48,6 @@ import com.season.lib.view.BaseReadView;
 import com.season.lib.view.EpubReadView;
 import com.season.lib.view.IReaderView;
 import com.season.lib.view.PullRefreshLayout;
-import com.season.lib.view.TextUmdReadView;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
 import com.season.lib.BaseContext;
@@ -77,7 +74,7 @@ public class BaseBookActivity extends Activity implements
     private BaseReadView mReadView;
 	private CatalogView mCatalogView;
 	private RelativeLayout mCatalogLay;
-	private Book mBook;
+	private BookInfo mBook;
 	private ReaderMenuPopWin mReaderMenuPopWin;
 	private boolean isInit;
 	private ClickDetector mClickDetector;
@@ -96,7 +93,7 @@ public class BaseBookActivity extends Activity implements
         StatusBarUtil.setColor(this, 0xff30302E);
        // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
 
-		mBook = new Book();
+		mBook = new BookInfo();
 		centerRect = new RectF();
 		centerRect.left = ScreenUtils.getScreenWidth()/4;
 		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
@@ -309,7 +306,7 @@ public class BaseBookActivity extends Activity implements
 			}
 
 			@Override
-			public Book getBookInfo() {
+			public BookInfo getBookInfo() {
 				return mBook;
 			}
 		});
@@ -431,10 +428,10 @@ public class BaseBookActivity extends Activity implements
                 try {
                     InputStream is = getResources().openRawResource(R.raw.epub_book);
 					//InputStream is = getResources().openRawResource(R.raw.text_book);
-					mBook.setBookId("00001");
-					BookMarkDB.getInstance().loadBookMarks(mBook.getBookId());
-                    mBook.setPath(getBookFielPath(".epub"));
-                    if(!FileUtils.copyFileToFile(mBook.getPath(), is)){
+					mBook.id = "00001";
+					BookMarkDB.getInstance().loadBookMarks(mBook.id);
+                    mBook.path = getBookFielPath(".epub");
+                    if(!FileUtils.copyFileToFile(mBook.path, is)){
                         LogUtil.e("status  error");
                         finish();
                         return;

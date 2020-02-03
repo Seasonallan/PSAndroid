@@ -29,10 +29,10 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.book.R;
-import com.season.example.model.Book;
 import com.season.example.model.MenuItem;
 import com.season.example.adapter.MenuItemAdapter;
 import com.season.lib.ReadSetting;
+import com.season.lib.bean.BookInfo;
 import com.season.lib.epub.span.media.ReaderMediaPlayer;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
@@ -44,7 +44,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 	private static final int FONT_INCREASE_UNIT = 1;
 	private static final int MAX_MENU_SIZE = 5;
 	private Activity mActivity;
-	private Book mBook;
+	private BookInfo mBook;
 	private IActionCallback mActionCallback;
 	private CheckedGridView mGridView;
 	private View addBookmarkIB;
@@ -76,7 +76,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 	private boolean isVoicePlay;
 	private AudioManager mAudioManager;
     private NavigationBarUtil mNavigationBarUtil;
-	public ReaderMenuPopWin(View parent,Activity activity,Book book,IActionCallback callback) {
+	public ReaderMenuPopWin(View parent,Activity activity,BookInfo book,IActionCallback callback) {
 		super(parent, LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		mActivity = activity;
         mNavigationBarUtil = new NavigationBarUtil(activity);
@@ -235,7 +235,7 @@ public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 			mBuyBut.setVisibility(View.GONE);
 		}
 		mTitleTV.setVisibility(View.VISIBLE);
-		mTitleTV.setText(mBook.getBookName());
+		mTitleTV.setText(mBook.title);
 		validateBookmarkState(mHasBookmark);
 	}
 
