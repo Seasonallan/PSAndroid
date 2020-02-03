@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/me_dark"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.season.lib.view.CircleImageView
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_margin="10dp"
+        android:src="@mipmap/img_me"
+        app:border_color="#FF7F24"
+        app:border_width="4dp"
+        app:is_circle="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="阿狸懒"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:textStyle="bold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="意向：Android工程师"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:textStyle="bold"/>
+
+    <com.season.lib.view.LineTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:text="个人信息"
+        app:text_color="@color/me_light"
+        />
+
+    <com.season.lib.view.LineTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:text="联系方式"
+        app:text_color="@color/me_light"
+        />
+    <Button
+        android:id="@+id/btn_close_left"
+        android:layout_width="wrap_content"
+        android:layout_height="1500dp"
+        android:text="关闭"/>
+
+</LinearLayout>

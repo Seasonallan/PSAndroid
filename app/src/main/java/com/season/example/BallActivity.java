@@ -12,7 +12,7 @@ import com.season.playball.Ball;
 import com.season.playball.BallView;
 import com.season.playball.interpolator.BallInterpolatorFactory;
 
-public class FunctionActivity extends Activity{
+public class BallActivity extends Activity{
 
     private BallView mBallView;
     @Override
@@ -20,7 +20,7 @@ public class FunctionActivity extends Activity{
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_function);
+        setContentView(R.layout.activity_ball);
 
         mBallView = findViewById(R.id.top_view);
 

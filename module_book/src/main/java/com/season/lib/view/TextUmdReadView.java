@@ -625,11 +625,7 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 
 	@Override
 	public BookInfo getBookInfo() {
-		BookInfo info = new BookInfo();
-		info.author = mBook.author;
-		info.id = mBook.id;
-		info.title = mBook.title;
-		return info;
+		return mBook;
 	}
 
 	@Override

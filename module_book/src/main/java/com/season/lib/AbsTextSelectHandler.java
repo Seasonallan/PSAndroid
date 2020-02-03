@@ -284,6 +284,7 @@ public abstract class AbsTextSelectHandler{
                     removeLongPressCallback();
                     if( !isSelect() ){
                         if( !mHasLongPress ){
+							LogUtil.v(TAG, "mTempMotionEvent=ACTION_DOWN");
                             mHasConsume = false;
                             mTempMotionEvent = MotionEvent.obtain(ev);
                             mTempMotionEvent.setAction(MotionEvent.ACTION_DOWN);

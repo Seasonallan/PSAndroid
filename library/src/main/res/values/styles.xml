@@ -6,4 +6,27 @@
     </declare-styleable>
     <item type="id" name="action_view" />
     <item type="id" name="tool_view" />
+    <declare-styleable name="CircleImageView">
+        <attr name="is_circle" format="boolean" />
+        <attr name="is_cover_src" format="boolean" />
+        <attr name="corner_radius" format="dimension" />
+        <attr name="corner_top_left_radius" format="dimension" />
+        <attr name="corner_top_right_radius" format="dimension" />
+        <attr name="corner_bottom_left_radius" format="dimension" />
+        <attr name="corner_bottom_right_radius" format="dimension" />
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="inner_border_width" format="dimension" />
+        <attr name="inner_border_color" format="color" />
+        <attr name="mask_color" format="color" />
+    </declare-styleable>
+
+
+    <declare-styleable name="LineText">
+        <attr name="text" format="string" />
+        <attr name="text_color" format="color" />
+    </declare-styleable>
+    <item type="id" name="center_text" />
+
+
 </resources>

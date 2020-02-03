@@ -22,7 +22,7 @@ public class SplashActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, FunctionActivity.class));
+                startActivity(new Intent(SplashActivity.this, MeeActivity.class));
                 finish();
             }
         }, 3000);
