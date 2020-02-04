@@ -28,5 +28,15 @@
     </declare-styleable>
     <item type="id" name="center_text" />
 
+    <declare-styleable name="IconText">
+        <attr name="it_desc" format="string" />
+        <attr name="it_text" format="string" />
+        <attr name="it_icon" format="integer" />
+        <attr name="it_text_color" format="color" />
+    </declare-styleable>
+    <item type="id" name="left_icon" />
+    <item type="id" name="left_text" />
+    <item type="id" name="right_text" />
+
 
 </resources>

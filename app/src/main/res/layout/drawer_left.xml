@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/me_dark"
     android:gravity="center"
+    android:paddingTop="18dp"
+    android:paddingBottom="18dp"
     android:orientation="vertical">
 
     <com.season.lib.view.CircleImageView
@@ -27,8 +28,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="意向：Android工程师"
-        android:textColor="@color/white"
+        android:text="Android开发工程师"
+        android:textColor="@color/me_white"
+        android:paddingBottom="16dp"
         android:textSize="16dp"
         android:textStyle="bold"/>
 
@@ -36,8 +38,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        app:text="个人信息"
-        app:text_color="@color/me_light"
+        app:text="基本信息"
+        app:text_color="@color/me_white"/>
+
+    <com.season.lib.view.IconTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:it_desc="出生年月："
+        app:it_text="1990.06.15"
+        app:it_icon = "@drawable/emoji_1f55c"
+        app:it_text_color="@color/me_white"
+        />
+    <com.season.lib.view.IconTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:it_desc="大学院校："
+        app:it_text="集美大学"
+        app:it_icon = "@drawable/emoji_1f31f"
+        app:it_text_color="@color/me_white"
+        />
+    <com.season.lib.view.IconTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_marginBottom="18dp"
+        app:it_desc="最高学历："
+        app:it_text="大学本科"
+        app:it_icon = "@drawable/emoji_1f681"
+        app:it_text_color="@color/me_white"
         />
 
     <com.season.lib.view.LineTextView
@@ -45,12 +75,32 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:text="联系方式"
-        app:text_color="@color/me_light"
+        app:text_color="@color/me_white" />
+
+    <com.season.lib.view.IconTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:it_desc=""
+        app:it_text="451360508@qq.com"
+        app:it_icon = "@drawable/emoji_2709"
+        app:it_text_color="@color/me_white"
         />
+    <com.season.lib.view.IconTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:it_desc=""
+        app:it_text="15080319470"
+        app:it_icon = "@drawable/emoji_1f522"
+        app:it_text_color="@color/me_white"
+        />
+
     <Button
         android:id="@+id/btn_close_left"
         android:layout_width="wrap_content"
-        android:layout_height="1500dp"
-        android:text="关闭"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="关闭" />
 
 </LinearLayout>

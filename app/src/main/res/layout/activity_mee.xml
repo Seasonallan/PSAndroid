@@ -12,7 +12,8 @@
     <!-- 菜单 -->
     <ScrollView
         android:layout_gravity="left"
-        android:layout_width="248dp"
+        android:layout_width="268dp"
+        android:background="@color/me_dark"
         android:layout_height="match_parent">
         <include layout="@layout/drawer_left" />
     </ScrollView>

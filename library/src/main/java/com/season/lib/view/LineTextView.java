@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.example.library.R;
+import com.season.lib.dimen.DimenUtil;
 
 public class LineTextView extends RelativeLayout {
     private String text = "";
