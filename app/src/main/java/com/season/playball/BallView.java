@@ -19,6 +19,7 @@ import com.season.playball.interpolator.BallInterpolatorFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -29,7 +30,8 @@ import java.util.Random;
 public class BallView extends View {
 
     Paint paint;
-    List<Ball> ballList;
+    CopyOnWriteArrayList<Ball> ballList;
+
 
     public BallView(Context context) {
         super(context);
@@ -46,7 +48,7 @@ public class BallView extends View {
     }
 
     private void init(){
-        ballList = new ArrayList<>();
+        ballList = new CopyOnWriteArrayList<>();
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStrokeWidth(10);
         initBottomPaint();
@@ -169,6 +171,7 @@ public class BallView extends View {
                 mTouchStartY = event.getY();
                 if (y >= getTopHeight()){
                     isBottomTouched = true;
+
                     return true;
                 }else{
                     isBottomTouched = false;

@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import androidx.customview.widget.ViewDragHelper;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.alibaba.android.arouter.launcher.ARouter;
+import com.season.lib.RoutePath;
 import com.season.myapplication.R;
 
 import java.lang.reflect.Field;
@@ -29,19 +31,28 @@ public class MeeActivity extends Activity{
 
         setDrawerLeftEdgeSize(this, mDrawerLayout, 0.5f);
 
-        findViewById(R.id.btn_open_left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
         findViewById(R.id.btn_close_left).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
+        findViewById(R.id.ll_ps).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ARouter.getInstance().build(RoutePath.PS).navigation();
+            }
+        });
+        findViewById(R.id.ll_book).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ARouter.getInstance().build(RoutePath.BOOK).navigation();
+            }
+        });
+
     }
+
+
     /**
      * 抽屉滑动范围控制
      * @param activity
