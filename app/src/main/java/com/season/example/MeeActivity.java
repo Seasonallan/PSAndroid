@@ -12,7 +12,10 @@ import androidx.customview.widget.ViewDragHelper;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.season.example.view.HAHAView;
+import com.season.example.view.LRLRView;
 import com.season.lib.RoutePath;
+import com.season.lib.dimen.ScreenUtils;
 import com.season.myapplication.R;
 
 import java.lang.reflect.Field;
@@ -29,7 +32,7 @@ public class MeeActivity extends Activity{
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        setDrawerLeftEdgeSize(this, mDrawerLayout, 0.5f);
+        setDrawerLeftEdgeSize(mDrawerLayout, 0.5f);
 
         findViewById(R.id.btn_close_left).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,38 +53,52 @@ public class MeeActivity extends Activity{
             }
         });
 
+        hahaView = findViewById(R.id.ps_haha);
+        lrlrView = findViewById(R.id.book_lrlr);
+    }
+
+    private HAHAView hahaView;
+    private LRLRView lrlrView;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        hahaView.destroy();
+        lrlrView.destroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        hahaView.stop();
+        //lrlrView.stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hahaView.start();
+        //lrlrView.start();
     }
 
 
     /**
      * 抽屉滑动范围控制
-     * @param activity
      * @param drawerLayout
      * @param displayWidthPercentage 占全屏的份额0~1
      */
-    private void setDrawerLeftEdgeSize(Activity activity, DrawerLayout drawerLayout, float displayWidthPercentage) {
-        if (activity == null || drawerLayout == null)
+    private void setDrawerLeftEdgeSize(DrawerLayout drawerLayout, float displayWidthPercentage) {
+        if (drawerLayout == null)
             return;
         try {
-// find ViewDragHelper and set it accessible
             Field leftDraggerField = drawerLayout.getClass().getDeclaredField("mLeftDragger");
             leftDraggerField.setAccessible(true);
             ViewDragHelper leftDragger = (ViewDragHelper) leftDraggerField.get(drawerLayout);
-// find edgesize and set is accessible
             Field edgeSizeField = leftDragger.getClass().getDeclaredField("mEdgeSize");
             edgeSizeField.setAccessible(true);
             int edgeSize = edgeSizeField.getInt(leftDragger);
-// set new edgesize
-// Point displaySize = new Point();
-            DisplayMetrics dm = new DisplayMetrics();
-            activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-            edgeSizeField.setInt(leftDragger, Math.max(edgeSize, (int) (dm.widthPixels * displayWidthPercentage)));
-        } catch (NoSuchFieldException e) {
-            Log.e("NoSuchFieldException", e.getMessage().toString());
-        } catch (IllegalArgumentException e) {
-            Log.e("IllegalArgument", e.getMessage().toString());
-        } catch (IllegalAccessException e) {
-            Log.e("IllegalAccessException", e.getMessage().toString());
+            edgeSizeField.setInt(leftDragger, Math.max(edgeSize, (int) (ScreenUtils.getScreenWidth() * displayWidthPercentage)));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
