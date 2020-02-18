@@ -6,12 +6,13 @@
 
     <application
         android:allowBackup="true"
-        android:supportsRtl="true" >
-        <activity android:name="com.season.example.BaseBookActivity"
-            android:theme="@style/Theme.AppCompat.Light" android:screenOrientation="portrait">
+        android:label="book"
+        android:icon="@drawable/ic_launcher"
+        android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+        android:supportsRtl="true">
+        <activity android:name="com.season.example.BaseBookActivity"  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

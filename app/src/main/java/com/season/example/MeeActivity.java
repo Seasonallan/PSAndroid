@@ -2,8 +2,6 @@ package com.season.example;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;

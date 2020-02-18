@@ -68,12 +68,12 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        BaseContext.init(getApplicationContext());
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_ps);
 
-        BaseContext.init(getApplicationContext());
         initView();
         initBottomLayout();
 

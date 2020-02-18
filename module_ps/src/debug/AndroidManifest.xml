@@ -6,17 +6,18 @@
 
     <application
         android:allowBackup="true"
+        android:label="ps"
+        android:icon="@drawable/emoji_00a9"
+        android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
         android:supportsRtl="true" >
-        <activity android:name="com.season.example.PsActivity" android:theme="@style/Theme.AppCompat.Light"
+        <activity android:name="com.season.example.PsActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name="com.season.example.CropActivity"
-            android:theme="@style/Theme.AppCompat.Light"
             android:screenOrientation="portrait">
         </activity>
 
