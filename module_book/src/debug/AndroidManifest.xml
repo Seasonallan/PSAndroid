@@ -17,9 +17,6 @@
             </intent-filter>
         </activity>
 
-        <provider
-            android:name="com.season.example.provider.BookContentProvider"
-            android:authorities="com.season.example.provider.BookContentProvider" />
     </application>
 
 </manifest>

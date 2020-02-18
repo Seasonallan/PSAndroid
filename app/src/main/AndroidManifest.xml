@@ -24,6 +24,19 @@
         <activity android:name="com.season.example.BallActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.season.example.MeeActivity" android:screenOrientation="portrait"/>
 
+
+        <activity android:name="com.season.example.PsActivity"
+            tools:node="replace"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="com.season.example.BaseBookActivity"
+            tools:node="replace"
+            android:screenOrientation="portrait">
+        </activity>
+        <provider
+            android:name="com.season.example.provider.BookContentProvider"
+            android:exported="true"
+            android:authorities="com.season.example.provider.BookContentProvider" />
     </application>
 
 </manifest>

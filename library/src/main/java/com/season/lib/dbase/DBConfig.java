@@ -4,9 +4,6 @@ import android.net.Uri;
 
 public class DBConfig {
 
-	public static final String DATABASE_NAME = "surfingReader.db";
-	public static final int DATABASE_VERSION13 = 14;//乐阅新版本
-	
 	 /** 主机名，匹配Manifest.xml中注册provider的 android:authorities*/
     public static final String AUTHORITIES = "com.season.example.provider.BookContentProvider";
 
