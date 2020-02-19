@@ -32,7 +32,6 @@ public class TextReadView extends BaseHtmlReadView {
 	private BookInfo mBookInfo;
 
 
-
 	/**
 	 * 是否为整本排版
 	 */
@@ -48,6 +47,7 @@ public class TextReadView extends BaseHtmlReadView {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		mPlugin.recyle();
 	}
 
 
@@ -68,15 +68,7 @@ public class TextReadView extends BaseHtmlReadView {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if(!mBook.isOrder && getBuyIndex() != -1){
-						if (fRequestCatalogIndex >= getBuyIndex()) {
-							initView(getBuyIndex() + 1, 0, fRequestPageCharIndex);
-						}else {
-							initView(getBuyIndex() + 1, fRequestCatalogIndex, fRequestPageCharIndex);
-						}
-					}else{
-						initView(mPlugin.getCatalog().size(), fRequestCatalogIndex, fRequestPageCharIndex);
-					}
+					initView(mPlugin.getCatalog().size(), fRequestCatalogIndex, fRequestPageCharIndex);
 				}
 			});
         } catch (Exception e) {
@@ -85,27 +77,7 @@ public class TextReadView extends BaseHtmlReadView {
         }
         return SUCCESS;
 	}
-	
-	/** 获取购买点*/
-	private int getBuyIndex(){
-		int feeIndex = -1;
-		if (!TextUtils.isEmpty(mBook.feeStart)) {
-			String feeStart = String.valueOf(mBook.feeStart);
-			if(!TextUtils.isEmpty(feeStart) && !"null".equals(feeStart)){
-				try {
-					int start = feeStart.lastIndexOf("chapter") + 7;
-					int end = feeStart.lastIndexOf(".");
-					feeIndex = Integer.valueOf(feeStart.substring(start, end));
-				} catch (Exception e) {
-					LogUtil.e(e.getMessage());
-				}
-			}
-		}else {
-			feeIndex = -1;
-		}
-		return feeIndex;
-	}
-	
+
 	@Override
 	public String getChapterInputStream_(int chapterIndex) {
 		String defaultString = "<html><body>无法阅读此章节.原因：<p>1.该章节未购买</p><p>2.书籍格式错误-请到书架删除后重新下载！</p></body></html>";
@@ -151,12 +123,12 @@ public class TextReadView extends BaseHtmlReadView {
 
 	@Override
 	public ICssProvider getCssProvider() {
-		return mCssProvider;
+		return null;
 	}
 
 	@Override
 	public DataProvider getDataProvider() {
-		return mDataProvider;
+		return null;
 	}
 
 	@Override
@@ -202,95 +174,4 @@ public class TextReadView extends BaseHtmlReadView {
 		return index < 0 ? 0 : index;
 	}
 
-	private CssProvider mCssProvider = new CssProvider(new CssProvider.ICssLoader() {
-		@Override
-		public String load(String path) {
-			try {
-				Resource resource = mPlugin.findResource(path);
-				byte[] data = null;
-				if(resource != null){
-					if (TextUtils.isEmpty(mSecretKey)) {
-						data = resource.getData();
-					}else {
-						data = EncryptUtils.decryptByAES(resource.getData(),mSecretKey);
-					}
-				}
-				if (data != null) {
-					return new String(data);
-				}
-			} catch (Exception e) {
-			}
-			return null;
-		}
-	});
-	
-	private DataProvider mDataProvider = new DataProvider() {
-		@Override
-		public Drawable getDrawable(final String source,final DrawableContainer drawableContainer) {
-			Drawable drawable = new ColorDrawable(Color.TRANSPARENT);
-            new SinThreadPool().addTask(new Runnable() {
-                Bitmap bitmap = null;
-
-                @Override
-                public void run() {
-                    if (drawableContainer.isInvalid()) {
-                        return;
-                    }
-                    try {
-                        bitmap = BitmapUtil.clipScreenBoundsBitmap(getDataStream(source));
-                    } catch (Exception e) {
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BitmapDrawable bitmapDrawable = null;
-                            if (bitmap != null) {
-                                bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-                            }
-                            drawableContainer.setDrawable(bitmapDrawable);
-                        }
-                    });
-                }
-            });
-			return drawable;
-		}
-
-		@Override
-		public Context getContext() {
-			return TextReadView.this.getContext().getApplicationContext();
-		}
-
-		@Override
-		public InputStream getDataStream(String source) throws IOException {
-			Resource resource = mPlugin.findResource(source);
-			if(resource != null){
-				//目前media文件不加密。音视频
-				if (source.endsWith(".mp3")||source.endsWith(".mp4")) {//服务器对此后缀不加密
-					if (mBookInfo.isMediaDecode) {
-						if (TextUtils.isEmpty(mSecretKey)) {
-							return resource.getDataStream();
-						}else {
-							return EncryptUtils.decryptByAES(resource.getDataStream(),mSecretKey);
-						}
-					}else {
-						return resource.getDataStream();
-					}
-				}else {
-					if (TextUtils.isEmpty(mSecretKey)) {
-						return resource.getDataStream();
-					}else {
-						return EncryptUtils.decryptByAES(resource.getDataStream(),mSecretKey);
-					}
-				}
-			}
-			return null;
-			
-		}
-
-		@Override
-		public boolean hasData(String source) {
-			Resource resource = mPlugin.findResource(source);
-			return resource != null;
-		}
-	};
 }

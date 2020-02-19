@@ -1,72 +1,42 @@
 package com.season.lib.text;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import android.text.TextUtils;
 
 import com.season.lib.BaseContext;
-import com.season.lib.epub.paser.epub.Resource;
-import com.season.lib.epub.paser.epub.ContainerDecoder;
-import com.season.lib.epub.paser.epub.CatalogNAVDecoder;
-import com.season.lib.epub.paser.epub.CatalogNCXDecoder;
-import com.season.lib.epub.paser.epub.EpubFileDecoder;
-import com.season.lib.file.IOUtil;
-import com.season.lib.file.XMLUtil;
-import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
 import com.season.lib.bean.Chapter;
-import com.season.lib.book.EncryptUtils;
 import com.season.lib.txtumd.support.ChapterControll;
-import com.season.lib.util.LogUtil;
-
 import com.season.lib.txtumd.support.BytesEncodingDetect;
-/** EPUB格式书籍的解析
- * @author mingkg21
- * @email mingkg21@gmail.com
- * @date 2013-2-19
+
+/**
+ * TXT格式书籍的解析
  */
 public class TextPlugin{
 
-    private String secretKey;
-
     /** 文件路径  */
     protected String filePath;
-    /** 书籍信息 */
-    protected BookInfo bookInfo;
-
     /** 书籍目录 */
     private ArrayList<Catalog> catalog = new ArrayList<Catalog>();
-
-    public TextPlugin(String filePath) {
-        this.filePath = filePath ;
-    }
-
     private RandomAccessFile mRandomAccessFile;
     protected int mBufferLength = 0;
     private FileChannel mFileChannel;
     private MappedByteBuffer mMappedByteBuffer = null;
     protected String mEncode = "UTF-8";
     private TextChapter mChapterControll;
-    public void init(String secretKey) throws Exception {
-        this.secretKey = secretKey;
 
+    public TextPlugin(String filePath) {
+        this.filePath = filePath ;
+    }
+
+    public void init(String secretKey) throws Exception {
         File book_file = new File(filePath);
         mBufferLength = (int) book_file.length();
         mRandomAccessFile = new RandomAccessFile(book_file, "r");
@@ -89,8 +59,8 @@ public class TextPlugin{
         return mEncode;
     }
 
-    int start = 0;
     private void findChapters(){
+        int start = 0;
         try {
             List<Catalog> res = mChapterControll.readFile();
             if(res != null && res.size() > 0){
@@ -119,11 +89,11 @@ public class TextPlugin{
             }
             start += bts.length;
         }
-        start = mBufferLength;
         if(mChapterControll.getChapters().size() == 0){
             mChapterControll.addChapter(ChapterControll.DEFAULT_CHAPTER, 0);
         }
         catalog = (ArrayList<Catalog>) mChapterControll.getChapters();
+        mChapterControll.save();
     }
 
     private int _lastEndPosition = -1;
@@ -197,14 +167,6 @@ public class TextPlugin{
         return 0x0a;
     }
 
-
-    /** 获取书籍信息
-     * @return the bookInfo
-     */
-    public BookInfo getBookInfo() {
-        return bookInfo;
-    }
-
     /** 获取书籍目录；不为NULL，如果没有目录，SIZE为0
      * @return the catalog
      */
@@ -217,12 +179,8 @@ public class TextPlugin{
         try {
             mFileChannel.close();
             mRandomAccessFile.close();
-            if(start == mBufferLength){
-                mChapterControll.save();
-            }
         } catch (Exception e) {
         }
-        start = Integer.MAX_VALUE;
         mMappedByteBuffer = null;
         System.gc();
     }
@@ -267,10 +225,6 @@ public class TextPlugin{
         for (int i = 0; i < length; i++){
             dst[i] = mMappedByteBuffer.get(offset + i);
         }
-    }
-
-    public Resource findResource(String path){
-        return null;
     }
 
     public int getChapterPosition(String chapterID) {
