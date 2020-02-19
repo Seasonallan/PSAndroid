@@ -96,13 +96,13 @@ public class SurfingHtmlToSpannedConverter implements ContentHandler {
 			mReader.parse(source);
 		} catch (IOException e1) {
 			e = e1;
-			e1.printStackTrace();
+			//e1.printStackTrace();
 		} catch (SAXException e2) {
 			e = e2;
-			e2.printStackTrace();
+			//e2.printStackTrace();
 		} catch (Exception e3) {
 			e = e3;
-			e3.printStackTrace();
+			//e3.printStackTrace();
 		}
 		if(e != null){
 			throw new RuntimeException(e);

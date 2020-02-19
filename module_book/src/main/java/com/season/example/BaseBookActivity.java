@@ -57,6 +57,8 @@ import com.season.lib.util.LogUtil;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.StatusBarUtil;
 import com.season.lib.util.ToastUtil;
+import com.season.lib.view.TextReadView;
+import com.season.lib.view.TextUmdReadView;
 
 import java.io.File;
 import java.io.InputStream;
@@ -426,11 +428,12 @@ public class BaseBookActivity extends Activity implements
             @Override
             public void run() {
                 try {
-                    InputStream is = getResources().openRawResource(R.raw.epub_book);
-					//InputStream is = getResources().openRawResource(R.raw.text_book);
-					mBook.id = "00001";
+                    //InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";
+					InputStream is = getResources().openRawResource(R.raw.text_book);
+					mBook.id = "00002";
 					BookMarkDB.getInstance().loadBookMarks(mBook.id);
-                    mBook.path = getBookFielPath(".epub");
+                    //mBook.path = getBookFielPath(".epub");
+					mBook.path = getBookFielPath(".txt");
                     if(!FileUtils.copyFileToFile(mBook.path, is)){
                         LogUtil.e("status  error");
                         finish();
@@ -440,8 +443,8 @@ public class BaseBookActivity extends Activity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-							//mReadView = new TextUmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-							mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							mReadView = new TextReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							//mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;
                             mReadView.onCreate(null);
@@ -452,8 +455,8 @@ public class BaseBookActivity extends Activity implements
                             new Thread() {
                                 @Override
                                 public void run() {
-									//mReadView.onInitReaderInBackground(requestCatalogIndex, requestPageCharIndex, "");
 									mReadView.onInitReaderInBackground(0, 0, "");
+									//mReadView.onInitReaderInBackground(0, 0, "");
                                 }
                             }.start();
                         }

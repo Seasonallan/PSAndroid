@@ -30,6 +30,17 @@ public class Catalog {
 		setIndex(index);
 		setLayer(parent == null ? 1 : parent.getLayer() + 1);
 	}
+
+	public Catalog(String text, int index){
+		setText(text);
+		setIndex(index);
+		setLayer(parent == null ? 1 : parent.getLayer() + 1);
+	}
+
+	public Catalog(int index){
+		setIndex(index);
+		setLayer(parent == null ? 1 : parent.getLayer() + 1);
+	}
 	
 	/**
 	 * @return the hasLabel

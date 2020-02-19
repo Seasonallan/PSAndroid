@@ -101,7 +101,7 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 		}
 		ArrayList<Catalog> res = new ArrayList<Catalog>();
 		for (int i = 0; i < chapter.size(); i++) {
-			Catalog item = new Catalog(null, i);
+			Catalog item = new Catalog(i);
 			item.setText(chapter.get(i));
 			res.add(item);
 		}
@@ -111,7 +111,7 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 	 * 目录类型转换
 	 */
 	private Catalog translaterChapter(String chapter, int position){
-		Catalog item = new Catalog(null, position);
+		Catalog item = new Catalog(position);
 		item.setText(chapter);
 		return item;
 	}
