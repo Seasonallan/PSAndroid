@@ -1,4 +1,4 @@
-package com.season.lib.txtumd;
+package com.season.lib.epub.expand.txtumd;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.season.lib.txtumd.TxtUmdBasePlugin;
-import com.season.lib.txtumd.support.BytesEncodingDetect;
-import com.season.lib.txtumd.support.ChapterControll;
+import com.season.lib.text.BytesEncodingDetect;
+import com.season.lib.epub.expand.txtumd.support.ChapterControll;
 
 /**
  * TXT格式书籍解析

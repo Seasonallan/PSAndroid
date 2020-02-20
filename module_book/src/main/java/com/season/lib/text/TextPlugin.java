@@ -10,11 +10,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.season.lib.BaseContext;
 import com.season.lib.bean.Catalog;
 import com.season.lib.bean.Chapter;
-import com.season.lib.txtumd.support.ChapterControll;
-import com.season.lib.txtumd.support.BytesEncodingDetect;
 
 /**
  * TXT格式书籍的解析
@@ -30,7 +27,6 @@ public class TextPlugin{
     private FileChannel mFileChannel;
     private MappedByteBuffer mMappedByteBuffer = null;
     protected String mEncode = "UTF-8";
-    private TextChapter mChapterControll;
 
     public TextPlugin(String filePath) {
         this.filePath = filePath ;
@@ -50,7 +46,6 @@ public class TextPlugin{
         int position = be.detectEncoding(encodings);
         position = position==22?6:position;
         mEncode = BytesEncodingDetect.nicename[position];
-        mChapterControll= new TextChapter(filePath, BaseContext.getInstance().getCacheDir()+"/chapters/");
 
         findChapters();
     }
@@ -62,11 +57,9 @@ public class TextPlugin{
     private void findChapters(){
         int start = 0;
         try {
-            List<Catalog> res = mChapterControll.readFile();
+            List<Catalog> res = TextChapterCache.readFile(filePath);
             if(res != null && res.size() > 0){
-                start = Integer.MAX_VALUE;
-                mChapterControll.addChapterList(res);
-                catalog = (ArrayList<Catalog>) mChapterControll.getChapters();
+                catalog = (ArrayList<Catalog>) res;
                 return;
             }
         } catch (Exception e1) {
@@ -82,18 +75,17 @@ public class TextPlugin{
                 Matcher matcher = p.matcher(str);
                 if (matcher.find()) {
                     String name = matcher.group(0);
-                    mChapterControll.addChapter(name, start);
+                    catalog.add(new Catalog(name, start));
                 }
             } catch (UnsupportedEncodingException e) {
                 return;
             }
             start += bts.length;
         }
-        if(mChapterControll.getChapters().size() == 0){
-            mChapterControll.addChapter(ChapterControll.DEFAULT_CHAPTER, 0);
+        if(catalog.size() == 0){
+            catalog.add(new Catalog("正文", start));
         }
-        catalog = (ArrayList<Catalog>) mChapterControll.getChapters();
-        mChapterControll.save();
+        TextChapterCache.save(filePath, catalog);
     }
 
     private int _lastEndPosition = -1;

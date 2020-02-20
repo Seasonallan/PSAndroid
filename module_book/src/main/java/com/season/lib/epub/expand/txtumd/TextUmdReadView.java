@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.lib.epub.expand.txtumd;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,10 +27,8 @@ import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
 import com.season.lib.epub.page.IPagePicture;
 import com.season.lib.epub.page.PagePicture;
-import com.season.lib.txtumd.TxtUmdBasePlugin;
-import com.season.lib.txtumd.TxtPlugin;
-import com.season.lib.txtumd.UMDPlugin;
 import com.season.lib.util.LogUtil;
+import com.season.lib.view.BaseReadView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

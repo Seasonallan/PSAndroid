@@ -1,4 +1,4 @@
-package com.season.lib.txtumd;
+package com.season.lib.epub.expand.txtumd;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

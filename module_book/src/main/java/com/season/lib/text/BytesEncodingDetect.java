@@ -1,4 +1,4 @@
-package com.season.lib.txtumd.support;
+package com.season.lib.text;
 
 import java.io.File;
 import java.io.FileInputStream;

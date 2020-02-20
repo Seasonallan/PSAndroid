@@ -45,7 +45,6 @@ import com.season.lib.epub.span.ClickAsyncDrawableSpan;
 import com.season.lib.epub.span.UrlSpna;
 import com.season.lib.util.SimpleAnimationListener;
 import com.season.lib.view.BaseReadView;
-import com.season.lib.view.EpubReadView;
 import com.season.lib.view.IReaderView;
 import com.season.lib.view.PullRefreshLayout;
 import com.season.lib.bean.BookInfo;
@@ -57,8 +56,7 @@ import com.season.lib.util.LogUtil;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.StatusBarUtil;
 import com.season.lib.util.ToastUtil;
-import com.season.lib.view.TextReadView;
-import com.season.lib.view.TextUmdReadView;
+import com.season.lib.view.UmdReadView;
 
 import java.io.File;
 import java.io.InputStream;
@@ -429,21 +427,19 @@ public class BaseBookActivity extends Activity implements
             public void run() {
                 try {
                     //InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";
-					InputStream is = getResources().openRawResource(R.raw.text_book);
-					mBook.id = "00002";
-					BookMarkDB.getInstance().loadBookMarks(mBook.id);
-                    //mBook.path = getBookFielPath(".epub");
-					mBook.path = getBookFielPath(".txt");
-                    if(!FileUtils.copyFileToFile(mBook.path, is)){
-                        LogUtil.e("status  error");
+					//InputStream is = getResources().openRawResource(R.raw.text_book);	mBook.id = "00002";
+					InputStream is = getResources().openRawResource(R.raw.umd_book);	mBook.id = "00003";
+					mBook.path = getBookFielPath(".umd");
+					if(!FileUtils.copyFileToFile(mBook.path, is)){
                         finish();
                         return;
                     }
+					BookMarkDB.getInstance().loadBookMarks(mBook.id);
                     // 读章节信息
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-							mReadView = new TextReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							mReadView = new UmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
 							//mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;

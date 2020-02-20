@@ -1,4 +1,4 @@
-package com.season.lib.txtumd;
+package com.season.lib.epub.expand.txtumd;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.season.lib.txtumd.TxtUmdBasePlugin;
-import com.season.lib.txtumd.support.IntergerUtil;
-import com.season.lib.txtumd.support.UmdDataBlock;
+import com.season.lib.umd.IntergerUtil;
+import com.season.lib.umd.UmdDataBlock;
 
 /**
  * UMD格式书籍解析
@@ -122,7 +121,6 @@ public class UMDPlugin extends TxtUmdBasePlugin {
 		try {
 			return mUmdDataBlock.getByteAtPosition(position);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return 0x0a;
