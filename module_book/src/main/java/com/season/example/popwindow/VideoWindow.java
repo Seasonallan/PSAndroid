@@ -38,10 +38,10 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.book.R;
-import com.season.lib.epub.span.media.ReaderMediaPlayer;
-import com.season.lib.epub.span.media.ReaderMediaPlayer.PlayerListener;
-import com.season.lib.epub.span.media.ReaderMediaPlayer.PlayerSetDataListener;
-import com.season.lib.epub.span.media.VideoSpan;
+import com.season.lib.page.span.media.ReaderMediaPlayer;
+import com.season.lib.page.span.media.ReaderMediaPlayer.PlayerListener;
+import com.season.lib.page.span.media.ReaderMediaPlayer.PlayerSetDataListener;
+import com.season.lib.page.span.media.VideoSpan;
 
 /**
  * 视频窗口

@@ -7,9 +7,9 @@ import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
 import com.season.lib.bean.Chapter;
 import com.season.lib.book.EncryptUtils;
-import com.season.lib.epub.paser.html.DataProvider;
-import com.season.lib.epub.paser.html.ICssProvider;
-import com.season.lib.umd.UmdPlugin;
+import com.season.lib.page.paser.html.DataProvider;
+import com.season.lib.page.paser.html.ICssProvider;
+import com.season.lib.plugin.umd.UmdPlugin;
 import com.season.lib.util.LogUtil;
 
 import java.util.ArrayList;

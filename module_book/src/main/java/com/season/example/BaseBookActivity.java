@@ -34,17 +34,18 @@ import com.season.example.popwindow.NotePopWin;
 import com.season.example.popwindow.ReaderMenuPopWin;
 import com.season.example.support.SelectorControlView;
 import com.season.lib.dimen.ScreenUtils;
-import com.season.lib.epub.span.media.IMediaSpan;
-import com.season.lib.epub.span.NoteSpan;
-import com.season.lib.epub.span.media.ReaderMediaPlayer;
-import com.season.lib.epub.span.media.VideoSpan;
+import com.season.lib.page.span.media.IMediaSpan;
+import com.season.lib.page.span.NoteSpan;
+import com.season.lib.page.span.media.ReaderMediaPlayer;
+import com.season.lib.page.span.media.VideoSpan;
 import com.season.example.popwindow.VideoWindow;
-import com.season.lib.epub.span.AsyncDrawableSpan;
-import com.season.lib.epub.span.ClickActionSpan;
-import com.season.lib.epub.span.ClickAsyncDrawableSpan;
-import com.season.lib.epub.span.UrlSpna;
+import com.season.lib.page.span.AsyncDrawableSpan;
+import com.season.lib.page.span.ClickActionSpan;
+import com.season.lib.page.span.ClickAsyncDrawableSpan;
+import com.season.lib.page.span.UrlSpna;
 import com.season.lib.util.SimpleAnimationListener;
 import com.season.lib.view.BaseReadView;
+import com.season.lib.view.EpubReadView;
 import com.season.lib.view.IReaderView;
 import com.season.lib.view.PullRefreshLayout;
 import com.season.lib.bean.BookInfo;
@@ -426,10 +427,10 @@ public class BaseBookActivity extends Activity implements
             @Override
             public void run() {
                 try {
-                    //InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";
+                    InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";
 					//InputStream is = getResources().openRawResource(R.raw.text_book);	mBook.id = "00002";
-					InputStream is = getResources().openRawResource(R.raw.umd_book);	mBook.id = "00003";
-					mBook.path = getBookFielPath(".umd");
+					//InputStream is = getResources().openRawResource(R.raw.umd_book);	mBook.id = "00003";
+					mBook.path = getBookFielPath(".epub");
 					if(!FileUtils.copyFileToFile(mBook.path, is)){
                         finish();
                         return;
@@ -439,8 +440,8 @@ public class BaseBookActivity extends Activity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-							mReadView = new UmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-							//mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							//mReadView = new UmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;
                             mReadView.onCreate(null);

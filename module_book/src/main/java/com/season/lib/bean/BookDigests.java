@@ -9,7 +9,7 @@ import com.season.lib.dbase.base.BaseDao;
 import com.season.lib.dbase.base.IDbHelper;
 import com.season.lib.dbase.base.iterface.Column;
 import com.season.lib.dbase.base.iterface.Table;
-import com.season.lib.epub.span.ColorSpan;
+import com.season.lib.page.span.ColorSpan;
 
 
 /**

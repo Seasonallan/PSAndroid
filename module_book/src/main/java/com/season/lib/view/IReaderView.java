@@ -12,7 +12,7 @@ import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.TextSelectHandler;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
-import com.season.lib.epub.span.ClickActionSpan;
+import com.season.lib.page.span.ClickActionSpan;
 
 import java.util.ArrayList;
 

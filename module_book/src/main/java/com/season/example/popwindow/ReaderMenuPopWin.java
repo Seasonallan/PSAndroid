@@ -33,12 +33,12 @@ import com.season.example.model.MenuItem;
 import com.season.example.adapter.MenuItemAdapter;
 import com.season.lib.ReadSetting;
 import com.season.lib.bean.BookInfo;
-import com.season.lib.epub.span.media.ReaderMediaPlayer;
+import com.season.lib.page.span.media.ReaderMediaPlayer;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 import com.season.lib.view.CheckedGridView;
 import com.season.lib.view.CheckedGridView.OnItemCheckedStateChangeListener;
-import com.season.lib.epub.span.media.ReaderMediaPlayer.PlayerListener;
+import com.season.lib.page.span.media.ReaderMediaPlayer.PlayerListener;
 
 public class ReaderMenuPopWin extends BasePopupWindow implements PlayerListener{
 	private static final int FONT_INCREASE_UNIT = 1;

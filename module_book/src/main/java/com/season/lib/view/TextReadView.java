@@ -1,29 +1,17 @@
 package com.season.lib.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
 import com.season.lib.bean.Chapter;
-import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.book.EncryptUtils;
-import com.season.lib.epub.EpubPlugin;
-import com.season.lib.epub.paser.epub.Resource;
-import com.season.lib.epub.paser.html.CssProvider;
-import com.season.lib.epub.paser.html.DataProvider;
-import com.season.lib.epub.paser.html.ICssProvider;
-import com.season.lib.os.SinThreadPool;
-import com.season.lib.text.TextPlugin;
+import com.season.lib.page.paser.html.DataProvider;
+import com.season.lib.page.paser.html.ICssProvider;
+import com.season.lib.plugin.text.TextPlugin;
 import com.season.lib.util.LogUtil;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 public class TextReadView extends BaseHtmlReadView {

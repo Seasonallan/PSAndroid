@@ -1,10 +1,6 @@
 package com.season.example.adapter;
 
 import android.app.Activity;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +9,10 @@ import android.widget.TextView;
 
 import com.example.book.R;
 import com.season.lib.bean.BookDigests;
-import com.season.lib.bean.Catalog;
-import com.season.lib.dimen.DimenUtil;
-import com.season.lib.epub.page.Constant;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 
 
 public class BookDigestsItemAdapter extends BaseAdapter {

@@ -16,7 +16,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
 import com.season.lib.bean.BookDigests;
-import com.season.lib.epub.span.ColorSpan;
+import com.season.lib.page.span.ColorSpan;
 import com.season.lib.util.LogUtil;
 
 import java.util.ArrayList;
