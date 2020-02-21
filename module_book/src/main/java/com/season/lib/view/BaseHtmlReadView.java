@@ -267,7 +267,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 				@Override
 				public void setBookDigestsSpan(ColorSpan span, int start, int end) {
-					mPageManager.setSpan(mCurrentChapterIndex,span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					mPageManager.setSpan(mCurrentChapterIndex, span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 
 				@Override
