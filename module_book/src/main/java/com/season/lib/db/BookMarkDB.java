@@ -81,6 +81,7 @@ public class BookMarkDB{
      * 某个页面是否已经被标记为用户书签
      */
     public boolean isPageMarked(int chapterId, int pageStart, int pageEnd){
+        //LogUtil.e("findBookMarkPosition>>"+ chapterId +">>"+ pageStart +","+ pageEnd);
         String key = buildKey(chapterId, pageStart, pageEnd);
         if(mFastCache.containsKey(key)){
             return mFastCache.get(key);

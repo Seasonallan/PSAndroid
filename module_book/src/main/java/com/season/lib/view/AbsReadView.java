@@ -118,6 +118,14 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	public void gotoChapter(int requestChapterIndex,boolean isStartAnim){
 		gotoPage(requestChapterIndex, 0, isStartAnim);
 	}
+
+	/**
+	 * 是否正在执行翻页动画
+	 * @return
+	 */
+	public boolean isAnimating(){
+		return !mPageAnimController.isAnimStop();
+	}
 	
 	public boolean gotoPage(int requestChapterIndex,int requestPage,boolean isStartAnim){
 		if(interceptGotoPage(requestChapterIndex,requestPage)){
@@ -192,6 +200,22 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		}
 	}
 
+
+	/**
+	 * 获取某个页面是否被标记为书签
+	 */
+	protected boolean isPageMarked(int chapterIndex, int pageIndex){
+		return false;
+	}
+
+	/**
+	 * 当前页面是否是书签
+	 * @return
+	 */
+	public boolean isCurrentPageMarked(){
+		return isPageMarked(mCurrentChapterIndex, mCurrentPageIndex);
+	}
+
 	@Override
 	public void drawPage(Canvas canvas,int requestPage) {
 		int chapterIndex = 0;
@@ -210,7 +234,9 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		if(chapterIndex == INDEX_INITIAL_CONTENT || !onDrawPage(canvas,isCurrentPage, chapterIndex, requestPage)){
 			drawWaitPage(canvas, false);
 		}else{
-            drawBookMarkTip(canvas, chapterIndex, requestPage);
+			if(isPageMarked(chapterIndex, requestPage)){
+				drawBookMarkTip(canvas, chapterIndex, requestPage);
+			}
         }
 	}
 

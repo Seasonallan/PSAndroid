@@ -50,25 +50,16 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
 
     }
 
-    /**
-     * 获取某个页面是否被标记为书签
-     */
-    protected boolean isPageMarked(int chapterIndex, int pageIndex){
-        return false;
-    }
-
     @Override
     protected void drawBookMarkTip(Canvas canvas, int chapterIndex, int pageIndex){
-        if(isPageMarked(chapterIndex, pageIndex)){
-            if(mBookMarkTip == null){
-                mBookMarkTip = getResources().getDrawable(R.drawable.icon_shuqian_chang);
-                int bookMarkW = mBookMarkTip.getIntrinsicWidth();
-                int bookMarkH = mBookMarkTip.getIntrinsicHeight();
-                Rect bounds = new Rect(getWidth() - PADDING_RIGHT - PADDING_LEFT - bookMarkW, 0, getWidth() - PADDING_RIGHT, bookMarkH);
-                mBookMarkTip.setBounds(bounds);
-            }
-            mBookMarkTip.draw(canvas);
+        if(mBookMarkTip == null){
+            mBookMarkTip = getResources().getDrawable(R.drawable.icon_shuqian_chang);
+            int bookMarkW = mBookMarkTip.getIntrinsicWidth();
+            int bookMarkH = mBookMarkTip.getIntrinsicHeight();
+            Rect bounds = new Rect(getWidth() - PADDING_RIGHT - PADDING_LEFT - bookMarkW, 0, getWidth() - PADDING_RIGHT, bookMarkH);
+            mBookMarkTip.setBounds(bounds);
         }
+        mBookMarkTip.draw(canvas);
     }
 
     /**
