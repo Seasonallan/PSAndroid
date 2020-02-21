@@ -10,8 +10,7 @@ import android.text.TextUtils;
 
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
-import com.season.lib.bean.Chapter;
-import com.season.lib.plugin.epub.EpubPlugin;
+import com.season.lib.plugin.PluginManager;
 import com.season.lib.plugin.epub.Resource;
 import com.season.lib.os.SinThreadPool;
 import com.season.lib.page.paser.html.CssProvider;
@@ -25,33 +24,38 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class EpubReadView extends BaseHtmlReadView {
+public class ReadView extends BaseHtmlReadView {
 	private String mSecretKey;
-	private EpubPlugin mPlugin;
+	private PluginManager mPlugin;
 	private BookInfo mBookInfo;
 
 
-	public EpubReadView(Context context, BookInfo book, IReadCallback readCallback) {
+	public ReadView(Context context, BookInfo book, IReadCallback readCallback) {
 		super(context, book, readCallback);
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		mPlugin.recyle();
 	}
 
+	@Override
+	protected boolean isLayoutAll() {
+		return false;
+	}
 
 	@Override
 	public int onInitReaderInBackground(final int fRequestCatalogIndex,final int fRequestPageCharIndex, String secretKey) {
         mSecretKey = secretKey;
 		try {
             try {
-                mPlugin = new EpubPlugin(mBook.path);
+                mPlugin = PluginManager.getPlugin(mBook.path);
                 mPlugin.init(secretKey);
             }catch (Exception e){
             }
 			// 书籍信息
-			mBookInfo = mPlugin.getBookInfo();
+			mBookInfo = mPlugin.getBookInfo(mBook);
 			mBookInfo.id = mBook.id;
             mReadCallback.setFreeStart_Order_Price(Integer.MAX_VALUE , true, null, null);
 			// 读章节信息
@@ -65,7 +69,7 @@ public class EpubReadView extends BaseHtmlReadView {
 							initView(getBuyIndex() + 1, fRequestCatalogIndex, fRequestPageCharIndex);
 						}
 					}else{
-						initView(mPlugin.getChapterIds().size(), fRequestCatalogIndex, fRequestPageCharIndex);
+						initView(mPlugin.getCatalog().size(), fRequestCatalogIndex, fRequestPageCharIndex);
 					}
 				}
 			});
@@ -99,39 +103,16 @@ public class EpubReadView extends BaseHtmlReadView {
 	@Override
 	public String getChapterInputStream_(int chapterIndex) {
 		String defaultString = "<html><body>无法阅读此章节.原因：<p>1.该章节未购买</p><p>2.书籍格式错误-请到书架删除后重新下载！</p></body></html>";
-		//用于触发购买点
 		String content = defaultString;
-		Chapter chapter = null;
 		try {
-			chapter = mPlugin.getChapter(mPlugin.getChapterIds().get(chapterIndex));
+			content = mPlugin.getChapter(chapterIndex);
 		} catch (Exception e) {
 			LogUtil.e(TAG, e);
-		}
-		if (chapter != null) {
-			byte[] contentByte = null;
-			try {
-				if (TextUtils.isEmpty(mSecretKey)) {
-					contentByte = chapter.getContent();
-				}else {
-					contentByte = EncryptUtils.decryptByAES(chapter.getContent(), mSecretKey);
-				}
-				if(contentByte != null){
-					content = new String(contentByte);
-				}
-			} catch (Exception e) {
-				if(contentByte != null){
-					content = new String(contentByte);
-				}
-			}
 		}
 		if(TextUtils.isEmpty(content)){
 			content = defaultString;
 		}else if(content.indexOf("<html") == -1){
-			StringBuffer temp = new StringBuffer();
-			temp.append("<html><body>");
-			temp.append(content);
-			temp.append("</body></html>");
-			content = temp.toString();
+			content = mPlugin.getFixHtml(content);
 		}
 		return content;
 	}
@@ -158,7 +139,7 @@ public class EpubReadView extends BaseHtmlReadView {
 
 	@Override
 	public String getChapterId(int chapterIndex) {
-		return mPlugin.getChapterIds().get(chapterIndex);
+		return mPlugin.getChapterId(chapterIndex);
 	}
 
 	@Override
@@ -185,7 +166,7 @@ public class EpubReadView extends BaseHtmlReadView {
 
 	@Override
 	protected int loadCatalogID(String chapterID) {
-		int index = mPlugin.getChapterIds().indexOf(chapterID);
+		int index = mPlugin.getChapterPosition(chapterID);
 		return index < 0 ? 0 : index;
 	}
 
@@ -244,7 +225,7 @@ public class EpubReadView extends BaseHtmlReadView {
 
 		@Override
 		public Context getContext() {
-			return EpubReadView.this.getContext().getApplicationContext();
+			return ReadView.this.getContext().getApplicationContext();
 		}
 
 		@Override

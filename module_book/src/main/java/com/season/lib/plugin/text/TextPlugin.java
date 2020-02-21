@@ -11,17 +11,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.season.lib.bean.Catalog;
-import com.season.lib.bean.Chapter;
+import com.season.lib.plugin.PluginManager;
 
 /**
  * TXT格式书籍的解析
  */
-public class TextPlugin{
+public class TextPlugin extends PluginManager {
 
-    /** 文件路径  */
-    protected String filePath;
-    /** 书籍目录 */
-    private ArrayList<Catalog> catalog = new ArrayList<Catalog>();
     private RandomAccessFile mRandomAccessFile;
     protected int mBufferLength = 0;
     private FileChannel mFileChannel;
@@ -29,7 +25,7 @@ public class TextPlugin{
     protected String mEncode = "UTF-8";
 
     public TextPlugin(String filePath) {
-        this.filePath = filePath ;
+        super(filePath);
     }
 
     public void init(String secretKey) throws Exception {
@@ -159,14 +155,8 @@ public class TextPlugin{
         return 0x0a;
     }
 
-    /** 获取书籍目录；不为NULL，如果没有目录，SIZE为0
-     * @return the catalog
-     */
-    public ArrayList<Catalog> getCatalog() {
-        return catalog;
-    }
 
-
+    @Override
     public void recyle() {
         try {
             mFileChannel.close();
@@ -177,23 +167,8 @@ public class TextPlugin{
         System.gc();
     }
 
-    public Catalog getCatalogByIndex(int index) {
-        return getCatalog().get(index);
-    }
-
-    public int getChapterIndex(Catalog catalog) {
-        int index = catalog.getIndex();
-        ArrayList<Catalog> chapterIds = getCatalog();
-        for (int i = 0;i < chapterIds.size();i++) {
-            int id = chapterIds.get(i).getIndex();
-            if(id == index){
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public Chapter getChapter(int chapterIndex) throws Exception {
+    @Override
+    public String getChapter(int chapterIndex) throws Exception {
         if(mMappedByteBuffer == null){
             return null;
         }
@@ -203,14 +178,26 @@ public class TextPlugin{
             if (position >= chapterIds.size() - 1){
                 byte[] bytes = new byte[mBufferLength - chapterIds.get(position).getIndex()];
                 fillBytes(bytes, chapterIds.get(position).getIndex(), bytes.length);
-                return new Chapter(chapterIds.get(position).getIndex()+"", chapterIds.get(position).getText(), bytes);
+                return new String(bytes, mEncode);
             }else{
                 byte[] bytes = new byte[chapterIds.get(position + 1).getIndex() - chapterIds.get(position).getIndex()];
                 fillBytes(bytes, chapterIds.get(position).getIndex(), bytes.length);
-                return new Chapter(chapterIds.get(position).getIndex()+"", chapterIds.get(position).getText(), bytes);
+                return new String(bytes, mEncode);
             }
         }
         return null;
+    }
+
+    @Override
+    public String getFixHtml(String content) {
+        StringBuffer temp = new StringBuffer();
+        temp.append("<html><body><p>");
+        content = content.replaceAll("\r\n", "</p><p>");
+        content = content.replaceAll("\n", "</p><p>");
+        content = content.replaceAll("\r", "</p><p>");
+        temp.append(content);
+        temp.append("</p></body></html>");
+        return temp.toString();
     }
 
     private void fillBytes(byte[] dst, int offset, int length){
@@ -219,13 +206,4 @@ public class TextPlugin{
         }
     }
 
-    public int getChapterPosition(String chapterID) {
-        int id = Integer.parseInt(chapterID);
-        for (int i = 0; i<catalog.size();i++){
-            if (catalog.get(i).getIndex() == id){
-                return i;
-            }
-        }
-        return 0;
-    }
 }

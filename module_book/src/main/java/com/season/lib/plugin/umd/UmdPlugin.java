@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.season.lib.bean.Catalog;
-import com.season.lib.bean.Chapter;
+import com.season.lib.plugin.PluginManager;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -15,15 +15,10 @@ import java.util.ArrayList;
 /**
  * UMD格式书籍的解析
  */
-public class UmdPlugin {
-
-    /** 文件路径  */
-    protected String filePath;
-    /** 书籍目录 */
-    private ArrayList<Catalog> catalog = new ArrayList<Catalog>();
+public class UmdPlugin extends PluginManager {
 
     public UmdPlugin(String filePath) {
-        this.filePath = filePath ;
+        super(filePath);
     }
 
     /** UMD file format */
@@ -42,6 +37,7 @@ public class UmdPlugin {
     private long currentPoint;
     private UmdDataBlock mUmdDataBlock;
 
+    @Override
     public void init(String secretKey) throws Exception {
         contentArr = new ArrayList<UmdDataBlock.BlockEntity>();
         currentPoint = 0L;
@@ -73,6 +69,18 @@ public class UmdPlugin {
         }
     }
 
+
+    @Override
+    public String getFixHtml(String content) {
+        StringBuffer temp = new StringBuffer();
+        temp.append("<html><body><p>");
+        content = content.replaceAll("\r\n", "</p><p>");
+        content = content.replaceAll("\n", "</p><p>");
+        content = content.replaceAll("\r", "</p><p>");
+        temp.append(content);
+        temp.append("</p></body></html>");
+        return temp.toString();
+    }
 
 
     /**
@@ -299,14 +307,8 @@ public class UmdPlugin {
     }
 
 
-    /** 获取书籍目录；不为NULL，如果没有目录，SIZE为0
-     * @return the catalog
-     */
-    public ArrayList<Catalog> getCatalog() {
-        return catalog;
-    }
 
-
+    @Override
     public void recyle() {
         if(mUmdDataBlock != null){
             mUmdDataBlock.release();
@@ -320,32 +322,14 @@ public class UmdPlugin {
         System.gc();
     }
 
-    public Catalog getCatalogByIndex(int index) {
-        return getCatalog().get(index);
-    }
 
-    public int getChapterIndex(Catalog catalog) {
-        int index = catalog.getIndex();
-        ArrayList<Catalog> chapterIds = getCatalog();
-        for (int i = 0;i < chapterIds.size();i++) {
-            int id = chapterIds.get(i).getIndex();
-            if(id == index){
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public Chapter getChapter(int chapterIndex) throws Exception {
-        int position = chapterIndex;
-        ArrayList<Catalog> chapterIds = getCatalog();
-
+    @Override
+    public String getChapter(int chapterIndex) throws Exception {
         int mBufferLength = mUmdDataBlock.getCurrentChapterLength(chapterIndex);
         mUmdDataBlock.setCurrentChapterIndex(chapterIndex);
-
         byte[] bytes = new byte[mBufferLength];
         fillBytes(bytes, 0, bytes.length);
-        return new Chapter(chapterIds.get(position).getIndex()+"", chapterIds.get(position).getText(), bytes);
+        return new String(bytes, "UNICODE");
 
     }
 
@@ -355,17 +339,4 @@ public class UmdPlugin {
         }
     }
 
-    public int getChapterPosition(String chapterID) {
-        int id = Integer.parseInt(chapterID);
-        for (int i = 0; i<catalog.size();i++){
-            if (catalog.get(i).getIndex() == id){
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    public String getEncode() {
-        return "UNICODE";
-    }
 }

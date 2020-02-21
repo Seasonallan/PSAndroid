@@ -18,8 +18,8 @@ import com.season.lib.file.IOUtil;
 import com.season.lib.file.XMLUtil;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.Catalog;
-import com.season.lib.bean.Chapter;
 import com.season.lib.book.EncryptUtils;
+import com.season.lib.plugin.PluginManager;
 import com.season.lib.util.LogUtil;
 
 /** EPUB格式书籍的解析
@@ -27,7 +27,7 @@ import com.season.lib.util.LogUtil;
  * @email mingkg21@gmail.com
  * @date 2013-2-19
  */
-public class EpubPlugin{
+public class EpubPlugin extends PluginManager {
 	
 	private static final String DEFAULT_OPF_FILE_LOCATION = "OEBPS/content.opf";
 	private static final String CONTAINER_FILE_LOCATION = "META-INF/container.xml";
@@ -38,19 +38,11 @@ public class EpubPlugin{
 	private HashMap<String,Catalog> catalogHrefMap;
 	private HashMap<String, Resource> allResources = new HashMap<String, Resource>();
 
-
-	/** 文件路径  */
-	protected String filePath;
-	/** 书籍信息 */
-	protected BookInfo bookInfo;
-
-	/** 书籍目录 */
-	private ArrayList<Catalog> catalog = new ArrayList<Catalog>();
 	/** 书籍章节ID列表 */
 	private ArrayList<String> chapterIds = new ArrayList<String>();
 
 	public EpubPlugin(String filePath) {
-		this.filePath = filePath ;
+		super(filePath);
 	}
 
 	public void init(String secretKey) throws Exception {
@@ -114,13 +106,6 @@ public class EpubPlugin{
 	}
 
 
-	/** 获取书籍信息
-	 * @return the bookInfo
-	 */
-	public BookInfo getBookInfo() {
-		return bookInfo;
-	}
-
 	/** 获取书籍目录；不为NULL，如果没有目录，SIZE为0
 	 * @return the catalog
 	 */
@@ -133,6 +118,25 @@ public class EpubPlugin{
 	 */
 	public ArrayList<String> getChapterIds() {
 		return chapterIds;
+	}
+
+	@Override
+	public String getFixHtml(String content) {
+		StringBuffer temp = new StringBuffer();
+		temp.append("<html><body>");
+		temp.append(content);
+		temp.append("</body></html>");
+		return temp.toString();
+	}
+
+	@Override
+	public int getChapterPosition(String chapterID) {
+		return getChapterIds().indexOf(chapterID);
+	}
+
+	@Override
+	public String getChapterId(int chapterIndex) {
+		return getChapterIds().get(chapterIndex);
 	}
 
 	protected void setCatalog(List<Catalog> catalogs){
@@ -226,9 +230,12 @@ public class EpubPlugin{
 		
 	}
 
+	@Override
 	public void recyle() {
 		
 	}
+
+	@Override
 	public Catalog getCatalogByIndex(int index) {
 		String chapterID = getChapterIds().get(index);
 		Resource resource = manifestIdResources.get(chapterID);
@@ -238,6 +245,7 @@ public class EpubPlugin{
 		return null;
 	}
 
+	@Override
 	public int getChapterIndex(Catalog catalog) {
 		Resource resource = manifestHrefResources.get(catalog.getHref());
 		if(resource != null){
@@ -252,16 +260,11 @@ public class EpubPlugin{
 		return -1;
 	}
 
-	public Chapter getChapter(String chapterID) throws Exception {
-		Resource resource = manifestIdResources.get(chapterID);
-		if(resource != null && catalogHrefMap != null){
-			String title = null;
-			Catalog catalog = catalogHrefMap.get(resource.getHref());
-			if(catalog != null){
-				title = catalog.getText();
-			}
-			Chapter chapter = new Chapter(chapterID, title, resource.getData());
-			return chapter;
+	@Override
+	public String getChapter(int chapterID) throws Exception {
+		Resource resource = manifestIdResources.get(getChapterIds().get(chapterID));
+		if(resource != null){
+			return new String(resource.getData());
 		}
 		return null;
 	}

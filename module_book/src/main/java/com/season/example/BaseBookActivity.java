@@ -45,7 +45,7 @@ import com.season.lib.page.span.ClickAsyncDrawableSpan;
 import com.season.lib.page.span.UrlSpna;
 import com.season.lib.util.SimpleAnimationListener;
 import com.season.lib.view.BaseReadView;
-import com.season.lib.view.EpubReadView;
+import com.season.lib.view.ReadView;
 import com.season.lib.view.IReaderView;
 import com.season.lib.view.PullRefreshLayout;
 import com.season.lib.bean.BookInfo;
@@ -57,7 +57,6 @@ import com.season.lib.util.LogUtil;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.StatusBarUtil;
 import com.season.lib.util.ToastUtil;
-import com.season.lib.view.UmdReadView;
 
 import java.io.File;
 import java.io.InputStream;
@@ -427,10 +426,10 @@ public class BaseBookActivity extends Activity implements
             @Override
             public void run() {
                 try {
-                    InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";
-					//InputStream is = getResources().openRawResource(R.raw.text_book);	mBook.id = "00002";
-					//InputStream is = getResources().openRawResource(R.raw.umd_book);	mBook.id = "00003";
-					mBook.path = getBookFielPath(".epub");
+                    //InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";mBook.path = getBookFielPath(".epub");
+					//InputStream is = getResources().openRawResource(R.raw.text_book);	mBook.id = "00002";mBook.path = getBookFielPath(".txt");
+					InputStream is = getResources().openRawResource(R.raw.umd_book);	mBook.id = "00003";mBook.path = getBookFielPath(".umd");
+
 					if(!FileUtils.copyFileToFile(mBook.path, is)){
                         finish();
                         return;
@@ -440,8 +439,7 @@ public class BaseBookActivity extends Activity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-							//mReadView = new UmdReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-							mReadView = new EpubReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+							mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;
                             mReadView.onCreate(null);
