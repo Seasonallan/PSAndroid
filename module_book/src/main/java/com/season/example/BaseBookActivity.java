@@ -673,7 +673,6 @@ public class BaseBookActivity extends Activity implements
      */
     private void addBookLabel(){
         BookMark userMark = mReadView.newUserBookmark();
-		LogUtil.e("findBookMarkPosition add>>"+ userMark.getChapterID() +">>"+ userMark.getPosition());
         if(BookMarkDB.getInstance().addBookMark(userMark)){
             ToastUtil.showToast(R.string.book_label_add_success);
         }
@@ -685,7 +684,6 @@ public class BaseBookActivity extends Activity implements
      */
     private void delBookLabel(){
         BookMark userMark = mReadView.newUserBookmark();
-		LogUtil.e("findBookMarkPosition delete>>"+ userMark.getChapterID() +">>"+ userMark.getPosition());
         if(BookMarkDB.getInstance().deleteBookMark(userMark)){
             ToastUtil.showToast(R.string.book_label_del_success);
         }
