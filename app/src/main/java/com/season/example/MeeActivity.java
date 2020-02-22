@@ -13,6 +13,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.example.view.HAHAView;
 import com.season.example.view.LRLRView;
 import com.season.lib.RoutePath;
+import com.season.lib.anim.PageAnimController;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.myapplication.R;
 
@@ -53,6 +54,14 @@ public class MeeActivity extends Activity{
 
         hahaView = findViewById(R.id.ps_haha);
         lrlrView = findViewById(R.id.book_lrlr);
+
+        lrlrView.post(new Runnable() {
+            @Override
+            public void run() {
+                lrlrView.start();
+            }
+        });
+
     }
 
     private HAHAView hahaView;
@@ -68,14 +77,14 @@ public class MeeActivity extends Activity{
     protected void onPause() {
         super.onPause();
         hahaView.stop();
-        //lrlrView.stop();
+        lrlrView.destroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         hahaView.start();
-        //lrlrView.start();
+        lrlrView.start();
     }
 
 

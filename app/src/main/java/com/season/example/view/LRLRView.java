@@ -10,8 +10,14 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.Nullable;
 
+import com.season.lib.anim.PageAnimController;
+import com.season.lib.util.LogUtil;
+import com.season.lib.view.AbsReadView;
 
-public class LRLRView extends View {
+import java.util.logging.Handler;
+
+
+public class LRLRView extends View implements PageAnimController.PageCarver {
 
     public LRLRView(Context context) {
         super(context);
@@ -30,89 +36,46 @@ public class LRLRView extends View {
 
 
     private boolean mStop = true;
-    public void stop() {
-        pause = true;
-    }
-
     public void destroy() {
         mStop = true;
-        synchronized (mSync) {
-            mSync.notify();
-        }
-        mRefreshThread = null;
     }
 
-    private boolean pause = false;
     public void start() {
-        current = System.currentTimeMillis();
-        mStop = false;
-        pause = false;
-        if (mRefreshThread == null){
-            mRefreshThread = new RefreshThread();
-            mRefreshThread.start();
-        }else{
-            synchronized (mSync) {
-                mSync.notify();
-            }
+        if (getWidth() <= 0){
+            return;
         }
+        LogUtil.e("start");
+        if (mPageAnimController == null){
+            mPageAnimController = PageAnimController.create(getContext(),
+                    PageAnimController.ANIM_TYPE_PAGE_TURNING);
+        }
+        mStop = false;
+        mPageAnimController.startAnim(current, current==0?1:0, true, this);
     }
 
-    private RefreshThread mRefreshThread;
-    private int[] mSync = new int[0];
-    private class RefreshThread extends Thread {
-        @Override
-        public void run() {
-            while (!mStop) {
-                if (rect != null){
-                    long nowD = System.currentTimeMillis();
-                    long duration = nowD - current;
-                    if (duration >= time){
-                        duration = 0;
-                        if (status == 1){
-                            status = 3;
-                        }else{
-                            status = 1;
-                        }
-                        current = nowD;
-                    }
-                    float percent = accelerateDecelerateInterpolator.getInterpolation(duration * 1.0f/time);
-                    if (status == 1){
-                        dx = -width * percent;
-                    }
-                }
-                postInvalidate();
-                if(!pause) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    continue;
-                }
-                synchronized (mSync) {
-                    try {
-                        mSync.wait();
-                    }catch(InterruptedException ignore){}
-                }
-            }
-        }
-    }
-    float dx = 0;
-    int status = 3;
-    long current = -1;
-    int time = 1300;
-    private RectF rect;
+    private int current = 0;
     private Paint paint;
-    AccelerateDecelerateInterpolator accelerateDecelerateInterpolator;
     private void init(){
         paint = new Paint();
         paint.setColor(0xff13b0a5);
-        accelerateDecelerateInterpolator = new AccelerateDecelerateInterpolator();
+
+    }
+    PageAnimController mPageAnimController;
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if(!mPageAnimController.dispatchDrawPage(canvas, this)){
+            drawPage(canvas, current);
+        }
     }
 
     private int height, width;
+    private RectF rect;
     @Override
-    protected void onDraw(Canvas canvas) {
+    public void drawPage(Canvas canvas, int index) {
+        LogUtil.e("drawPage:"+index);
+
         if (height <= 0){
             width = getWidth();
             height = getHeight();
@@ -123,7 +86,71 @@ public class LRLRView extends View {
         if (rect == null){
             rect = new RectF(0,0,width, height);
         }
-        canvas.translate(dx, 0);
+        paint.setColor(index == 0?0xff13b0a5:0xffc9c9c9);
         canvas.drawRect(rect, paint);
+    }
+
+    @Override
+    public Integer requestPrePage() {
+        return null;
+    }
+
+    @Override
+    public Integer requestNextPage() {
+        return null;
+    }
+
+    @Override
+    public void requestInvalidate() {
+        invalidate();
+    }
+
+    @Override
+    public int getCurrentPageIndex() {
+        return 0;
+    }
+
+    @Override
+    public int getContentWidth() {
+        return getWidth();
+    }
+
+    @Override
+    public int getContentHeight() {
+        return getHeight();
+    }
+
+    @Override
+    public int getScreenWidth() {
+        return getWidth();
+    }
+
+    @Override
+    public int getScreenHeight() {
+        return getHeight();
+    }
+
+    @Override
+    public int getPageBackgroundColor() {
+        return 0;
+    }
+
+    @Override
+    public void onStartAnim(boolean isCancel) {
+
+    }
+
+    @Override
+    public void onStopAnim(boolean isCancel) {
+        current = current==0?1:0;
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mStop){
+                    return;
+                }
+                start();
+            }
+        }, 2000);
     }
 }
