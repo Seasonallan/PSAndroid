@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.view.MotionEvent;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
 import com.season.lib.util.LogUtil;
@@ -37,13 +39,18 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		this.mDuration = duration;
 	}
 
-	AbsHorGestureAnimController(Context context){
-		super(context);
-		mScroller = new Scroller(context);
-		mLastTouchPoint = new PointF();
-		mDownTouchPoint = new PointF();
-		mContentWidth = -1;
-	}
+    AbsHorGestureAnimController(Context context){
+        this(context, null);
+    }
+
+    AbsHorGestureAnimController(Context context, Interpolator interpolator){
+        super(context);
+        mScroller = new Scroller(context, interpolator);
+        mLastTouchPoint = new PointF();
+        mDownTouchPoint = new PointF();
+        mContentWidth = -1;
+    }
+
 	
 	private void checkInit(PageCarver pageCarver){
 		if(mContentWidth == -1 
@@ -63,6 +70,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		mScreenHeight = pageCarver.getScreenHeight();
 		mHalfScreenWidth = mScreenWidth >> 1;
 		mHalfScreenHeight = mScreenHeight >> 1;
+		LogUtil.e(TAG, "onMeasure: CW="+ mContentWidth +" CH="+ mContentHeight+" SW="+ mScreenWidth+" SH="+mScreenHeight);
 	}
 	
 	@Override
@@ -175,7 +183,18 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		checkInit(pageCarver);
 		boolean isUnFinished = !mScroller.isFinished() && mScroller.computeScrollOffset();
 		if(isUnFinished){
-			mLastTouchPoint.set(mScroller.getCurrX(), mScroller.getCurrY());
+		    if (isFullAnimation){
+		        float percent = (mScroller.getCurrX() -  mScroller.getStartX()) * 1.0f
+                        /(mScroller.getFinalX() - mScroller.getStartX());
+                //LogUtil.e("dispatchDrawPage  "+percent);
+                float y = Math.abs(mContentHeight/2 * percent);
+                if (y >= mContentHeight/4){
+                    y = mContentHeight/2 - y;
+                }
+                mLastTouchPoint.set(mScroller.getCurrX(), mContentHeight - y);
+            }else{
+                mLastTouchPoint.set(mScroller.getCurrX(), mScroller.getCurrY());
+            }
 		}
 		if(!isUnFinished && !isTouchStart){
 			dispatchAnimEnd(pageCarver);
@@ -195,6 +214,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	}
 	
 	private void dispatchAnimEnd(PageCarver pageCarver){
+        isFullAnimation = false;
 		isAnimStart = false;
 		isRequestNextPage = null;
 		onAnimEnd(isCancelAnim);
@@ -236,7 +256,6 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 			}else{
 				dx = (int) (pageCarver.getContentWidth() - (mLastTouchPoint.x - mDownTouchPoint.x));
 			}
-//			LogUtil.i(TAG,"startAnim startX="+mLastTouchPoint.x+" dx="+dx+" isDown="+isTouchStart+" mLastTouchPoint.x="+mLastTouchPoint.x);
 			dy = (int) mLastTouchPoint.y;
 			scroller.startScroll((int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, mDuration);
 		}
@@ -256,9 +275,11 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		}
 		mLastTouchPoint.set(mDownTouchPoint);
 	}
-	
+
+	private boolean isFullAnimation = false;
 	@Override
 	public void startAnim(int fromIndex,int toIndex,boolean isNext, PageCarver pageCarver) {
+        isFullAnimation = true;
 		stopAnim(pageCarver);
 		checkInit(pageCarver);
 		isRequestNextPage = isNext;

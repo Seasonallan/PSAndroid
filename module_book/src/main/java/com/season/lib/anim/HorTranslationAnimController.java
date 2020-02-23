@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
+import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
 /**
@@ -19,7 +20,11 @@ public class HorTranslationAnimController extends AbsHorGestureAnimController {
 	private Rect mCurrentRect;
 
 	HorTranslationAnimController(Context context){
-		super(context);
+		this(context, null);
+	}
+
+	HorTranslationAnimController(Context context, Interpolator interpolator){
+		super(context, interpolator);
 		int[] frontShadowColors = new int[] { 0xa0111111, 0x111111 };
 		mShadowDrawableL = new GradientDrawable(
 				GradientDrawable.Orientation.LEFT_RIGHT, frontShadowColors);

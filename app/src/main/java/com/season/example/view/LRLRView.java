@@ -8,6 +8,7 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.Nullable;
 
@@ -47,9 +48,9 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
         }
         LogUtil.e("start");
         if (mPageAnimController == null){
-            mPageAnimController = PageAnimController.create(getContext(),
+            mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
                     PageAnimController.ANIM_TYPE_PAGE_TURNING);
-            mPageAnimController.setDuration(12468);
+           // mPageAnimController.setDuration(2468);
         }
         mStop = false;
         if (mPageAnimController.isAnimStop())

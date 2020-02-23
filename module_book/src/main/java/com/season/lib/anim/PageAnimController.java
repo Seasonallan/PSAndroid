@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
+import android.view.animation.Interpolator;
 
 /**
  * 翻页动画控制者
@@ -14,17 +15,21 @@ public abstract class PageAnimController{
 	public static final int ANIM_TYPE_TRANSLATION = 1;
     public static final int ANIM_TYPE_AUTO = 2;
 	protected Context mContext;
-	
+
 	public static PageAnimController create(Context context,int type){
+		return create(context, null, type);
+	}
+
+	public static PageAnimController create(Context context, Interpolator interpolator,int type){
 		PageAnimController pageAnimController = null;
 		if(ANIM_TYPE_PAGE_TURNING == type){
-			pageAnimController = new PageTurningAnimController(context);
+			pageAnimController = new PageTurningAnimController(context, interpolator);
 		}else if(ANIM_TYPE_TRANSLATION == type){
-			pageAnimController = new HorTranslationAnimController(context);
+			pageAnimController = new HorTranslationAnimController(context, interpolator);
 		}else if(ANIM_TYPE_AUTO == type){
-            pageAnimController = new PageTurningAnimController(context);
-            //pageAnimController = new AutoAnimController(context);
-        }
+			pageAnimController = new PageTurningAnimController(context, interpolator);
+			//pageAnimController = new AutoAnimController(context);
+		}
 		return pageAnimController;
 	}
 
@@ -44,13 +49,10 @@ public abstract class PageAnimController{
 	public abstract void dispatchTouchEvent(MotionEvent event,PageCarver pageCarver);
 	/**
 	 * 派遣绘制事件
-	 * @param event
 	 */
 	public abstract boolean dispatchDrawPage(Canvas canvas,PageCarver pageCarver);
 	/**
 	 * 播放动画
-	 * @param isNext TODO
-	 * @param index 目标页的偏移量
 	 */
 	public abstract void startAnim(int fromIndex,int toIndex,boolean isNext, PageCarver pageCarver);
 	/**

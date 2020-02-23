@@ -8,7 +8,10 @@ import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
+import android.view.animation.Interpolator;
 import android.widget.Scroller;
+
+import com.season.lib.util.LogUtil;
 
 public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private Integer mFromIndex;
@@ -75,9 +78,13 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private int maxShadow = 30;
 	private float mRightPageStartX = 0;
 	private boolean isCenterTouchAnim;
-	
+
 	PageTurningAnimController(Context context) {
-		super(context);
+		this(context, null);
+	}
+
+	PageTurningAnimController(Context context, Interpolator interpolator) {
+		super(context, interpolator);
 		createDrawable();
 		mPath0 = new Path();
 		mPath1 = new Path();
@@ -90,6 +97,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int dx, dy;
 		// dx 水平方向滑动的距离，负值会使滚动向左滚动
 		// dy 垂直方向滑动的距离，负值会使滚动向上滚动
+		//LogUtil.i(TAG,"startAnim mLastTouchPointX="+mLastTouchPoint.x+" mLastTouchPoint.y="+mLastTouchPoint.y);
 		mTouch.set(mLastTouchPoint);
 		calcPoints(!isRequestNext);
 		int duration = mDuration;
@@ -144,6 +152,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 					dy = (int) (1 - mTouch.y); // 防止mTouch.y最终变为0
 				}
 			}
+			//LogUtil.i(TAG,"startAnim startX="+mTouch.x+" dx="+dx+" dy="+dy+" mLastTouchPoint.y="+mTouch.y);
 			scroller.startScroll((int) mTouch.x, (int) mTouch.y, dx, dy,duration);
 		}
 	}
@@ -174,6 +183,15 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			mDownTouchPoint.x = mContentWidth / 4;
 		}
 		mDownTouchPoint.y = mContentHeight / 8 * 7;
+
+//全部展现
+		if(isNext){
+			mDownTouchPoint.x = mContentWidth -1;
+		}else{
+			mDownTouchPoint.x = 1;
+		}
+		mDownTouchPoint.y = mContentHeight - 1;
+
 		mLastTouchPoint.set(mDownTouchPoint);
 	}
 
