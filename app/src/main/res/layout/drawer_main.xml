@@ -5,50 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/ll_ps"
+    <com.season.example.view.HAHAView
+        android:id="@+id/ps_haha"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <com.season.example.view.HAHAView
-            android:id="@+id/ps_haha"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="48dp"
-            android:layout_centerInParent="true"
-            android:textColor="@color/white"
-            android:text="PS图层" />
-
-    </RelativeLayout>
+        android:layout_weight="1"/>
 
 
-    <RelativeLayout
-        android:id="@+id/ll_book"
+    <com.season.example.view.LRLRView
+        android:id="@+id/book_lrlr"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <com.season.example.view.LRLRView
-            android:id="@+id/book_lrlr"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="48dp"
-            android:textColor="@color/white"
-            android:layout_centerInParent="true"
-            android:text="书籍阅读器" />
-
-    </RelativeLayout>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

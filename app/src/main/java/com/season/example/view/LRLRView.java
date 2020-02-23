@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -48,6 +49,7 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
         if (mPageAnimController == null){
             mPageAnimController = PageAnimController.create(getContext(),
                     PageAnimController.ANIM_TYPE_PAGE_TURNING);
+            mPageAnimController.setDuration(2468);
         }
         mStop = false;
         mPageAnimController.startAnim(current, current==0?1:0, true, this);
@@ -55,17 +57,24 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
 
     private int current = 0;
     private Paint paint;
+    private TextPaint textPaint;
+    private String desc = "书籍阅读";
+    private float textWidth, baseLineY;
     private void init(){
         paint = new Paint();
         paint.setColor(0xff13b0a5);
-
+        textPaint = new TextPaint();
+        textPaint.setColor(0xffffffff);
+        textPaint.setTextSize(88);
+        baseLineY = Math.abs(textPaint.ascent() + textPaint.descent()) / 2;
+        textWidth = textPaint.measureText(desc);
     }
     PageAnimController mPageAnimController;
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(!mPageAnimController.dispatchDrawPage(canvas, this)){
+        if(mPageAnimController != null && !mPageAnimController.dispatchDrawPage(canvas, this)){
             drawPage(canvas, current);
         }
     }
@@ -74,8 +83,6 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
     private RectF rect;
     @Override
     public void drawPage(Canvas canvas, int index) {
-        LogUtil.e("drawPage:"+index);
-
         if (height <= 0){
             width = getWidth();
             height = getHeight();
@@ -88,6 +95,7 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
         }
         paint.setColor(index == 0?0xff13b0a5:0xffc9c9c9);
         canvas.drawRect(rect, paint);
+        canvas.drawText(desc, width/2 - textWidth/2, height/2 + baseLineY ,textPaint);
     }
 
     @Override

@@ -39,21 +39,21 @@ public class MeeActivity extends Activity{
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
-        findViewById(R.id.ll_ps).setOnClickListener(new View.OnClickListener() {
+
+        hahaView = findViewById(R.id.ps_haha);
+        lrlrView = findViewById(R.id.book_lrlr);
+        hahaView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ARouter.getInstance().build(RoutePath.PS).navigation();
             }
         });
-        findViewById(R.id.ll_book).setOnClickListener(new View.OnClickListener() {
+        lrlrView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ARouter.getInstance().build(RoutePath.BOOK).navigation();
             }
         });
-
-        hahaView = findViewById(R.id.ps_haha);
-        lrlrView = findViewById(R.id.book_lrlr);
 
         lrlrView.post(new Runnable() {
             @Override

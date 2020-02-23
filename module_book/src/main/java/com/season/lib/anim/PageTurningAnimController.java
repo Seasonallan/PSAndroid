@@ -92,7 +92,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		// dy 垂直方向滑动的距离，负值会使滚动向上滚动
 		mTouch.set(mLastTouchPoint);
 		calcPoints(!isRequestNext);
-		int duration = DURATION;
+		int duration = mDuration;
 		if(isCancelAnim){
 			if(isLandscape){
 				if(isRequestNext){
@@ -110,7 +110,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 					dx = (int) (mScreenWidth - mTouch.x);
 				}else{
 					dx = (int) - mTouch.x - mScreenWidth;
-					duration = DURATION * 2;
+					duration = mDuration * 2;
 				}
 				if (mCornerY > 0) {
 					dy = (int) (mScreenHeight - mTouch.y);
@@ -120,7 +120,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			}
 			scroller.startScroll((int) mTouch.x, (int) mTouch.y, dx, dy,duration);
 		}else{
-			duration = DURATION * 2;
+			duration = mDuration * 2;
 			if(isLandscape){
 				if(!isRequestNext){
 					dx = (int) (mScreenWidth - mTouch.x);

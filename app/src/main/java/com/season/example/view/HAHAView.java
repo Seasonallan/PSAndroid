@@ -5,9 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.webkit.WebSettings;
 
 import androidx.annotation.Nullable;
 
@@ -99,7 +102,7 @@ public class HAHAView extends View {
                                 * percent;
                         rect.bottom = height - rect.top;
                     }else if (status == 2){
-                        degree = 180 * percent;
+                        degree = 360 * percent;
                     }
                 }
                 postInvalidate();
@@ -125,10 +128,18 @@ public class HAHAView extends View {
     int time = 1300;
     private RectF rect;
     private Paint paint;
+    private TextPaint textPaint;
+    private String desc = "PS图层";
+    private float textWidth, baseLineY;
     AccelerateDecelerateInterpolator accelerateDecelerateInterpolator;
     private void init(){
         paint = new Paint();
         paint.setColor(0xfff1b136);
+        textPaint = new TextPaint();
+        textPaint.setColor(0xffffffff);
+        textPaint.setTextSize(88);
+        textWidth = textPaint.measureText(desc);
+        baseLineY = Math.abs(textPaint.ascent() + textPaint.descent()) / 2;
         accelerateDecelerateInterpolator = new AccelerateDecelerateInterpolator();
     }
 
@@ -148,5 +159,6 @@ public class HAHAView extends View {
         }
         canvas.rotate(degree, width/2, height/2);
         canvas.drawRect(rect, paint);
+        canvas.drawText(desc, width/2 - textWidth/2, height/2 + baseLineY ,textPaint);
     }
 }

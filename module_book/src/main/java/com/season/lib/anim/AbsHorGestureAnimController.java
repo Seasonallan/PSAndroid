@@ -14,7 +14,7 @@ import com.season.lib.util.LogUtil;
  */
 public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected static final String TAG = AbsHorGestureAnimController.class.getSimpleName();
-	protected static final int DURATION = 800;
+	protected int mDuration = 800;
 	private Scroller mScroller;
 	private boolean isCancelAnim;
 	private Boolean isRequestNextPage;
@@ -32,7 +32,11 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected boolean isAnimStart;
 	protected boolean isTouchStart;
 	protected boolean isTouchRequestPage;
-	
+
+	public void setDuration(int duration){
+		this.mDuration = duration;
+	}
+
 	AbsHorGestureAnimController(Context context){
 		super(context);
 		mScroller = new Scroller(context);
@@ -225,7 +229,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 			}
 //			LogUtil.i(TAG,"startCancelAnim dx="+dx+" isDown="+isTouchStart+" mLastTouchPoint.x="+mLastTouchPoint.x);
 			dy = (int) mLastTouchPoint.y;
-			scroller.startScroll((int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, DURATION);
+			scroller.startScroll((int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, mDuration);
 		}else{
 			if(isRequestNext){
 				dx = (int) -(pageCarver.getContentWidth() - (mDownTouchPoint.x - mLastTouchPoint.x));
@@ -234,7 +238,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 			}
 //			LogUtil.i(TAG,"startAnim startX="+mLastTouchPoint.x+" dx="+dx+" isDown="+isTouchStart+" mLastTouchPoint.x="+mLastTouchPoint.x);
 			dy = (int) mLastTouchPoint.y;
-			scroller.startScroll((int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, DURATION);
+			scroller.startScroll((int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, mDuration);
 		}
 	}
 	

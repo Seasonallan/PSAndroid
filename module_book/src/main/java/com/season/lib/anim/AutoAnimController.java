@@ -24,6 +24,11 @@ public class AutoAnimController extends PageAnimController{
 	private GradientDrawable mFolderShadowDrawableLR;
 	private GradientDrawable mFolderShadowDrawableRL;
 
+	@Override
+	public void setDuration(int duration) {
+
+	}
+
 	AutoAnimController(Context context){
 		super(context);
 		int[] color = { 0x333333, 0x80333333 };

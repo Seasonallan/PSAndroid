@@ -27,6 +27,8 @@ public abstract class PageAnimController{
         }
 		return pageAnimController;
 	}
+
+	public abstract void setDuration(int duration);
 	
 	PageAnimController(Context context) {
 		mContext = context;
