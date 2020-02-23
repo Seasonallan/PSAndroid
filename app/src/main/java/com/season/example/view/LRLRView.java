@@ -49,7 +49,7 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
         if (mPageAnimController == null){
             mPageAnimController = PageAnimController.create(getContext(),
                     PageAnimController.ANIM_TYPE_PAGE_TURNING);
-            mPageAnimController.setDuration(2468);
+            mPageAnimController.setDuration(12468);
         }
         mStop = false;
         mPageAnimController.startAnim(current, current==0?1:0, true, this);
@@ -69,7 +69,7 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
         baseLineY = Math.abs(textPaint.ascent() + textPaint.descent()) / 2;
         textWidth = textPaint.measureText(desc);
     }
-    PageAnimController mPageAnimController;
+    private PageAnimController mPageAnimController;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -93,7 +93,7 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
         if (rect == null){
             rect = new RectF(0,0,width, height);
         }
-        paint.setColor(index == 0?0xff13b0a5:0xffc9c9c9);
+        paint.setColor(index == 0?0xff13b0a5:0xfffc9d9a);
         canvas.drawRect(rect, paint);
         canvas.drawText(desc, width/2 - textWidth/2, height/2 + baseLineY ,textPaint);
     }
