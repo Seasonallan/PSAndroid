@@ -52,7 +52,8 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
             mPageAnimController.setDuration(12468);
         }
         mStop = false;
-        mPageAnimController.startAnim(current, current==0?1:0, true, this);
+        if (mPageAnimController.isAnimStop())
+            mPageAnimController.startAnim(current, current==0?1:0, true, this);
     }
 
     private int current = 0;
