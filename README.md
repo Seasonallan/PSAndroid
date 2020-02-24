@@ -48,10 +48,10 @@ ARouter.getInstance().build(RoutePath.BOOK).navigation();
 
 + PageManager.java       
   描述: 页面排版     
-  ArrayList<ChapterTask> 每本书拥有的章节列表     
-  LinkedList<Page> 每章节拥有的页列表     
-  LinkedList<Patch> 每页面拥有的区域（Line行）     
-  SparseArray<RectF> 每行拥有的矩阵     
+  ArrayList ChapterTask 每本书拥有的章节列表     
+  LinkedList Page  每章节拥有的页列表     
+  LinkedList Patch  每页面拥有的区域（Line行）     
+  SparseArray RectF  每行拥有的矩阵     
   
   
 + PageAnimController.java       
