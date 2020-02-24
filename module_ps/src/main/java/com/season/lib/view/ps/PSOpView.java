@@ -164,7 +164,6 @@ public class PSOpView {
         if (Math.abs(scale[0]) >= minScale[0] && scale[1] >= minScale[1]) {
             System.arraycopy(desPoints, 0, fixPoints, 0, 8);
         } else {//如果缩小超过最小scale，fixPoints修正为最小的坐标系
-
             Matrix matrixFix = new Matrix();
             float sx = (isRight ? 1 : -1) * Math.max(minScale[0], Math.abs(scale[0]));
             float sy = Math.max(minScale[1], scale[1]);

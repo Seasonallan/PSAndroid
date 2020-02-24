@@ -186,7 +186,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
      */
 	public boolean handlerTouchEvent(MotionEvent event) {
 		if(mCurrentPageIndex != INDEX_INITIAL_CONTENT){
-            LogUtil.e("handlerTouchEvent ");
+            //LogUtil.e("handlerTouchEvent ");
 			mPageAnimController.dispatchTouchEvent(event, this);
 		}
 		return true;

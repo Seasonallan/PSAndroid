@@ -26,7 +26,7 @@ import com.season.lib.dimen.ToolPaint;
  * 父类是：
  *
  * @see PSCanvas 画布
- * 子类有：
+ * 可以放置的视图有：
  * @see CustomTextView 文字图层
  * @see CustomImageView 静图图层，包含涂鸦
  * @see CustomGifMovie gif动图图层
