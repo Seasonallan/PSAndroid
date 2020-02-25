@@ -3,7 +3,7 @@ package com.season.lib.page.span;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 
-public class ColorSpan extends CharacterStyle {
+public class ColorSpan extends CharacterStyle{
 	private int mColor;
 	public ColorSpan(int color){
 		mColor = color;
@@ -12,4 +12,5 @@ public class ColorSpan extends CharacterStyle {
 	public void updateDrawState(TextPaint tp) {
 		tp.bgColor = mColor;
 	}
+
 }

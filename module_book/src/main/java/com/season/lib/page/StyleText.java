@@ -1,5 +1,6 @@
 package com.season.lib.page;
 
+import java.util.Set;
 import java.util.TreeMap;
 
 import android.text.style.BackgroundColorSpan;
@@ -500,6 +501,7 @@ public final class StyleText{
 	public final void putIntervalo(Intervalo intervalo){
 		mRootParent.mStyleTreeMap.put(intervalo, this);
 	}
+
 	
 	public final int getIntervaloSzie(){
 		return mRootParent.mStyleTreeMap.size();

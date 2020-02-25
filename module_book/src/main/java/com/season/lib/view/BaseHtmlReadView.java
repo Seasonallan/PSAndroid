@@ -224,7 +224,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 			invalidate();
 		}
 	}
-	
+
 	private void createTextSelectHandler(){
 		if(mTextSelectHandler == null || mTextSelectHandler.isChangeSize(getMeasuredWidth(),getMeasuredHeight())){
 			if(mTextSelectHandler != null){
@@ -496,8 +496,13 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	public boolean onClickSpan(ClickActionSpan clickableSpan, RectF localRect,
-			int x, int y) {
+							   int x, int y) {
 		return mReadCallback.onSpanClicked(clickableSpan, localRect, x, y);
+	}
+
+	@Override
+	public boolean checkDigestSpan(int i) {
+		return mTextSelectHandler.postLongClick(i);
 	}
 	
 	@Override

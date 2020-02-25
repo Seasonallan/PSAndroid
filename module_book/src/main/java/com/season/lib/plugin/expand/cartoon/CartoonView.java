@@ -309,6 +309,12 @@ public abstract class CartoonView extends FrameLayout implements PageManager.Pag
 		}
 	}
 
+
+	@Override
+	public boolean checkDigestSpan(int i) {
+ 		return false;
+	}
+
 	@Override
 	public void onPlayStateChange(int playState, String voiceSrc) {
 		post(new Runnable() {

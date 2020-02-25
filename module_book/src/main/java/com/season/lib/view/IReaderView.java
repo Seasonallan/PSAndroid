@@ -271,6 +271,7 @@ public interface IReaderView {
      * @param chapterId
      */
      void dealBuyResult(int chapterId);
+
     /**
      * 触发长按事件
      */

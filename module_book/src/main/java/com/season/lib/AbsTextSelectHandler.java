@@ -771,7 +771,24 @@ public abstract class AbsTextSelectHandler{
 		}
 		mHandler.removeCallbacks(mLongPressRunnable);
 	}
-	
+
+	/**
+	 * 单击位置检测，存在笔记则打开编辑框
+	 * @param i
+	 * @return
+	 */
+	public boolean postLongClick(int i){
+		ArrayList<BookDigests> bookDigestsList = getBookDigests(i, i);
+		if(bookDigestsList.size() > 0){
+			if(!isEdit){
+				onOpenEditView(mCurrentTouchPoint.x,mCurrentTouchPoint.y, bookDigestsList.get(0), this);
+				isEdit = true;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void postCheckForLongClick(int delayOffset) {
 		LogUtil.i(TAG, "postCheckForLongClick");
 		removeLongPressCallback();

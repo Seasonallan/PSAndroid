@@ -220,7 +220,7 @@ public class Line extends Patch{
 	/**
 	 * 计算一个字符的宽高
 	 * @param index
-	 * @param characterStyles 当前字符所包含的样式
+	 * @param styleText 当前字符所包含的样式
 	 * @return
 	 */
 	private Rect measureText(int index,StyleText styleText){
@@ -482,6 +482,7 @@ public class Line extends Patch{
 							return true;
 						}
 					}
+					return mSettingParam.getClickSpanHandler().checkDigestSpan(i);
 				}
 			}
 		}

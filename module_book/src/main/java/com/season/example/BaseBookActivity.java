@@ -34,6 +34,7 @@ import com.season.example.popwindow.NotePopWin;
 import com.season.example.popwindow.ReaderMenuPopWin;
 import com.season.example.support.SelectorControlView;
 import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.page.span.ColorSpan;
 import com.season.lib.page.span.media.IMediaSpan;
 import com.season.lib.page.span.NoteSpan;
 import com.season.lib.page.span.media.ReaderMediaPlayer;
