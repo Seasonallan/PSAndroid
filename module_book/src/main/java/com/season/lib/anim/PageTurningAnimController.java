@@ -2,6 +2,7 @@ package com.season.lib.anim;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -56,7 +57,6 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 
 	private float mMiddleX;
 	private float mMiddleY;
-	private float mDegrees;
 	private float mTouchToCornerDis;
 	private Matrix mMatrix;
 	private float[] mMatrixArray = { 0, 0, 0, 0, 0, 0, 0, 0, 1.0f };
@@ -238,19 +238,18 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 				mBezierStart2.y);
 		mPath0.lineTo(mCornerX, mCornerY);
 		mPath0.close();
+		// 1、绘制当前页面所有区域
 		drawCurrentPageArea(canvas, fromIndex,true,pageCarver);
-//		drawCurrentPageArea(canvas, rightPageCurBitmap, false);
-		mDegrees = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
-				- mCornerX, mBezierControl2.y - mCornerY));
-		// 绘制翻起页背面//第三个参数表示是否绘制在左边
+		// 2、绘制当前页面扭曲部分区域
+		drawCurrentPageWarpingArea(canvas, fromIndex,true,pageCarver);
+		// 3、绘制翻起页背面//第三个参数表示是否绘制在左边
 		drawCurrentBackArea(canvas, fromIndex,!isNext,pageCarver);
-		// 绘制下一页//第三个参数表示是否绘制在左边
+		// 4、绘制下一页//第三个参数表示是否绘制在左边
 		drawNextPageAreaAndShadow(canvas, toIndex,!isNext,pageCarver);
-		// 绘制翻起页的阴影
+		// 5、绘制翻起页的阴影
 		drawCurrentPageShadow(canvas,!isNext);
-		// //自动播放的动画结束时，进行的操作
 	}
-	
+
 	/**
 	 * 绘制翻起页背面
 	 */
@@ -330,10 +329,88 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		if(!isLandscape){
 			canvas.drawColor(bgColor + 0xaa000000);
 		}
-		canvas.rotate(mDegrees, filterBezierStartBound(mBezierStart1,isLeftPage), mBezierStart1.y);
+		float degree = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
+				- mCornerX, mBezierControl2.y - mCornerY));
+		canvas.rotate(degree, filterBezierStartBound(mBezierStart1,isLeftPage), mBezierStart1.y);
 		mFolderShadowDrawable.setBounds(left, (int) mBezierStart1.y, right,
 				(int) (mBezierStart1.y + mMaxLength));
 		mFolderShadowDrawable.draw(canvas);
+		canvas.restore();
+	}
+
+
+	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex,boolean isLeftPage, PageCarver pageCarver) {
+		int count = 50; float perScale = 0.7f;
+		float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierEnd1.y
+				,mBezierStart1.x - mBezierEnd1.x));
+		degrees = degrees - 90;
+		for (int i = 0; i < count; i++){
+			drawCurrentPageWarping(canvas, Math.abs(mBezierEnd1.x - mBezierStart1.x)*i/(2 * count),
+					1 - perScale * i / (count), fromIndex,degrees,pageCarver);
+		}
+		degrees = (float) Math.toDegrees(Math.atan2(mBezierStart2.y - mBezierEnd2.y
+				,mBezierStart2.x - mBezierEnd2.x));
+		degrees = degrees - 90;
+		for (int i = 0; i < count; i++){
+			drawCurrentPageWarping2(canvas, Math.abs(mBezierEnd2.x - mBezierStart2.x)*i/(2 * count),
+					1 - perScale * i / (count), fromIndex,degrees,pageCarver);
+		}
+	}
+
+	/**
+	 * 绘制当前页面扭曲部分
+	 */
+	private final void drawCurrentPageWarping(Canvas canvas, float x, float scale, int pageIndex, float degrees, PageCarver pageCarver) {
+
+		mPath1.reset();
+		mPath1.moveTo(mBezierEnd1.x + x, mBezierEnd1.y);
+		mPath1.lineTo(mBezierStart1.x +  + x, mBezierStart1.y);
+		mPath1.lineTo(mBezierControl1.x, mBezierControl1.y);
+		mPath1.close();
+
+		canvas.save();
+		canvas.clipPath(mPath1);
+
+		mMatrix.reset();
+		float dx = mBezierEnd1.x + (mBezierStart1.x - mBezierEnd1.x)/2;
+		float dy = mBezierStart1.y + (mBezierEnd1.y - mBezierStart1.y)/2;
+		mMatrix.postTranslate(-dx, -dy);
+		mMatrix.postRotate(-degrees, 0 , 0);
+		mMatrix.postScale(scale, 1, 0,0);
+		mMatrix.postRotate(degrees, 0 , 0);
+		mMatrix.postTranslate(dx, dy);
+		canvas.concat(mMatrix);
+
+		pageCarver.drawPage(canvas, pageIndex);
+
+		canvas.restore();
+	}
+	/**
+	 * 绘制当前页面扭曲部分
+	 */
+	private final void drawCurrentPageWarping2(Canvas canvas, float x, float scale, int pageIndex,float degrees, PageCarver pageCarver) {
+
+		mPath1.reset();
+		mPath1.moveTo(mBezierEnd2.x + x, mBezierEnd2.y);
+		mPath1.lineTo(mBezierStart2.x +  + x, mBezierStart2.y);
+		mPath1.lineTo(mBezierControl2.x, mBezierControl2.y);
+		mPath1.close();
+
+		canvas.save();
+		canvas.clipPath(mPath1);
+
+		mMatrix.reset();
+		float dx = mBezierEnd2.x + (mBezierStart2.x - mBezierEnd2.x)/2;
+		float dy = mBezierStart2.y + (mBezierEnd2.y - mBezierStart2.y)/2;
+		mMatrix.postTranslate(-dx, -dy);
+		mMatrix.postRotate(-degrees, 0 , 0);
+		mMatrix.postScale(scale, 1, 0,0);
+		mMatrix.postRotate(degrees, 0 , 0);
+		mMatrix.postTranslate(dx, dy);
+		canvas.concat(mMatrix);
+
+		pageCarver.drawPage(canvas, pageIndex);
+
 		canvas.restore();
 	}
 	
@@ -377,7 +454,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			pageCarver.drawPage(canvas, pageIndex);
 			canvas.restore();
 		}
-		canvas.rotate(mDegrees, filterBezierStartBound(mBezierStart1,isLeftPage), mBezierStart1.y);
+		float degree = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
+				- mCornerX, mBezierControl2.y - mCornerY));
+		canvas.rotate(degree, filterBezierStartBound(mBezierStart1,isLeftPage), mBezierStart1.y);
 		mBackShadowDrawable.setBounds(leftx, (int) mBezierStart1.y, rightx,
 				(int) (mMaxLength + mBezierStart1.y));
 		mBackShadowDrawable.draw(canvas);
