@@ -1,5 +1,6 @@
 package com.season.lib;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,6 +16,8 @@ import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
+import com.example.book.R;
+import com.season.example.popwindow.BookDigestsRemarksDialog;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.page.span.ColorSpan;
 import com.season.lib.util.LogUtil;
@@ -452,8 +455,8 @@ public abstract class AbsTextSelectHandler{
 	protected void drawSelectCursor(Canvas canvas){
 		canvas.save();
 		mPaint.setColor(Color.BLACK);
-        canvas.drawBitmap(getTopSelectCursorBitmap(), mTopSelectCursor.left, mTopSelectCursor.top + 32, mPaint);
-        canvas.drawBitmap(getBottomSelectCursorBitmap(), mBottomSelectCursor.left, mBottomSelectCursor.top - 32, mPaint);
+        canvas.drawBitmap(getTopSelectCursorBitmap(), mTopSelectCursor.left, mTopSelectCursor.top + 0, mPaint);
+        canvas.drawBitmap(getBottomSelectCursorBitmap(), mBottomSelectCursor.left, mBottomSelectCursor.top - 0, mPaint);
 //        mPaint.setColor(0x99ffffff);
 //        canvas.drawRect(new Rect(
 //        		 (int) ( mCurrentTouchPoint.x - 20 )
@@ -656,9 +659,9 @@ public abstract class AbsTextSelectHandler{
 			int tempY = (int)y;
 			if(!isFirstTouchPeriod){
 				if(mCurrentTouchSelectCursor.isTop){
-					tempY +=  mSelectCursorSize.height() * 1.5;
+					tempY +=  mSelectCursorSize.height() / 2;
 				}else{
-					tempY -=  mSelectCursorSize.height();
+					tempY -=  mSelectCursorSize.height() / 2;
 				}
 			}
 			int tempPosition = findIndexByLocation(tempX,tempY);
@@ -786,6 +789,18 @@ public abstract class AbsTextSelectHandler{
 				return true;
 			}
 		}
+		bookDigestsList = getBookDigests(i - 1, i - 1);
+		if(bookDigestsList.size() > 0){
+			BookDigests bookDigests = bookDigestsList.get(0);
+			if (bookDigests.getPosition() + bookDigests.getCount() == i){
+				LogUtil.i(TAG, "onOpenEditView");
+				if(mSelectorLocationListener != null){
+					mSelectorLocationListener.onOpenDigestView(bookDigests, this);
+				}
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -1081,6 +1096,8 @@ public abstract class AbsTextSelectHandler{
 		public void onOpenEditView(float x, float y, BookDigests bookDigests, AbsTextSelectHandler textSelectHandler);
 		
 		public void onCloseEditView(AbsTextSelectHandler textSelectHandler);
+
+		public void onOpenDigestView(BookDigests bookDigests, AbsTextSelectHandler textSelectHandler);
 	}
 	
 	public interface IViewInformer{

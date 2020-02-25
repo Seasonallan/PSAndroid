@@ -9,11 +9,17 @@ import android.text.style.CharacterStyle;
 public class ColorSpan extends CharacterStyle{
 	private int mColor;
 	private String mDigest;
+	private int mEnd;
 	public ColorSpan(int color){
 		mColor = color;
 	}
-	public void setDigest(String content){
+	public void setDigest(String content, int end){
 		this.mDigest = content;
+		this.mEnd = end;
+	}
+
+	public int getEnd(){
+		return mEnd;
 	}
 
 	@Override

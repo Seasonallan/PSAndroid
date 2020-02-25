@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class BookDigestsRemarksDialog extends Dialog {
-	public final static int YELLOW = Color.parseColor("#e6ef50") + 0x66000000;
-	public final static int ORANGE = Color.parseColor("#ff9900") + 0x66000000;
-	public final static int GREEN = Color.parseColor("#66cc00") + 0x66000000;
-	public final static int BLUE = Color.parseColor("#6de8d5") + 0x66000000;
-	public final static int PINK = Color.parseColor("#f898f8") + 0x66000000;
+	public final static int TRANS = 0xFF000000;
+	public final static int YELLOW = Color.parseColor("#e6ef50") + TRANS;
+	public final static int ORANGE = Color.parseColor("#f1b136") + TRANS;
+	public final static int GREEN = Color.parseColor("#66cc00") + TRANS;
+	public final static int BLUE = Color.parseColor("#13b0a5") + TRANS;
+	public final static int PINK = Color.parseColor("#fc9d9a") + TRANS;
     public final static int HSPAC = 5;
 	public final static int LAYOUT_MARGIN = 5;
 	private EditText mRemarks_et;

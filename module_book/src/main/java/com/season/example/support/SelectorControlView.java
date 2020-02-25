@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.example.book.R;
 import com.season.example.popwindow.BookDigestsPopWin;
+import com.season.example.popwindow.BookDigestsRemarksDialog;
 import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
 
@@ -88,5 +89,22 @@ public class SelectorControlView implements AbsTextSelectHandler.ISelectorListen
 		}
 		mBookDigestsPopWin.dismiss();
 	}
-	
+
+	@Override
+	public void onOpenDigestView(BookDigests bookDigests, AbsTextSelectHandler textSelectHandler) {
+
+		final BookDigestsRemarksDialog mDialog=new BookDigestsRemarksDialog(mActivity, R.style.remark_Dialog,
+				textSelectHandler , bookDigests);
+		mDialog.show();
+		mDialog.setOnCloseDialogLisenter(new BookDigestsRemarksDialog.OnCloseDialogLisenter(){
+
+			@Override
+			public void onCloseDialog(boolean isCloseDialog) {
+				if(isCloseDialog){
+					mDialog.dismiss();
+				}
+			}
+		});
+	}
+
 }

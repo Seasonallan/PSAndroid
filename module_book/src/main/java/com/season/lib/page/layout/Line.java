@@ -3,6 +3,8 @@ package com.season.lib.page.layout;
 import java.lang.ref.SoftReference;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
@@ -21,6 +23,7 @@ import com.season.lib.page.Util;
 import com.season.lib.page.span.AlignSpan;
 import com.season.lib.page.span.AsyncDrawableSpan;
 import com.season.lib.page.span.ClickActionSpan;
+import com.season.lib.page.span.ColorSpan;
 import com.season.lib.page.span.FloatSpan;
 import com.season.lib.page.span.ReplacementSpan;
 import com.season.lib.page.span.ResourceSpan;
@@ -32,6 +35,7 @@ public class Line extends Patch{
 	private SparseArray<RectF> mTextSizeMap;
 	private SoftReference<SparseArray<RectF>> mCacheTextSizeMap;
 	private TextPaint mTextPaint;
+	private Paint mWhiteDotPaint;
 	private RectF mTempBgRect;
 	private int mDefaultFontSize;
 	private int mIndentSize;
@@ -41,6 +45,8 @@ public class Line extends Patch{
 		mCacheTextSizeMap = new SoftReference<SparseArray<RectF>>(null);
 		mTextPaint = new TextPaint();
 		mTempBgRect = new RectF();
+		mWhiteDotPaint = new Paint();
+		mWhiteDotPaint.setColor(Color.WHITE);
 		mDefaultFontSize = (int) getSourcePaint().measureText("测");
 		mIndentSize = 2;
 	}
@@ -314,7 +320,8 @@ public class Line extends Patch{
 		}
 		return mTextSizeMap;
 	}
-	
+
+
 	@Override
 	public void draw(Canvas canvas) {
 		if(mParent == null){
@@ -370,12 +377,16 @@ public class Line extends Patch{
 			}
 		}
 		FontMetricsInt fm = paint.getFontMetricsInt();
+		boolean isDigestEnd = false;
 		if(rect != null){
 			if(characterStyles != null && characterStyles.length > 0){
 				for(CharacterStyle characterStyle : characterStyles){
 					characterStyle.updateDrawState(paint);
 					if (paint.bgColor != 0)
 						drawBgColor(canvas, rect, paint);
+					if (characterStyle instanceof ColorSpan){
+						isDigestEnd = index + 1 == ((ColorSpan) characterStyle).getEnd();
+					}
 				}
 			}else{
 				if (paint.bgColor != 0) //不是透明
@@ -402,8 +413,22 @@ public class Line extends Patch{
 				canvas.drawText(mStyleText.getDataSource(), index, index + 1, startX , startY , paint);
 				if(isUnderlineText){
 					paint.setColor(paint.linkColor);
-					canvas.drawRect(rect.left, rect.bottom, rect.right, rect.bottom + 5, paint);
+					canvas.drawRect(rect.left, rect.bottom, rect.right, rect.bottom + 4, paint);
 					//canvas.drawLine(rect.left, rect.bottom, rect.right, rect.bottom + 5, paint);
+					if (isDigestEnd){//绘制笔记圆点
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+							float left = rect.right - 1;
+							float right = rect.right + (rect.right - rect.left)*2/3;
+							float top = rect.bottom - (rect.bottom - rect.top)/4 + 2;
+							float bottom = rect.bottom + (rect.bottom - rect.top)/4 + 2;
+							canvas.drawOval(left,top ,right, bottom , paint);
+							float percentX = (right - left)/4;
+							float cy = top + (bottom - top)/2;
+							canvas.drawCircle(left + percentX,cy,1, mWhiteDotPaint);
+							canvas.drawCircle(left + percentX * 2,cy,1, mWhiteDotPaint);
+							canvas.drawCircle(left + percentX * 3,cy,1, mWhiteDotPaint);
+						}
+					}
 				}
 			}
 //			canvas.drawLine(rect.left, rect.top, rect.right, rect.top, paint);

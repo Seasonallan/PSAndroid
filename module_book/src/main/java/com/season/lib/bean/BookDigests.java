@@ -126,7 +126,7 @@ public class BookDigests  extends BaseDao {
 	}
 
 	public ColorSpan getColorSpan(){
-		mColorSpan.setDigest(mMsg);
+		mColorSpan.setDigest(mMsg, mPosition + mCount);
 		return mColorSpan;
 	}
 	

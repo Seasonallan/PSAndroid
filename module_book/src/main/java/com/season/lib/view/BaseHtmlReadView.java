@@ -791,7 +791,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 				}
 			}
 			drawReadPercent(canvas, pageSizeStr);
-            drawReadProgress(canvas, progress, max);
+            //drawReadProgress(canvas, progress, max);
 		}
 	}
 
