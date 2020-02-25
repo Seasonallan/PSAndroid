@@ -1,6 +1,7 @@
 package com.season.lib.bean;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import com.season.lib.db.BookDigestsDB;
 import com.season.lib.db.DigestDBHelper;
@@ -47,7 +48,7 @@ public class BookDigests  extends BaseDao {
 		return DigestDBHelper.getDBHelper();
 	}
 
-	public ColorSpan mColorSpan;
+	private ColorSpan mColorSpan;
  
 	@Column(name = "content_id",isPrimaryKey = true)
 	public String mContentId;
@@ -122,6 +123,11 @@ public class BookDigests  extends BaseDao {
 		mChaptersId = chaptersId;
 		mFromType = fromType;
 		this.author = author;
+	}
+
+	public ColorSpan getColorSpan(){
+		mColorSpan.setDigest(mMsg);
+		return mColorSpan;
 	}
 	
 	@Override

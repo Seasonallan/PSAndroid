@@ -13,6 +13,7 @@ import com.season.lib.page.span.FloatSpan;
 import com.season.lib.page.span.ImgPanelBGDrawableSpan;
 import com.season.lib.page.span.SpannableStringBuilder;
 import com.season.lib.book.ArrayMap;
+import com.season.lib.util.LogUtil;
 
 public final class StyleText{
 	public static final int PANLE_TYPE_P = 0;

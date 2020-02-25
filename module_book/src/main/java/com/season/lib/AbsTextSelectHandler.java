@@ -205,7 +205,7 @@ public abstract class AbsTextSelectHandler{
 			if(currentBookDigests != null && start != -1){
 				if(isSelfInvalidate){
 					int end = start + currentBookDigests.getCount();
-					mViewInformer.setBookDigestsSpan(currentBookDigests.mColorSpan, start, end);
+					mViewInformer.setBookDigestsSpan(currentBookDigests.getColorSpan(), start, end);
 				}
 			}
 		}
@@ -636,7 +636,7 @@ public abstract class AbsTextSelectHandler{
 			if(mSelectData.getCurrentBookDigests() != null 
 //					&& !hasBookDigests
 					){
-				mViewInformer.deleteBookDigestsSpan(mSelectData.getCurrentBookDigests().mColorSpan);
+				mViewInformer.deleteBookDigestsSpan(mSelectData.getCurrentBookDigests().getColorSpan());
 			}
 		}
 		invalidate();
@@ -821,7 +821,7 @@ public abstract class AbsTextSelectHandler{
 		if(bookDigestsList != null){
 			mShowBookDigestsList = new ArrayList<BookDigests>();
             for(BookDigests data : deletBookDigestsList){
-                mViewInformer.deleteBookDigestsSpan(data.mColorSpan);
+                mViewInformer.deleteBookDigestsSpan(data.getColorSpan());
             }
 			for(BookDigests data : bookDigestsList){
                 BookDigests digests = new BookDigests();
@@ -829,7 +829,7 @@ public abstract class AbsTextSelectHandler{
                 mShowBookDigestsList.add(digests);
 				int start = data.getPosition();
 				int end = start + data.getCount();
-				mViewInformer.setBookDigestsSpan(data.mColorSpan, start, end);
+				mViewInformer.setBookDigestsSpan(data.getColorSpan(), start, end);
 			}
 		}
 		invalidate();
@@ -837,7 +837,7 @@ public abstract class AbsTextSelectHandler{
 	
 	public void releaseSpan(){
 		for (BookDigests data : mShowBookDigestsList) {
-			mViewInformer.deleteBookDigestsSpan(data.mColorSpan);
+			mViewInformer.deleteBookDigestsSpan(data.getColorSpan());
 		}
 		mShowBookDigestsList.clear();
 	}

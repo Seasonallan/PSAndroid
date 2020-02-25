@@ -7,6 +7,7 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Build;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.util.SparseArray;
@@ -373,10 +374,12 @@ public class Line extends Patch{
 			if(characterStyles != null && characterStyles.length > 0){
 				for(CharacterStyle characterStyle : characterStyles){
 					characterStyle.updateDrawState(paint);
-					drawBgColor(canvas, rect, paint);
+					if (paint.bgColor != 0)
+						drawBgColor(canvas, rect, paint);
 				}
 			}else{
-				drawBgColor(canvas, rect, paint);
+				if (paint.bgColor != 0) //不是透明
+					drawBgColor(canvas, rect, paint);
 			}
 			ReplacementSpan replacementSpan = Util.findFirstSpans(characterStyles, ReplacementSpan.class);
 			if(replacementSpan != null){
@@ -398,7 +401,9 @@ public class Line extends Patch{
 				int startY = (int) rect.bottom - fm.bottom / 2;
 				canvas.drawText(mStyleText.getDataSource(), index, index + 1, startX , startY , paint);
 				if(isUnderlineText){
-					canvas.drawLine(rect.left, rect.bottom, rect.right, rect.bottom, paint);
+					paint.setColor(paint.linkColor);
+					canvas.drawRect(rect.left, rect.bottom, rect.right, rect.bottom + 5, paint);
+					//canvas.drawLine(rect.left, rect.bottom, rect.right, rect.bottom + 5, paint);
 				}
 			}
 //			canvas.drawLine(rect.left, rect.top, rect.right, rect.top, paint);
