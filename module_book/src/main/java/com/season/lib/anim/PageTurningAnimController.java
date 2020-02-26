@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
@@ -341,19 +342,23 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 
 	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex,boolean isLeftPage, PageCarver pageCarver) {
 		int count = 50; float perScale = 0.7f;
+		AccelerateInterpolator accelerateInterpolator = new AccelerateInterpolator();
+
 		float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierEnd1.y
 				,mBezierStart1.x - mBezierEnd1.x));
 		degrees = degrees - 90;
 		for (int i = 0; i < count; i++){
 			drawCurrentPageWarping(canvas, Math.abs(mBezierEnd1.x - mBezierStart1.x)*i/(2 * count),
-					1 - perScale * i / (count), fromIndex,degrees,pageCarver);
+					1 - perScale * accelerateInterpolator.getInterpolation(i * 1.0f / count)
+					, fromIndex,degrees,pageCarver);
 		}
 		degrees = (float) Math.toDegrees(Math.atan2(mBezierStart2.y - mBezierEnd2.y
 				,mBezierStart2.x - mBezierEnd2.x));
 		degrees = degrees - 90;
 		for (int i = 0; i < count; i++){
 			drawCurrentPageWarping2(canvas, Math.abs(mBezierEnd2.x - mBezierStart2.x)*i/(2 * count),
-					1 - perScale * i / (count), fromIndex,degrees,pageCarver);
+					1 - perScale * accelerateInterpolator.getInterpolation(i * 1.0f / count)
+					, fromIndex,degrees,pageCarver);
 		}
 	}
 
