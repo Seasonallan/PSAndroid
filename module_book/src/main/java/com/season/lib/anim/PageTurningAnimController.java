@@ -4,13 +4,16 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
 import com.season.lib.util.LogUtil;
@@ -241,8 +244,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mPath0.close();
 		// 1、绘制当前页面所有区域
 		drawCurrentPageArea(canvas, fromIndex,true,pageCarver);
-		// 2、绘制当前页面扭曲部分区域
-		drawCurrentPageWarpingArea(canvas, fromIndex,true,pageCarver);
+		if (!isFullAnimation)
+            // 2、绘制当前页面扭曲部分区域
+            drawCurrentPageWarpingArea(canvas, fromIndex,true,pageCarver);
 		// 3、绘制翻起页背面//第三个参数表示是否绘制在左边
 		drawCurrentBackArea(canvas, fromIndex,!isNext,pageCarver);
 		// 4、绘制下一页//第三个参数表示是否绘制在左边
@@ -341,85 +345,48 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 
 
 	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex,boolean isLeftPage, PageCarver pageCarver) {
-		int count = 50; float perScale = 0.7f;
-		AccelerateInterpolator accelerateInterpolator = new AccelerateInterpolator();
-
-		float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierEnd1.y
-				,mBezierStart1.x - mBezierEnd1.x));
-		degrees = degrees - 90;
-		for (int i = 0; i < count; i++){
-			drawCurrentPageWarping(canvas, Math.abs(mBezierEnd1.x - mBezierStart1.x)*i/(2 * count),
-					1 - perScale * accelerateInterpolator.getInterpolation(i * 1.0f / count)
-					, fromIndex,degrees,pageCarver);
-		}
-		degrees = (float) Math.toDegrees(Math.atan2(mBezierStart2.y - mBezierEnd2.y
-				,mBezierStart2.x - mBezierEnd2.x));
-		degrees = degrees - 90;
-		for (int i = 0; i < count; i++){
-			drawCurrentPageWarping2(canvas, Math.abs(mBezierEnd2.x - mBezierStart2.x)*i/(2 * count),
-					1 - perScale * accelerateInterpolator.getInterpolation(i * 1.0f / count)
-					, fromIndex,degrees,pageCarver);
-		}
+        Interpolator interpolatorScale = new AccelerateInterpolator();
+        Interpolator interpolatorDx = new LinearInterpolator();
+        int count = 40; float perScale = 1f;
+        float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierStart2.y
+                ,mBezierStart1.x - mBezierStart2.x));
+        degrees = degrees - 90;
+        for (int i = 0; i < count; i++){
+            drawCurrentPageWarping(canvas,
+                    Math.abs(mBezierControl1.x - mBezierStart1.x) * interpolatorDx.getInterpolation(i * 1.0f / count),
+                    1 - perScale * interpolatorScale.getInterpolation(i * 1.0f / count)
+                    , fromIndex,degrees,pageCarver);
+        }
 	}
+    /**
+     * 绘制当前页面扭曲部分
+     */
+    private final void drawCurrentPageWarping(Canvas canvas, float x, float scale, int pageIndex, float degrees, PageCarver pageCarver) {
+        mPath1.reset();
+        mPath1.moveTo(mBezierStart2.x + x, mBezierStart2.y);
+        mPath1.lineTo(mBezierStart1.x  + x, mBezierStart1.y);
+        mPath1.lineTo(mBezierControl1.x  + x, mBezierControl1.y);
+        mPath1.lineTo(mBezierControl2.x  + x, mBezierControl2.y);
+        mPath1.close();
+        canvas.save();
+        canvas.clipPath(mPath1);
 
-	/**
-	 * 绘制当前页面扭曲部分
-	 */
-	private final void drawCurrentPageWarping(Canvas canvas, float x, float scale, int pageIndex, float degrees, PageCarver pageCarver) {
+        mMatrix.reset();
+        float dx = mBezierStart1.x + (mBezierStart2.x - mBezierStart1.x)/2;
+        float dy = mBezierStart1.y + (mBezierStart2.y - mBezierStart1.y)/2;
+        mMatrix.postTranslate(-dx, -dy);
+        mMatrix.postRotate(-degrees, 0 , 0);
+        mMatrix.postScale(scale, 1, 0,0);
+        mMatrix.postRotate(degrees, 0 , 0);
+        mMatrix.postTranslate(dx, dy);
+        canvas.concat(mMatrix);
 
-		mPath1.reset();
-		mPath1.moveTo(mBezierEnd1.x + x, mBezierEnd1.y);
-		mPath1.lineTo(mBezierStart1.x +  + x, mBezierStart1.y);
-		mPath1.lineTo(mBezierControl1.x, mBezierControl1.y);
-		mPath1.close();
+        pageCarver.drawPage(canvas, pageIndex);
 
-		canvas.save();
-		canvas.clipPath(mPath1);
+        canvas.restore();
+    }
 
-		mMatrix.reset();
-		float dx = mBezierEnd1.x + (mBezierStart1.x - mBezierEnd1.x)/2;
-		float dy = mBezierStart1.y + (mBezierEnd1.y - mBezierStart1.y)/2;
-		mMatrix.postTranslate(-dx, -dy);
-		mMatrix.postRotate(-degrees, 0 , 0);
-		mMatrix.postScale(scale, 1, 0,0);
-		mMatrix.postRotate(degrees, 0 , 0);
-		mMatrix.postTranslate(dx, dy);
-		canvas.concat(mMatrix);
-
-		pageCarver.drawPage(canvas, pageIndex);
-
-		canvas.restore();
-	}
-	/**
-	 * 绘制当前页面扭曲部分
-	 */
-	private final void drawCurrentPageWarping2(Canvas canvas, float x, float scale, int pageIndex,float degrees, PageCarver pageCarver) {
-
-		mPath1.reset();
-		mPath1.moveTo(mBezierEnd2.x + x, mBezierEnd2.y);
-		mPath1.lineTo(mBezierStart2.x +  + x, mBezierStart2.y);
-		mPath1.lineTo(mBezierControl2.x, mBezierControl2.y);
-		mPath1.close();
-
-		canvas.save();
-		canvas.clipPath(mPath1);
-
-		mMatrix.reset();
-		float dx = mBezierEnd2.x + (mBezierStart2.x - mBezierEnd2.x)/2;
-		float dy = mBezierStart2.y + (mBezierEnd2.y - mBezierStart2.y)/2;
-		mMatrix.postTranslate(-dx, -dy);
-		mMatrix.postRotate(-degrees, 0 , 0);
-		mMatrix.postScale(scale, 1, 0,0);
-		mMatrix.postRotate(degrees, 0 , 0);
-		mMatrix.postTranslate(dx, dy);
-		canvas.concat(mMatrix);
-
-		pageCarver.drawPage(canvas, pageIndex);
-
-		canvas.restore();
-	}
-	
-	private final void drawNextPageAreaAndShadow(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
+    private final void drawNextPageAreaAndShadow(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
 		if(!isLandscape)isLeftPage = true;
 		int leftx;
 		int rightx;

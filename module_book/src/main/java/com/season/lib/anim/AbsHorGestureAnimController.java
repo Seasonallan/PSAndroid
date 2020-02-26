@@ -276,7 +276,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		mLastTouchPoint.set(mDownTouchPoint);
 	}
 
-	private boolean isFullAnimation = false;
+	protected boolean isFullAnimation = false;
 	@Override
 	public void startAnim(int fromIndex,int toIndex,boolean isNext, PageCarver pageCarver) {
         isFullAnimation = true;
