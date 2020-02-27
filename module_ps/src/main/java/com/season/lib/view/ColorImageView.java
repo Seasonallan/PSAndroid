@@ -26,12 +26,6 @@ public class ColorImageView extends AppCompatImageView {
         super(context, attrs);
     }
 
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(47,47);
-    }
-
     float stroke;
     float radius;
     @Override

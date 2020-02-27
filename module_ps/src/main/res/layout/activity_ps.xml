@@ -81,19 +81,19 @@
 
                 <ImageView
                     android:id="@+id/iv_back"
-                    android:layout_width="59px"
-                    android:layout_height="59px"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
                     android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="20px"
+                    android:layout_marginLeft="20dp"
                     android:src="@drawable/selector_crop_fanhui" />
 
                 <ImageView
                     android:id="@+id/iv_close"
-                    android:layout_width="59px"
-                    android:layout_height="59px"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
                     android:layout_alignParentLeft="true"
                     android:visibility="gone"
-                    android:layout_marginLeft="20px"
+                    android:layout_marginLeft="20dp"
                     android:src="@drawable/selector_crop_close"  />
 
                 <View
@@ -103,20 +103,20 @@
 
                 <ImageView
                     android:id="@+id/iv_next"
-                    android:layout_width="128px"
-                    android:layout_height="59px"
+                    android:layout_width="88dp"
+                    android:layout_height="38dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginLeft="16px"
-                    android:layout_marginRight="20px"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="20dp"
                     android:src="@drawable/selector_crop_next" />
 
                 <ImageView
                     android:id="@+id/iv_confirm"
-                    android:layout_width="59px"
-                    android:layout_height="59px"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginLeft="16px"
-                    android:layout_marginRight="20px"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="20dp"
                     android:src="@drawable/selector_crop_confirm"
                     android:visibility="gone" />
 
@@ -134,9 +134,11 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10px"
-                    android:layout_marginLeft="20px"
+                    android:layout_height="36dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
                     android:background="@drawable/btn_shape_white"
                     android:gravity="center"
                     android:clipChildren="false"
@@ -147,16 +149,14 @@
                         android:id="@+id/iv_lable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="8dp"
                         android:paddingRight="3dp"
                         android:text="背景"
-                        android:textSize="20px" />
+                        android:textSize="18dp" />
 
                     <com.season.lib.view.ColorImageView
                         android:id="@+id/v_color"
-                        android:layout_width="47px"
-                        android:layout_height="47px"
-                        android:layout_margin="6px"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:background="@mipmap/icon_color_transparent" />
 
                     <RadioGroup
@@ -166,30 +166,29 @@
                         android:gravity="center_vertical"
                         android:clipChildren="false"
                         android:clipToPadding="false"
-                        android:layout_margin="6px"
                         android:orientation="horizontal"
                         android:visibility="gone">
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_translate"
-                            android:layout_width="47px"
-                            android:layout_height="47px"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:background="@mipmap/icon_color_transparent"
                             android:button="@null"
                             android:checked="true" />
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_white"
-                            android:layout_width="47px"
-                            android:layout_height="47px"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:layout_marginLeft="5dp"
                             android:background="@mipmap/icon_color_white"
                             android:button="@null" />
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_hui"
-                            android:layout_width="47px"
-                            android:layout_height="47px"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:layout_marginLeft="5dp"
                             android:background="@mipmap/icon_color_gray"
                             android:button="@null"
@@ -197,16 +196,16 @@
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_black"
-                            android:layout_width="47px"
-                            android:layout_height="47px"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:layout_marginLeft="5dp"
                             android:background="@mipmap/icon_color_black"
                             android:button="@null" />
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_vid_pic"
-                            android:layout_width="47px"
-                            android:layout_height="47px"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:layout_marginLeft="5dp"
                             android:button="@null"
                             android:visibility="gone" />
@@ -220,36 +219,40 @@
                     android:layout_weight="1" />
 
                 <LinearLayout
-                    android:layout_width="259px"
-                    android:layout_height="59px"
-                    android:layout_marginBottom="10px"
-                    android:layout_marginRight="20px"
+                    android:layout_width="168dp"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="20dp"
+                    android:padding="10dp"
                     android:background="@drawable/shape_conn_gray"
                     android:gravity="center"
                     android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/iv_undo"
-                        android:layout_width="91px"
-                        android:layout_height="59px"
-                        android:paddingLeft="30px"
-                        android:paddingRight="24px"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
                         android:src="@mipmap/icon_op_pre_sel" />
 
                     <ImageView
                         android:id="@+id/iv_redo"
-                        android:layout_width="91px"
-                        android:layout_height="59px"
-                        android:paddingLeft="24px"
-                        android:paddingRight="30px"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
                         android:src="@mipmap/icon_op_pro_sel" />
 
                     <ImageView
                         android:id="@+id/iv_delete"
-                        android:layout_width="77px"
-                        android:layout_height="59px"
-                        android:paddingLeft="22px"
-                        android:paddingRight="30px"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
                         android:src="@drawable/selector_crop_clear" />
                 </LinearLayout>
             </LinearLayout>
@@ -257,7 +260,7 @@
             <LinearLayout
                 android:id="@+id/del_container"
                 android:layout_width="match_parent"
-                android:layout_height="128px"
+                android:layout_height="128dp"
                 android:visibility="invisible"
                 android:gravity="center" >
 
@@ -271,7 +274,7 @@
                         android:id="@+id/del_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="8px"
+                        android:paddingBottom="8dp"
                         android:src="@mipmap/icon_zoom_h" />
 
                     <TextView

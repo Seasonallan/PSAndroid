@@ -33,11 +33,6 @@ public class ColorPickView extends AppCompatRadioButton {
         invalidate();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(47,47);
-    }
-
     float radius;
     float padding;
     float stroke;

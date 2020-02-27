@@ -17,7 +17,7 @@
 
     <com.season.lib.view.VerticalSeekBar
         android:id="@+id/text_sb"
-        android:layout_width="14dp"
+        android:layout_width="8dp"
         android:layout_height="match_parent"
         />
 
@@ -31,13 +31,14 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:paddingRight="12dp"
             android:orientation="horizontal"
             >
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:paddingLeft="32px"
+                android:paddingLeft="12dp"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -51,13 +52,13 @@
 
                     <TextView
                         android:id="@+id/animation_text1"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="无状态"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -71,13 +72,13 @@
 
                     <TextView
                         android:id="@+id/animation_text2"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="上下抖动"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -87,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingLeft="32px" >
+                android:paddingLeft="12dp" >
 
                 <RelativeLayout
                     android:id="@+id/animation_3"
@@ -100,13 +101,13 @@
 
                     <TextView
                         android:id="@+id/animation_text3"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="放大缩小"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -121,13 +122,13 @@
 
                     <TextView
                         android:id="@+id/animation_text4"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="排队出现"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -137,11 +138,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingLeft="32px" >
+                android:paddingLeft="12dp" >
 
                 <RelativeLayout
                     android:id="@+id/animation_5"
-                    android:layout_width="140px"
+                    android:layout_width="88dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_marginTop="16dp"
@@ -156,7 +157,7 @@
                         android:gravity="center"
                         android:text="突然闪现"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -170,13 +171,13 @@
 
                     <TextView
                         android:id="@+id/animation_text6"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="彩色渐变"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -186,7 +187,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingLeft="32px" >
+                android:paddingLeft="12dp" >
 
                 <RelativeLayout
                     android:id="@+id/animation_7"
@@ -199,13 +200,13 @@
 
                     <TextView
                         android:id="@+id/animation_text7"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="波浪跳动"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -220,13 +221,13 @@
 
                     <TextView
                         android:id="@+id/animation_text8"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="单字跳动"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -236,7 +237,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingLeft="32px" >
+                android:paddingLeft="12dp" >
 
                 <RelativeLayout
                     android:id="@+id/animation_9"
@@ -249,13 +250,13 @@
 
                     <TextView
                         android:id="@+id/animation_text9"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="波浪放大"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -270,13 +271,13 @@
 
                     <TextView
                         android:id="@+id/animation_text10"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="缩小出现"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -286,7 +287,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingLeft="32px" >
+                android:paddingLeft="12dp" >
 
                 <RelativeLayout
                     android:id="@+id/animation_11"
@@ -299,13 +300,13 @@
 
                     <TextView
                         android:id="@+id/animation_text11"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="走跑马灯"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -320,13 +321,13 @@
 
                     <TextView
                         android:id="@+id/animation_text12"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="底部升起"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -336,7 +337,7 @@
                 android:gravity="center"
                 android:visibility="gone"
                 android:orientation="vertical"
-                android:paddingLeft="32px" >
+                android:paddingLeft="12dp" >
 
                 <RelativeLayout
                     android:id="@+id/animation_13"
@@ -349,13 +350,13 @@
 
                     <TextView
                         android:id="@+id/animation_text13"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="走跑马灯"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -370,13 +371,13 @@
 
                     <TextView
                         android:id="@+id/animation_text14"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="底部升起"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -387,8 +388,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:paddingRight="32px"
-                android:paddingLeft="32px"
+                android:paddingRight="12dp"
+                android:paddingLeft="12dp"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -402,13 +403,13 @@
 
                     <TextView
                         android:id="@+id/animation_animation_singleline1_text"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="single1"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -423,13 +424,13 @@
 
                     <TextView
                         android:id="@+id/animation_animation_singleline1_text2"
-                        android:layout_width="140px"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:text="single1"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="22px" />
+                        android:textSize="16dp" />
                 </RelativeLayout>
 
             </LinearLayout>
