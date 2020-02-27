@@ -4,6 +4,6 @@
 	android:layout_height="wrap_content"
 	android:cacheColorHint="@color/transparent"
 	android:gravity="center"
-	android:listSelector="@drawable/list_selector_background"
+	android:listSelector="@drawable/transparent"
 	android:numColumns="4"
 	android:stretchMode="columnWidth"/>

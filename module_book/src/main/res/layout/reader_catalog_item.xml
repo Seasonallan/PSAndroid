@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.season.lib.view.CheckedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:padding="6dp"
+	android:orientation="vertical">
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		<TextView
+			android:id="@+id/catalog_title_tv"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:layout_weight="1"
+			android:gravity="center_vertical"
+			android:text="内容"
+			android:textColor="@color/common_black_6"
+			android:textSize="15dp" />
+		<TextView
+			android:id="@+id/catalog_title_index_tv"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:gravity="center_vertical"
+			android:text="index"
+			android:paddingLeft="8dp"
+			android:textColor="@color/common_black_6"
+			android:textSize="16dp" />
+	</LinearLayout>
+	<TextView
+		android:id="@+id/catalog_content_tv"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
+		android:visibility="gone"
+		android:paddingTop="8dp"
+		android:text="内容"
+		android:textColor="@color/common_blue_4"
+		android:textSize="18dp" />
+</com.season.lib.view.CheckedLinearLayout>

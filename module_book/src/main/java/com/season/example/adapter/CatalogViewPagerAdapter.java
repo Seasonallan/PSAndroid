@@ -4,9 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,8 +15,6 @@ import com.season.example.popwindow.CatalogView;
 import java.util.ArrayList;
 
 public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapter {
-    private static final String ITEM_VIEW_TAG = "ITEM_VIEW_TAG";
-
     public ArrayList<String> mTags;
     private Context mContext;
 
@@ -36,20 +32,14 @@ public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapt
         String tag = getTab(position);
         if(tag.equals(CatalogView.TAG_CATALOG)){
             indicatorView = newIndicator(R.string.btn_text_catalog);
-            indicatorView.setBackgroundResource(R.drawable.ic_reader_catalog_item_bg);
+            //indicatorView.setBackgroundResource(R.drawable.ic_reader_catalog_item_bg);
         }else if(tag.equals(CatalogView.TAG_DIGEST)){
             indicatorView = newIndicator(R.string.btn_text_bookdigest);
-            indicatorView.setBackgroundResource(R.drawable.ic_reader_catalog_item_bg);
+           // indicatorView.setBackgroundResource(R.drawable.ic_reader_catalog_item_bg);
         }else if(tag.equals(CatalogView.TAG_BOOKMARK)){
             indicatorView = newIndicator(R.string.btn_text_bookmark);
         }
         return indicatorView;
-    }
-
-    public class ViewHolder {
-        public ListView mListView;
-        public ImageView mListViewBG;
-        public View mLoadingView;
     }
 
     protected View newIndicator(int strResID) {
@@ -73,23 +63,7 @@ public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapt
     public View getItemView(ViewGroup container, int position) {
         final String tag = getTab(position);
         View contentView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_tab_item_lay, null);
-        final ListView mListView = (ListView) contentView.findViewById(R.id.reader_catalog_lv);
-        final ImageView mListViewBG = (ImageView) contentView.findViewById(R.id.reader_catalog_lv_bg);
-        contentView.setTag(getItemViewTag(position));
-        ViewHolder viewHolder = new ViewHolder();
-        viewHolder.mListView = mListView;
-        viewHolder.mListViewBG = mListViewBG;
-        viewHolder.mLoadingView = contentView.findViewById(R.id.reader_catalog_loading_lay);
-        contentView.setTag(R.layout.reader_catalog_tab_item_lay, viewHolder);
-        mListView.setRecyclerListener(new AbsListView.RecyclerListener() {
-            @Override
-            public void onMovedToScrapHeap(View view) {
-                if(view == null){
-                    return;
-                }
-                view.destroyDrawingCache();
-            }
-        });
+        final ListView mListView = contentView.findViewById(R.id.reader_catalog_lv);
         mListView.setAdapter(getAdapter(tag));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -106,7 +80,4 @@ public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapt
 
     public abstract void onItemClicked(String tag, ListView mListView, int position);
 
-    public String getItemViewTag(int position){
-        return ITEM_VIEW_TAG + "_" + position;
-    }
 }

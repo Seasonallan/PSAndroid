@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:cacheColorHint="@color/transparent"
-	android:listSelector="@drawable/list_selector_background"
+	android:listSelector="@drawable/transparent"
 	android:gravity="center"
 	android:numColumns="4"
 	android:paddingTop="15dip"

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.example.book.R;
 import com.season.lib.anim.AbsVerGestureAnimController;
+import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookMark;
 import com.season.lib.db.BookMarkDB;
 import com.season.lib.AbsTextSelectHandler;
@@ -279,26 +280,13 @@ public class BaseBookActivity extends Activity implements
 			}
 
 			@Override
-			public void reflashCurrentPageBookmark() {
-				this_.reflashCurrentPageBookmark();
+			public void selectBookmark(BookMark bookMark) {
+				mReadView.gotoBookmark(bookMark, true);
 			}
 
 			@Override
-			public void onEditModeChange(boolean isEdit) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public boolean isTextSelectHandlEenabled() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean isHasNetWork() {
-				// TODO Auto-generated method stub
-				return false;
+			public void selectDigest(BookDigests bookDigests) {
+				mReadView.gotoChar(bookDigests.getChaptersId(), bookDigests.getPosition(), true);
 			}
 
 			@Override
@@ -325,10 +313,12 @@ public class BaseBookActivity extends Activity implements
 		}
 	}
 
-	protected void showReaderContentView() {
+	protected boolean showReaderContentView() {
 		if(mCatalogView != null && mCatalogView.isShown()){
 			dismissReaderCatalogView();
+			return true;
 		}
+		return false;
 	}
 
 	protected void showReaderCatalogView() {
@@ -353,11 +343,13 @@ public class BaseBookActivity extends Activity implements
 		}
 	}
 
-	protected void reflashCurrentPageBookmark() {
-		if (Build.VERSION.SDK_INT >= 10) {
-			// saveSystemBookmarkInUi();
+	@Override
+	public void onBackPressed() {
+		if (showReaderContentView()){
+			return;
 		}
-	};
+		super.onBackPressed();
+	}
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
@@ -468,7 +460,6 @@ public class BaseBookActivity extends Activity implements
     public void onChapterChange(ArrayList<Catalog> chapters) {
         if(mCatalogView != null){
             mCatalogView.setCatalogData(chapters);
-            mCatalogView.refreshCatalog();
         }
     }
 

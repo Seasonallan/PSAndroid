@@ -22,6 +22,8 @@ public class CatalogAdapter extends BaseAdapter {
         this.mCatalogList = catalogList;
     }
 
+    public int selectCatalog = 0;
+
     @Override
     public int getCount() {
         return mCatalogList.size();
@@ -42,7 +44,7 @@ public class CatalogAdapter extends BaseAdapter {
         ViewHolder viewHolder = null;
         if(convertView == null){
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_item_leyue, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_item, null);
             viewHolder.titileTV = (TextView)convertView.findViewById(R.id.catalog_title_tv);
             viewHolder.titileIndexTV = (TextView)convertView.findViewById(R.id.catalog_title_index_tv);
             convertView.setTag(viewHolder);
@@ -78,6 +80,8 @@ public class CatalogAdapter extends BaseAdapter {
                 , convertView.getPaddingRight(), convertView.getPaddingBottom());
         viewHolder.titileTV.setText(catalog.getText());
         viewHolder.titileTV.setTextSize(textSize);
+        viewHolder.titileTV.setTextColor(position != selectCatalog?mContext.getResources().getColor(R.color.common_black_6):
+                mContext.getResources().getColor(R.color.common_blue_4));
         return convertView;
     }
 

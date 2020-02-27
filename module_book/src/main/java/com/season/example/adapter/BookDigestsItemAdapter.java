@@ -1,6 +1,7 @@
 package com.season.example.adapter;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +28,9 @@ public class BookDigestsItemAdapter extends BaseAdapter {
     public void setData(ArrayList<BookDigests> bookDigests){
         Collections.sort(bookDigests, new SortByDate());
         this.mBookDigests = bookDigests;
+        notifyDataSetChanged();
     }
 
-    public BookDigests remove(int position) {
-        return mBookDigests.remove(position);
-    }
 
     @Override
     public int getCount() {
@@ -59,9 +58,10 @@ public class BookDigestsItemAdapter extends BaseAdapter {
         ViewHolder viewHolder = null;
         if(convertView == null){
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_item_leyue, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_item, null);
             viewHolder.titileTV = (TextView)convertView.findViewById(R.id.catalog_title_tv);
             viewHolder.titileIndexTV = (TextView)convertView.findViewById(R.id.catalog_title_index_tv);
+            viewHolder.contentTV = (TextView)convertView.findViewById(R.id.catalog_content_tv);
             convertView.setTag(viewHolder);
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
@@ -69,12 +69,19 @@ public class BookDigestsItemAdapter extends BaseAdapter {
         BookDigests catalog =  getItem(position);
         viewHolder.titileIndexTV.setText(String.valueOf(catalog.getChaptersId()));
         viewHolder.titileTV.setText(catalog.getContent());
+        if (TextUtils.isEmpty(catalog.getMsg())){
+            viewHolder.contentTV.setVisibility(View.GONE);
+        }else{
+            viewHolder.contentTV.setVisibility(View.VISIBLE);
+            viewHolder.contentTV.setText(catalog.getMsg());
+        }
         return convertView;
     }
 
 
     private class ViewHolder {
         TextView titileTV;
+        TextView contentTV;
         TextView titileIndexTV;
     }
 

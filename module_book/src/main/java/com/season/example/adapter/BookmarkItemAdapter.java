@@ -10,20 +10,26 @@ import android.widget.TextView;
 
 
 import com.example.book.R;
+import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookMark;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class BookmarkItemAdapter extends BaseAdapter {
 
-	private ArrayList<BookMark> bookmarks;
+	private List<BookMark> bookmarks;
 	private Context mContext;
-	public BookmarkItemAdapter(Context context, List<BookMark> bookmarks){
+	public BookmarkItemAdapter(Context context){
 		super();
         this.mContext = context;
-		this.bookmarks = (ArrayList<BookMark>) bookmarks;
+	}
+
+	public void setData(List<BookMark> bookmarks){
+		this.bookmarks = bookmarks;
+		notifyDataSetChanged();
 	}
 
 	@Override
@@ -37,7 +43,7 @@ public class BookmarkItemAdapter extends BaseAdapter {
 	@Override
 	public BookMark getItem(int position) {
 		if(position < getCount()){
-			return bookmarks.get(position);
+			return bookmarks.get(getCount() - 1 - position);
 		}
 		return null;
 	}
@@ -52,7 +58,7 @@ public class BookmarkItemAdapter extends BaseAdapter {
 		ViewHolder viewHolder = null;
 		if(convertView == null){
 			viewHolder = new ViewHolder();
-			convertView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_item_leyue, null);
+			convertView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_item, null);
 			viewHolder.titileTV = (TextView)convertView.findViewById(R.id.catalog_title_tv);
 			viewHolder.titileIndexTV = (TextView)convertView.findViewById(R.id.catalog_title_index_tv);
 			convertView.setTag(viewHolder);
@@ -64,7 +70,7 @@ public class BookmarkItemAdapter extends BaseAdapter {
 		if(TextUtils.isEmpty(catalog)){
 			catalog = "第"+item.getChapterID() +"章";
 		}
-		viewHolder.titileIndexTV.setText(String.valueOf(item.getChapterID()));
+		viewHolder.titileIndexTV.setText(String.valueOf(item.getPosition()));
 		viewHolder.titileTV.setText(catalog);
 		return convertView;
 	}
