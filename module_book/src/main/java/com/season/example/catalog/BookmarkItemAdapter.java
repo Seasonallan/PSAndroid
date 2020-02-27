@@ -1,4 +1,4 @@
-package com.season.example.adapter;
+package com.season.example.catalog;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -10,11 +10,8 @@ import android.widget.TextView;
 
 
 import com.example.book.R;
-import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookMark;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 

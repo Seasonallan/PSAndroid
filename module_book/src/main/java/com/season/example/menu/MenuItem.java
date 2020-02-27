@@ -1,4 +1,4 @@
-package com.season.example.model;
+package com.season.example.menu;
 
 
 /**

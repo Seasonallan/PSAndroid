@@ -14,7 +14,7 @@ import android.widget.GridView;
 
 
 import com.example.book.R;
-import com.season.example.adapter.BookDigestColorItemAdapter;
+import com.season.example.catalog.BookDigestColorItemAdapter;
 import com.season.example.model.BookDigestColorItem;
 import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;

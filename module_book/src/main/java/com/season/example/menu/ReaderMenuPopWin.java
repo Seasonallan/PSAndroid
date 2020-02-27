@@ -1,4 +1,4 @@
-package com.season.example.popwindow;
+package com.season.example.menu;
 
 import java.util.ArrayList;
 
@@ -29,8 +29,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.book.R;
-import com.season.example.model.MenuItem;
-import com.season.example.adapter.MenuItemAdapter;
+import com.season.example.popwindow.BasePopupWindow;
 import com.season.lib.ReadSetting;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.page.span.media.ReaderMediaPlayer;

@@ -1,4 +1,4 @@
-package com.season.example.adapter;
+package com.season.example.catalog;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;

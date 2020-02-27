@@ -1,4 +1,4 @@
-package com.season.example.adapter;
+package com.season.example.menu;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,6 @@ import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import com.example.book.R;
-import com.season.example.model.MenuItem;
 
 
 /**

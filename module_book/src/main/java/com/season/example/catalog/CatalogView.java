@@ -1,4 +1,4 @@
-package com.season.example.popwindow;
+package com.season.example.catalog;
 
 import java.util.ArrayList;
 
@@ -10,16 +10,11 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 
-import androidx.viewpager.widget.ViewPager;
-
 import com.example.book.R;
-import com.season.example.adapter.BookDigestsItemAdapter;
-import com.season.example.adapter.BookmarkItemAdapter;
-import com.season.example.adapter.CatalogAdapter;
-import com.season.example.adapter.CatalogViewPagerAdapter;
+import com.season.example.popwindow.SlideTabWidget;
+import com.season.example.popwindow.ViewPagerTabHost;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.BookMark;
