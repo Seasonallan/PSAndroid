@@ -30,7 +30,7 @@
 				android:paddingLeft="10dip"
 				android:text="00:00"
 				android:textColor="@color/common_white_2"
-				android:textSize="@dimen/font_common_num5" />
+				android:textSize="15dp" />
 			<View
 				android:layout_width="0dip"
 				android:layout_height="0dip"
@@ -42,7 +42,7 @@
 				android:paddingRight="10dip"
 				android:text="00:00"
 				android:textColor="@color/common_white_2"
-				android:textSize="@dimen/font_common_num5" />
+				android:textSize="15dp" />
 		</LinearLayout>
 		<SeekBar
 			android:id="@+id/menu_reader_voice_seek"

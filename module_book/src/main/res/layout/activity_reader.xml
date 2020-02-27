@@ -13,15 +13,15 @@
 
         <include
             android:id="@+id/action_view"
-            layout="@layout/book_mark_refresh_layout" />
-
+            layout="@layout/refresh_action_view" />
         <include
             android:id="@+id/tool_view"
-            layout="@layout/tool_layout" />
+            layout="@layout/refresh_tool_view" />
         <FrameLayout
             android:id="@+id/read_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
     </com.season.lib.view.PullRefreshLayout>
 	<RelativeLayout
 		android:id="@+id/content_lay" 

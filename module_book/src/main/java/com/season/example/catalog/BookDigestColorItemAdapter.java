@@ -94,7 +94,7 @@ public class BookDigestColorItemAdapter extends BaseAdapter {
 	}
 	
 	private View newView(){
-		return inflater.inflate(R.layout.bookdigest_color_item, null);
+		return inflater.inflate(R.layout.pop_digest_item, null);
 	}
 	public void setSeleted(int position){
 		if(position != oldSelect){

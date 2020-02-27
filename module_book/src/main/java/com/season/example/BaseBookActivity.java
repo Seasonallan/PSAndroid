@@ -43,7 +43,6 @@ import com.season.lib.page.span.AsyncDrawableSpan;
 import com.season.lib.page.span.ClickActionSpan;
 import com.season.lib.page.span.ClickAsyncDrawableSpan;
 import com.season.lib.page.span.UrlSpna;
-import com.season.lib.util.SimpleAnimationListener;
 import com.season.lib.view.BaseReadView;
 import com.season.lib.view.ReadView;
 import com.season.lib.view.IReaderView;
@@ -100,13 +99,15 @@ public class BaseBookActivity extends Activity implements
 		centerRect.top = ScreenUtils.getScreenHeight()/4;
 		centerRect.bottom = ScreenUtils.getScreenHeight()*3/4;
 
-		setContentView(R.layout.activity_reader_lay);
+		setContentView(R.layout.activity_reader);
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
-		showReaderContentView();
+
 		initClickDetector();
-		init();
+		initReadView();
         initPullView();
+		initReaderCatalogView();
+		initMenu();
 
         overridePendingTransition(0, 0);
         LogUtil.e("status  onCreated");
@@ -181,7 +182,7 @@ public class BaseBookActivity extends Activity implements
 	}
 	
 	private void initMenu() {
-		mReaderMenuPopWin = new ReaderMenuPopWin(mReadView, this, mBook,
+		mReaderMenuPopWin = new ReaderMenuPopWin(this,
 				new ReaderMenuPopWin.IActionCallback() {
 					@Override
 					public void onShowReaderCatalog() {
@@ -253,6 +254,11 @@ public class BaseBookActivity extends Activity implements
 					}
 
 					@Override
+					public void onDismiss() {
+						mCatalogLay.setVisibility(View.GONE);
+					}
+
+					@Override
 					public int getLayoutChapterProgress() {
 						return mReadView.getLayoutChapterProgress();
 					}
@@ -266,12 +272,10 @@ public class BaseBookActivity extends Activity implements
 
 	private void initReaderCatalogView() {
 		mCatalogView = new CatalogView(this_, new CatalogView.IActionCallBack() {
-
 			@Override
-			public void showReaderContentView() {
-				this_.showReaderContentView();
+			public void onDismiss() {
+				mCatalogLay.setVisibility(View.GONE);
 			}
-
 			@Override
 			public void selectCatalog(Catalog catalog) {
 				mReadView.gotoChapter(catalog, true);
@@ -286,64 +290,33 @@ public class BaseBookActivity extends Activity implements
 			public void selectDigest(BookDigests bookDigests) {
 				mReadView.gotoChar(bookDigests.getChaptersId(), bookDigests.getPosition(), true);
 			}
-
-			@Override
-			public Catalog getCurrentCatalog() {
-				return mReadView.getCurrentCatalog();
-			}
-
-			@Override
-			public BookInfo getBookInfo() {
-				return mBook;
-			}
 		});
 	}
 
 	private void showMenu() {
-		if (!mReaderMenuPopWin.isShowing() && !mCatalogLay.isShown()) {
-			mReaderMenuPopWin.showAtLocation();
+		if (mReaderMenuPopWin.getParent() == null) {
+			mCatalogLay.addView(mReaderMenuPopWin);
 		}
-	}
-
-	private void dismissMenu() {
-		if (mReaderMenuPopWin.isShowing()) {
-			mReaderMenuPopWin.dismiss();
-		}
-	}
-
-	protected boolean showReaderContentView() {
-		if(mCatalogView != null && mCatalogView.isShown()){
-			dismissReaderCatalogView();
-			return true;
-		}
-		return false;
+		mCatalogLay.setVisibility(View.VISIBLE);
+		mReaderMenuPopWin.show(mBook);
 	}
 
 	protected void showReaderCatalogView() {
-		if (mCatalogView != null) {
-			if (mCatalogView.getParent() == null) {
-				mCatalogLay.addView(mCatalogView);
-			}
-			mCatalogLay.setVisibility(View.VISIBLE);
-			mCatalogView.show();
+		if (mCatalogView.getParent() == null) {
+			mCatalogLay.addView(mCatalogView);
 		}
-	}
-	
-	protected void dismissReaderCatalogView() {
-		if (mCatalogView != null) {
-			mCatalogView.dismiss(new SimpleAnimationListener(){
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					mReadView.setVisibility(View.VISIBLE);
-					mCatalogLay.setVisibility(View.GONE);
-				}
-			});
-		}
+		mCatalogLay.setVisibility(View.VISIBLE);
+		mCatalogView.show(mBook, mReadView.getCurrentCatalog());
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (showReaderContentView()){
+		if(mCatalogView.isShown()){
+			mCatalogView.dismiss();
+			return;
+		}
+		if(mReaderMenuPopWin.isShown()){
+			mReaderMenuPopWin.dismiss(true);
 			return;
 		}
 		super.onBackPressed();
@@ -412,7 +385,7 @@ public class BaseBookActivity extends Activity implements
     }
 
 
-    private void init() {
+    private void initReadView() {
         new Thread() {
             @Override
             public void run() {
@@ -434,10 +407,6 @@ public class BaseBookActivity extends Activity implements
                             mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             isInit = true;
                             mReadView.onCreate(null);
-
-							initReaderCatalogView();
-                            initMenu();
-
                             new Thread() {
                                 @Override
                                 public void run() {

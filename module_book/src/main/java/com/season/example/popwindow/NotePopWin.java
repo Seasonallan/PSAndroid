@@ -44,7 +44,7 @@ public class NotePopWin extends BasePopupWindow {
 		tempIV.setLayoutParams(lp);
 		mContentLayout.addView(tempIV);
 		
-		mTextView = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.scroll_text_view, null);
+		mTextView = new TextView(getContext());
 		mTextView.setId(mTextView.hashCode());
 		mTextView.setBackgroundDrawable(mContentDrawable);
 		mTextView.setTextColor(Color.WHITE);

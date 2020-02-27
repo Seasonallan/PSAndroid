@@ -70,7 +70,7 @@ public class MenuItemAdapter extends BaseAdapter {
 	}
 	
 	private View newView(){
-		return inflater.inflate(R.layout.menu_item_leyue, null);
+		return inflater.inflate(R.layout.menu_tab_item, null);
 	}
 	
 	private class ViewHolder {

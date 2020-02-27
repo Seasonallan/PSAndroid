@@ -22,8 +22,10 @@ import com.season.lib.bean.Catalog;
 import com.season.lib.db.BookDigestsDB;
 import com.season.lib.db.BookMarkDB;
 import com.season.lib.dimen.ScreenUtils;
-import com.season.lib.util.SimpleAnimationListener;
 
+/**
+ * 目录视图
+ */
 public class CatalogView extends FrameLayout{
 	private static final String TAG = CatalogView.class.getSimpleName();
 	public static final String TAG_CATALOG = "TAG_CATALOG";
@@ -39,8 +41,6 @@ public class CatalogView extends FrameLayout{
 	protected ArrayList<Catalog> mCatalogList;
 	private ArrayList<String> mTags = new ArrayList<String>();
 	private IActionCallBack mCallBack;
-	private boolean isShowing = false;
-	private boolean isDismissing = false;
 	private View mGotoReaderBut;
 
 	private CatalogAdapter catalogAdapter;
@@ -50,8 +50,7 @@ public class CatalogView extends FrameLayout{
 		super(context);
 		mContext = context;
 		mCallBack = actionCallBack;
-		mBookInfo = mCallBack.getBookInfo();
-		LayoutInflater.from(context).inflate(R.layout.pager_tabs, this, true);
+		LayoutInflater.from(context).inflate(R.layout.reader_catalog, this, true);
 		mBookNameTV = (TextView) findViewById(R.id.catalog_book_name_tv);
 		mAuthorNameTV = (TextView) findViewById(R.id.catalog_author_name_tv);
 		((SlideTabWidget) findViewById(android.R.id.tabs)).initialize(LayoutParams.FILL_PARENT,getResources().getDrawable(R.drawable.ic_reader_catalog_select_bg));
@@ -67,7 +66,7 @@ public class CatalogView extends FrameLayout{
 		mGotoReaderBut.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mCallBack.showReaderContentView();
+				dismiss();
 			}
 		});
 		mTags.add(TAG_CATALOG);
@@ -82,7 +81,7 @@ public class CatalogView extends FrameLayout{
 				}else if(tag.equals(CatalogView.TAG_BOOKMARK)){
 					mCallBack.selectBookmark(mBookMarkAdapter.getItem(position));
 				}
-				mCallBack.showReaderContentView();
+				dismiss();
 			}
 			public ListAdapter getAdapter(String tag){
 				if(tag.equals(CatalogView.TAG_CATALOG)){
@@ -97,7 +96,53 @@ public class CatalogView extends FrameLayout{
 		};
 		mTabHost.setAdapter(mViewPagerAdapter);
 
+		initAnimation();
 	}
+
+	private boolean isShowing = false,isDismissing = false;
+	Animation showAnimation, hideAnimation;
+	private void initAnimation() {
+		showAnimation = new TranslateAnimation(
+				Animation.ABSOLUTE, -ScreenUtils.getScreenWidth(), Animation.ABSOLUTE,
+				0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+				Animation.RELATIVE_TO_SELF, 0.0f);
+		showAnimation.setDuration(600);
+		showAnimation.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				setAnimation(null);
+				isShowing = false;
+			}
+		});
+
+		hideAnimation = new TranslateAnimation(Animation.ABSOLUTE,
+				0.0f, Animation.ABSOLUTE, -ScreenUtils.getScreenWidth(),
+				Animation.RELATIVE_TO_SELF, 0.0f,
+				Animation.RELATIVE_TO_SELF, 0.0f);
+		hideAnimation.setDuration(350);
+		hideAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				isDismissing = false;
+				setVisibility(View.GONE);
+				mCallBack.onDismiss();
+			}
+		});
+	}
+
 
 	public void setBookInfo(String bookName,String authorName){
 		mBookNameTV.setText(bookName);
@@ -114,79 +159,35 @@ public class CatalogView extends FrameLayout{
 	}
 
 
-	public void show(){
+	public void show(BookInfo book, Catalog currentCatalog){
+		mBookInfo = book;
 		if (isShowing){
 			return;
 		}
 		setVisibility(View.VISIBLE);
 		isShowing = true;
 
-		catalogAdapter.selectCatalog = mCatalogList.indexOf(mCallBack.getCurrentCatalog());
+		catalogAdapter.selectCatalog = mCatalogList.indexOf(currentCatalog);
 		catalogAdapter.notifyDataSetChanged();
 		mBookDigestsAdapter.setData(BookDigestsDB.getInstance().getListBookDigests(
 				mBookInfo.id));
 		mBookMarkAdapter.setData(BookMarkDB.getInstance().getUserBookMark(mBookInfo.id));
-
-		Animation trans1 = new TranslateAnimation(
-				Animation.ABSOLUTE, -ScreenUtils.getScreenWidth(), Animation.ABSOLUTE,
-				0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-				Animation.RELATIVE_TO_SELF, 0.0f);
-		trans1.setDuration(600);
-		trans1.setAnimationListener(new Animation.AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				setAnimation(null);
-				isShowing = false;
-			}
-		});
-		startAnimation(trans1);
+		startAnimation(showAnimation);
 	}
-	public void dismiss(final SimpleAnimationListener listener){
+	public void dismiss(){
 		if (isDismissing){
 			return;
 		}
 		isDismissing = true;
-		setVisibility(View.INVISIBLE);
-		Animation trans1 = new TranslateAnimation(Animation.ABSOLUTE,
-				0.0f, Animation.ABSOLUTE, -ScreenUtils.getScreenWidth(),
-				Animation.RELATIVE_TO_SELF, 0.0f,
-				Animation.RELATIVE_TO_SELF, 0.0f);
-		trans1.setDuration(350);
-		trans1.setAnimationListener(new Animation.AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				isDismissing = false;
-				listener.onAnimationEnd(animation);
-			}
-		});
-		startAnimation(trans1);
+		setVisibility(View.VISIBLE);
+		startAnimation(hideAnimation);
 	}
 
 	
 	public interface IActionCallBack{
-
-		Catalog getCurrentCatalog();
-
-		void showReaderContentView();
-
+		void onDismiss();
 		void selectCatalog(Catalog catalog);
 		void selectBookmark(BookMark bookMark);
 		void selectDigest(BookDigests bookDigests);
-
-		BookInfo getBookInfo();
-
 	}
 }

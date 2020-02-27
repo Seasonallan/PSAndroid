@@ -56,7 +56,7 @@ public class BookDigestsRemarksDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_edit_bookdigest_remarks);
+		setContentView(R.layout.pop_digest);
 //		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		mRemarks_et = (EditText) findViewById(R.id.remarks_edit);
 		EditText content = (EditText) findViewById(R.id.digests_content);
