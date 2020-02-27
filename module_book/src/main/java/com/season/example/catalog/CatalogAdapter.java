@@ -1,6 +1,7 @@
 package com.season.example.catalog;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,7 @@ public class CatalogAdapter extends BaseAdapter {
             viewHolder.titileTV.setTextColor(mContext.getResources().getColor(R.color.common_black_6));
             viewHolder.titileIndexTV.setTextColor(mContext.getResources().getColor(R.color.common_black_6));
         }
-        float textSize = DimenUtil.DIPToPX(11);
+        float textSize = 18;
         for (int i = 1; i < catalog.getLayer(); i++) {
             textSize *= 0.85f;
         }
@@ -79,7 +80,7 @@ public class CatalogAdapter extends BaseAdapter {
         viewHolder.titileTV.setPadding(paddingLeft, convertView.getPaddingTop()
                 , convertView.getPaddingRight(), convertView.getPaddingBottom());
         viewHolder.titileTV.setText(catalog.getText());
-        viewHolder.titileTV.setTextSize(textSize);
+        viewHolder.titileTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
         viewHolder.titileTV.setTextColor(position != selectCatalog?mContext.getResources().getColor(R.color.common_black_6):
                 mContext.getResources().getColor(R.color.common_blue_4));
         return convertView;

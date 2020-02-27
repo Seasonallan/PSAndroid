@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" >
 	
-	<com.season.example.popwindow.ViewPagerTabHost
+	<com.season.example.catalog.BaseViewPagerTabHost
 		android:id="@android:id/tabhost"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" >
@@ -53,7 +53,7 @@
 				android:layout_below="@android:id/tabs"
 				android:background="@drawable/ic_reader_catalog_bg_shadow" />
 		</RelativeLayout>
-	</com.season.example.popwindow.ViewPagerTabHost>
+	</com.season.example.catalog.BaseViewPagerTabHost>
 	<ImageButton
 		android:id="@+id/left_suspension_but"
 		android:layout_width="wrap_content"

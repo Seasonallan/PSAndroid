@@ -6,6 +6,6 @@
 	android:listSelector="@drawable/transparent"
 	android:gravity="center"
 	android:numColumns="4"
-	android:paddingTop="15dp"
-	android:paddingBottom="15dp"
+	android:paddingTop="5dp"
+	android:paddingBottom="5dp"
 	android:stretchMode="columnWidth"/>

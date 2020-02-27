@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.example.book.R;
 import com.season.example.popwindow.SlideTabWidget;
-import com.season.example.popwindow.ViewPagerTabHost;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.BookMark;
@@ -36,7 +35,7 @@ public class CatalogView extends FrameLayout{
 	private BookInfo mBookInfo;
 	private TextView mBookNameTV;
 	private TextView mAuthorNameTV;
-	private ViewPagerTabHost mTabHost;
+	private BaseViewPagerTabHost mTabHost;
 	private CatalogViewPagerAdapter mViewPagerAdapter;
 	protected ArrayList<Catalog> mCatalogList;
 	private ArrayList<String> mTags = new ArrayList<String>();
@@ -54,7 +53,7 @@ public class CatalogView extends FrameLayout{
 		mBookNameTV = (TextView) findViewById(R.id.catalog_book_name_tv);
 		mAuthorNameTV = (TextView) findViewById(R.id.catalog_author_name_tv);
 		((SlideTabWidget) findViewById(android.R.id.tabs)).initialize(LayoutParams.FILL_PARENT,getResources().getDrawable(R.drawable.ic_reader_catalog_select_bg));
-		mTabHost = (ViewPagerTabHost)findViewById(android.R.id.tabhost);
+		mTabHost = (BaseViewPagerTabHost)findViewById(android.R.id.tabhost);
 		mTabHost.setBackgroundColor(getResources().getColor(R.color.window_bg));
 		mTabHost.setup(); 
 		mTabHost.setOffscreenPageLimit(2);

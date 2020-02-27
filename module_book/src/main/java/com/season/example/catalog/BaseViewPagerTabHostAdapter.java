@@ -7,10 +7,9 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.season.example.popwindow.ViewPagerTabHost;
 import com.season.lib.util.LogUtil;
 
-public abstract class BaseViewPagerTabHostAdapter extends ViewPagerTabHost.AbsPagerTabHostAdapter {
+public abstract class BaseViewPagerTabHostAdapter extends BaseViewPagerTabHost.AbsPagerTabHostAdapter {
 	private static final String TAG = BaseViewPagerTabHostAdapter.class.getSimpleName();
 	private WeakReference<ViewGroup> mContainer;
 	private ItemLifeCycleListener mItemLifeCycleListener;

@@ -29,10 +29,8 @@ public class SelectorControlView implements AbsTextSelectHandler.ISelectorListen
 			AbsTextSelectHandler textSelectHandler) {
 		
 		if(mBookDigestsPopWin == null){
-			View contentView = mActivity.getLayoutInflater().inflate(R.layout.pop_selected, null);
-			mBookDigestsPopWin = new BookDigestsPopWin(contentView,mReadView
+			mBookDigestsPopWin = new BookDigestsPopWin(mReadView
 					, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT,mActivity, textSelectHandler);
-			
 		}
 		mBookDigestsPopWin.show(BookDigestsPopWin.VIEW_TYPE_MAGNIFIER, x, y, bitmap);
 	}
@@ -72,9 +70,7 @@ public class SelectorControlView implements AbsTextSelectHandler.ISelectorListen
 	@Override
 	public void onOpenEditView(float x, float y, BookDigests bookDigests,
                                AbsTextSelectHandler textSelectHandler) {
-		
-		View contentView = mActivity.getLayoutInflater().inflate(R.layout.pop_selected, null);
-		mBookDigestsPopWin = new BookDigestsPopWin(contentView,mReadView
+		mBookDigestsPopWin = new BookDigestsPopWin(mReadView
 				, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT,mActivity, textSelectHandler);
 		mBookDigestsPopWin.setmBookDigests(bookDigests);
 		mBookDigestsPopWin.setTouchable(true);

@@ -1,4 +1,4 @@
-package com.season.example.popwindow;
+package com.season.example.catalog;
 
 import android.content.Context;
 import android.util.AttributeSet;

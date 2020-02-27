@@ -14,10 +14,10 @@ import android.widget.GridView;
 
 
 import com.example.book.R;
-import com.season.example.catalog.BookDigestColorItemAdapter;
 import com.season.example.model.BookDigestColorItem;
 import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
+import com.season.lib.util.NavigationBarUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +30,6 @@ public class BookDigestsRemarksDialog extends Dialog {
 	public final static int BLUE = Color.parseColor("#13b0a5") + TRANS;
 	public final static int PINK = Color.parseColor("#fc9d9a") + TRANS;
     public final static int HSPAC = 5;
-	public final static int LAYOUT_MARGIN = 5;
 	private EditText mRemarks_et;
 	private AbsTextSelectHandler mTextSelectHandler;
 	private Activity mContext;
@@ -38,12 +37,10 @@ public class BookDigestsRemarksDialog extends Dialog {
 	private OnCloseDialogLisenter mOnCloseDialogLisenter;
 	private int mColor = -1;
 	
-	
 	public BookDigestsRemarksDialog(Activity context,int theme, AbsTextSelectHandler textSelectHandler) {
 		super(context,theme);
 		this.mTextSelectHandler = textSelectHandler;
 		this.mContext = context;
-		
 	}
 	
 	public BookDigestsRemarksDialog(Activity context, int theme,AbsTextSelectHandler textSelectHandler, BookDigests bookDigests) {
@@ -54,10 +51,10 @@ public class BookDigestsRemarksDialog extends Dialog {
 	}
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.pop_digest);
-//		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
 		mRemarks_et = (EditText) findViewById(R.id.remarks_edit);
 		EditText content = (EditText) findViewById(R.id.digests_content);
 		if(mBookDigests == null){
@@ -146,12 +143,18 @@ public class BookDigestsRemarksDialog extends Dialog {
 			
 	};
 
+	@Override
+	public void dismiss() {
+		super.dismiss();
+		NavigationBarUtil.hideNavigationBar(mContext);
+	}
+
 	public void setOnCloseDialogLisenter(OnCloseDialogLisenter onCloseDialog){
 		   mOnCloseDialogLisenter = onCloseDialog;
 	    }
 	    private void closeDialog(boolean isCloseDialog){
+
 	    	if(mOnCloseDialogLisenter != null){
-	    		
 	    		mOnCloseDialogLisenter.onCloseDialog(isCloseDialog);
 	    	}
 	    }

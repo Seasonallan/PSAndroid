@@ -9,10 +9,10 @@
 
     <ImageView
         android:id="@+id/text_iv"
-        android:layout_width="128dp"
+        android:layout_width="88dp"
         android:layout_height="match_parent"
         android:background="#fff"
-        android:padding="24dp"
+        android:padding="12dp"
         android:src="@mipmap/img_text"/>
 
     <com.season.lib.view.VerticalSeekBar
@@ -45,8 +45,8 @@
                     android:id="@+id/animation_1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 
@@ -65,8 +65,8 @@
                     android:id="@+id/animation_2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 
@@ -95,8 +95,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -115,8 +115,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
 
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 
@@ -145,8 +145,8 @@
                     android:layout_width="88dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -165,8 +165,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -194,8 +194,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -214,8 +214,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
 
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 
@@ -244,8 +244,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -264,8 +264,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
 
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 
@@ -294,8 +294,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -314,8 +314,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
 
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 
@@ -344,8 +344,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -364,8 +364,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
 
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 
@@ -397,8 +397,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@mipmap/img_rect">
 
                     <TextView
@@ -417,8 +417,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
 
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:background="@mipmap/img_rect">
 

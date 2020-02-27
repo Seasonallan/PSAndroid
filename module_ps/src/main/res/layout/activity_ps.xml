@@ -81,19 +81,19 @@
 
                 <ImageView
                     android:id="@+id/iv_back"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="16dp"
                     android:src="@drawable/selector_crop_fanhui" />
 
                 <ImageView
                     android:id="@+id/iv_close"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentLeft="true"
                     android:visibility="gone"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="16dp"
                     android:src="@drawable/selector_crop_close"  />
 
                 <View
@@ -103,20 +103,20 @@
 
                 <ImageView
                     android:id="@+id/iv_next"
-                    android:layout_width="88dp"
-                    android:layout_height="38dp"
+                    android:layout_width="66dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginRight="16dp"
                     android:src="@drawable/selector_crop_next" />
 
                 <ImageView
                     android:id="@+id/iv_confirm"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginRight="16dp"
                     android:src="@drawable/selector_crop_confirm"
                     android:visibility="gone" />
 
@@ -134,9 +134,9 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
+                    android:layout_height="30dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="10dp"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:background="@drawable/btn_shape_white"
@@ -151,12 +151,12 @@
                         android:layout_height="wrap_content"
                         android:paddingRight="3dp"
                         android:text="背景"
-                        android:textSize="18dp" />
+                        android:textSize="15dp" />
 
                     <com.season.lib.view.ColorImageView
                         android:id="@+id/v_color"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:background="@mipmap/icon_color_transparent" />
 
                     <RadioGroup
@@ -171,24 +171,24 @@
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_translate"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:background="@mipmap/icon_color_transparent"
                             android:button="@null"
                             android:checked="true" />
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_white"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_marginLeft="5dp"
                             android:background="@mipmap/icon_color_white"
                             android:button="@null" />
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_hui"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_marginLeft="5dp"
                             android:background="@mipmap/icon_color_gray"
                             android:button="@null"
@@ -196,16 +196,16 @@
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_black"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_marginLeft="5dp"
                             android:background="@mipmap/icon_color_black"
                             android:button="@null" />
 
                         <com.season.lib.view.ColorPickView
                             android:id="@+id/rb_vid_pic"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_marginLeft="5dp"
                             android:button="@null"
                             android:visibility="gone" />
@@ -219,11 +219,11 @@
                     android:layout_weight="1" />
 
                 <LinearLayout
-                    android:layout_width="168dp"
-                    android:layout_height="38dp"
+                    android:layout_width="128dp"
+                    android:layout_height="28dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginRight="20dp"
-                    android:padding="10dp"
+                    android:layout_marginRight="10dp"
+                    android:padding="8dp"
                     android:background="@drawable/shape_conn_gray"
                     android:gravity="center"
                     android:orientation="horizontal">
@@ -291,7 +291,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="128dp"
+            android:layout_height="88dp"
             android:background="#dadada"
             >
             <LinearLayout
@@ -301,21 +301,21 @@
                     android:id="@+id/bt_paint"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="24dp"
+                    android:padding="12dp"
                     android:layout_weight="1"
                     android:src="@mipmap/img_tuya"/>
                 <ImageView
                     android:id="@+id/bt_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="24dp"
+                    android:padding="12dp"
                     android:layout_weight="1"
                     android:src="@mipmap/img_text"/>
                 <ImageView
                     android:id="@+id/bt_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="24dp"
+                    android:padding="12dp"
                     android:layout_weight="1"
                     android:src="@mipmap/img_image"/>
             </LinearLayout>

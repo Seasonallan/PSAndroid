@@ -1,16 +1,10 @@
 <resources>
     <style name="button_bookdigests" parent="android:style/Widget.Button">
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">18dip</item>
-        <item name="android:paddingLeft">8dip</item>
-        <item name="android:paddingTop">4dip</item>
-        <item name="android:paddingBottom">4dip</item>
-        <item name="android:paddingRight">8dip</item>
-
-        <item name="android:layout_width">68dip</item>
-        <item name="android:layout_height">wrap_content</item>
-
-
+        <item name="android:textSize">18dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">68dp</item>
+        <item name="android:layout_height">48dp</item>
     </style>
 
     <style name="remark_Dialog" parent="@android:style/Theme.Dialog">

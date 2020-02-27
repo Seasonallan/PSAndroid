@@ -1,4 +1,4 @@
-package com.season.example.popwindow;
+package com.season.example.catalog;
 
 
 import android.content.Context;
@@ -16,7 +16,9 @@ import android.widget.TabHost;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-public class ViewPagerTabHost extends BaseTabHost {
+import com.season.example.popwindow.SlideTabWidget;
+
+public class BaseViewPagerTabHost extends BaseTabHost {
     private ViewPager mViewPager;
     private FrameLayout mTempContentLayout;
     private FrameLayout mContentLayout;
@@ -25,11 +27,11 @@ public class ViewPagerTabHost extends BaseTabHost {
 	private InteriorPagerAdapter mInteriorPagerAdapter;
 	private OnTabChangeListener mOnTabChangeListener;
 	
-	public ViewPagerTabHost(Context context) {
+	public BaseViewPagerTabHost(Context context) {
 		super(context);
 	}
 
-	public ViewPagerTabHost(Context context, AttributeSet attrs) {
+	public BaseViewPagerTabHost(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 

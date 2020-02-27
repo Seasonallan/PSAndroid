@@ -88,9 +88,10 @@ public class BaseBookActivity extends Activity implements
 			finish();
 			return;
 		}
-        new NavigationBarUtil(this).hideNavigationBar();
-        StatusBarUtil.setColor(this, 0xff30302E);
-       // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
+        NavigationBarUtil.hideNavigationBar(this);
+		StatusBarUtil.setTranslucent(this);
+        // StatusBarUtil.setColor(this, 0xff30302E);
+        // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
 
 		mBook = new BookInfo();
 		centerRect = new RectF();
@@ -334,6 +335,9 @@ public class BaseBookActivity extends Activity implements
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		if (!isInit) {
 			return false;
+		}
+		if (ev.getAction() == MotionEvent.ACTION_DOWN){
+			NavigationBarUtil.hideNavigationBar(this);
 		}
 		if(mReadView.onActivityDispatchTouchEvent(ev)){
 			return false;

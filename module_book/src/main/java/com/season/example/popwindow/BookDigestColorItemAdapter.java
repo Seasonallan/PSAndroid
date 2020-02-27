@@ -1,4 +1,4 @@
-package com.season.example.catalog;
+package com.season.example.popwindow;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
@@ -37,12 +37,8 @@ public class BookDigestColorItemAdapter extends BaseAdapter {
 	}
 
 	private void setImaHight() {
-		WindowManager windowManager = mContext.getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        int screenWidth = display.getWidth();
-        int margin =  BookDigestsRemarksDialog.LAYOUT_MARGIN;
         int hspac = BookDigestsRemarksDialog.HSPAC;
-        mHight = (screenWidth - 2 * margin - 4 * hspac) / 5;
+        mHight = (mContext.getResources().getDisplayMetrics().widthPixels - 2 * 68 - 4 * hspac) / 5;
 	}
 
 	@Override

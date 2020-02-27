@@ -29,8 +29,7 @@ public class BookDigestsPopWin extends PopupWindow {
 	private final static int SHOW_WIN_HIGHT = DimenUtil.dip2px(50);//游标和view的距离，可依据需要调整
 	
 	private Activity mContext;
-	private AbsTextSelectHandler mTextSelectHandler;
-	private View mContentView;
+	private AbsTextSelectHandler mTextSelectHandler; 
 	private View mParentView;
 	private BookDigests mBookDigests;
 	protected BookDigestsRemarksDialog mDialog;
@@ -39,12 +38,11 @@ public class BookDigestsPopWin extends PopupWindow {
 	private View mViewMenuTwo;
 	
 	
-	public BookDigestsPopWin(View contentView,View parentView, int width, int height,Activity context,AbsTextSelectHandler textSelectHandler){
-		super(contentView,width, height);
+	public BookDigestsPopWin(View parentView, int width, int height,Activity context,AbsTextSelectHandler textSelectHandler){
+		super(context.getLayoutInflater().inflate(R.layout.pop_selected, null),width, height);
 		this.mParentView = parentView;
 		this.mContext = context;
 		this.mTextSelectHandler = textSelectHandler;
-		mContentView = contentView;
 		initView();
 
 	}
@@ -174,7 +172,7 @@ public class BookDigestsPopWin extends PopupWindow {
 	}
 	
 	private void showMagnifier(Bitmap bitmap){
-		((ImageView) mContentView.findViewById(R.id.book_digests_view_magnifier_lv)).setImageBitmap(bitmap);
+		((ImageView) findViewById(R.id.book_digests_view_magnifier_lv)).setImageBitmap(bitmap);
 		setMeumVisible(VIEW_TYPE_MAGNIFIER);
 	}
 	
@@ -283,35 +281,39 @@ public class BookDigestsPopWin extends PopupWindow {
 		}
 	};
 
+	View findViewById(int id){
+		return getContentView().findViewById(id);
+	}
+	
 	private void initView(){
-		mViewMenuOne = mContentView.findViewById(R.id.book_digests_meum1);
-		mViewMenuTwo = mContentView.findViewById(R.id.book_digests_meum2);
-		mViewMagnifier = mContentView.findViewById(R.id.book_digests_view_magnifier_lay);
+		mViewMenuOne = findViewById(R.id.book_digests_meum1);
+		mViewMenuTwo = findViewById(R.id.book_digests_meum2);
+		mViewMagnifier = findViewById(R.id.book_digests_view_magnifier_lay);
 		
 		Resources res = mContext.getResources();
 		String[] item = res.getStringArray(R.array.book_digests_menu_one);
-		((Button) mContentView.findViewById(R.id.copy_)).setText(item[1]);
-		((Button) mContentView.findViewById(R.id.digest)).setText(item[0]);
-		((Button) mContentView.findViewById(R.id.beizhu_)).setText(item[2]);
-		((Button) mContentView.findViewById(R.id.share_)).setText(item[3]);
-		//((Button) mContentView.findViewById(R.id.share_)).setVisibility(View.GONE);
+		((Button) findViewById(R.id.copy_)).setText(item[1]);
+		((Button) findViewById(R.id.digest)).setText(item[0]);
+		((Button) findViewById(R.id.beizhu_)).setText(item[2]);
+		((Button) findViewById(R.id.share_)).setText(item[3]);
+		//((Button) findViewById(R.id.share_)).setVisibility(View.GONE);
 		
-		((Button) mContentView.findViewById(R.id.copy_)).setOnClickListener(choseListener);
-		((Button) mContentView.findViewById(R.id.digest)).setOnClickListener(choseListener);
-		((Button) mContentView.findViewById(R.id.beizhu_)).setOnClickListener(choseListener);
-		((Button) mContentView.findViewById(R.id.share_)).setOnClickListener(choseListener);
+		findViewById(R.id.copy_).setOnClickListener(choseListener);
+		findViewById(R.id.digest).setOnClickListener(choseListener);
+		findViewById(R.id.beizhu_).setOnClickListener(choseListener);
+		findViewById(R.id.share_).setOnClickListener(choseListener);
 		
 		item = res.getStringArray(R.array.book_digests_menu_two);
-		((Button) mContentView.findViewById(R.id.copy)).setText(item[0]);
-		((Button) mContentView.findViewById(R.id.delete)).setText(item[3]);
-		((Button) mContentView.findViewById(R.id.beizhu)).setText(item[1]);
-		((Button) mContentView.findViewById(R.id.share)).setText(item[2]);
+		((Button) findViewById(R.id.copy)).setText(item[0]);
+		((Button) findViewById(R.id.delete)).setText(item[3]);
+		((Button) findViewById(R.id.beizhu)).setText(item[1]);
+		((Button) findViewById(R.id.share)).setText(item[2]);
 
-		((Button) mContentView.findViewById(R.id.beizhu)).setOnClickListener(choseListener);
-		((Button) mContentView.findViewById(R.id.copy)).setOnClickListener(choseListener);
-		((Button) mContentView.findViewById(R.id.delete)).setOnClickListener(choseListener);
-		((Button) mContentView.findViewById(R.id.share)).setOnClickListener(choseListener);
-		//((Button) mContentView.findViewById(R.id.share)).setVisibility(View.GONE);
+		findViewById(R.id.beizhu).setOnClickListener(choseListener);
+		findViewById(R.id.copy).setOnClickListener(choseListener);
+		findViewById(R.id.delete).setOnClickListener(choseListener);
+		findViewById(R.id.share).setOnClickListener(choseListener);
+		//findViewById(R.id.share)).setVisibility(View.GONE);
 		
 		
 	}

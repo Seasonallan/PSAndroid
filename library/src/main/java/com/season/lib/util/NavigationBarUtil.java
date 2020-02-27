@@ -14,18 +14,13 @@ import android.view.WindowManager;
  */
 public class NavigationBarUtil {
 
-    private final Activity mActivity;
-    public NavigationBarUtil(Activity activity){
-        this.mActivity = activity;
-    }
+    public static void hideNavigationBar(Activity activity) {
 
-    public void hideNavigationBar() {
-
-        WindowManager.LayoutParams attrs = mActivity.getWindow().getAttributes();
+        WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
         attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        mActivity.getWindow().setAttributes(attrs);
+        activity.getWindow().setAttributes(attrs);
 
-        View decorView = mActivity.getWindow().getDecorView();
+        View decorView = activity.getWindow().getDecorView();
         int uiOptions =  View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
 
@@ -66,12 +61,10 @@ public class NavigationBarUtil {
         decorView.setSystemUiVisibility(uiOptions);
     }
 
-    public void showNavigationBar() {
-
-        WindowManager.LayoutParams attrs = mActivity.getWindow().getAttributes();
+    public void showNavigationBar(Activity activity) {
+        WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
         attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        mActivity.getWindow().setAttributes(attrs);
-
+        activity.getWindow().setAttributes(attrs);
     }
 
 }

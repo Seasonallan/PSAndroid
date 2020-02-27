@@ -292,7 +292,21 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				if(isChecked){
 					return handlerMenuItemAction(item);
 				}else{
-					showJumpPageView();
+					dowAnimation = new TranslateAnimation(
+					Animation.RELATIVE_TO_SELF,0, Animation.RELATIVE_TO_SELF, 0,
+					Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1.0f);
+					upAnimation = new TranslateAnimation(
+							Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0,
+							Animation.RELATIVE_TO_SELF, 1.0f,Animation.RELATIVE_TO_SELF, 0.0f);
+					dowAnimation.setDuration(timeHalf);upAnimation.setDuration(timeHalf);
+					dowAnimation.setAnimationListener(new SimpleAnimationListener(){
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							showJumpPageView();
+							mChildMenuLayout.startAnimation(upAnimation);
+						}
+					});
+					mChildMenuLayout.startAnimation(dowAnimation);
 				}
 				return false;
 			}

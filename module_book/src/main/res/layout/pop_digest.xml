@@ -10,20 +10,20 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="5dip"
+        android:padding="5dp"
         android:singleLine="true"  />
 
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dip"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/line" />
 
     <EditText
         android:id="@+id/digests_content"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
+        android:layout_margin="5dp"
         android:clickable="false"
         android:cursorVisible="false"
         android:editable="false"
@@ -37,8 +37,8 @@
         android:id="@+id/color_gv"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dip"
-        android:layout_marginRight="5dip"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:cacheColorHint="@color/transparent"
         android:gravity="center"
         android:numColumns="5"
@@ -48,7 +48,7 @@
         android:id="@+id/remarks_edit"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
+        android:layout_margin="5dp"
         android:gravity="top"
         android:lines="4"
         android:scrollbars="vertical" />
@@ -56,26 +56,24 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dip"
+        android:layout_marginBottom="5dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
         android:gravity="center"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/remarks_save_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dip"
-            android:paddingBottom="5dip"
-            android:paddingTop="5dip"
-            android:text="sure" />
+            android:layout_weight="1"
+            android:text="保存" />
 
         <Button
             android:id="@+id/remarks_cancel_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dip"
-            android:paddingBottom="5dip"
-            android:paddingTop="5dip"
-            android:text="cancel" />
+            android:layout_weight="1"
+            android:text="取消" />
     </LinearLayout>
 </LinearLayout>

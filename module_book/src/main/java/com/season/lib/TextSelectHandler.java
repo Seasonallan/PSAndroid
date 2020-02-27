@@ -31,7 +31,7 @@ public class TextSelectHandler extends AbsTextSelectHandler {
 		if(mTopSelectCursorBitmap == null){
 			Resources resources = getContext().getResources();
 			mTopSelectCursorBitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_xuanqu_shang);
-            mTopSelectCursorBitmap = BitmapUtil.scale(mTopSelectCursorBitmap, 60);
+            mTopSelectCursorBitmap = BitmapUtil.scale(mTopSelectCursorBitmap, 40 * getContext().getResources().getDisplayMetrics().density);
 		}
 		return mTopSelectCursorBitmap;
 	}
@@ -41,7 +41,7 @@ public class TextSelectHandler extends AbsTextSelectHandler {
 		if(mBottomSelectCursorBitmap == null){
 			Resources resources = getContext().getResources();
 			mBottomSelectCursorBitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_xuanqu_xia);
-            mBottomSelectCursorBitmap = BitmapUtil.scale(mBottomSelectCursorBitmap, 60);
+            mBottomSelectCursorBitmap = BitmapUtil.scale(mBottomSelectCursorBitmap, 40 * getContext().getResources().getDisplayMetrics().density);
 		}
 		return mBottomSelectCursorBitmap;
 	}
