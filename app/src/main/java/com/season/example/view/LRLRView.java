@@ -42,19 +42,30 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
         mStop = true;
     }
 
-    public void start() {
-        if (getWidth() <= 0){
-            return;
-        }
-        LogUtil.e("start");
-        if (mPageAnimController == null){
-            mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
-                    PageAnimController.ANIM_TYPE_PAGE_TURNING);
-           // mPageAnimController.setDuration(2468);
-        }
+    public void start(){
         mStop = false;
-        if (mPageAnimController.isAnimStop())
-            mPageAnimController.startAnim(current, current==0?1:0, true, this);
+        startDelay();
+    }
+
+    public void startDelay() {
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mStop){
+                    return;
+                }
+                if (getWidth() <= 0){
+                    return;
+                }
+                if (mPageAnimController == null){
+                    mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
+                            PageAnimController.ANIM_TYPE_PAGE_TURNING);
+                    // mPageAnimController.setDuration(2468);
+                }
+                if (mPageAnimController.isAnimStop())
+                    mPageAnimController.startAnim(current, current==0?1:0, true, LRLRView.this);
+            }
+        }, 2000);
     }
 
     private int current = 0;
@@ -76,7 +87,7 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(mPageAnimController != null && !mPageAnimController.dispatchDrawPage(canvas, this)){
+        if(mPageAnimController == null || !mPageAnimController.dispatchDrawPage(canvas, this)){
             drawPage(canvas, current);
         }
     }
@@ -153,14 +164,6 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
     @Override
     public void onStopAnim(boolean isCancel) {
         current = current==0?1:0;
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mStop){
-                    return;
-                }
-                start();
-            }
-        }, 2000);
+        startDelay();
     }
 }
