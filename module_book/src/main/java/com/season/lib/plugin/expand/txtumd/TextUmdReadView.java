@@ -413,7 +413,7 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 	public int calculateLineSize(String text) {
 		int contentWidth = newPageContenRect().width();
 		if(contentWidth <= 0){
-			contentWidth = getResources().getDisplayMetrics().widthPixels - PADDING_LEFT - PADDING_RIGHT;
+			contentWidth = getResources().getDisplayMetrics().widthPixels - PADDING_LEFTRIGHT - PADDING_LEFTRIGHT;
 		}
 		int size = mTextPaint.breakText(text, true, contentWidth, null);
 		return size;

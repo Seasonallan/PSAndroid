@@ -21,10 +21,8 @@ import com.season.lib.util.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener {
 	protected static final String TAG = AbsReadView.class.getSimpleName();
-	protected static int PADDING_LEFT;
-	protected static int PADDING_RIGHT;
-	protected static int PADDING_TOP;
-	protected static int PADDING_BOTTOM;
+	protected static int PADDING_LEFTRIGHT;
+	protected static int PADDING_TOPBOTTOM;
 	protected static int PADDING_CONTENT_TOP;
 	protected static int PADDING_CONTENT_BOTTOM;
 	/** 代表初始界面*/
@@ -62,12 +60,12 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		init();
 	}
 
+
+	protected static int DEFAULT_PADDING = 32;
 	private void init(){
-		PADDING_LEFT = DimenUtil.dip2px(15);
-		PADDING_RIGHT = DimenUtil.dip2px(15);
-		PADDING_TOP = DimenUtil.dip2px(10);
-		PADDING_BOTTOM = DimenUtil.dip2px(15);
-		PADDING_CONTENT_TOP = DimenUtil.dip2px(15);
+		PADDING_LEFTRIGHT = DimenUtil.dip2px(DEFAULT_PADDING);
+		PADDING_TOPBOTTOM = DimenUtil.dip2px(DEFAULT_PADDING);
+		PADDING_CONTENT_TOP = DimenUtil.dip2px(DEFAULT_PADDING);
 		PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(2);
 
 		mHandler = new Handler(Looper.getMainLooper());
@@ -101,17 +99,17 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		mTextPaint.linkColor = Color.BLUE;
 		mTextPaint.setAntiAlias(true);
 		mTextPaint.setTextSize(mReadSetting.getMinFontSize());
-		mHeadspaceTop = (int) ((int)mTextPaint.getFontSpacing() + PADDING_TOP + PADDING_CONTENT_TOP);
-		mHeadspaceBottom = (int) ((int)mTextPaint.getFontSpacing() + PADDING_BOTTOM  + PADDING_CONTENT_BOTTOM);
+		mHeadspaceTop = (int) ((int)mTextPaint.getFontSpacing() + PADDING_TOPBOTTOM + PADDING_CONTENT_TOP);
+		mHeadspaceBottom = (int) ((int)mTextPaint.getFontSpacing() + PADDING_TOPBOTTOM  + PADDING_CONTENT_BOTTOM);
 		mTextPaint.setTextSize(mReadSetting.getFontSize());
 		onLoadStyleSetting(isReLayout);
 		LogUtil.i(TAG, " loadStyleSetting");
 	}
 	
 	protected Rect newPageContenRect(){
-		return new Rect(getLeft() + PADDING_LEFT
+		return new Rect(getLeft() + PADDING_LEFTRIGHT
 				,getTop() + mHeadspaceTop
-				,getRight() - PADDING_RIGHT
+				,getRight() - PADDING_LEFTRIGHT
 				,getBottom() - mHeadspaceBottom); 
 	}
 	

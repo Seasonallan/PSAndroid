@@ -66,7 +66,7 @@ public class ReadSetting{
     public static final int FONT_SIZE_MIN = 15;
     public static final int FONT_SIZE_MAX = 25;
     public static final int FONT_SIZE_NUM = FONT_SIZE_MAX - FONT_SIZE_MIN;
-    public static final int FONT_SIZE_DEFALUT = FONT_SIZE_MIN + (FONT_SIZE_NUM >> 1) - 2;
+    public static final int FONT_SIZE_DEFALUT = FONT_SIZE_MIN + (FONT_SIZE_NUM >> 1);
 
     private static final String PREFS_MODULE_INFO = "read_setting_prefs";
     private static final int FONT_INCREASE_UNIT = 1;
@@ -282,7 +282,7 @@ public class ReadSetting{
     }
 
     public int getParagraphSpaceSize(){
-        return (int) (getLineSpaceSize() * 3.5f);
+        return (int) (getLineSpaceSize() * 1.2f);
     }
 
     public float getLineSpaceType(){
