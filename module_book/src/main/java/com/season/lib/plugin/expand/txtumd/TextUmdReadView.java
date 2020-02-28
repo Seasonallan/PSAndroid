@@ -338,7 +338,6 @@ public class TextUmdReadView extends BaseReadView implements TxtUmdBasePlugin.IS
 		drawBackground(canvas);
 		drawChapterName(canvas, mPlugin.getCurrentChapterName());
 		drawReadPercent(canvas, getJumpProgressStr(getCurReadProgress(), getMaxReadProgress()));
-        drawReadProgress(canvas,getCurReadProgress() , getMaxReadProgress());
 		Rect contentRect = newPageContenRect();
 		FontMetrics metrics = mTextPaint.getFontMetrics();
 		float top = metrics.bottom - metrics.top;

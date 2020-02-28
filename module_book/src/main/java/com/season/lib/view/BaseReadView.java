@@ -7,6 +7,7 @@ import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
+import android.view.View;
 
 import com.example.book.R;
 import com.season.lib.bean.BookInfo;
@@ -24,6 +25,18 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
         mBook = book;
         mReadCallback = readCallback;
     }
+
+    @Override
+    public View getContentView() {
+        return this;
+    }
+
+
+    @Override
+    public boolean isAnimating(){
+        return !mPageAnimController.isAnimStop();
+    }
+
 
     @Override
     protected void onAttachedToWindow() {
@@ -54,17 +67,32 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
 
     }
 
+
+    /**
+     * 获取某个页面是否被标记为书签
+     */
+    protected boolean isPageMarked(int chapterIndex, int pageIndex){
+        return false;
+    }
+
+    @Override
+    public boolean isCurrentPageMarked(){
+        return isPageMarked(mCurrentChapterIndex, mCurrentPageIndex);
+    }
+
     @Override
     protected void drawBookMarkTip(Canvas canvas, int chapterIndex, int pageIndex){
-        if(mBookMarkTip == null){
-            mBookMarkTip = getResources().getDrawable(R.drawable.icon_shuqian_chang);
-            int bookMarkW = mBookMarkTip.getIntrinsicWidth();
-            int bookMarkH = mBookMarkTip.getIntrinsicHeight();
-            Rect bounds = new Rect(getWidth() - PADDING_LEFTRIGHT - PADDING_LEFTRIGHT - bookMarkW, 0,
-                    getWidth() - PADDING_LEFTRIGHT, bookMarkH);
-            mBookMarkTip.setBounds(bounds);
+        if(isPageMarked(chapterIndex, pageIndex)){
+            if(mBookMarkTip == null){
+                mBookMarkTip = getResources().getDrawable(R.drawable.icon_shuqian_chang);
+                int bookMarkW = mBookMarkTip.getIntrinsicWidth();
+                int bookMarkH = mBookMarkTip.getIntrinsicHeight();
+                Rect bounds = new Rect(getWidth() - PADDING_LEFTRIGHT - PADDING_LEFTRIGHT - bookMarkW, 0,
+                        getWidth() - PADDING_LEFTRIGHT, bookMarkH);
+                mBookMarkTip.setBounds(bounds);
+            }
+            mBookMarkTip.draw(canvas);
         }
-        mBookMarkTip.draw(canvas);
     }
 
     /**
@@ -97,15 +125,6 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
 
     }
 
-    protected void drawReadProgress(Canvas canvas, float progress, float max){
-        int height = 8;
-        int y = getHeight() - height;
-        mTempTextPaint.setColor(0xffa5a5a5);
-        canvas.drawRect(0 , y, getWidth(), getHeight(), mTempTextPaint);
-        mTempTextPaint.setColor(0xff40ac7a);
-        canvas.drawRect(0 , y, getWidth() * progress/ max, getHeight(), mTempTextPaint);
-    }
-
     BatteryView batteryView;
     protected void drawReadPercent(Canvas canvas, String pageSizeStr){
         mTempTextPaint.setTextSize((float) (mReadSetting.getMinFontSize()));
@@ -135,7 +154,9 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
             batteryView = new BatteryView(getContext(), mReadSetting, new Runnable() {
                 @Override
                 public void run() {
-                    postInvalidate();
+                    if (!isAnimating()){
+                        postInvalidate();
+                    }
                 }
             });
         }

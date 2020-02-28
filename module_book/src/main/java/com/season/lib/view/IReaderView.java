@@ -289,6 +289,19 @@ public interface IReaderView {
      * @return
      */
      String getChapterId(int chaptersId);
+
+    /**
+     * 当前页面是否是书签
+     * @return
+     */
+    boolean isCurrentPageMarked();
+
+    /**
+     * 是否正在执行翻页动画
+     * @return
+     */
+    boolean isAnimating();
+
     /**
      * 对外接口
      * @author lyw

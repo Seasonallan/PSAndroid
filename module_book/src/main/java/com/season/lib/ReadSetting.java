@@ -368,17 +368,24 @@ public class ReadSetting{
      * @return
      */
     public int getThemeBGColor(){
+        return getThemeBGColor(mThemeType);
+    }
+    /**
+     * 获取背景颜色值
+     * @return
+     */
+    public static int getThemeBGColor(int themeType){
         int bgColor = 0;
-        switch (mThemeType) {
+        switch (themeType) {
             case THEME_TYPE_DAY:
                 bgColor = 0xffe6e4df;
                 break;
             case THEME_TYPE_NIGHT:
-//			bgColor = 0xff141414;
                 bgColor = 0xff282a2e;
                 break;
             case THEME_TYPE_OTHERS_1:
                 bgColor = 0xfff0e4d2;
+                bgColor = 0xffFFF2E2;
                 break;
             case THEME_TYPE_OTHERS_2:
                 bgColor = 0xffc9e2cb;

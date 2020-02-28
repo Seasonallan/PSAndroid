@@ -1,36 +1,28 @@
 package com.season.example.popwindow;
 
 import android.app.Activity;
-import android.graphics.drawable.ColorDrawable;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.example.book.R;
-import com.season.example.model.BookDigestColorItem;
-import com.season.example.popwindow.BookDigestsRemarksDialog;
-
-import java.util.ArrayList;
 
 
 public class BookDigestColorItemAdapter extends BaseAdapter {
 	
 	private LayoutInflater inflater;
-	private ArrayList<BookDigestColorItem> bookDigestColorItems;
-	private int oldSelect = 0;
+	private int[] colors;
 	private Activity mContext;
 	private int mHight;
-	public BookDigestColorItemAdapter(Activity context, ArrayList<BookDigestColorItem> bookDigestColorItems){
+	public BookDigestColorItemAdapter(Activity context, int... colors){
 		super();
 		this.mContext = context;
 		inflater = LayoutInflater.from(context);
-		this.bookDigestColorItems = bookDigestColorItems;
+		this.colors = colors;
 		setImaHight();
 		
         
@@ -43,16 +35,16 @@ public class BookDigestColorItemAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		if(bookDigestColorItems != null){
-			return bookDigestColorItems.size();
+		if(colors != null){
+			return colors.length;
 		}
 		return 0;
 	}
 
 	@Override
-	public BookDigestColorItem getItem(int position) {
+	public Object getItem(int position) {
 		if(position < getCount()){
-			return bookDigestColorItems.get(position);
+			return colors[position];
 		}
 		return null;
 	}
@@ -75,13 +67,12 @@ public class BookDigestColorItemAdapter extends BaseAdapter {
 		}else{
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		
-		BookDigestColorItem item = getItem(position);
+
+		int color = colors[position];
 		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, mHight);
 		viewHolder.contentIV.setLayoutParams(lp);
-		viewHolder.contentIV.setBackgroundDrawable(new ColorDrawable(item.id));
-		if(item.isSelected){
-			oldSelect = position;
+		viewHolder.contentIV.setBackgroundColor(color);
+		if(selectedColor == color){
 			viewHolder.selectTV.setVisibility(View.VISIBLE);
 		}else{
 			viewHolder.selectTV.setVisibility(View.GONE);
@@ -92,19 +83,11 @@ public class BookDigestColorItemAdapter extends BaseAdapter {
 	private View newView(){
 		return inflater.inflate(R.layout.pop_digest_item, null);
 	}
-	public void setSeleted(int position){
-		if(position != oldSelect){
-			getItem(oldSelect).isSelected = false;
-			getItem(position).isSelected = true;
-			oldSelect = position;
-			notifyDataSetChanged();
-		}
-	}
+	public int selectedColor = -1;
+
 	private class ViewHolder {
-		
 		public ImageView contentIV;
 		public ImageView selectTV;
-		
 	}
 
 }

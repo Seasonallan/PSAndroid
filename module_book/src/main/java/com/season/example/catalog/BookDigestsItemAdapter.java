@@ -1,6 +1,6 @@
 package com.season.example.catalog;
 
-import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +18,9 @@ import java.util.Comparator;
 
 public class BookDigestsItemAdapter extends BaseAdapter {
     private ArrayList<BookDigests> mBookDigests;
-    private Activity mContext;
+    private Context mContext;
 
-    public BookDigestsItemAdapter(Activity context){
+    public BookDigestsItemAdapter(Context context){
         super();
         this.mContext = context;
     }

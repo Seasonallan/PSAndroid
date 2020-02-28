@@ -2,7 +2,7 @@ package com.season.example.catalog;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,17 +21,17 @@ import com.season.lib.bean.Catalog;
 import com.season.lib.db.BookDigestsDB;
 import com.season.lib.db.BookMarkDB;
 import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.view.IReaderView;
 
 /**
  * 目录视图
  */
 public class CatalogView extends FrameLayout{
-	private static final String TAG = CatalogView.class.getSimpleName();
 	public static final String TAG_CATALOG = "TAG_CATALOG";
 	public static final String TAG_DIGEST = "TAG_DIGEST";
 	public static final String TAG_BOOKMARK = "TAG_BOOKMARK";
 
-	private Activity mContext;
+	private IReaderView mReadView;
 	private BookInfo mBookInfo;
 	private TextView mBookNameTV;
 	private TextView mAuthorNameTV;
@@ -45,9 +45,9 @@ public class CatalogView extends FrameLayout{
 	private CatalogAdapter catalogAdapter;
 	private BookDigestsItemAdapter mBookDigestsAdapter;
 	private BookmarkItemAdapter mBookMarkAdapter;
-	public CatalogView(final Activity context, IActionCallBack actionCallBack) {
+	public CatalogView(Context context, IReaderView readView, IActionCallBack actionCallBack) {
 		super(context);
-		mContext = context;
+		this.mReadView = readView;
 		mCallBack = actionCallBack;
 		LayoutInflater.from(context).inflate(R.layout.reader_catalog, this, true);
 		mBookNameTV = (TextView) findViewById(R.id.catalog_book_name_tv);
@@ -74,11 +74,12 @@ public class CatalogView extends FrameLayout{
 		mViewPagerAdapter = new CatalogViewPagerAdapter(context, mTags){
 			public void onItemClicked(String tag, ListView mListView, int position){
 				if(tag.equals(CatalogView.TAG_CATALOG)){
-					mCallBack.selectCatalog(mCatalogList.get(position));
+					mReadView.gotoChapter(mCatalogList.get(position), true);
 				}else if(tag.equals(CatalogView.TAG_DIGEST)){
-					mCallBack.selectDigest(mBookDigestsAdapter.getItem(position));
+					BookDigests bookDigests = mBookDigestsAdapter.getItem(position);
+					mReadView.gotoChar(bookDigests.getChaptersId(), bookDigests.getPosition(), true);
 				}else if(tag.equals(CatalogView.TAG_BOOKMARK)){
-					mCallBack.selectBookmark(mBookMarkAdapter.getItem(position));
+					mReadView.gotoBookmark(mBookMarkAdapter.getItem(position), true);
 				}
 				dismiss();
 			}
@@ -185,8 +186,5 @@ public class CatalogView extends FrameLayout{
 	
 	public interface IActionCallBack{
 		void onDismiss();
-		void selectCatalog(Catalog catalog);
-		void selectBookmark(BookMark bookMark);
-		void selectDigest(BookDigests bookDigests);
 	}
 }

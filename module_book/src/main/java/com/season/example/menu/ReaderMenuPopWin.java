@@ -35,20 +35,18 @@ import com.season.lib.util.ToastUtil;
 import com.season.lib.view.CheckedGridView;
 import com.season.lib.view.CheckedGridView.OnItemCheckedStateChangeListener;
 import com.season.lib.page.span.media.ReaderMediaPlayer.PlayerListener;
+import com.season.lib.view.IReaderView;
 
 public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	private static final int FONT_INCREASE_UNIT = 1;
 	private static final int MAX_MENU_SIZE = 5;
 	private Activity mActivity;
+	private IReaderView mReadView;
 	private BookInfo mBook;
 	private IActionCallback mActionCallback;
 	private CheckedGridView mGridView;
-	private View addBookmarkIB;
 	private ViewGroup mChildMenuLayout;
-	private TextView mTitleTV;
-	private View mBuyBut;
-	private boolean mHasBookmark;
-	private ArrayList<MenuItem> mMoreMenuItems;
+	private ArrayList<MenuItemAdapter.MenuItem> mMoreMenuItems;
 	private View mJumpPageView;
 	private int mTotalPageNums;
 	private TextView mJumpPageTip;
@@ -70,8 +68,10 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	private ImageButton mVoiceCloseBut;
 	private ImageButton mVoiceStateBut;
 	private boolean isVoicePlay;
-	public ReaderMenuPopWin(Activity activity, IActionCallback callback) {
+
+	public ReaderMenuPopWin(Activity activity, IReaderView readView, IActionCallback callback) {
 		super(activity);
+		mReadView = readView;
 		mActivity = activity;
 		mReadSetting = ReadSetting.getInstance(mActivity);
 		mActionCallback = callback;
@@ -97,7 +97,6 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		}else{
 			mVoiceLayout.setVisibility(View.VISIBLE);
 		}
-		updateState();
 		mGridView.clearChoices();
 		showJumpPageView();
 
@@ -171,16 +170,15 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		mChildMenuLayout.startAnimation(dowAnimation);
 	}
 
-
-	public void validateBookmarkState(boolean hasBookmark) {
-		mHasBookmark = hasBookmark;
-		if(addBookmarkIB == null) {
-			return;
-		}
-	}
-
 	protected void onCreateContentView() {
 		getLayoutInflater().inflate(R.layout.reader_menu, this, true);
+		findViewById(R.id.menu_back).setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                mActionCallback.onBackPressed();
+            }
+        });
 		mVoiceLayout = findViewById(R.id.menu_reader_voice_layout);
 		mVoiceStateBut = (ImageButton)findViewById(R.id.menu_reader_voice_state_but);
 		mVoiceCloseBut = (ImageButton)findViewById(R.id.menu_reader_voice_close_but);
@@ -202,10 +200,10 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				animation.setAnimationListener(new AnimationListener() {
 					@Override
 					public void onAnimationStart(Animation animation) {}
-					
+
 					@Override
 					public void onAnimationRepeat(Animation animation) {}
-					
+
 					@Override
 					public void onAnimationEnd(Animation animation) {
 						mVoiceLayout.setVisibility(View.GONE);
@@ -226,18 +224,18 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				voicePlayer.seekTo(seekBar.getProgress());
 			}
-			
+
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				voicePlayer.pause();
 			}
-			
+
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
 				onProgressChange(progress, seekBar.getMax(), null);
 			}
 		});
-		
+
 		mChildMenuLayout = (ViewGroup) findViewById(R.id.menu_child_layout);
 		findViewById(R.id.transparent_view).setOnClickListener(new OnClickListener() {
 			@Override
@@ -248,33 +246,17 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				dismiss(true);
 			}
 		});
-		addBookmarkIB = findViewById(R.id.menu_add_bookmark_ib);
-		addBookmarkIB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if(!mHasBookmark){
-					mActionCallback.onSaveUserBookmark();
-				}else{
-					mActionCallback.onDeleteUserBookmark();
-				}
-			}
-		});
-		if (mActionCallback.canAddUserBookmark()) {
-			addBookmarkIB.setVisibility(View.VISIBLE);
-		}
-		
-		mTitleTV = (TextView) findViewById(R.id.menu_body_title);
-		mBuyBut = findViewById(R.id.menu_buy_but);
-		ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
-		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_CATALOG, R.drawable.menu_icon_mark, getString(R.string.reader_menu_item_catalog_tip)));
-		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_FONT, R.drawable.menu_icon_font, getString(R.string.reader_menu_item_font_tip)));
-		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_THEME, R.drawable.menu_icon_background, getString(R.string.reader_menu_item_theme_tip)));
-		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_BRIGHTNESS, R.drawable.menu_icon_brightness, getString(R.string.reader_menu_item_brightness_tip)));
+
+		ArrayList<MenuItemAdapter.MenuItem> menuItems = new ArrayList<MenuItemAdapter.MenuItem>();
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_CATALOG, R.drawable.menu_icon_mark, getString(R.string.reader_menu_item_catalog_tip)));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_FONT, R.drawable.menu_icon_font, getString(R.string.reader_menu_item_font_tip)));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_THEME, R.drawable.menu_icon_background, getString(R.string.reader_menu_item_theme_tip)));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS, R.drawable.menu_icon_brightness, getString(R.string.reader_menu_item_brightness_tip)));
 //		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_SETTING, R.drawable.menu_icon_settings, getString(R.string.reader_menu_item_setting_tip)));
 		if(menuItems.size() > MAX_MENU_SIZE){
-			mMoreMenuItems = new ArrayList<MenuItem>(menuItems.subList(MAX_MENU_SIZE - 1, menuItems.size()));
-			menuItems = new ArrayList<MenuItem>(menuItems.subList(0, MAX_MENU_SIZE - 1));
-			menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_MORE, R.drawable.menu_icon_more, getString(R.string.reader_menu_item_more_tip)));
+			mMoreMenuItems = new ArrayList<MenuItemAdapter.MenuItem>(menuItems.subList(MAX_MENU_SIZE - 1, menuItems.size()));
+			menuItems = new ArrayList<MenuItemAdapter.MenuItem>(menuItems.subList(0, MAX_MENU_SIZE - 1));
+			menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_MORE, R.drawable.menu_icon_more, getString(R.string.reader_menu_item_more_tip)));
 		}
 		MenuItemAdapter adapter = new MenuItemAdapter(getContext(), menuItems);
 		mGridView = (CheckedGridView) findViewById(R.id.reader_menu_gv);
@@ -288,7 +270,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			@Override
 			public boolean onPreItemCheckedStateChange(AdapterView<?> parent,
 					int position, boolean isChecked) {
-				MenuItem item = (MenuItem) parent.getItemAtPosition(position);
+				MenuItemAdapter.MenuItem item = (MenuItemAdapter.MenuItem) parent.getItemAtPosition(position);
 				if(isChecked){
 					return handlerMenuItemAction(item);
 				}else{
@@ -322,29 +304,11 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	public String getString(int id, Object... formatArgs) {
 		return getResources().getString(id, formatArgs);
 	}
-	
-	private void updateState(){
-		if(mActionCallback.isNeedBuy()){
-			mBuyBut.setVisibility(View.VISIBLE);
-			mBuyBut.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					mActionCallback.onGotoBuyBook();
-					dismiss(true);
-				}
-			});
-		}else{
-			mBuyBut.setVisibility(View.GONE);
-		}
-		mTitleTV.setVisibility(View.VISIBLE);
-		mTitleTV.setText(mBook.title);
-		validateBookmarkState(mHasBookmark);
-	}
 
 	public void setLayoutChapterProgress(int progress,int max){
 		if(mJumpPageView != null){
 			if(progress == max){
-				setJumpSeekBarProgress(mActionCallback.getCurPage(), mActionCallback.getPageNums());
+				setJumpSeekBarProgress(mReadView.getCurReadProgress(), mReadView.getMaxReadProgress());
 				mJumpSeekBar.setSecondaryProgress(0);
 				mJumpPageTip.setTextColor(getResources().getColor(R.color.common_white_2));
 			}else{
@@ -352,21 +316,21 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				mJumpSeekBar.setSecondaryProgress(progress);
 				mJumpSeekBar.setMax(max);
 				mJumpSeekBar.setEnabled(false);
-				mJumpPreBut.setEnabled(mActionCallback.hasPreChapter());
-				mJumpNextBut.setEnabled(mActionCallback.hasNextChapter());
+				mJumpPreBut.setEnabled(mReadView.hasPreChapter());
+				mJumpNextBut.setEnabled(mReadView.hasNextChapter());
 				mJumpPageTip.setText(getString(R.string.reader_menu_item_seek_layouting_tip, (int)(progress * 1f / max * 100)+"%"));
 				mJumpPageTip.setTextColor(Color.parseColor("#60ffffff"));
 			}
 		}
 	}
-	
+
 	public void setJumpSeekBarProgress(int progress,int max){
 		if(mJumpPageView != null){
 			mTotalPageNums = max;
 			updateJumpSeekBar(progress, mTotalPageNums);
 		}
 	}
-	
+
 	private void showPageNum(int curPage, int pageNums){
 		if(pageNums > 1){
 			curPage += 1;
@@ -375,14 +339,14 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			mJumpPageTip.setText(getString(R.string.reader_menu_item_seek_page_tip, curPage, pageNums));
 		}
 	}
-	
+
 	private void gotoPage(int page,int oldPage){
-		mActionCallback.onGotoPage(page);
+		mReadView.gotoPage(page, true);
 	}
-	
+
 	private void showJumpPageView(){
-		int pageNums = mActionCallback.getPageNums();
-		int curPage = mActionCallback.getCurPage();
+		int pageNums = mReadView.getMaxReadProgress();
+		int curPage = mReadView.getCurReadProgress();
 		mTotalPageNums = pageNums;
 		if(mJumpPageView == null){
 			mJumpPageView = getLayoutInflater().inflate(R.layout.reader_menu_jump_page, null);
@@ -392,15 +356,17 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				int oldPage = 0;
 				@Override
 				public void onStopTrackingTouch(SeekBar seekBar) {
+					mJumpPageTip.setVisibility(View.GONE);
 					showPageNum(seekBar.getProgress(), mTotalPageNums);
 					gotoPage(seekBar.getProgress(),oldPage);
 				}
-				
+
 				@Override
 				public void onStartTrackingTouch(SeekBar seekBar) {
 					oldPage = seekBar.getProgress();
+					mJumpPageTip.setVisibility(View.VISIBLE);
 				}
-				
+
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress,
 						boolean fromUser) {
@@ -411,28 +377,28 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			mJumpPreBut.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mActionCallback.gotoPreChapter();
-					mJumpPreBut.setEnabled(mActionCallback.hasPreChapter());
-					mJumpNextBut.setEnabled(mActionCallback.hasNextChapter());
+					mReadView.gotoPreChapter();
+					mJumpPreBut.setEnabled(mReadView.hasPreChapter());
+					mJumpNextBut.setEnabled(mReadView.hasNextChapter());
 				}
 			});
 			mJumpNextBut = mJumpPageView.findViewById(R.id.jump_next_but);
 			mJumpNextBut.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mActionCallback.gotoNextChapter();
-					mJumpPreBut.setEnabled(mActionCallback.hasPreChapter());
-					mJumpNextBut.setEnabled(mActionCallback.hasNextChapter());
+					mReadView.gotoNextChapter();
+					mJumpPreBut.setEnabled(mReadView.hasPreChapter());
+					mJumpNextBut.setEnabled(mReadView.hasNextChapter());
 				}
 			});
 		}
 		updateJumpSeekBar(curPage, mTotalPageNums);
 		showChildMenu(mJumpPageView);
 	}
-	
+
 	private void updateJumpSeekBar(int curPage,int max){
 		if(max < 0){
-			setLayoutChapterProgress(mActionCallback.getLayoutChapterProgress(), mActionCallback.getLayoutChapterMax());
+			setLayoutChapterProgress(mReadView.getLayoutChapterProgress(), mReadView.getLayoutChapterMax());
 		}else{
 			if(max == 1){
 				curPage = 1;
@@ -445,28 +411,28 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				mJumpSeekBar.setProgress(curPage);
 				mJumpSeekBar.setEnabled(true);
 			}
-			mJumpPreBut.setEnabled(mActionCallback.hasPreChapter());
-			mJumpNextBut.setEnabled(mActionCallback.hasNextChapter());
+			mJumpPreBut.setEnabled(mReadView.hasPreChapter());
+			mJumpNextBut.setEnabled(mReadView.hasNextChapter());
 			showPageNum(curPage, max);
 		}
 	}
-	
+
 	private void showBrightessSettingView(){
 		SeekBar seekBar = null;
 		if(mBrightessSettingView == null){
 			mBrightessSettingView = getLayoutInflater().inflate(R.layout.reader_menu_brightness_setting, null);
 			seekBar = (SeekBar) mBrightessSettingView.findViewById(R.id.brightness_seek);
 			seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-				
+
 				@Override
 				public void onStopTrackingTouch(SeekBar seekBar) {
 					mReadSetting.setBrightessLevel(seekBar.getProgress());
 				}
-				
+
 				@Override
 				public void onStartTrackingTouch(SeekBar seekBar) {
 				}
-				
+
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress,
 						boolean fromUser) {
@@ -494,38 +460,27 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		}
 		showChildMenu(mBrightessSettingView);
 	}
-	
+
+	private int[] themeTypes = {ReadSetting.THEME_TYPE_DAY, ReadSetting.THEME_TYPE_OTHERS_1, ReadSetting.THEME_TYPE_OTHERS_2
+			, ReadSetting.THEME_TYPE_OTHERS_3, ReadSetting.THEME_TYPE_OTHERS_4};
 	private void showThemeView(){
 		if(mThemeView == null){
 			mThemeView = getLayoutInflater().inflate(R.layout.reader_menu_theme, null);
 		}
 		GridView gridView  = (GridView) mThemeView;
-		ArrayList<ReadStyleItem> readStyleItems = new ArrayList<ReadStyleItem>();
-		int style = mReadSetting.getThemeType();
-		readStyleItems.add(new ReadStyleItem(ReadSetting.THEME_TYPE_DAY, R.drawable.ic_read_style_day, 
-				style == ReadSetting.THEME_TYPE_DAY));
-		readStyleItems.add(new ReadStyleItem(ReadSetting.THEME_TYPE_OTHERS_1, R.drawable.ic_read_style_other_1, 
-				style == ReadSetting.THEME_TYPE_OTHERS_1));
-		readStyleItems.add(new ReadStyleItem(ReadSetting.THEME_TYPE_OTHERS_2, R.drawable.ic_read_style_other_2, 
-				style == ReadSetting.THEME_TYPE_OTHERS_2));
-		readStyleItems.add(new ReadStyleItem(ReadSetting.THEME_TYPE_OTHERS_3, R.drawable.ic_read_style_other_3, 
-				style == ReadSetting.THEME_TYPE_OTHERS_3));
-		readStyleItems.add(new ReadStyleItem(ReadSetting.THEME_TYPE_OTHERS_4, R.drawable.ic_read_style_other_4, 
-				style == ReadSetting.THEME_TYPE_OTHERS_4));
-		
-		final ReadStytleItemAdapter adapter = new ReadStytleItemAdapter(getContext(), readStyleItems);
-		gridView.setNumColumns(readStyleItems.size());
+		final ReadStytleItemAdapter adapter = new ReadStytleItemAdapter(getContext(), themeTypes);
+		adapter.selectedType = mReadSetting.getThemeType();
+		gridView.setNumColumns(themeTypes.length);
 		gridView.setAdapter(adapter);
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				adapter.setSeleted(position);
-				ReadStyleItem item = (ReadStyleItem) parent.getItemAtPosition(position);
-				if(item != null){
-					int styleId = item.id;
-					mReadSetting.setThemeType(styleId);
-//					updateLightState(styleId);
+				int selectedType = themeTypes[position];
+				if (selectedType != mReadSetting.getThemeType()){
+					adapter.selectedType = selectedType;
+					adapter.notifyDataSetChanged();
+					mReadSetting.setThemeType(selectedType);
 				}
 			}
 		});
@@ -591,7 +546,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				}
 			});
 		}
-		
+
 		//同步字体大小设置状态
 		int temtFontProgress = mReadSetting.getFontLevel();
 		if(temtFontProgress == 10){
@@ -611,7 +566,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		//显示界面
 		showChildMenu(mFontSettingView);
 	}
-	
+
 	private void showMoreView(){
 		if(mMoreView == null){
 			mMoreView = getLayoutInflater().inflate(R.layout.reader_menu_more, null);
@@ -624,7 +579,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						MenuItem item = (MenuItem) parent.getItemAtPosition(position);
+						MenuItemAdapter.MenuItem item = (MenuItemAdapter.MenuItem) parent.getItemAtPosition(position);
 						handlerMenuItemAction(item);
 					}
 				});
@@ -632,7 +587,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		}
 		showChildMenu(mMoreView);
 	}
-	
+
 	private void showChildMenu(View childContentView){
 		hideAllViews();
 		childContentView.setAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
@@ -642,7 +597,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			childContentView.setVisibility(View.VISIBLE);
 		}
 	}
-	
+
 	private void hideAllViews(){
 		int count = mChildMenuLayout.getChildCount();
 		View child = null;
@@ -652,7 +607,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			child.setAnimation(null);
 		}
 	}
-	
+
 	/** 设置屏幕亮度
 	 * @param value
 	 */
@@ -665,7 +620,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		mActivity.getWindow().setAttributes(lp);
 	}
 
-	private boolean handlerMenuItemAction(MenuItem item){
+	private boolean handlerMenuItemAction(MenuItemAdapter.MenuItem item){
 		dowAnimation = new TranslateAnimation(
 				Animation.RELATIVE_TO_SELF,0, Animation.RELATIVE_TO_SELF, 0,
 				Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1.0f);
@@ -676,7 +631,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		if(item != null){
 			ToastUtil.dismissToast();
 			switch(item.id){
-			case MenuItem.MENU_ITEM_ID_BRIGHTNESS:
+			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS:
 				ToastUtil.showToast("若调节失败，请禁用系统自动亮度调节");
 				dowAnimation.setAnimationListener(new SimpleAnimationListener(){
 					@Override
@@ -687,7 +642,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				});
 				mChildMenuLayout.startAnimation(dowAnimation);
 				break;
-			case MenuItem.MENU_ITEM_ID_FONT:
+			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_FONT:
 				dowAnimation.setAnimationListener(new SimpleAnimationListener(){
 					@Override
 					public void onAnimationEnd(Animation animation) {
@@ -697,16 +652,16 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				});
 				mChildMenuLayout.startAnimation(dowAnimation);
 				break;
-			case MenuItem.MENU_ITEM_ID_SETTING:
+			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_SETTING:
 				return true;
-			case MenuItem.MENU_ITEM_ID_CATALOG:
+			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_CATALOG:
 				dismiss(false);
 				mActionCallback.onShowReaderCatalog();
 				return true;
-			case MenuItem.MENU_ITEM_ID_MORE:
+			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_MORE:
 				showMoreView();
 				break;
-			case MenuItem.MENU_ITEM_ID_THEME:
+			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_THEME:
 				dowAnimation.setAnimationListener(new SimpleAnimationListener(){
 					@Override
 					public void onAnimationEnd(Animation animation) {
@@ -724,22 +679,9 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	
 	public interface IActionCallback{
 		void onDismiss();
-		int getLayoutChapterProgress();
-		int getLayoutChapterMax();
-		int getPageNums();
-		int getCurPage();
-		void onGotoPage(int pageNum);
-		void onGotoBuyBook();
-		boolean isNeedBuy();
-		boolean canAddUserBookmark();
-		void onSaveUserBookmark();
-		void onDeleteUserBookmark();
 		void onShowReaderCatalog();
-		void gotoPreChapter();
-		void gotoNextChapter();
-		boolean hasPreChapter();
-		boolean hasNextChapter();
-	}
+        void onBackPressed();
+    }
 
 	@Override
 	public void onPlayStateChange(int playState, String voiceSrc) {
@@ -768,96 +710,5 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			mVoiceMaxProgressTV.setText(ReaderMediaPlayer.getTimeStr((int) (maxPosition / 1000)));
 		}
 	}
-	
-	public class ReadStyleItem {
-		public int id;
-		public int resId;
-		public boolean isSelected;
-		
-		public ReadStyleItem(int id, int resId, boolean isSelected){
-			this.id = id;
-			this.resId = resId;
-			this.isSelected = isSelected;
-		}
-	}
-	
-	public class ReadStytleItemAdapter extends BaseAdapter {
-		private LayoutInflater inflater;
-		private ArrayList<ReadStyleItem> readStyleItems;
-		private int oldSelect = -1;
-		public ReadStytleItemAdapter(Context context, ArrayList<ReadStyleItem> readStyleItems){
-			super();
-			inflater = LayoutInflater.from(context);
-			this.readStyleItems = readStyleItems;
-		}
 
-		@Override
-		public int getCount() {
-			if(readStyleItems != null){
-				return readStyleItems.size();
-			}
-			return 0;
-		}
-
-		@Override
-		public ReadStyleItem getItem(int position) {
-			if(position < getCount()){
-				return readStyleItems.get(position);
-			}
-			return null;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			ViewHolder viewHolder;
-			if(convertView == null){
-				convertView = newView();
-				viewHolder = new ViewHolder();
-				viewHolder.contentIV = (ImageView) convertView.findViewById(R.id.content_iv);
-				viewHolder.selectTV = (ImageView) convertView.findViewById(R.id.select_iv);
-				convertView.setTag(viewHolder);
-			}else{
-				viewHolder = (ViewHolder) convertView.getTag();
-			}
-			
-			ReadStyleItem item = getItem(position);
-			
-			viewHolder.contentIV.setImageResource(item.resId);
-			if(item.isSelected){
-				oldSelect = position;
-				viewHolder.selectTV.setVisibility(View.VISIBLE);
-			}else{
-				viewHolder.selectTV.setVisibility(View.INVISIBLE);
-			}
-			return convertView;
-		}
-		
-		private View newView(){
-			return inflater.inflate(R.layout.reader_menu_theme_item, null);
-		}
-		
-		public void setSeleted(int position){
-			if(position != oldSelect){
-				if(oldSelect != -1){
-					getItem(oldSelect).isSelected = false;
-				}
-				getItem(position).isSelected = true;
-				oldSelect = position;
-				notifyDataSetChanged();
-			}
-		}
-		
-		private class ViewHolder {
-			
-			public ImageView contentIV;
-			public ImageView selectTV;
-			
-		}
-	}
 }

@@ -512,11 +512,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	}
 
 	@Override
-	public View getContentView() {
-		return this;
-	}
-
-	@Override
 	public void dealBuyResult(int chapterId) {
 	}
 
@@ -774,24 +769,18 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 				drawChapterName(canvas,getChapterName(chapterIndex));
 			}
 			String pageSizeStr = "-/-";
-            float progress = 0, max = 1;
 			if(mPageManager.isLayoutAll()){
 				int totalPageSize = mPageManager.getTotalPageSize();
 				if(totalPageSize > 0){
 					pageSizeStr = (mPageManager.getTotalPageIndex(chapterIndex, pageIndex) + 1) + " / " + totalPageSize;
-                    progress = mPageManager.getTotalPageIndex(chapterIndex, pageIndex) + 1;
-                    max = totalPageSize;
 				}
 			}else{
 				int totalPageSize = mPageManager.getChapterPageSize(chapterIndex);
 				if(totalPageSize > 0){
 					pageSizeStr = (pageIndex + 1) + " / " + totalPageSize;
-                    progress = pageIndex + 1;
-                    max = totalPageSize;
 				}
 			}
 			drawReadPercent(canvas, pageSizeStr);
-            //drawReadProgress(canvas, progress, max);
 		}
 	}
 

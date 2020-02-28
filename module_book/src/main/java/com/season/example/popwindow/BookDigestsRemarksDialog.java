@@ -14,12 +14,10 @@ import android.widget.GridView;
 
 
 import com.example.book.R;
-import com.season.example.model.BookDigestColorItem;
 import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.util.NavigationBarUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class BookDigestsRemarksDialog extends Dialog {
@@ -35,7 +33,6 @@ public class BookDigestsRemarksDialog extends Dialog {
 	private Activity mContext;
 	private BookDigests mBookDigests;
 	private OnCloseDialogLisenter mOnCloseDialogLisenter;
-	private int mColor = -1;
 	
 	public BookDigestsRemarksDialog(Activity context,int theme, AbsTextSelectHandler textSelectHandler) {
 		super(context,theme);
@@ -61,7 +58,6 @@ public class BookDigestsRemarksDialog extends Dialog {
 			mBookDigests = mTextSelectHandler.getCurrentBookDigests();
 		}
 		if(mBookDigests.getContent() == null){
-			
 			mBookDigests.setContent(mTextSelectHandler.getData(mBookDigests));
 		}
 		content.setText(mBookDigests.getContent());
@@ -72,25 +68,13 @@ public class BookDigestsRemarksDialog extends Dialog {
 		}
 		preColorView();
 
-       // NavigationBarUtil.hideNavigationBar(this);
-	
 	}
 
-    private ArrayList<BookDigestColorItem> getItems(){
-		ArrayList<BookDigestColorItem> items = new ArrayList<BookDigestColorItem>();
-		items.add(new BookDigestColorItem(YELLOW,-1,YELLOW == mBookDigests.getBGColor()));
-		items.add(new BookDigestColorItem(ORANGE,-1,ORANGE == mBookDigests.getBGColor()));
-		items.add(new BookDigestColorItem(GREEN,-1,GREEN == mBookDigests.getBGColor()));
-		items.add(new BookDigestColorItem(BLUE,-1,BLUE == mBookDigests.getBGColor()));
-		items.add(new BookDigestColorItem(PINK,-1,PINK == mBookDigests.getBGColor()));
-		return items;
-		
-		
-	}
+	private int[] colors = {YELLOW, ORANGE, GREEN, BLUE, PINK};
+	BookDigestColorItemAdapter adapter;
 	private void preColorView() {
-		
-		ArrayList<BookDigestColorItem> bookDigestColorItems = getItems();
-		final BookDigestColorItemAdapter adapter = new BookDigestColorItemAdapter(mContext, bookDigestColorItems);
+		adapter = new BookDigestColorItemAdapter(mContext, colors);
+		adapter.selectedColor = mBookDigests.getBGColor();
 		GridView gridView = (GridView) findViewById(R.id.color_gv);
 		gridView.setHorizontalSpacing(HSPAC);
 		gridView.setAdapter(adapter);
@@ -99,9 +83,11 @@ public class BookDigestsRemarksDialog extends Dialog {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				adapter.setSeleted(position);
-				BookDigestColorItem item = (BookDigestColorItem) parent.getItemAtPosition(position);
-				mColor = item.id;
+				int color = colors[position];
+				if (color != adapter.selectedColor){
+					adapter.selectedColor = color;
+					adapter.notifyDataSetChanged();
+				}
 			}
 		});
 		 
@@ -127,8 +113,8 @@ public class BookDigestsRemarksDialog extends Dialog {
 			int id = v.getId();
 			if(id == R.id.remarks_save_btn){
 				mBookDigests.setMsg(mRemarks_et.getText().toString());
-				if(mColor != -1){
-				mBookDigests.setBGColor(mColor);
+				if(adapter.selectedColor != -1){
+					mBookDigests.setBGColor(adapter.selectedColor);
 				}
 				if(mTextSelectHandler.isSelect()){
 					mTextSelectHandler.setSelect(false);

@@ -52,7 +52,6 @@ import com.season.lib.bean.Catalog;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.file.FileUtils;
-import com.season.lib.util.LogUtil;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.StatusBarUtil;
 import com.season.lib.util.ToastUtil;
@@ -68,9 +67,8 @@ public class BaseBookActivity extends Activity implements
         IReaderView.IReadCallback, AbsTextSelectHandler.ITouchEventDispatcher,
         PullRefreshLayout.OnPullListener, PullRefreshLayout.OnPullStateListener{
 
-	private BaseBookActivity this_ = this;
     private FrameLayout mReadContainerView;
-    private BaseReadView mReadView;
+    private IReaderView mReadView;
 	private CatalogView mCatalogView;
 	private RelativeLayout mCatalogLay;
 	private BookInfo mBook;
@@ -107,11 +105,8 @@ public class BaseBookActivity extends Activity implements
 		initClickDetector();
 		initReadView();
         initPullView();
-		initReaderCatalogView();
-		initMenu();
 
         overridePendingTransition(0, 0);
-        LogUtil.e("status  onCreated");
 	}
 
     private Animation mRotateUpAnimation;
@@ -123,9 +118,9 @@ public class BaseBookActivity extends Activity implements
     private View mProgress;
     private View mActionImage;
     protected void initPullView() {
-        mRotateUpAnimation = AnimationUtils.loadAnimation(this_,
+        mRotateUpAnimation = AnimationUtils.loadAnimation(this,
                 R.anim.rotate_up);
-        mRotateDownAnimation = AnimationUtils.loadAnimation(this_,
+        mRotateDownAnimation = AnimationUtils.loadAnimation(this,
                 R.anim.rotate_down);
 
         mPullLayout = (PullRefreshLayout) findViewById(R.id.pull_container);
@@ -145,7 +140,6 @@ public class BaseBookActivity extends Activity implements
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-        LogUtil.e("status  onDestroy");
 		if(mReadView != null){
 			mReadView.onDestroy();
 		}
@@ -160,14 +154,11 @@ public class BaseBookActivity extends Activity implements
 			
 			@Override
 			public boolean onClickCallBack(MotionEvent ev) {
-                LogUtil.e("key>> onClickCallBack "+ "11" );
 				float x = ev.getX();
 				float y = ev.getY();
 				if (mReadView.dispatchClickEvent(ev)) {
-                    LogUtil.e("key>> onClickCallBack "+ "22" );
 					return true;
 				} else if (centerRect.contains(x, y)) {
-                    LogUtil.e("key>> onClickCallBack "+ "44" );
 					showMenu();
 					return true;
 				}
@@ -176,125 +167,42 @@ public class BaseBookActivity extends Activity implements
 			
 			@Override
 			public void dispatchTouchEventCallBack(MotionEvent event) {
-                LogUtil.e("key>> onClickCallBack "+ "4444" );
 				onTouchEvent(event);
 			}
 		},false);
 	}
 	
 	private void initMenu() {
-		mReaderMenuPopWin = new ReaderMenuPopWin(this,
+		mReaderMenuPopWin = new ReaderMenuPopWin(this, mReadView,
 				new ReaderMenuPopWin.IActionCallback() {
 					@Override
 					public void onShowReaderCatalog() {
 						showReaderCatalogView();
 					}
-
 					@Override
-					public void onSaveUserBookmark() {
-						// TODO Auto-generated method stub
+					public void onBackPressed() {
+						finish();
 					}
-
-					@Override
-					public void onGotoPage(int pageNum) {
-						mReadView.gotoPage(pageNum, true);
-					}
-
-					@Override
-					public void onGotoBuyBook() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onDeleteUserBookmark() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public boolean isNeedBuy() {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public int getPageNums() {
-						return mReadView.getMaxReadProgress();
-					}
-
-					@Override
-					public int getCurPage() {
-						return mReadView.getCurReadProgress();
-					}
-
-					@Override
-					public boolean canAddUserBookmark() {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public void gotoPreChapter() {
-						mReadView.gotoPreChapter();
-					}
-
-					@Override
-					public void gotoNextChapter() {
-						mReadView.gotoNextChapter();
-					}
-
-					@Override
-					public boolean hasPreChapter() {
-						return mReadView.hasPreChapter();
-					}
-
-					@Override
-					public boolean hasNextChapter() {
-						return mReadView.hasNextChapter();
-					}
-
 					@Override
 					public void onDismiss() {
 						mCatalogLay.setVisibility(View.GONE);
-					}
-
-					@Override
-					public int getLayoutChapterProgress() {
-						return mReadView.getLayoutChapterProgress();
-					}
-
-					@Override
-					public int getLayoutChapterMax() {
-						return mReadView.getLayoutChapterMax();
 					}
 				});
 	}
 
 	private void initReaderCatalogView() {
-		mCatalogView = new CatalogView(this_, new CatalogView.IActionCallBack() {
+		mCatalogView = new CatalogView(this, mReadView,  new CatalogView.IActionCallBack() {
 			@Override
 			public void onDismiss() {
 				mCatalogLay.setVisibility(View.GONE);
-			}
-			@Override
-			public void selectCatalog(Catalog catalog) {
-				mReadView.gotoChapter(catalog, true);
-			}
-
-			@Override
-			public void selectBookmark(BookMark bookMark) {
-				mReadView.gotoBookmark(bookMark, true);
-			}
-
-			@Override
-			public void selectDigest(BookDigests bookDigests) {
-				mReadView.gotoChar(bookDigests.getChaptersId(), bookDigests.getPosition(), true);
 			}
 		});
 	}
 
 	private void showMenu() {
+    	if (mReaderMenuPopWin == null){
+    		return;
+		}
 		if (mReaderMenuPopWin.getParent() == null) {
 			mCatalogLay.addView(mReaderMenuPopWin);
 		}
@@ -312,11 +220,11 @@ public class BaseBookActivity extends Activity implements
 
 	@Override
 	public void onBackPressed() {
-		if(mCatalogView.isShown()){
+		if(mCatalogView != null && mCatalogView.isShown()){
 			mCatalogView.dismiss();
 			return;
 		}
-		if(mReaderMenuPopWin.isShown()){
+		if(mReaderMenuPopWin != null && mReaderMenuPopWin.isShown()){
 			mReaderMenuPopWin.dismiss(true);
 			return;
 		}
@@ -408,7 +316,9 @@ public class BaseBookActivity extends Activity implements
                         @Override
                         public void run() {
 							mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-                            mReadContainerView.addView(mReadView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+							initReaderCatalogView();
+							initMenu();
                             isInit = true;
                             mReadView.onCreate(null);
                             new Thread() {
@@ -446,7 +356,7 @@ public class BaseBookActivity extends Activity implements
 
 	@Override
 	public AbsTextSelectHandler.ISelectorListener getSelecter(){
-    	return new SelectorControlView(mReadView, this);
+    	return new SelectorControlView(mReadView.getContentView(), this);
 	}
 
 	@Override
@@ -513,11 +423,11 @@ public class BaseBookActivity extends Activity implements
 						(int)localRect.left,
 						(int)localRect.top,
 						(int)localRect.right,
-						(int)localRect.bottom),mReadView);
+						(int)localRect.bottom),mReadView.getContentView());
 				return true;
 			}else if(clickableSpan instanceof NoteSpan){
 				if(mNotePopWin == null){
-					mNotePopWin = new NotePopWin(mReadView);
+					mNotePopWin = new NotePopWin(mReadView.getContentView());
 				}
 				mNotePopWin.showNote(((NoteSpan) clickableSpan).getNote(),localRect, ReadSetting.getInstance(this).getMinFontSize());
 				return true;
@@ -543,20 +453,6 @@ public class BaseBookActivity extends Activity implements
 			}
 		} catch (Exception e) {}
 		return false;
-	}
-
-	public void closeVideo(){
-		if(mVideoWindow != null){
-			mVideoWindow.dismiss();
-		}
-	}
-
-	public boolean dispatchVideoKeyEvent(KeyEvent event){
-		return mVideoWindow != null && mVideoWindow.dispatchKeyEvent(event);
-	}
-
-	public boolean dispatchVideoTouchEvent(MotionEvent ev){
-		return mVideoWindow != null && mVideoWindow.dispatchTouchEvent(ev);
 	}
 
 
@@ -620,7 +516,7 @@ public class BaseBookActivity extends Activity implements
 			}else{
 				addBookLabel();
 			}
-            mTimeText.setText(this_.getString(R.string.note_update_at, getCurrentTimeByMDHM()));
+            mTimeText.setText(getString(R.string.note_update_at, getCurrentTimeByMDHM()));
         }
 
     }
