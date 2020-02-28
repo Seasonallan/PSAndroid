@@ -33,6 +33,10 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
     @Override
     public void onDestroy() {
         mBookMarkTip = null;
+        if (batteryView != null){
+            batteryView.stop();
+            batteryView = null;
+        }
     }
 
     @Override
@@ -102,6 +106,7 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
         canvas.drawRect(0 , y, getWidth() * progress/ max, getHeight(), mTempTextPaint);
     }
 
+    BatteryView batteryView;
     protected void drawReadPercent(Canvas canvas, String pageSizeStr){
         mTempTextPaint.setTextSize((float) (mReadSetting.getMinFontSize()));
         mTempTextPaint.setTextAlign(Align.RIGHT);
@@ -114,12 +119,27 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
             Rect bounds = new Rect(getWidth() - PADDING_CONTENT_BOTTOM - bookMarkW, 0, getWidth() - PADDING_CONTENT_BOTTOM, bookMarkH);
             mBookMarkTip.setBounds(bounds);
         }
-        int bookMarkW = mBookMarkTip.getIntrinsicWidth();
+        int bookMarkW = 0;//mBookMarkTip.getIntrinsicWidth();
 
         FontMetricsInt fm = mTempTextPaint.getFontMetricsInt();
         int x = getWidth() - PADDING_LEFTRIGHT - bookMarkW;
-        int y = PADDING_TOPBOTTOM - fm.top;
+        int y = getHeight() - PADDING_TOPBOTTOM + fm.bottom;
         canvas.drawText(pageSizeStr, x, y, mTempTextPaint);
+
+    }
+
+
+    @Override
+    protected void drawBatteryTime(Canvas canvas){
+        if (batteryView == null){
+            batteryView = new BatteryView(getContext(), mReadSetting, new Runnable() {
+                @Override
+                public void run() {
+                    postInvalidate();
+                }
+            });
+        }
+        batteryView.draw(canvas, PADDING_LEFTRIGHT, getHeight() - PADDING_TOPBOTTOM);
     }
 
     protected void drawChapterName(Canvas canvas,String title){

@@ -778,14 +778,14 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 			if(mPageManager.isLayoutAll()){
 				int totalPageSize = mPageManager.getTotalPageSize();
 				if(totalPageSize > 0){
-					pageSizeStr = (mPageManager.getTotalPageIndex(chapterIndex, pageIndex) + 1) + "/" + totalPageSize;
+					pageSizeStr = (mPageManager.getTotalPageIndex(chapterIndex, pageIndex) + 1) + " / " + totalPageSize;
                     progress = mPageManager.getTotalPageIndex(chapterIndex, pageIndex) + 1;
                     max = totalPageSize;
 				}
 			}else{
 				int totalPageSize = mPageManager.getChapterPageSize(chapterIndex);
 				if(totalPageSize > 0){
-					pageSizeStr = (pageIndex + 1) + "/" + totalPageSize;
+					pageSizeStr = (pageIndex + 1) + " / " + totalPageSize;
                     progress = pageIndex + 1;
                     max = totalPageSize;
 				}

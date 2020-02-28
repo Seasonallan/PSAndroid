@@ -66,7 +66,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		PADDING_LEFTRIGHT = DimenUtil.dip2px(DEFAULT_PADDING);
 		PADDING_TOPBOTTOM = DimenUtil.dip2px(DEFAULT_PADDING);
 		PADDING_CONTENT_TOP = DimenUtil.dip2px(DEFAULT_PADDING);
-		PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(2);
+		PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(DEFAULT_PADDING);
 
 		mHandler = new Handler(Looper.getMainLooper());
 		setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
@@ -235,13 +235,18 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 			if(isPageMarked(chapterIndex, requestPage)){
 				drawBookMarkTip(canvas, chapterIndex, requestPage);
 			}
+			drawBatteryTime(canvas);
         }
 	}
 
     /**
-     * 绘制书签
+     * 绘制书签， 该canvas不加入页面缓存
      */
-    protected abstract void drawBookMarkTip(Canvas canvas, int chapterIndex, int pageIndex);
+	protected abstract void drawBookMarkTip(Canvas canvas, int chapterIndex, int pageIndex);
+	/**
+	 * 绘制电池， 该canvas不加入页面缓存
+	 */
+	protected abstract void drawBatteryTime(Canvas canvas);
 
 	protected void drawBackground(Canvas canvas){
 		mBGDrawable.setBounds(getLeft(), getTop(), getRight(), getBottom());
