@@ -394,8 +394,8 @@ public class BaseBookActivity extends Activity implements
             @Override
             public void run() {
                 try {
-                    InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";mBook.path = getBookFielPath(".epub");
-					//InputStream is = getResources().openRawResource(R.raw.text_book);	mBook.id = "00002";mBook.path = getBookFielPath(".txt");
+                   // InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";mBook.path = getBookFielPath(".epub");
+					InputStream is = getResources().openRawResource(R.raw.text_book);	mBook.id = "00002";mBook.path = getBookFielPath(".txt");
 					//InputStream is = getResources().openRawResource(R.raw.umd_book);	mBook.id = "00003";mBook.path = getBookFielPath(".umd");
 
 					if(!FileUtils.copyFileToFile(mBook.path, is)){
