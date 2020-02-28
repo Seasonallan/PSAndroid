@@ -35,8 +35,8 @@ public class ReadView extends BaseHtmlReadView {
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
+	public void release() {
+		super.release();
 		mPlugin.recyle();
 	}
 
@@ -46,7 +46,7 @@ public class ReadView extends BaseHtmlReadView {
 	}
 
 	@Override
-	public int onInitReaderInBackground(final int fRequestCatalogIndex,final int fRequestPageCharIndex, String secretKey) {
+	public int decodeBookFromPlugin(final int fRequestCatalogIndex, final int fRequestPageCharIndex, String secretKey) {
         mSecretKey = secretKey;
 		try {
             try {
@@ -130,16 +130,6 @@ public class ReadView extends BaseHtmlReadView {
 	@Override
 	public ArrayList<Catalog> getChapterList() {
 		return mPlugin.getCatalog();
-	}
-
-	@Override
-	public BookInfo getBookInfo() {
-		return mBookInfo;
-	}
-
-	@Override
-	public String getChapterId(int chapterIndex) {
-		return mPlugin.getChapterId(chapterIndex);
 	}
 
 	@Override

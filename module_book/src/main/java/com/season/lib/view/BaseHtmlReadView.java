@@ -7,16 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Bundle;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.season.lib.bean.BookMark;
 import com.season.lib.AbsTextSelectHandler;
@@ -53,10 +50,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	public BaseHtmlReadView(Context context, BookInfo book, IReadCallback readCallback) {
 		super(context, book, readCallback);
         mTextSelectHandler = new TextSelectHandler(0, 0);
-	}
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
 		ReaderMediaPlayer.init(getDataProvider());
 		mPageManager = new PageManager(getContext(),this, isLayoutAll());
 		setDrawingCacheEnabled(false);
@@ -67,6 +61,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		mRequestCharIndex = -1;
 		ReaderMediaPlayer.getInstance().addPlayerListener(this);
 	}
+
 
 	protected void initView(int chapterSize,int requestChapterIndex,int requestCharIndex){
 		LogUtil.e(TAG, "initView");
@@ -99,8 +94,8 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	}
 	
 	@Override
-	public void onDestroy() {
-        super.onDestroy();
+	public void release() {
+        super.release();
 		ReaderMediaPlayer player = ReaderMediaPlayer.getInstance();
 		if(player != null){
 			player.release();
@@ -141,26 +136,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		}
 	}
 
-	@Override
-	public void onActivityResume() {
-	}
-
-	@Override
-	public void onActivityPause() {
-	}
-
-	@Override
-	public void onActivitySaveInstanceState(Bundle outState) {
-	}
-
-	@Override
-	public Object onActivityRetainNonConfigurationInstance() {
-		return null;
-	}
-
-	@Override
-	public void onActivityRestoreInstanceState(Bundle savedInstanceState) {
-	}
 
 	@Override
 	public boolean onActivityDispatchTouchEvent(MotionEvent ev) {
@@ -296,24 +271,10 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
         //mTextSelectHandler.setRectOffset(0, -displayFrame.top);
         mTextSelectHandler.setRectOffset(0, 0);
 	}
-	
-	@Override
-	public TextSelectHandler getTextSelectHandler() {
-		return mTextSelectHandler;
-	}
-
-	@Override
-	public String getJumpProgressStr(int curPage, int pageNums) {
-		String pageSizeStr = "-/-";
-		if(pageNums > 0){
-			pageSizeStr = (curPage + 1) + "/" + pageNums;
-		}
-		return pageSizeStr;
-	}
 
 	@Override
 	public void gotoChapter(Catalog catalog, boolean isStartAnim) {
-		gotoChapter(getChapterIndex(catalog), isStartAnim);
+		gotoPage(getChapterIndex(catalog), 0, isStartAnim);
 	}
 	
 	@Override
@@ -324,7 +285,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 				gotoPage(locals[0], locals[1], isStartAnim);
 			}
 		}else{
-			gotoPage(mCurrentChapterIndex,requestProgress, isStartAnim);
+			gotoPage(mCurrentChapterIndex, requestProgress, isStartAnim);
 		}
 	}
 
@@ -339,82 +300,33 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		}
 	}
 
-	@Override
-	public void gotoBookmark(BookMark bookmark, boolean isStartAnim) {
-		int requestCatalogIndex = 0;
-		int requestPageCharIndex = 0;
-		if (bookmark != null) {
-			requestCatalogIndex = bookmark.getChapterID();
-			requestPageCharIndex = bookmark.getPosition();
-			try {
-				gotoChar(requestCatalogIndex, requestPageCharIndex,isStartAnim);
-			} catch (Exception e) {
-				LogUtil.e(TAG, e);
-			}
-		} 
-	}
 
-	@Override
-	public boolean hasPreSet() {
-		return false;
-	}
-
-	@Override
-	public boolean hasNextSet() {
-		return false;
-	}
-
-	@Override
-	public void gotoPreSet() {
-	}
-
-	@Override
-	public void gotoNextSet() {
-	}
-
-	private BookMark newBookMark() {
-		BookMark bookMark = null;
-		if(mChapterSize != null && mBook != null && mCurrentChapterIndex >= 0 && mCurrentChapterIndex <= mChapterSize - 1){
-			bookMark = new BookMark();
-			bookMark.setAuthor(mBook.author);
-			bookMark.setContentID(mBook.id);
-			bookMark.setBookmarkName(mBook.title);
-			bookMark.setSoftDelete(DBConfig.BOOKMARK_STATUS_SOFT_DELETE_NO);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = new Date();
-            bookMark.setCreateTime(sdf.format(date));
-		}
-		return bookMark;
-	}
-	
-	@Override
-	public BookMark newSysBookmark() {
-		BookMark bookMark = newBookMark();
-		if(bookMark != null){
-            bookMark.max = mChapterSize;
-			bookMark.setBookmarkType(DBConfig.BOOKMARK_TYPE_SYSTEM);
-			bookMark.setChapterID(mCurrentChapterIndex);
-			bookMark.setPosition(getCurPageStartIndex());
-		}
-		return bookMark;
-	}
 
 	@Override
 	public BookMark newUserBookmark() {
-        BookMark bookMark = newBookMark();
-        if(bookMark != null){
-            int chapterIndex = mCurrentChapterIndex;
-            int start = getCurPageStartIndex();
-            int end = start + 30;
-            bookMark.setBookmarkType(DBConfig.BOOKMARK_TYPE_USER);
-            bookMark.setChapterID(getCurChapterIndex());
-            bookMark.setChapterName(getChapterName(getCurChapterIndex()));
-            bookMark.setPosition(start);
-            bookMark.setContentID(mBook.id);
-            String subString = mPageManager.subSequence(chapterIndex, start, end);
-            bookMark.setBookmarkName(subString);
-        }
-        return bookMark;
+		if(mChapterSize != null && mBook != null && mCurrentChapterIndex >= 0 && mCurrentChapterIndex <= mChapterSize - 1){
+			BookMark bookMark = new BookMark();
+			bookMark.setAuthor(mBook.author);
+			bookMark.setContentID(mBook.id);
+			bookMark.setContentName(mBook.title);
+			bookMark.setSoftDelete(DBConfig.BOOKMARK_STATUS_SOFT_DELETE_NO);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date();
+			bookMark.setCreateTime(sdf.format(date));
+
+			int chapterIndex = mCurrentChapterIndex;
+			int start = getCurPageStartIndex();
+			int end = start + 30;
+			bookMark.setBookmarkType(DBConfig.BOOKMARK_TYPE_USER);
+			bookMark.setChapterID(getCurChapterIndex());
+			bookMark.setChapterName(getChapterName(getCurChapterIndex()));
+			bookMark.setPosition(start);
+			String subString = mPageManager.subSequence(chapterIndex, start, end);
+			bookMark.setBookmarkName(subString);
+
+			return bookMark;
+		}
+        return null;
 	}
 
 	@Override
@@ -459,8 +371,13 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
         return getPageStartIndex(mCurrentChapterIndex, mCurrentPageIndex);
     }
 
-	@Override
-	public int getPageStartIndex(int chapterIndex, int pageIndex) {
+	/**
+	 * 获取某一个页面的开始index
+	 * @param chapterIndex
+	 * @param pageIndex
+	 * @return
+	 */
+	protected int getPageStartIndex(int chapterIndex, int pageIndex) {
 		int requestPageIndex = mPageManager.findPageFirstIndex(chapterIndex, pageIndex);
 		if(requestPageIndex >= 0){
 			return requestPageIndex;
@@ -504,24 +421,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	@Override
 	public boolean checkDigestSpan(int i) {
 		return mTextSelectHandler.postLongClick(i);
-	}
-	
-	@Override
-	public boolean canAddUserBookmark() {
-		return false;
-	}
-
-	@Override
-	public void dealBuyResult(int chapterId) {
-	}
-
-	@Override
-	public boolean onLongPress() {
-		return false;
-	}
-
-	@Override
-	public void search(int direction, String keyWord) {
 	}
 
 	@Override
@@ -723,7 +622,12 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 			}
 		}
 	}
-	
+
+	/**
+	 * 获取章节列表
+	 */
+	abstract ArrayList<Catalog> getChapterList();
+
 	@Override
 	public void onLayoutChapterFinish(int chapterIndex,int progress,int max) {
 		if(progress == 0){

@@ -112,10 +112,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 				,getRight() - PADDING_LEFTRIGHT
 				,getBottom() - mHeadspaceBottom); 
 	}
-	
-	public void gotoChapter(int requestChapterIndex,boolean isStartAnim){
-		gotoPage(requestChapterIndex, 0, isStartAnim);
-	}
+
 
 	public boolean gotoPage(int requestChapterIndex,int requestPage,boolean isStartAnim){
 		if(interceptGotoPage(requestChapterIndex,requestPage)){
@@ -502,7 +499,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 			mPageAnimController.stopAnim(this);
 		}
 		if(hasPreChapter()){
-			gotoChapter(mCurrentChapterIndex - 1, true);
+			gotoPage(mCurrentChapterIndex - 1, 0, true);
 		}
 	}
 
@@ -511,7 +508,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 			mPageAnimController.stopAnim(this);
 		}
 		if(hasNextChapter()){
-			gotoChapter(mCurrentChapterIndex + 1, true);
+			gotoPage(mCurrentChapterIndex + 1, 0,true);
 		}
 	}
 

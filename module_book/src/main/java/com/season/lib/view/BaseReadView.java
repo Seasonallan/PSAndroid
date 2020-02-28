@@ -44,7 +44,7 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
     }
 
     @Override
-    public void onDestroy() {
+    public void release() {
         mBookMarkTip = null;
         if (batteryView != null){
             batteryView.stop();

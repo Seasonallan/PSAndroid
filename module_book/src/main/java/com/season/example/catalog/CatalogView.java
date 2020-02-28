@@ -79,7 +79,8 @@ public class CatalogView extends FrameLayout{
 					BookDigests bookDigests = mBookDigestsAdapter.getItem(position);
 					mReadView.gotoChar(bookDigests.getChaptersId(), bookDigests.getPosition(), true);
 				}else if(tag.equals(CatalogView.TAG_BOOKMARK)){
-					mReadView.gotoBookmark(mBookMarkAdapter.getItem(position), true);
+					BookMark bookMark = mBookMarkAdapter.getItem(position);
+					mReadView.gotoChar(bookMark.getChapterID(), bookMark.getPosition(), true);
 				}
 				dismiss();
 			}

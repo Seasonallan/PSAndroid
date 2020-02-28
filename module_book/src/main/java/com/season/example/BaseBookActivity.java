@@ -23,7 +23,6 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.example.book.R;
 import com.season.lib.anim.AbsVerGestureAnimController;
-import com.season.lib.bean.BookDigests;
 import com.season.lib.bean.BookMark;
 import com.season.lib.db.BookMarkDB;
 import com.season.lib.AbsTextSelectHandler;
@@ -43,7 +42,7 @@ import com.season.lib.page.span.AsyncDrawableSpan;
 import com.season.lib.page.span.ClickActionSpan;
 import com.season.lib.page.span.ClickAsyncDrawableSpan;
 import com.season.lib.page.span.UrlSpna;
-import com.season.lib.view.BaseReadView;
+import com.season.lib.view.IReadCallback;
 import com.season.lib.view.ReadView;
 import com.season.lib.view.IReaderView;
 import com.season.lib.view.PullRefreshLayout;
@@ -64,7 +63,7 @@ import java.util.Calendar;
 
 @Route(path= RoutePath.BOOK)
 public class BaseBookActivity extends Activity implements
-        IReaderView.IReadCallback, AbsTextSelectHandler.ITouchEventDispatcher,
+		IReadCallback, AbsTextSelectHandler.ITouchEventDispatcher,
         PullRefreshLayout.OnPullListener, PullRefreshLayout.OnPullStateListener{
 
     private FrameLayout mReadContainerView;
@@ -141,7 +140,7 @@ public class BaseBookActivity extends Activity implements
 	protected void onDestroy() {
 		super.onDestroy();
 		if(mReadView != null){
-			mReadView.onDestroy();
+			mReadView.release();
 		}
 	}
 
@@ -320,12 +319,11 @@ public class BaseBookActivity extends Activity implements
 							initReaderCatalogView();
 							initMenu();
                             isInit = true;
-                            mReadView.onCreate(null);
                             new Thread() {
                                 @Override
                                 public void run() {
-									mReadView.onInitReaderInBackground(0, 0, "");
-									//mReadView.onInitReaderInBackground(0, 0, "");
+									mReadView.decodeBookFromPlugin(0, 0, "");
+									//mReadView.decodeBookFromPlugin(0, 0, "");
                                 }
                             }.start();
                         }
@@ -375,16 +373,6 @@ public class BaseBookActivity extends Activity implements
     }
 
     @Override
-    public void showLoadingDialog(int resId) {
-
-    }
-
-    @Override
-    public void hideLoadingDialog() {
-
-    }
-
-    @Override
     public boolean hasShowBookMark(int chapterId, int pageStart, int pageEnd) {
         return BookMarkDB.getInstance().isPageMarked(chapterId, pageStart, pageEnd);
     }
@@ -392,11 +380,6 @@ public class BaseBookActivity extends Activity implements
     @Override
     public boolean setFreeStart_Order_Price(int feeStart, boolean isOrdered, String price, String limitPrice) {
         return false;
-    }
-
-    @Override
-    public void setCebBookId(String cebBookId) {
-
     }
 
     @Override
@@ -584,7 +567,7 @@ public class BaseBookActivity extends Activity implements
 
     @Override
     public boolean isPullEnabled() {
-        return !mReadView.isAnimating() && mReadView.getTextSelectHandler() != null;
+        return !mReadView.isAnimating();
     }
 
 }
