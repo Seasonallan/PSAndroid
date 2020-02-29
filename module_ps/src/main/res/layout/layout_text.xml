@@ -58,7 +58,7 @@
                         android:gravity="center"
                         android:text="无状态"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -78,7 +78,7 @@
                         android:gravity="center"
                         android:text="上下抖动"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -107,7 +107,7 @@
                         android:gravity="center"
                         android:text="放大缩小"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -128,7 +128,7 @@
                         android:gravity="center"
                         android:text="排队出现"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -157,7 +157,7 @@
                         android:gravity="center"
                         android:text="突然闪现"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -177,7 +177,7 @@
                         android:gravity="center"
                         android:text="彩色渐变"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -206,7 +206,7 @@
                         android:gravity="center"
                         android:text="波浪跳动"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -227,7 +227,7 @@
                         android:gravity="center"
                         android:text="单字跳动"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -256,7 +256,7 @@
                         android:gravity="center"
                         android:text="波浪放大"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -277,7 +277,7 @@
                         android:gravity="center"
                         android:text="缩小出现"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -306,7 +306,7 @@
                         android:gravity="center"
                         android:text="走跑马灯"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -327,7 +327,7 @@
                         android:gravity="center"
                         android:text="底部升起"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -356,7 +356,7 @@
                         android:gravity="center"
                         android:text="走跑马灯"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -377,7 +377,7 @@
                         android:gravity="center"
                         android:text="底部升起"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -409,7 +409,7 @@
                         android:gravity="center"
                         android:text="single1"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -430,7 +430,7 @@
                         android:gravity="center"
                         android:text="single1"
                         android:textColor="@color/diy_text_anim"
-                        android:textSize="16dp" />
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
             </LinearLayout>
