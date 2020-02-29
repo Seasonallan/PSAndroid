@@ -245,7 +245,7 @@ public class Layout{
 			// start 处理浮动区域
 			//1.只处理最顶层的浮动区域，被当前浮动样式包含的直接过滤掉
 			//2.直接获取浮动样区域作用的字符范围，交个FloatLine对象计算需要的空间
-//			LogUtil.i(TAG, "处理浮动区域 开始位置："+i+" 内容："+c);
+			LogUtil.i(TAG, "处理浮动区域 开始位置："+index+" 内容："+c);
 			//生成浮动区域，向页请求可分配空间并进行定位
 			Line floatLine = createLine();
 			floatLine.setLayoutType(floatSpan.getType() == FloatSpan.LEFT_FLOAT 
@@ -266,7 +266,7 @@ public class Layout{
 			enabledRect = getEnabledRect(floatLine.getWidth(),floatLine.getHeight(),mTempEnabledRect,floatLine,styleText);
 			if(enabledRect != null){
 				//XXX 按页还原排版会导致重复内容
-//				LogUtil.i(TAG, "处理浮动区域 获得到的可用空间:"+enabledRect+" 当前行未处理的浮动："+nextFloatLine.size());
+//				LogUtil.i(TAG, "处理浮动区域 获得到的可用空间:"+enabledRect+" 当前行未处理的浮动："+mNextFloatLine.size());
 				//当前行没有足够的空间放浮动区域,在换行之后重新计算
 				if(mNextFloatLine.size() > 0 || mCurrentLine != null 
 						&& enabledRect.width() - mCurrentLine.getWidth() < floatLine.getWidth()){
@@ -293,7 +293,7 @@ public class Layout{
 				return gotoStart;
 			}
 			//跳转浮动区域结束的位置继续往下计算
-//			LogUtil.i(TAG, "处理浮动区域 结束位置是："+i+" 内容："+charSequence.charAt(i));
+//			LogUtil.i(TAG, "处理浮动区域 结束位置是："+index+" 内容：");
 //			floatTiem += System.currentTimeMillis() - startTime;
 //			startTime = System.currentTimeMillis();
 			return floatLine.getEnd() + 1;
@@ -303,6 +303,7 @@ public class Layout{
 			int oldWidth = mCurrentLine.getWidth();
 			enabledRect = getEnabledRect(oldWidth,mCurrentLine.getHeight(),mTempEnabledRect,mCurrentLine,styleText);
 			if(isNewlineChar || isPanleStart){
+//				LogUtil.i(TAG, "回车换行");
 				addPatch(mCurrentLine,enabledRect,styleText);
 				mCurrentLine = null;
 				handlerNextFloatLine();
@@ -315,7 +316,6 @@ public class Layout{
 				if(enabledRect == null || enabledRect.height() < newLineHeight){
 					onLayoutFinishPage(mCurrentPage);
 					mCurrentPage = createPage();
-//					LogUtil.i(TAG, "处理行区域 处理行区域发现高已经超过了当前页换页 重新从第"+i+"个字符开始计算");
 					int gotoStart = mCurrentLine.getStart();
 					mCurrentLine = null;
 //					addCharTiem += System.currentTimeMillis() - startTime;
@@ -325,7 +325,7 @@ public class Layout{
 					isOutOfBounds = enabledRect.width() < newLineWidth;
 					//需要换行
 					if(isOutOfBounds){
-//						LogUtil.i(TAG, "处理行区域 发现需要换行 isOutOfBounds="+isOutOfBounds+" isNewlineChar"+isNewlineChar);
+//						LogUtil.i(TAG, "宽度超过，换行");
 						addPatch(mCurrentLine,enabledRect,styleText);
 						mCurrentLine = null;
 						handlerNextFloatLine();
@@ -340,7 +340,7 @@ public class Layout{
 			}
 		}
 		if(mCurrentLine == null){
-//			LogUtil.i(TAG, "处理行区域 申请新的行 outOfBoundsTextRect="+outOfBoundsTextRect+" isLineFirst"+isLineFirst);
+//			LogUtil.i(TAG, "新行>> "+c);
 			mCurrentLine = createLine();
 			mCurrentLine.setContent(index, index);
 			mCurrentLine.setPanleStart(styleText.getPanleStart(),styleText.getPanleType());
@@ -354,9 +354,7 @@ public class Layout{
 			int oldWidth = mCurrentLine.getWidth();
 			int oldHeight = mCurrentLine.getHeight();
 			enabledRect = getEnabledRect(oldWidth,oldHeight,mTempEnabledRect,mCurrentLine,styleText);
-			//如果当前页不够放添加到下一页，也许是下下下下页，只到找到可以放的页位置
 			if(enabledRect == null){
-//				LogUtil.i(TAG, "处理行区域 当前页无法放下新的行，进行换页处理");
 				do {
 					onLayoutFinishPage(mCurrentPage);
 					mCurrentPage = createPage();
@@ -365,9 +363,9 @@ public class Layout{
 						mCurrentLine.setLocation(enabledRect.left, enabledRect.top);
 					}
 				} while (enabledRect == null);
-//				LogUtil.i(TAG, "处理行区域 当前页无法放下新的行 ==》 找到了新的页  当前页数为："+(pageList.size() + 1));
 			}
 			if(isNewlineChar){
+//				LogUtil.i(TAG, "--回车换行");
 				addPatch(mCurrentLine,enabledRect,styleText);
 				handlerNextFloatLine();
 				mCurrentLine = null;
@@ -375,6 +373,7 @@ public class Layout{
 //			newLineTiem += System.currentTimeMillis() - startTime;
 		}
 		if(isPanleEnd && mCurrentLine != null){
+//			LogUtil.i(TAG, "》》回车换行" + c);
 			addPatch(mCurrentLine,enabledRect,styleText);
 			handlerNextFloatLine();
 			mCurrentLine = null;
@@ -425,9 +424,6 @@ public class Layout{
 	}
 	/**
 	 * 处理之前计算当前行时发现不够放的浮动区域
-	 * @param nextFloatLine
-	 * @param nextPages
-	 * @param currentPage
 	 */
 	private final void handlerNextFloatLine(){
 		for(Line floatLine : mNextFloatLine){
@@ -446,7 +442,6 @@ public class Layout{
 	 * 1.当前也空间已经 不足，尝试添加到后面的页中
 	 * 2.如果后面的页已经有预先生成并且空间足够就添加进去，否则新生成一个页添加
 	 * @param floatLine
-	 * @param nextPages
 	 */
 	private final void addFloatLineToNextPages(Line floatLine,StyleText styleText){
 		Rect rect = null;
@@ -532,7 +527,6 @@ public class Layout{
 	}
 	/**
 	 * 在构造新的page时会优先使用这些page，没有的情况才重新生成新的page
-	 * @param nextPages 表示预先申请的后面几页
 	 * @return
 	 */
 	private final Page createPage(){
@@ -545,7 +539,6 @@ public class Layout{
 	/**
 	 * 计算字符宽高
 	 * @param index
-	 * @param charRect
 	 */
 	private final Rect measureText(int index,StyleText styleText){
 		mTextPaint.set(mSettingParam.getSourcePaint());

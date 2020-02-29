@@ -281,8 +281,12 @@ public class ReadSetting{
         return (int) (size / 6 * mLineSpaceType);
     }
 
+    /**
+     * 段落需要额外增加的高度
+     * @return
+     */
     public int getParagraphSpaceSize(){
-        return (int) (getLineSpaceSize() * 1.2f);
+        return (int) (getLineSpaceSize() * 0.5f);
     }
 
     public float getLineSpaceType(){
