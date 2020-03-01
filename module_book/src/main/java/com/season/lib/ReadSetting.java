@@ -286,7 +286,7 @@ public class ReadSetting{
      * @return
      */
     public int getParagraphSpaceSize(){
-        return (int) (getLineSpaceSize() * 0.5f);
+        return (int) (getLineSpaceSize() * 0.75f);
     }
 
     public float getLineSpaceType(){
