@@ -21,10 +21,6 @@ import com.season.lib.util.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener {
 	protected static final String TAG = AbsReadView.class.getSimpleName();
-	protected static int PADDING_LEFTRIGHT;
-	protected static int PADDING_TOPBOTTOM;
-	protected static int PADDING_CONTENT_TOP;
-	protected static int PADDING_CONTENT_BOTTOM;
 	/** 代表初始界面*/
 	protected static final int INDEX_INITIAL_CONTENT = Integer.MIN_VALUE - 1;
 	protected static final int REQUEST_INDEX_INITIAL_CONTENT = -Integer.MIN_VALUE;
@@ -42,10 +38,6 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	protected int mRequestChapterIndex;
 	/** 阅读界面设置管理*/
 	protected ReadSetting mReadSetting;
-	/** 头部间距*/
-	protected int mHeadspaceTop;
-	/** 当前状态*/
-	protected int mHeadspaceBottom;
 	/** 翻页动画控制者*/
 	protected PageAnimController mPageAnimController;
 	/** 背景图片*/
@@ -60,14 +52,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		init();
 	}
 
-
-	protected static int DEFAULT_PADDING = 32;
 	private void init(){
-		PADDING_LEFTRIGHT = DimenUtil.dip2px(DEFAULT_PADDING);
-		PADDING_TOPBOTTOM = DimenUtil.dip2px(DEFAULT_PADDING);
-		PADDING_CONTENT_TOP = DimenUtil.dip2px(DEFAULT_PADDING/2);
-		PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(DEFAULT_PADDING/2);
-
 		mHandler = new Handler(Looper.getMainLooper());
 		setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		setDrawingCacheEnabled(false);
@@ -99,18 +84,22 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		mTextPaint.linkColor = Color.BLUE;
 		mTextPaint.setAntiAlias(true);
 		mTextPaint.setTextSize(mReadSetting.getMinFontSize());
-		mHeadspaceTop = (int) ((int)mTextPaint.getFontSpacing() + PADDING_TOPBOTTOM + PADDING_CONTENT_TOP);
-		mHeadspaceBottom = (int) ((int)mTextPaint.getFontSpacing() + PADDING_TOPBOTTOM  + PADDING_CONTENT_BOTTOM);
+		Rect rect = new Rect();
+		mTextPaint.getTextBounds("你好", 0, 2, rect);
+		topChapterNameHeight = rect.height();
+
 		mTextPaint.setTextSize(mReadSetting.getFontSize());
 		onLoadStyleSetting(isReLayout);
 		LogUtil.i(TAG, " loadStyleSetting");
 	}
+
+	protected int topChapterNameHeight;
 	
 	protected Rect newPageContenRect(){
-		return new Rect(getLeft() + PADDING_LEFTRIGHT
-				,getTop() + mHeadspaceTop
-				,getRight() - PADDING_LEFTRIGHT
-				,getBottom() - mHeadspaceBottom); 
+		return new Rect(getLeft() + mReadSetting.getLeftRightSpaceSize()
+				,getTop() + mReadSetting.getTopBottomSpaceSize() + topChapterNameHeight + mReadSetting.getParagraphSpaceSize()
+				,getRight() - mReadSetting.getLeftRightSpaceSize()
+				,getBottom() - mReadSetting.getTopBottomSpaceSize() - topChapterNameHeight * 3/2);
 	}
 
 

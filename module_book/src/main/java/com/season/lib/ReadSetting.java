@@ -72,6 +72,18 @@ public class ReadSetting{
     public static final int PARAGRAPH_SPACE_COUNT = 6;
     private int mParagraphSpaceLevel;
 
+    /*		定义上下边距		*/
+    public static final String SETTING_TYPE_TOPBOTTOM_SPACE_TYPE = "SETTING_TYPE_TOP_BOTTOM_SPACE_TYPE";
+    public static final int TOPBOTTOM_SPACE_MIN = 0;
+    public static final int TOPBOTTOM_SPACE_COUNT = 10;
+    private int mTopBottomSpaceLevel;
+
+    /*		定义上下边距		*/
+    public static final String SETTING_TYPE_LEFTRIGHT_SPACE_TYPE = "SETTING_TYPE_LEFT_RIGHT_SPACE_TYPE";
+    public static final int LEFTRIGHT_SPACE_MIN = 0;
+    public static final int LEFTRIGHT_SPACE_COUNT = 10;
+    private int mLeftRightSpaceLevel;
+
     private static final String PREFS_MODULE_INFO = "read_setting_prefs";
     private static ReadSetting this_;
     private Context mContext;
@@ -103,6 +115,8 @@ public class ReadSetting{
         mFontLevel =  mSharedPreferences.getInt(SETTING_TYPE_FONT_SIZE, FONT_SIZE_COUNT/2);
         mLineSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_FONT_LINE_SPACE_TYPE, LINE_SPACE_COUNT/2);
         mParagraphSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_FONT_PARAGRAPH_SPACE_TYPE, PARAGRAPH_SPACE_COUNT/2);
+        mTopBottomSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_TOPBOTTOM_SPACE_TYPE, TOPBOTTOM_SPACE_COUNT/2);
+        mLeftRightSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_LEFTRIGHT_SPACE_TYPE, LEFTRIGHT_SPACE_COUNT/2);
         mThemeType = loadThemeType();
         mUserThemeType = loadUserThemeType();
         mBrightessLevel = loadBrightessLevel();
@@ -225,6 +239,49 @@ public class ReadSetting{
         return size / 3 * (PARAGRAPH_SPACE_MIN + mParagraphSpaceLevel)/2;
     }
 
+
+    /**
+     * 设置页面上下间距等级
+     * @param level
+     */
+    public void setTopBottomSpaceLevel(int level){
+        if(mTopBottomSpaceLevel == level){
+            return;
+        }
+        mTopBottomSpaceLevel = level;
+        mSharedPreferences.edit().putInt(SETTING_TYPE_TOPBOTTOM_SPACE_TYPE, mTopBottomSpaceLevel).commit();
+        notify(SETTING_TYPE_FONT_SIZE);
+    }
+
+    public int getTopBottomSpaceLevel(){
+        return mTopBottomSpaceLevel;
+    }
+
+    public int getTopBottomSpaceSize(){
+        return TOPBOTTOM_SPACE_MIN + mTopBottomSpaceLevel * 8;
+    }
+
+
+    /**
+     * 设置页面左右间距等级
+     * @param level
+     */
+    public void setLeftRightSpaceLevel(int level){
+        if(mLeftRightSpaceLevel == level){
+            return;
+        }
+        mLeftRightSpaceLevel = level;
+        mSharedPreferences.edit().putInt(SETTING_TYPE_LEFTRIGHT_SPACE_TYPE, mLeftRightSpaceLevel).commit();
+        notify(SETTING_TYPE_FONT_SIZE);
+    }
+
+    public int getLeftRightSpaceLevel(){
+        return mLeftRightSpaceLevel;
+    }
+
+    public int getLeftRightSpaceSize(){
+        return LEFTRIGHT_SPACE_MIN + mLeftRightSpaceLevel * 8;
+    }
 
 
     /**

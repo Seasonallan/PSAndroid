@@ -1,22 +1,6 @@
 <resources>
 
     <string name="app_name">阅读器</string>
-    <string name="btn_text_catalog">目录</string>
-    <string name="btn_text_bookmark">书签</string>
-    <string name="btn_text_bookdigest">笔记</string>
-    <string name="waitting_dialog_tip">正在处理数据，请稍候&#8230;</string>
-    <string name="reader_transition_tip">努力加载中，请稍候</string>
-    <string name="reader_menu_buy_tip">购买完整版</string>
-    <string name="reader_menu_item_catalog_tip">目录</string>
-    <string name="reader_menu_item_font_tip">文字</string>
-    <string name="reader_menu_item_theme_tip">主题</string>
-    <string name="reader_menu_item_brightness_tip">亮度</string>
-    <string name="reader_menu_item_brightness_auto_tip">自动调节亮度</string>
-    <string name="reader_menu_item_setting_tip">设置</string>
-    <string name="reader_menu_item_more_tip">更多</string>
-    <string name="reader_menu_item_seek_layouting_tip">正在排版中...%1$s</string>
-    <string name="reader_menu_item_seek_page_tip">%1$s/%2$s</string>
-
 
     <string-array name="auto_delayed">
         <item>5000</item>

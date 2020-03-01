@@ -11,32 +11,6 @@
 		android:gravity="center"
 		android:orientation="horizontal"
 		android:paddingBottom="10dp"
-		android:paddingTop="10dp"
-		android:visibility="gone">
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/menu_icon_brightness_auto" />
-		<TextView
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:paddingLeft="10dp"
-			android:paddingRight="10dp"
-			android:text="@string/reader_menu_item_brightness_auto_tip"
-			android:textSize="15dp"
-			android:textColor="@color/common_white_2" />
-		<ToggleButton 
-			android:id="@+id/brightness_auto_but"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-	</LinearLayout>
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:orientation="horizontal"
-		android:paddingBottom="10dp"
 		android:paddingTop="10dp" >
 		<ImageView
 			android:id="@+id/brightness_off_iv"

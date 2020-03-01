@@ -87,8 +87,8 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
                 mBookMarkTip = getResources().getDrawable(R.drawable.icon_shuqian_chang);
                 int bookMarkW = mBookMarkTip.getIntrinsicWidth();
                 int bookMarkH = mBookMarkTip.getIntrinsicHeight();
-                Rect bounds = new Rect(getWidth() - PADDING_LEFTRIGHT - PADDING_LEFTRIGHT - bookMarkW, 0,
-                        getWidth() - PADDING_LEFTRIGHT, bookMarkH);
+                Rect bounds = new Rect(getWidth() - mReadSetting.getLeftRightSpaceSize() - mReadSetting.getLeftRightSpaceSize() - bookMarkW, 0,
+                        getWidth() - mReadSetting.getLeftRightSpaceSize(), bookMarkH);
                 mBookMarkTip.setBounds(bounds);
             }
             mBookMarkTip.draw(canvas);
@@ -116,7 +116,7 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
             }
         }
         mTempTextPaint.setTextAlign(Align.CENTER);
-        String str = getResources().getString(R.string.reader_transition_tip);
+        String str = "努力加载中，请稍候";
         for (int i = 0; i < mLoadingPointSize; i++) {
             str = " " + str + ".";
         }
@@ -135,14 +135,14 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
             mBookMarkTip = getResources().getDrawable(R.drawable.icon_shuqian_chang);
             int bookMarkW = mBookMarkTip.getIntrinsicWidth();
             int bookMarkH = mBookMarkTip.getIntrinsicHeight();
-            Rect bounds = new Rect(getWidth() - PADDING_CONTENT_BOTTOM - bookMarkW, 0, getWidth() - PADDING_CONTENT_BOTTOM, bookMarkH);
+            Rect bounds = new Rect(getWidth() - bookMarkW - bookMarkW, 0, getWidth() - bookMarkW, bookMarkH);
             mBookMarkTip.setBounds(bounds);
         }
         int bookMarkW = 0;//mBookMarkTip.getIntrinsicWidth();
 
         FontMetricsInt fm = mTempTextPaint.getFontMetricsInt();
-        int x = getWidth() - PADDING_LEFTRIGHT - bookMarkW;
-        int y = getHeight() - PADDING_TOPBOTTOM + fm.bottom;
+        int x = getWidth() - mReadSetting.getLeftRightSpaceSize() - bookMarkW;
+        int y = getHeight() - mReadSetting.getTopBottomSpaceSize()  - topChapterNameHeight*2/3 + fm.bottom;
         canvas.drawText(pageSizeStr, x, y, mTempTextPaint);
 
     }
@@ -160,7 +160,7 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
                 }
             });
         }
-        batteryView.draw(canvas, PADDING_LEFTRIGHT, getHeight() - PADDING_TOPBOTTOM);
+        batteryView.draw(canvas, mReadSetting.getLeftRightSpaceSize(), getHeight() - mReadSetting.getTopBottomSpaceSize()  - topChapterNameHeight*2/3);
     }
 
     protected void drawChapterName(Canvas canvas,String title){
@@ -171,10 +171,10 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
         mTempTextPaint.setTextAlign(Align.LEFT);
         mTempTextPaint.setColor(mReadSetting.getThemeDecorateTextColor());
         FontMetricsInt fm = mTempTextPaint.getFontMetricsInt();
-        int x = PADDING_LEFTRIGHT;
-        int y = PADDING_TOPBOTTOM - fm.top;
+        int x = mReadSetting.getLeftRightSpaceSize();
+        int y = mReadSetting.getTopBottomSpaceSize() - fm.top;
         int w = (int) mTempTextPaint.measureText(title);
-        int titleMaxWidth = (getWidth() - (PADDING_LEFTRIGHT + PADDING_LEFTRIGHT)) * 8 / 10;//标题宽度最宽不能超过去掉padding后屏幕宽度的80%
+        int titleMaxWidth = (getWidth() - (mReadSetting.getLeftRightSpaceSize() + mReadSetting.getLeftRightSpaceSize())) * 8 / 10;//标题宽度最宽不能超过去掉padding后屏幕宽度的80%
         if(w > titleMaxWidth){
             title = validateTextWidth(mTempTextPaint, title, titleMaxWidth) + " ";
             w = (int) mTempTextPaint.measureText(title);
@@ -190,10 +190,10 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
         mTempTextPaint.setTextAlign(Align.LEFT);
         mTempTextPaint.setColor(mReadSetting.getThemeDecorateTextColor());
         FontMetricsInt fm = mTempTextPaint.getFontMetricsInt();
-        int x = PADDING_LEFTRIGHT;
-        int y = PADDING_TOPBOTTOM - fm.top;
+        int x = mReadSetting.getLeftRightSpaceSize();
+        int y = mReadSetting.getTopBottomSpaceSize() - fm.top;
         int w = (int) mTempTextPaint.measureText(title);
-        int titleMaxWidth = (getWidth() - (PADDING_LEFTRIGHT + PADDING_LEFTRIGHT)) * 8 / 10;//标题宽度最宽不能超过去掉padding后屏幕宽度的80%
+        int titleMaxWidth = (getWidth() - (mReadSetting.getLeftRightSpaceSize() + mReadSetting.getLeftRightSpaceSize())) * 8 / 10;//标题宽度最宽不能超过去掉padding后屏幕宽度的80%
         if(w > titleMaxWidth){
             title = validateTextWidth(mTempTextPaint, title, titleMaxWidth) + " ";
             w = (int) mTempTextPaint.measureText(title);

@@ -30,21 +30,21 @@ public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapt
         View indicatorView = null;
         String tag = getTab(position);
         if(tag.equals(CatalogView.TAG_CATALOG)){
-            indicatorView = newIndicator(R.string.btn_text_catalog);
+            indicatorView = newIndicator("目录");
             //indicatorView.setBackgroundResource(R.drawable.ic_reader_catalog_item_bg);
         }else if(tag.equals(CatalogView.TAG_DIGEST)){
-            indicatorView = newIndicator(R.string.btn_text_bookdigest);
+            indicatorView = newIndicator("笔记");
            // indicatorView.setBackgroundResource(R.drawable.ic_reader_catalog_item_bg);
         }else if(tag.equals(CatalogView.TAG_BOOKMARK)){
-            indicatorView = newIndicator(R.string.btn_text_bookmark);
+            indicatorView = newIndicator("书签");
         }
         return indicatorView;
     }
 
-    protected View newIndicator(int strResID) {
+    protected View newIndicator(String text) {
         TextView tv = (TextView) LayoutInflater.from(mContext).inflate(R.layout.tab_item_with_icon, null);
         tv.setId(android.R.id.title);
-        tv.setText(strResID);
+        tv.setText(text);
         return tv;
     };
 

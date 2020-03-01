@@ -238,15 +238,15 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		});
 
 		ArrayList<MenuItemAdapter.MenuItem> menuItems = new ArrayList<MenuItemAdapter.MenuItem>();
-		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_CATALOG, R.drawable.menu_icon_mark, getString(R.string.reader_menu_item_catalog_tip)));
-		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_FONT, R.drawable.menu_icon_font, getString(R.string.reader_menu_item_font_tip)));
-		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_THEME, R.drawable.menu_icon_background, getString(R.string.reader_menu_item_theme_tip)));
-		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS, R.drawable.menu_icon_brightness, getString(R.string.reader_menu_item_brightness_tip)));
-//		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_SETTING, R.drawable.menu_icon_settings, getString(R.string.reader_menu_item_setting_tip)));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_CATALOG, R.drawable.menu_icon_mark, "目录"));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_FONT, R.drawable.menu_icon_font, "排版"));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_THEME, R.drawable.menu_icon_background, "背景"));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS, R.drawable.menu_icon_brightness, "亮度"));
+//		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_SETTING, R.drawable.menu_icon_settings, "设置"));
 		if(menuItems.size() > MAX_MENU_SIZE){
 			mMoreMenuItems = new ArrayList<MenuItemAdapter.MenuItem>(menuItems.subList(MAX_MENU_SIZE - 1, menuItems.size()));
 			menuItems = new ArrayList<MenuItemAdapter.MenuItem>(menuItems.subList(0, MAX_MENU_SIZE - 1));
-			menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_MORE, R.drawable.menu_icon_more, getString(R.string.reader_menu_item_more_tip)));
+			menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_MORE, R.drawable.menu_icon_more, "更多"));
 		}
 		MenuItemAdapter adapter = new MenuItemAdapter(getContext(), menuItems);
 		mGridView = (CheckedGridView) findViewById(R.id.reader_menu_gv);
@@ -286,13 +286,8 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		topView = findViewById(R.id.menu_header_layout);
 	}
 	private View topView;
-
 	public LayoutInflater getLayoutInflater() {
 		return LayoutInflater.from(getContext());
-	}
-
-	public String getString(int id, Object... formatArgs) {
-		return getResources().getString(id, formatArgs);
 	}
 
 	public void setLayoutChapterProgress(int progress,int max){
@@ -307,8 +302,8 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				mJumpSeekBar.setMax(max);
 				mJumpSeekBar.setEnabled(false);
 				mJumpPreBut.setEnabled(mReadView.hasPreChapter());
-				mJumpNextBut.setEnabled(mReadView.hasNextChapter());
-				mJumpPageTip.setText(getString(R.string.reader_menu_item_seek_layouting_tip, (int)(progress * 1f / max * 100)+"%"));
+				mJumpNextBut.setEnabled(mReadView.hasNextChapter());//正在排版中...%1$s
+				mJumpPageTip.setText("正在排版中..."+(int)(progress * 1f / max * 100)+"%");
 				mJumpPageTip.setTextColor(Color.parseColor("#60ffffff"));
 			}
 		}
@@ -326,7 +321,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			curPage += 1;
 		}
 		if(mJumpPageTip != null){
-			mJumpPageTip.setText(getString(R.string.reader_menu_item_seek_page_tip, curPage, pageNums));
+			mJumpPageTip.setText( curPage +"/"+pageNums);
 		}
 	}
 
@@ -429,12 +424,6 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 					setScreenBrightess(progress);
 				}
 			});
-			mBrightessSettingView.findViewById(R.id.brightness_auto_but).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO 亮度自动调整
-                }
-            });
 		}
 		seekBar = (SeekBar) mBrightessSettingView.findViewById(R.id.brightness_seek);
 		WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
@@ -479,7 +468,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 
 
 	private View mFontSettingView;
-	private SizeChangeTool mFontSizeTool, mLineSpaceTool, mParagraphTool;
+	private SizeChangeTool mFontSizeTool, mLineSpaceTool, mParagraphTool, mTopBottomTool, mLeftRightTool;
 	private void showFontSettingView(){
 		if(mFontSettingView == null){
 			mFontSettingView = getLayoutInflater().inflate(R.layout.reader_menu_font_settings, null);
@@ -560,10 +549,64 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 					return mReadSetting.PARAGRAPH_SPACE_COUNT;
 				}
 			};
+			mTopBottomTool = new SizeChangeTool(mFontSettingView.findViewById(R.id.top_bottom_setting)) {
+				@Override
+				public String getDesc() {
+					return "上下边距";
+				}
+
+				@Override
+				public int getLevel() {
+					return mReadSetting.getTopBottomSpaceLevel();
+				}
+
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setTopBottomSpaceLevel(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.getTopBottomSpaceSize();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return mReadSetting.TOPBOTTOM_SPACE_COUNT;
+				}
+			};
+			mLeftRightTool = new SizeChangeTool(mFontSettingView.findViewById(R.id.left_right_setting)) {
+				@Override
+				public String getDesc() {
+					return "左右边距";
+				}
+
+				@Override
+				public int getLevel() {
+					return mReadSetting.getLeftRightSpaceLevel();
+				}
+
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setLeftRightSpaceLevel(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.getLeftRightSpaceSize();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return mReadSetting.LEFTRIGHT_SPACE_COUNT;
+				}
+			};
 		}
 		mFontSizeTool.resetStatus();
 		mLineSpaceTool.resetStatus();
 		mParagraphTool.resetStatus();
+		mTopBottomTool.resetStatus();
+		mLeftRightTool.resetStatus();
 		//显示界面
 		showChildMenu(mFontSettingView);
 	}
