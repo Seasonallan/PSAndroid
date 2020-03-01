@@ -13,7 +13,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.season.lib.anim.PageAnimController;
-import com.season.lib.util.LogUtil;
 
 
 /**
@@ -23,10 +22,6 @@ import com.season.lib.util.LogUtil;
 public class ReadSetting{
     /** 是否是简体 */
     public static final String SETTING_TYPE_FONT_SIM = "SETTING_TYPE_FONT_SIM";
-    /** 字体大小设置*/
-    public static final String SETTING_TYPE_FONT_SIZE = "SETTING_TYPE_FONT_SIZE";
-    /** 行间距设置*/
-    public static final String SETTING_TYPE_FONT_LINE_SPACE_TYPE = "SETTING_TYPE_FONT_LINE_SPACE_TYPE";
     /** 主题设置*/
     public static final String SETTING_TYPE_THEME = "SETTING_TYPE_THEME";
     /** 记录最后一次主题设置*/
@@ -58,26 +53,32 @@ public class ReadSetting{
     public static final int THEME_TYPE_OTHERS_2 = 3;
     public static final int THEME_TYPE_OTHERS_3 = 4;
     public static final int THEME_TYPE_OTHERS_4 = 5;
-    /*		定义行间距类型		*/
-    public static final float FONT_LINE_SPACE_TYPE_1 = 0f;
-    public static final float FONT_LINE_SPACE_TYPE_2 = 2f;
-    public static final float FONT_LINE_SPACE_TYPE_3 = 4f;
+
     /*		定义字体大小类型		*/
+    public static final String SETTING_TYPE_FONT_SIZE = "SETTING_TYPE_FONT_SIZE";
     public static final int FONT_SIZE_MIN = 15;
-    public static final int FONT_SIZE_MAX = 25;
-    public static final int FONT_SIZE_NUM = FONT_SIZE_MAX - FONT_SIZE_MIN;
-    public static final int FONT_SIZE_DEFALUT = FONT_SIZE_MIN + (FONT_SIZE_NUM >> 1);
+    public static final int FONT_SIZE_COUNT = 10;
+    private int mFontLevel;
+
+    /*		定义行间距类型		*/
+    public static final String SETTING_TYPE_FONT_LINE_SPACE_TYPE = "SETTING_TYPE_FONT_LINE_SPACE_TYPE";
+    public static final int LINE_SPACE_MIN = 0;
+    public static final int LINE_SPACE_COUNT = 8;
+    private int mLineSpaceLevel;
+
+    /*		定义段落间距类型		*/
+    public static final String SETTING_TYPE_FONT_PARAGRAPH_SPACE_TYPE = "SETTING_TYPE_FONT_PARAGRAPH_SPACE_TYPE";
+    public static final int PARAGRAPH_SPACE_MIN = 0;
+    public static final int PARAGRAPH_SPACE_COUNT = 6;
+    private int mParagraphSpaceLevel;
 
     private static final String PREFS_MODULE_INFO = "read_setting_prefs";
-    private static final int FONT_INCREASE_UNIT = 1;
     private static ReadSetting this_;
     private Context mContext;
     private LinkedList<WeakReference<SettingListener>> mSettingListenerList;
     private Handler mHandler;
     private SharedPreferences mSharedPreferences;
     private boolean isSimplified;
-    private int mFontLevel;
-    private float mLineSpaceType;
     private int mThemeType;
     private int mUserThemeType;
     private int mBrightessLevel;
@@ -99,8 +100,9 @@ public class ReadSetting{
     private ReadSetting(Context context){
         mContext = context.getApplicationContext();
         mSharedPreferences = mContext.getSharedPreferences(PREFS_MODULE_INFO, Context.MODE_PRIVATE);
-        mFontLevel = loadFontLevel();
-        mLineSpaceType = loadLineSpaceType();
+        mFontLevel =  mSharedPreferences.getInt(SETTING_TYPE_FONT_SIZE, FONT_SIZE_COUNT/2);
+        mLineSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_FONT_LINE_SPACE_TYPE, LINE_SPACE_COUNT/2);
+        mParagraphSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_FONT_PARAGRAPH_SPACE_TYPE, PARAGRAPH_SPACE_COUNT/2);
         mThemeType = loadThemeType();
         mUserThemeType = loadUserThemeType();
         mBrightessLevel = loadBrightessLevel();
@@ -152,36 +154,6 @@ public class ReadSetting{
         });
     }
 
-    /**
-     * 缩小字体
-     */
-    public void zoomOutFontSize() {
-        int currentFontProgress = getFontLevel();
-        int tempFontProgress = currentFontProgress;
-        tempFontProgress -= FONT_INCREASE_UNIT;
-        if (tempFontProgress < 0) {
-            tempFontProgress = 0;
-        }
-        currentFontProgress = tempFontProgress;
-        LogUtil.i("font_size", "currentFontProgress缩小:" + currentFontProgress);
-        setFontLevel(currentFontProgress);
-    }
-
-    /**
-     * 放大字体
-     */
-    public void zoomInFontSize() {
-        int currentFontProgress = getFontLevel();
-        LogUtil.i("font_size", "currentFontProgress放大前的当前值:" + currentFontProgress);
-        int tempFontProgress = currentFontProgress;
-        tempFontProgress += FONT_INCREASE_UNIT;
-        if (tempFontProgress > 10) {
-            tempFontProgress = 10;
-        }
-        currentFontProgress = tempFontProgress;
-        LogUtil.i("font_size", "currentFontProgress放大:" + currentFontProgress);
-        setFontLevel(currentFontProgress);
-    }
 
     /**
      * 设置字体等级
@@ -192,8 +164,68 @@ public class ReadSetting{
             return;
         }
         mFontLevel = level;
-        saveFontLevel(level);
+        mSharedPreferences.edit().putInt(SETTING_TYPE_FONT_SIZE, level).commit();
+        notify(SETTING_TYPE_FONT_SIZE);
     }
+    public int getFontLevel(){
+        return mFontLevel;
+    }
+
+    public int getFontSize(){
+        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+        return (int) (dm.density * (FONT_SIZE_MIN + mFontLevel) + 0.5f);
+    }
+
+    public int getMinFontSize(){
+        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+        return (int) (dm.density * FONT_SIZE_MIN + 0.5f);
+    }
+
+    /**
+     * 设置行间距等级
+     * @param level
+     */
+    public void setLineSpaceLevel(int level){
+        if(mLineSpaceLevel == level){
+            return;
+        }
+        mLineSpaceLevel = level;
+        mSharedPreferences.edit().putInt(SETTING_TYPE_FONT_LINE_SPACE_TYPE, mLineSpaceLevel).commit();
+        notify(SETTING_TYPE_FONT_LINE_SPACE_TYPE);
+    }
+
+    public int getLineSpaceLevel(){
+        return mLineSpaceLevel;
+    }
+
+    public int getLineSpaceSize(){
+        int size = getFontSize();
+        return size / 6 * (LINE_SPACE_MIN + mLineSpaceLevel)/2;
+    }
+
+    /**
+     * 设置行间距等级
+     * @param level
+     */
+    public void setParagraphSpaceLevel(int level){
+        if(mParagraphSpaceLevel == level){
+            return;
+        }
+        mParagraphSpaceLevel = level;
+        mSharedPreferences.edit().putInt(SETTING_TYPE_FONT_PARAGRAPH_SPACE_TYPE, mParagraphSpaceLevel).commit();
+        notify(SETTING_TYPE_FONT_SIZE);
+    }
+
+    public int getParagraphSpaceLevel(){
+        return mParagraphSpaceLevel;
+    }
+
+    public int getParagraphSpaceSize(){
+        int size = getFontSize();
+        return size / 3 * (PARAGRAPH_SPACE_MIN + mParagraphSpaceLevel)/2;
+    }
+
+
 
     /**
      * 保存字体是否为简体，并通知界面更新
@@ -211,51 +243,6 @@ public class ReadSetting{
         return isSimplified;
     }
 
-    /**
-     * 获取字体等级
-     * @return level 1-10级
-     */
-    public int getFontLevel(){
-        return mFontLevel;
-    }
-
-    public int getFontSize(){
-        int size = formaLevelToSize(mFontLevel);
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        return (int) (dm.density * size + 0.5f);
-    }
-
-    public int getMinFontSize(){
-        int size = formaLevelToSize(0);
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        return (int) (dm.density * size + 0.5f);
-    }
-
-    private int formaSizeToLevel(int size){
-        if(size < FONT_SIZE_MIN){
-            size = FONT_SIZE_MIN;
-        }
-        if(size > FONT_SIZE_MAX){
-            size = FONT_SIZE_MAX;
-        }
-        int level = size - FONT_SIZE_MIN;
-        return level;
-    }
-    /**
-     *
-     * @param level
-     * @return dip单位使用前需要转换像素
-     */
-    private int formaLevelToSize(int level){
-        int size = FONT_SIZE_MIN + level;
-        if(size < FONT_SIZE_MIN){
-            size = FONT_SIZE_MIN;
-        }
-        if(size > FONT_SIZE_MAX){
-            size = FONT_SIZE_MAX;
-        }
-        return size;
-    }
 
     private void saveFontSimplify(boolean isSimplified){
         mSharedPreferences.edit().putBoolean(SETTING_TYPE_FONT_SIM, isSimplified).commit();
@@ -267,48 +254,6 @@ public class ReadSetting{
     }
 
 
-    private void saveFontLevel(int level){
-        mSharedPreferences.edit().putInt(SETTING_TYPE_FONT_SIZE, level).commit();
-        notify(SETTING_TYPE_FONT_SIZE);
-    }
-
-    private int loadFontLevel(){
-        return mSharedPreferences.getInt(SETTING_TYPE_FONT_SIZE, formaSizeToLevel(FONT_SIZE_DEFALUT));
-    }
-
-    public int getLineSpaceSize(){
-        int size = getFontSize();
-        return (int) (size / 6 * mLineSpaceType);
-    }
-
-    /**
-     * 段落需要额外增加的高度
-     * @return
-     */
-    public int getParagraphSpaceSize(){
-        return (int) (getLineSpaceSize() * 0.75f);
-    }
-
-    public float getLineSpaceType(){
-        return mLineSpaceType;
-    }
-
-    public void setLineSpaceType(float type){
-        if(mLineSpaceType == type){
-            return;
-        }
-        mLineSpaceType = type;
-        saveLineSpaceType(type);
-    }
-
-    private float loadLineSpaceType(){
-        return mSharedPreferences.getFloat(SETTING_TYPE_FONT_LINE_SPACE_TYPE, FONT_LINE_SPACE_TYPE_2);
-    }
-
-    private void saveLineSpaceType(float type){
-        mSharedPreferences.edit().putFloat(SETTING_TYPE_FONT_LINE_SPACE_TYPE, type).commit();
-        notify(SETTING_TYPE_FONT_LINE_SPACE_TYPE);
-    }
     /**
      * 章节名和页码等装饰的字体颜色
      * @return

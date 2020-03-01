@@ -65,8 +65,8 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	private void init(){
 		PADDING_LEFTRIGHT = DimenUtil.dip2px(DEFAULT_PADDING);
 		PADDING_TOPBOTTOM = DimenUtil.dip2px(DEFAULT_PADDING);
-		PADDING_CONTENT_TOP = DimenUtil.dip2px(DEFAULT_PADDING);
-		PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(DEFAULT_PADDING);
+		PADDING_CONTENT_TOP = DimenUtil.dip2px(DEFAULT_PADDING/2);
+		PADDING_CONTENT_BOTTOM = DimenUtil.dip2px(DEFAULT_PADDING/2);
 
 		mHandler = new Handler(Looper.getMainLooper());
 		setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));

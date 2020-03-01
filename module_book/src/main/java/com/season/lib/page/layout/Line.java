@@ -184,9 +184,9 @@ public class Line extends Patch{
 	public int getBottom() {
 		int bottomSpace = mSettingParam.getLineSpace();
 		if(isParagraphEnd()){
-			bottomSpace += mSettingParam.getParagraphSpace();
+			bottomSpace = mSettingParam.getParagraphSpace();
 		}else if(isTitleEnd()){
-			bottomSpace += mSettingParam.getParagraphSpace() * 2;
+			bottomSpace = mSettingParam.getParagraphSpace() * 2;
 		}
 		return mBottom + bottomSpace;
 	}

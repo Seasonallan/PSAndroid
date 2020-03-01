@@ -17,8 +17,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -35,7 +33,6 @@ import com.season.lib.page.span.media.ReaderMediaPlayer.PlayerListener;
 import com.season.lib.view.IReaderView;
 
 public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
-	private static final int FONT_INCREASE_UNIT = 1;
 	private static final int MAX_MENU_SIZE = 5;
 	private Activity mActivity;
 	private IReaderView mReadView;
@@ -53,11 +50,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	private View mBrightessSettingView;
 	private View mMoreView;
 	private View mThemeView;
-	private View mFontSettingView;
-	private View mCutFontSizeBut;
-	private View mAddFontSizeBut;
 	private ReadSetting mReadSetting;
-	private RadioGroup mLineSpacingRG;
 	private View mVoiceLayout;
 	private SeekBar mVoiceSeekBar;
 	private TextView mVoiceMaxProgressTV;
@@ -484,82 +477,93 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		showChildMenu(mThemeView);
 	}
 
+
+	private View mFontSettingView;
+	private SizeChangeTool mFontSizeTool, mLineSpaceTool, mParagraphTool;
 	private void showFontSettingView(){
 		if(mFontSettingView == null){
-			//初始化字体大小设置逻辑
 			mFontSettingView = getLayoutInflater().inflate(R.layout.reader_menu_font_settings, null);
-			mCutFontSizeBut = mFontSettingView.findViewById(R.id.menu_settings_font_size_sut_but);
-			mAddFontSizeBut = mFontSettingView.findViewById(R.id.menu_settings_font_size_add_but);
-			mAddFontSizeBut.setOnClickListener(new OnClickListener() {
+			mFontSizeTool = new SizeChangeTool(mFontSettingView.findViewById(R.id.font_setting)) {
 				@Override
-				public void onClick(View v) {
-					int temtFontProgress = mReadSetting.getFontLevel();
-					temtFontProgress += FONT_INCREASE_UNIT;
-					if(temtFontProgress > 10){
-						temtFontProgress = 10;
-					}
-					if(temtFontProgress == 10){
-						ToastUtil.showToast("当前为最大字体");
-						v.setEnabled(false);
-					}
-					mReadSetting.setFontLevel(temtFontProgress);
-					if(!mCutFontSizeBut.isEnabled()){
-						mCutFontSizeBut.setEnabled(true);
-					}
+				public String getDesc() {
+					return "字号";
 				}
-			});
-			mCutFontSizeBut.setOnClickListener(new OnClickListener() {
 				@Override
-				public void onClick(View v) {
-					int temtFontProgress = mReadSetting.getFontLevel();
-					temtFontProgress -= FONT_INCREASE_UNIT;
-					if(temtFontProgress < 0){
-						ToastUtil.showToast("当前为最小字体");
-						temtFontProgress = 0;
-					}
-					if(temtFontProgress == 0){
-						v.setEnabled(false);
-					}
-					mReadSetting.setFontLevel(temtFontProgress);
-					if(!mAddFontSizeBut.isEnabled()){
-						mAddFontSizeBut.setEnabled(true);
-					}
+				public int getLevel() {
+					return mReadSetting.getFontLevel();
 				}
-			});
-			//初始化行距设置逻辑
-			mLineSpacingRG = (RadioGroup)mFontSettingView.findViewById(R.id.menu_settings_line_spacing_rg);
-			mLineSpacingRG.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(RadioGroup group, int checkedId) {
-					float lineSpaceType = ReadSetting.FONT_LINE_SPACE_TYPE_1;
-					if(checkedId == R.id.menu_settings_line_spacing_but_1){
-						lineSpaceType = ReadSetting.FONT_LINE_SPACE_TYPE_1;
-					}else if(checkedId == R.id.menu_settings_line_spacing_but_2){
-						lineSpaceType = ReadSetting.FONT_LINE_SPACE_TYPE_2;
-					}else if(checkedId == R.id.menu_settings_line_spacing_but_3){
-						lineSpaceType = ReadSetting.FONT_LINE_SPACE_TYPE_3;
-					}
-					mReadSetting.setLineSpaceType(lineSpaceType);
-				}
-			});
-		}
 
-		//同步字体大小设置状态
-		int temtFontProgress = mReadSetting.getFontLevel();
-		if(temtFontProgress == 10){
-			mAddFontSizeBut.setEnabled(false);
-		}else if(temtFontProgress == 0){
-			mCutFontSizeBut.setEnabled(false);
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setFontLevel(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.getFontSize();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return mReadSetting.FONT_SIZE_COUNT;
+				}
+			};
+			mLineSpaceTool = new SizeChangeTool(mFontSettingView.findViewById(R.id.line_setting)) {
+				@Override
+				public String getDesc() {
+					return "行间距";
+				}
+
+				@Override
+				public int getLevel() {
+					return mReadSetting.getLineSpaceLevel();
+				}
+
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setLineSpaceLevel(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.getLineSpaceSize();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return mReadSetting.LINE_SPACE_COUNT;
+				}
+			};
+			mParagraphTool = new SizeChangeTool(mFontSettingView.findViewById(R.id.paragraph_setting)) {
+				@Override
+				public String getDesc() {
+					return "段间距";
+				}
+
+				@Override
+				public int getLevel() {
+					return mReadSetting.getParagraphSpaceLevel();
+				}
+
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setParagraphSpaceLevel(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.getParagraphSpaceSize();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return mReadSetting.PARAGRAPH_SPACE_COUNT;
+				}
+			};
 		}
-		//同步行距设置状态
-		float lineSpaceType = mReadSetting.getLineSpaceType();
-		if(lineSpaceType == ReadSetting.FONT_LINE_SPACE_TYPE_1){
-			mLineSpacingRG.check(R.id.menu_settings_line_spacing_but_1);
-		}else if(lineSpaceType == ReadSetting.FONT_LINE_SPACE_TYPE_2){
-			mLineSpacingRG.check(R.id.menu_settings_line_spacing_but_2);
-		}else if(lineSpaceType == ReadSetting.FONT_LINE_SPACE_TYPE_3){
-			mLineSpacingRG.check(R.id.menu_settings_line_spacing_but_3);
-		}
+		mFontSizeTool.resetStatus();
+		mLineSpaceTool.resetStatus();
+		mParagraphTool.resetStatus();
 		//显示界面
 		showChildMenu(mFontSettingView);
 	}
