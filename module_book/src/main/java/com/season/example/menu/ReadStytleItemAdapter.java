@@ -1,7 +1,6 @@
 package com.season.example.menu;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.example.book.R;
-import com.season.lib.ReadSetting;
+import com.season.lib.ReadSettingThemeColor;
 
 
 public class ReadStytleItemAdapter extends BaseAdapter {
@@ -59,9 +58,9 @@ public class ReadStytleItemAdapter extends BaseAdapter {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             int type = readStyleItems[position];
-            int bgRes = ReadSetting.getThemeBGImgRes(type);
+            int bgRes = ReadSettingThemeColor.getThemeBGImgRes(type);
             if(bgRes == -1){
-                viewHolder.contentIV.setBackgroundColor(ReadSetting.getThemeBGColor(type));
+                viewHolder.contentIV.setBackgroundColor(ReadSettingThemeColor.getThemeBGColor(type));
             }else{
                 viewHolder.contentIV.setImageResource(bgRes);
             }

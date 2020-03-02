@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.example.book.R;
 import com.season.lib.ReadSetting;
+import com.season.lib.ReadSettingThemeColor;
 import com.season.lib.bean.BookInfo;
 import com.season.lib.page.span.media.ReaderMediaPlayer;
 import com.season.lib.util.SimpleAnimationListener;
@@ -440,22 +441,20 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		showChildMenu(mBrightessSettingView);
 	}
 
-	private int[] themeTypes = {ReadSetting.THEME_TYPE_DAY, ReadSetting.THEME_TYPE_OTHERS_1, ReadSetting.THEME_TYPE_OTHERS_2
-			, ReadSetting.THEME_TYPE_OTHERS_3, ReadSetting.THEME_TYPE_OTHERS_4};
 	private void showThemeView(){
 		if(mThemeView == null){
 			mThemeView = getLayoutInflater().inflate(R.layout.reader_menu_theme, null);
 		}
 		GridView gridView  = (GridView) mThemeView;
-		final ReadStytleItemAdapter adapter = new ReadStytleItemAdapter(getContext(), themeTypes);
+		final ReadStytleItemAdapter adapter = new ReadStytleItemAdapter(getContext(), ReadSettingThemeColor.sThemeTypes);
 		adapter.selectedType = mReadSetting.getThemeType();
-		gridView.setNumColumns(themeTypes.length);
+		gridView.setNumColumns(ReadSettingThemeColor.sThemeTypes.length);
 		gridView.setAdapter(adapter);
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				int selectedType = themeTypes[position];
+				int selectedType = ReadSettingThemeColor.sThemeTypes[position];
 				if (selectedType != mReadSetting.getThemeType()){
 					adapter.selectedType = selectedType;
 					adapter.notifyDataSetChanged();

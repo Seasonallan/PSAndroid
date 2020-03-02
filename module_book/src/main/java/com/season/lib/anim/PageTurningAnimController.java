@@ -331,7 +331,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		pageCarver.drawPage(canvas, pageIndex);
 		canvas.restore();
 		if(!isLandscape){
-			canvas.drawColor(bgColor + 0xaa000000);
+			canvas.drawColor(bgColor + 0xaa000000);//半透明遮罩，构建阴影效果
 		}
 		float degree = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
 				- mCornerX, mBezierControl2.y - mCornerY));

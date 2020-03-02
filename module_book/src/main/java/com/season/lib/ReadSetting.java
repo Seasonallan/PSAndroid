@@ -12,7 +12,6 @@ import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.example.book.R;
 import com.season.lib.anim.PageAnimController;
 
 
@@ -25,8 +24,6 @@ public class ReadSetting{
     public static final String SETTING_TYPE_FONT_SIM = "SETTING_TYPE_FONT_SIM";
     /** 主题设置*/
     public static final String SETTING_TYPE_THEME = "SETTING_TYPE_THEME";
-    /** 记录最后一次主题设置*/
-    public static final String SETTING_LAST_TYPE_THEME = "SETTING_LAST_TYPE_THEME";
     /** 亮度设置*/
     public static final String SETTING_TYPE_BRIGHTESS_LEVEL = "SETTING_TYPE_BRIGHTESS_LEVEL";
     /** 动画设置*/
@@ -39,21 +36,12 @@ public class ReadSetting{
     private static final String SETTING_TYPE_AUTO_DELAYED_UD = "SETTING_TYPE_AUTO_DELAYED_UD";
     /** 自动播放延迟设置*/
     private static final String SETTING_TYPE_AUTO_DELAYED_LR = "SETTING_TYPE_AUTO_DELAYED_LR";
-    /** User主题设置*/
-    private static final String SETTING_TYPE_USER_THEME = "SETTING_TYPE_USER_THEME";
     /** 横竖屏切换*/
     public static final String SETTING_TYPE_ORIENTATION = "SETTING_TYPE_ORIENTATION";
     /*		自动播放类型		*/
     public static final int AUTO_TYPE_NU = 0;
     public static final int AUTO_TYPE_UD = 1;
     public static final int AUTO_TYPE_LR = 2;
-    /*		定义主题类型		*/
-    public static final int THEME_TYPE_DAY = 0;
-    public static final int THEME_TYPE_NIGHT = 1;
-    public static final int THEME_TYPE_OTHERS_1 = 2;
-    public static final int THEME_TYPE_OTHERS_2 = 3;
-    public static final int THEME_TYPE_OTHERS_3 = 4;
-    public static final int THEME_TYPE_OTHERS_4 = 5;
 
     /*		定义字体大小类型		*/
     public static final String SETTING_TYPE_FONT_SIZE = "SETTING_TYPE_FONT_SIZE";
@@ -99,7 +87,6 @@ public class ReadSetting{
     private SharedPreferences mSharedPreferences;
     private boolean isSimplified;
     private int mThemeType;
-    private int mUserThemeType;
     private int mBrightessLevel;
     private int mAnimType;
     private int mAutoType;
@@ -126,7 +113,6 @@ public class ReadSetting{
         mLeftRightSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_LEFTRIGHT_SPACE_TYPE, LEFTRIGHT_SPACE_COUNT/2);
         mIndentSizeLevel = mSharedPreferences.getInt(SETTING_TYPE_INDENT_SIZE_TYPE, INDENT_SIZE_COUNT/2);
         mThemeType = loadThemeType();
-        mUserThemeType = loadUserThemeType();
         mBrightessLevel = loadBrightessLevel();
         isShakeSwitch = loadShakeSwitch();
         mAnimType = loadAnimType();
@@ -346,166 +332,31 @@ public class ReadSetting{
      * @return
      */
     public int getThemeDecorateTextColor(){
-        int textColor = 0x88464646;
-		switch (mThemeType) {
-		case THEME_TYPE_DAY:
-			textColor = 0x88464646;
-			break;
-		case THEME_TYPE_NIGHT:
-//			textColor = 0x881e1e1e;
-			textColor = 0xff1d2524;
-			break;
-		case THEME_TYPE_OTHERS_1:
-			textColor = 0x88cccccc;
-			break;
-		case THEME_TYPE_OTHERS_2:
-			textColor = 0x88464646;
-			break;
-		case THEME_TYPE_OTHERS_3:
-			textColor = 0x88cccccc;
-			break;
-		case THEME_TYPE_OTHERS_4:
-			textColor = 0x88464646;
-			break;
-		}
-        return textColor;
+        return ReadSettingThemeColor.getThemeDecorateTextColor(mThemeType);
     }
     /**
      * 获取字体颜色
      * @return
      */
     public int getThemeTextColor(){
-        int textColor = 0xff464646;
-		switch (mThemeType) {
-		case THEME_TYPE_DAY:
-			textColor = 0xff464646;
-			break;
-		case THEME_TYPE_NIGHT:
-//			textColor = 0xff1e1e1e;
-			textColor = 0xff1d2524;
-			break;
-		case THEME_TYPE_OTHERS_1:
-			textColor = 0xffcccccc;
-			break;
-		case THEME_TYPE_OTHERS_2:
-			textColor = 0xff464646;
-			break;
-		case THEME_TYPE_OTHERS_3:
-			textColor = 0xffcccccc;
-			break;
-		case THEME_TYPE_OTHERS_4:
-			textColor = 0xff464646;
-			break;
-		}
-        return textColor;
+       return ReadSettingThemeColor.getThemeTextColor(mThemeType);
     }
     /**
      * 获取背景颜色值
      * @return
      */
     public int getThemeBGColor(){
-        return getThemeBGColor(mThemeType);
+        return ReadSettingThemeColor.getThemeBGColor(mThemeType);
     }
-    /**
-     * 获取背景颜色值
-     * @return
-     */
-    public static int getThemeBGColor(int themeType){
-        int bgColor = 0;
-        switch (themeType) {
-            case THEME_TYPE_DAY:
-                bgColor = 0xffe6e4df;
-                break;
-            case THEME_TYPE_NIGHT:
-                bgColor = 0xff282a2e;
-                break;
-            case THEME_TYPE_OTHERS_1:
-                bgColor = 0xfff0e4d2;
-                bgColor = 0xffFFF2E2;
-                bgColor = 0xff395268;
-                break;
-            case THEME_TYPE_OTHERS_2:
-                bgColor = 0xffc9e2cb;
-                bgColor = 0xfff4f3e7;
-                break;
-            case THEME_TYPE_OTHERS_3:
-                bgColor = 0xffcee9eb;
-                bgColor = 0xff224a43;
-                break;
-            case THEME_TYPE_OTHERS_4:
-                bgColor = 0xffe5d4a8;
-                bgColor = 0xffdfc6a0;
-                break;
-        }
-        return bgColor;
-    }
+
     /**
      * 获取背景图片资源ID
      * @return 返回-1 代表没有背景图片
      */
     public int getThemeBGImgRes(){
-        return getThemeBGImgRes(mThemeType);
-    }
-    public static int getThemeBGImgRes(int themeType){
-        int bgImgRes = -1;
-		switch (themeType) {
-		case THEME_TYPE_NIGHT:
-			bgImgRes = R.drawable.read_style_night_bg;
-			break;
-		case THEME_TYPE_OTHERS_1:
-			bgImgRes = R.drawable.read_style_other_bg_1;
-			break;
-		case THEME_TYPE_OTHERS_2:
-			bgImgRes = R.drawable.read_style_other_bg_2;
-			break;
-		case THEME_TYPE_OTHERS_3:
-			bgImgRes = R.drawable.read_style_other_bg_3;
-			break;
-		case THEME_TYPE_OTHERS_4:
-			bgImgRes = R.drawable.read_style_other_bg_4;
-			break;
-		}
-        return bgImgRes;
+        return ReadSettingThemeColor.getThemeBGImgRes(mThemeType);
     }
 
-    public void switchReaderStyle() {
-        int styleId = getThemeType();
-        int tempStyleId = styleId;
-        int userStyleId = getUserThemeType();
-        if (styleId == THEME_TYPE_NIGHT) {
-            if (userStyleId != -1) {
-                styleId = userStyleId;
-            } else {
-                styleId = THEME_TYPE_DAY;
-            }
-        } else {
-            styleId = THEME_TYPE_NIGHT;
-        }
-        setThemeType(styleId);
-        if (tempStyleId != THEME_TYPE_NIGHT) {
-            if (userStyleId != tempStyleId) {
-                setUserThemeType(tempStyleId);
-            }
-        } else {
-            setUserThemeType(THEME_TYPE_DAY);
-        }
-    }
-
-    private int loadUserThemeType(){
-        return mSharedPreferences.getInt(SETTING_TYPE_USER_THEME, -1);
-    }
-
-    public int getUserThemeType() {
-        return mUserThemeType;
-    }
-
-    public void setUserThemeType(int type) {
-        if(mUserThemeType == type){
-            return;
-        }
-        mUserThemeType = type;
-        mSharedPreferences.edit().putInt(SETTING_TYPE_USER_THEME, type).commit();
-    }
 
     public int getThemeType(){
         return mThemeType;
@@ -520,7 +371,7 @@ public class ReadSetting{
     }
 
     private int loadThemeType(){
-        return mSharedPreferences.getInt(SETTING_TYPE_THEME, THEME_TYPE_OTHERS_2);
+        return mSharedPreferences.getInt(SETTING_TYPE_THEME, ReadSettingThemeColor.THEME_TYPE_IMAGE_2);
     }
 
     private void saveThemeType(int type){
@@ -528,21 +379,6 @@ public class ReadSetting{
         notify(SETTING_TYPE_THEME);
     }
 
-    /**
-     * 读取最后一次主题设置
-     * @return
-     */
-    public int getLastThemeType(){
-        return mSharedPreferences.getInt(SETTING_LAST_TYPE_THEME, THEME_TYPE_OTHERS_2);
-    }
-
-    /**
-     * 记录最后一次主题设置
-     * @param type
-     */
-    public void setLastThemeType(int type){
-        mSharedPreferences.edit().putInt(SETTING_LAST_TYPE_THEME, type).commit();
-    }
 
     public int getBrightessLevel(){
         return mBrightessLevel;
