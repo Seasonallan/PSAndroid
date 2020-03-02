@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -80,11 +81,6 @@ public class BaseBookActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		BaseContext.init(getApplicationContext());
-		Intent intent = getIntent();
-		if (intent == null) {
-			finish();
-			return;
-		}
         NavigationBarUtil.hideNavigationBar(this);
 		StatusBarUtil.setTranslucent(this);
         // StatusBarUtil.setColor(this, 0xff30302E);

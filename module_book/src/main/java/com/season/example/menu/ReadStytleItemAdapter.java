@@ -58,12 +58,13 @@ public class ReadStytleItemAdapter extends BaseAdapter {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             int type = readStyleItems[position];
-            int bgRes = ReadSettingThemeColor.getThemeBGImgRes(type);
-            if(bgRes == -1){
-                viewHolder.contentIV.setBackgroundColor(ReadSettingThemeColor.getThemeBGColor(type));
-            }else{
-                viewHolder.contentIV.setImageResource(bgRes);
-            }
+//            int bgRes = ReadSettingThemeColor.getThemeBGImgResThumb(type);
+//            if(bgRes == -1){
+//                viewHolder.contentIV.setBackgroundColor(ReadSettingThemeColor.getThemeBGColor(type));
+//            }else{
+//                viewHolder.contentIV.setImageResource(bgRes);
+//            }
+            viewHolder.contentIV.setBackgroundColor(ReadSettingThemeColor.getThemeBGColor(type));
             if(type == selectedType){
                 viewHolder.selectTV.setVisibility(View.VISIBLE);
             }else{

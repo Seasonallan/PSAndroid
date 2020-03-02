@@ -7,14 +7,14 @@
 		android:id="@+id/content_iv"
 		android:layout_width="68dp"
 		android:layout_height="68dp"
-		android:layout_margin="8dp"
+		android:layout_margin="4dp"
 		android:scaleType="centerCrop"
 		/>
 	<ImageView
 		android:id="@+id/select_iv"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_margin="8dp"
+		android:layout_margin="4dp"
 		android:src="@drawable/ic_select_read_style"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true" />

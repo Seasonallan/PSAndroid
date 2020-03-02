@@ -953,6 +953,7 @@ public class PageManager implements PatchParent{
 		    action.run();
 		}
 	}
+
 	/**
 	 * 代表章节的解析排版任务，每个任务会在结束时自动下一个任务列表里的任务
 	 * @author linyiwei

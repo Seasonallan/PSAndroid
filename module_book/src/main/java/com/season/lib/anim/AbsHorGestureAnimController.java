@@ -3,6 +3,8 @@ package com.season.lib.anim;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PointF;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -34,6 +36,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected boolean isAnimStart;
 	protected boolean isTouchStart;
 	protected boolean isTouchRequestPage;
+	protected Handler mHandler;
 
 	public void setDuration(int duration){
 		this.mDuration = duration;
@@ -45,6 +48,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 
     AbsHorGestureAnimController(Context context, Interpolator interpolator){
         super(context);
+		mHandler = new Handler(context.getMainLooper());
         mScroller = new Scroller(context, interpolator);
         mLastTouchPoint = new PointF();
         mDownTouchPoint = new PointF();
@@ -165,7 +169,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 					}
 				}
 				if(isRequestNextPage != null){
-					startAnim(isRequestNextPage,pageCarver);
+					//startAnim(isRequestNextPage,pageCarver);
 				}
 			}
 			isTouchStart = false;
@@ -176,7 +180,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	}
 
 	@Override
-	public boolean dispatchDrawPage(Canvas canvas, PageCarver pageCarver) {
+	public boolean dispatchDrawPage(Canvas canvas, final PageCarver pageCarver) {
 		if(isRequestNextPage == null){
 			return false;
 		}
@@ -279,6 +283,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected boolean isFullAnimation = false;
 	@Override
 	public void startAnim(int fromIndex,int toIndex,boolean isNext, PageCarver pageCarver) {
+		LogUtil.e("startAnim1111");
         isFullAnimation = true;
 		stopAnim(pageCarver);
 		checkInit(pageCarver);
@@ -289,8 +294,9 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	}
 	
 	protected void startAnim(boolean isRequestNext, PageCarver pageCarver) {
+		LogUtil.e("startAnim323232321");
 		isCancelAnim = false;
-		setScroller(mScroller, isRequestNext, isCancelAnim,pageCarver);
+		setScroller(mScroller, isRequestNext, isCancelAnim, pageCarver);
 		dispatchAnimStart(pageCarver);
 	}
 

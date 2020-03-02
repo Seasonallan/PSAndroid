@@ -69,9 +69,6 @@ public class ReadSettingThemeColor {
     public static int getThemeBGImgRes(int themeType){
         int bgImgRes = -1;
         switch (themeType) {
-            case THEME_TYPE_NIGHT:
-                bgImgRes = R.drawable.read_style_night_bg;
-                break;
             case THEME_TYPE_IMAGE_1:
                 bgImgRes = R.drawable.read_style_other_bg_1;
                 break;
@@ -83,6 +80,29 @@ public class ReadSettingThemeColor {
                 break;
             case THEME_TYPE_IMAGE_4:
                 bgImgRes = R.drawable.read_style_other_bg_4;
+                break;
+        }
+        return bgImgRes;
+    }
+
+    /**
+     * 获取背景图片资源ID
+     * @return 返回-1 代表没有背景图片
+     */
+    public static int getThemeBGImgResThumb(int themeType){
+        int bgImgRes = -1;
+        switch (themeType) {
+            case THEME_TYPE_IMAGE_1:
+                bgImgRes = R.drawable.ic_read_style_other_1;
+                break;
+            case THEME_TYPE_IMAGE_2:
+                bgImgRes = R.drawable.ic_read_style_other_2;
+                break;
+            case THEME_TYPE_IMAGE_3:
+                bgImgRes = R.drawable.ic_read_style_other_3;
+                break;
+            case THEME_TYPE_IMAGE_4:
+                bgImgRes = R.drawable.ic_read_style_other_4;
                 break;
         }
         return bgImgRes;

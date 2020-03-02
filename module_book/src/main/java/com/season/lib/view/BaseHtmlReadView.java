@@ -437,6 +437,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	protected boolean onDrawPage(Canvas canvas, boolean isCurrentPage,int chapterIndex, int pageIndex) {
+		long time = System.currentTimeMillis();
 		if(mTextSelectHandler != null && mTextSelectHandler.isSelect()){
 			if(mCacheBitmap == null){
 				mCacheBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Config.RGB_565);
@@ -457,6 +458,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 			}
 			mRequestDrawResult = result;
 		}
+		//LogUtil.e("onDraw--post>>> page=" + pageIndex +" >>" + (System.currentTimeMillis() - time));
 		return true;
 	}
 	
@@ -500,6 +502,9 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		super.onStopAnim(isCancel);
 		if(!isCancel){
 			updateSelectTexts(mCurrentChapterIndex);
+		}
+		if (mReadSetting.getThemeBGImgRes() != -1) {//图片背景时预加载下一页
+			//mPageManager.preLoadNextPage();
 		}
 	}
 	

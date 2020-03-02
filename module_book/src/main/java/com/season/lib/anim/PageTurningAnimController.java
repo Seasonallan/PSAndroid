@@ -244,9 +244,10 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mPath0.close();
 		// 1、绘制当前页面所有区域
 		drawCurrentPageArea(canvas, fromIndex,true,pageCarver);
-		if (!isFullAnimation)
-            // 2、绘制当前页面扭曲部分区域
-            drawCurrentPageWarpingArea(canvas, fromIndex,true,pageCarver);
+		// 2、绘制当前页面扭曲部分区域
+		if (!isFullAnimation) {
+			drawCurrentPageWarpingArea(canvas, fromIndex, true, pageCarver);
+		}
 		// 3、绘制翻起页背面//第三个参数表示是否绘制在左边
 		drawCurrentBackArea(canvas, fromIndex,!isNext,pageCarver);
 		// 4、绘制下一页//第三个参数表示是否绘制在左边

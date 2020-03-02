@@ -45,6 +45,7 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
 
     @Override
     public void release() {
+        super.release();
         mBookMarkTip = null;
         if (batteryView != null){
             batteryView.stop();

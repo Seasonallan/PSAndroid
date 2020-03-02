@@ -1,6 +1,8 @@
 package com.season.lib.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -16,7 +18,6 @@ import android.view.ViewGroup.LayoutParams;
 import com.season.lib.ReadSetting;
 import com.season.lib.anim.AutoAnimController;
 import com.season.lib.anim.PageAnimController;
-import com.season.lib.dimen.DimenUtil;
 import com.season.lib.util.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener {
@@ -40,8 +41,6 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	protected ReadSetting mReadSetting;
 	/** 翻页动画控制者*/
 	protected PageAnimController mPageAnimController;
-	/** 背景图片*/
-	private Drawable mBGDrawable;
 	/** 记录当前使用的动画类型，用于自动动画停止后恢复原动画*/
 	private int mAnimType = PageAnimController.ANIM_TYPE_PAGE_TURNING;
 	private Handler mHandler;
@@ -68,17 +67,22 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		setAnimType(mReadSetting.getAnimType(),true);
 		loadStyleSetting();
 	}
-	
+
+	protected void release(){
+		if (mBGBitmap != null){
+			mBGBitmap.recycle();
+			mBGBitmap = null;
+		}
+	}
+
 	private void loadStyleSetting(){
 		loadStyleSetting(true);
 	}
 	
 	private void loadStyleSetting(boolean isReLayout){
-		int bgRes = mReadSetting.getThemeBGImgRes();
-		if(bgRes == -1){
-			mBGDrawable = new ColorDrawable(mReadSetting.getThemeBGColor());
-		}else{
-			mBGDrawable = getResources().getDrawable(bgRes);
+		if (mBGBitmap != null){
+			mBGBitmap.recycle();
+			mBGBitmap = null;
 		}
 		mTextPaint.setColor(mReadSetting.getThemeTextColor());
 		mTextPaint.linkColor = Color.BLUE;
@@ -170,7 +174,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);  
+		super.onDraw(canvas);
 		if(!mPageAnimController.dispatchDrawPage(canvas, AbsReadView.this)){
 			drawPage(canvas, mCurrentPageIndex);
 		}
@@ -208,9 +212,19 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	 */
 	protected abstract void drawBatteryTime(Canvas canvas);
 
+	/** 背景图片*/
+	private Bitmap mBGBitmap;
 	protected void drawBackground(Canvas canvas){
-		mBGDrawable.setBounds(getLeft(), getTop(), getRight(), getBottom());
-		mBGDrawable.draw(canvas);
+		int bgRes = mReadSetting.getThemeBGImgRes();
+		if(bgRes == -1){
+			canvas.drawColor(mReadSetting.getThemeBGColor());
+		}else{
+			if (mBGBitmap == null){
+				mBGBitmap = BitmapFactory.decodeResource(getResources(), bgRes);
+			}
+			canvas.drawBitmap(mBGBitmap, new Rect(0, 0, mBGBitmap.getWidth(), mBGBitmap.getHeight()),
+					new Rect(getLeft(), getTop(), getRight(), getBottom()), null);
+		}
 	}
 	
 	@Override
@@ -428,6 +442,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 
 	@Override
 	public void onStartAnim(boolean isCancel) {
+		LogUtil.i(TAG,"onStartAnim mCurrentPageIndex="+mCurrentPageIndex);
 	}
 
 	@Override
@@ -450,36 +465,6 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	@Override
 	public int getCurrentPageIndex() {
 		return mCurrentPageIndex;
-	}
-	
-	public void gotoNextPage() {
-		if(!mPageAnimController.isAnimStop()){
-			mPageAnimController.stopAnim(this);
-		}
-		int[] locals = requestNextPage(mCurrentChapterIndex, mCurrentPageIndex);
-		if(locals != null){
-			if(locals[0] >= 0){
-				gotoPage(locals[0], locals[1], true);
-			}else{
-                //TODO:下一章节数据未加载完全
-            }
-		}else{
-			onNotNextContent();
-		}
-	}
-
-	public void gotoPrePage() {
-		if(!mPageAnimController.isAnimStop()){
-			mPageAnimController.stopAnim(this);
-		}
-		int[] locals = requestPrePage(mCurrentChapterIndex, mCurrentPageIndex);
-		if(locals != null){
-			if(locals[0] >= 0){
-				gotoPage(locals[0], locals[1], true);
-			}
-		}else{
-			onNotPreContent();
-		}
 	}
 
 	public void gotoPreChapter() {
