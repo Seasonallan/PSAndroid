@@ -440,7 +440,6 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 			LogUtil.i(TAG,"onAnimEnd mRequestPage="+mRequestPageIndex);
 			mCurrentPageIndex = -mRequestPageIndex - 1;
 			mCurrentChapterIndex = mRequestChapterIndex;
-			LogUtil.e("pagepage");
 			setOnPageChange();
 		}else{
 			mRequestPageIndex = -(mCurrentPageIndex + 1);

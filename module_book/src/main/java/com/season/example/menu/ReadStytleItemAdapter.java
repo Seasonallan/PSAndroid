@@ -1,6 +1,7 @@
 package com.season.example.menu;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,12 @@ public class ReadStytleItemAdapter extends BaseAdapter {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             int type = readStyleItems[position];
-            viewHolder.contentIV.setBackgroundColor(ReadSetting.getThemeBGColor(type));
+            int bgRes = ReadSetting.getThemeBGImgRes(type);
+            if(bgRes == -1){
+                viewHolder.contentIV.setBackgroundColor(ReadSetting.getThemeBGColor(type));
+            }else{
+                viewHolder.contentIV.setImageResource(bgRes);
+            }
             if(type == selectedType){
                 viewHolder.selectTV.setVisibility(View.VISIBLE);
             }else{

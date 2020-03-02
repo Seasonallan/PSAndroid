@@ -160,6 +160,7 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
                 }
             });
         }
+        batteryView.resetColor(mReadSetting);
         batteryView.draw(canvas, mReadSetting.getLeftRightSpaceSize(), getHeight() - mReadSetting.getTopBottomSpaceSize()  - topChapterNameHeight*2/3);
     }
 

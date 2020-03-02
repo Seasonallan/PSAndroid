@@ -266,7 +266,6 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		float f3 = Math.min(f1, f2);
 		mPath1.reset();
 		mPath1.moveTo(mBeziervertex2.x, mBeziervertex2.y);
-		
 		if(isBezierStartOut(isLeftPage) && isLandscape)
 		mPath1.lineTo(filterBezierControlBound(mBezierControl1,isLeftPage), mBezierControl1.y);
 		else

@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.example.book.R;
 import com.season.lib.anim.PageAnimController;
 
 
@@ -345,7 +346,7 @@ public class ReadSetting{
      * @return
      */
     public int getThemeDecorateTextColor(){
-        int textColor = 0x88464646;/*
+        int textColor = 0x88464646;
 		switch (mThemeType) {
 		case THEME_TYPE_DAY:
 			textColor = 0x88464646;
@@ -366,7 +367,7 @@ public class ReadSetting{
 		case THEME_TYPE_OTHERS_4:
 			textColor = 0x88464646;
 			break;
-		}*/
+		}
         return textColor;
     }
     /**
@@ -374,7 +375,7 @@ public class ReadSetting{
      * @return
      */
     public int getThemeTextColor(){
-        int textColor = 0xff464646;/*
+        int textColor = 0xff464646;
 		switch (mThemeType) {
 		case THEME_TYPE_DAY:
 			textColor = 0xff464646;
@@ -395,7 +396,7 @@ public class ReadSetting{
 		case THEME_TYPE_OTHERS_4:
 			textColor = 0xff464646;
 			break;
-		}*/
+		}
         return textColor;
     }
     /**
@@ -421,15 +422,19 @@ public class ReadSetting{
             case THEME_TYPE_OTHERS_1:
                 bgColor = 0xfff0e4d2;
                 bgColor = 0xffFFF2E2;
+                bgColor = 0xff395268;
                 break;
             case THEME_TYPE_OTHERS_2:
                 bgColor = 0xffc9e2cb;
+                bgColor = 0xfff4f3e7;
                 break;
             case THEME_TYPE_OTHERS_3:
                 bgColor = 0xffcee9eb;
+                bgColor = 0xff224a43;
                 break;
             case THEME_TYPE_OTHERS_4:
                 bgColor = 0xffe5d4a8;
+                bgColor = 0xffdfc6a0;
                 break;
         }
         return bgColor;
@@ -439,8 +444,11 @@ public class ReadSetting{
      * @return 返回-1 代表没有背景图片
      */
     public int getThemeBGImgRes(){
+        return getThemeBGImgRes(mThemeType);
+    }
+    public static int getThemeBGImgRes(int themeType){
         int bgImgRes = -1;
-		/*switch (mThemeType) {
+		switch (themeType) {
 		case THEME_TYPE_NIGHT:
 			bgImgRes = R.drawable.read_style_night_bg;
 			break;
@@ -456,7 +464,7 @@ public class ReadSetting{
 		case THEME_TYPE_OTHERS_4:
 			bgImgRes = R.drawable.read_style_other_bg_4;
 			break;
-		}*/
+		}
         return bgImgRes;
     }
 

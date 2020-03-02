@@ -52,19 +52,16 @@ public class BatteryView {
     public BatteryView(Context context, ReadSetting readSetting, Runnable runnable){
         this.mContext = context;
         this.mRunnable = runnable;
-        int color = readSetting.getThemeDecorateTextColor();
         /**
          * 时间
          */
         mTextPaint = new TextPaint();
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize((float) (readSetting.getMinFontSize()));
-        mTextPaint.setColor(color);
         /**
          * 设置电池画笔
          */
         mBatteryPait = new Paint();
-        mBatteryPait.setColor(color);
         mBatteryPait.setStrokeWidth(mBatteryStroke);
         mBatteryPait.setStyle(Paint.Style.STROKE);
         mBatteryPait.setAntiAlias(true);
@@ -72,7 +69,6 @@ public class BatteryView {
          * 电量画笔
          */
         mPowerPaint = new Paint();
-        mPowerPaint.setColor(color);
         mPowerPaint.setStyle(Paint.Style.FILL);
         mPowerPaint.setStrokeWidth(mBatteryStroke);
         mPowerPaint.setAntiAlias(true);
@@ -105,6 +101,13 @@ public class BatteryView {
 
         mHandler = new Handler(context.getMainLooper());
         start();
+    }
+
+    public void resetColor(ReadSetting readSetting) {
+        int color = readSetting.getThemeDecorateTextColor();
+        mTextPaint.setColor(color);
+        mPowerPaint.setColor(color);
+        mBatteryPait.setColor(color);
     }
 
     Handler mHandler;
@@ -143,5 +146,4 @@ public class BatteryView {
                   mBatteryHeight/2 + baseLineY, mTextPaint);
         canvas.restore();
     }
-
 }
