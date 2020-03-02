@@ -193,9 +193,10 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	private void createPageManager(){
 		if(mChapterSize != null && !mPageManager.isInit()){
 			Rect fullPageRect = new Rect(getLeft(), getTop(), getRight(), getBottom());
-			SettingParam settingParam = new SettingParam(mBook.id,mTextPaint
-					,newPageContenRect()
-					,fullPageRect,mReadSetting.getLineSpaceSize(),mReadSetting.getParagraphSpaceSize(),this);
+			SettingParam settingParam = new SettingParam(mBook.id, mTextPaint
+					,newPageContenRect() ,fullPageRect
+					,mReadSetting.getLineSpaceSize(),mReadSetting.getParagraphSpaceSize(), mReadSetting.getIndentSizeSize()
+					,this);
 			mPageManager.init(settingParam, mChapterSize, mCurrentChapterIndex);
 			invalidate();
 		}

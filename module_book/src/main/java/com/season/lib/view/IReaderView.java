@@ -4,6 +4,8 @@ package com.season.lib.view;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.BookMark;
 import com.season.lib.AbsTextSelectHandler;
 import com.season.lib.bean.Catalog;
@@ -13,16 +15,11 @@ import com.season.lib.bean.Catalog;
  */
 public interface IReaderView {
 
-    /** 获取书籍信息失败 */
-     int ERROR_GET_CONTENT_INFO = -1;
-    /** 成功 */
-     int SUCCESS = 1;
-
     /**
-     * 解析书籍并启动排版线程池，运行在子线程，失败返回false退出阅读界面
+     * 解析书籍并启动排版线程池，运行在子线程
      * @return
      */
-     int decodeBookFromPlugin(int fRequestCatalogIndex, int fRequestPageCharIndex , String secretKey);
+     BookInfo decodeBookFromPlugin(int fRequestCatalogIndex, int fRequestPageCharIndex , String secretKey);
 
     /**
      * 回收释放资源

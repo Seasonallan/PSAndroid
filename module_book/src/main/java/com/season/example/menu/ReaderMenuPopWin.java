@@ -468,7 +468,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 
 
 	private View mFontSettingView;
-	private SizeChangeTool mFontSizeTool, mLineSpaceTool, mParagraphTool, mTopBottomTool, mLeftRightTool;
+	private SizeChangeTool mFontSizeTool, mLineSpaceTool, mParagraphTool, mTopBottomTool, mLeftRightTool, mIndentTool;
 	private void showFontSettingView(){
 		if(mFontSettingView == null){
 			mFontSettingView = getLayoutInflater().inflate(R.layout.reader_menu_font_settings, null);
@@ -601,12 +601,39 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 					return mReadSetting.LEFTRIGHT_SPACE_COUNT;
 				}
 			};
+			mIndentTool = new SizeChangeTool(mFontSettingView.findViewById(R.id.indent_setting)) {
+				@Override
+				public String getDesc() {
+					return "首行缩进";
+				}
+
+				@Override
+				public int getLevel() {
+					return mReadSetting.getIndentSizeLevel();
+				}
+
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setIndentSizeLevel(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.getIndentSizeSize();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return mReadSetting.INDENT_SIZE_COUNT;
+				}
+			};
 		}
 		mFontSizeTool.resetStatus();
 		mLineSpaceTool.resetStatus();
 		mParagraphTool.resetStatus();
 		mTopBottomTool.resetStatus();
 		mLeftRightTool.resetStatus();
+		mIndentTool.resetStatus();
 		//显示界面
 		showChildMenu(mFontSettingView);
 	}

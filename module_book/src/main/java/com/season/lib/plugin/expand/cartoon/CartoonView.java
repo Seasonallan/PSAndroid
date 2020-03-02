@@ -303,7 +303,7 @@ public abstract class CartoonView extends FrameLayout implements PageManager.Pag
 			Rect fullPageRect = new Rect(getLeft(), getTop(), getRight(),
 					getBottom());
 			SettingParam settingParam = new SettingParam( mContentId,
-					new TextPaint(), fullPageRect, fullPageRect, 0, 0, this);
+					new TextPaint(), fullPageRect, fullPageRect, 0, 0, 0, this);
 			mPageManager.init(settingParam, mChapterSize, mCurrentChapterIndex);
 			invalidate();
 		}

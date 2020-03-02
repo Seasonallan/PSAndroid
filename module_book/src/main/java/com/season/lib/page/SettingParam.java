@@ -18,6 +18,8 @@ public class SettingParam {
 	private int lineSpace;
 	/** 段间距*/
 	private int paragraphSpace;
+	/** 首行缩进*/
+	private int indentSize;
 	/**
 	 * 全屏区域
 	 */
@@ -31,11 +33,12 @@ public class SettingParam {
 
 
 	public SettingParam(String contentId,TextPaint sourcePaint, Rect pageRect,Rect fullPageRect
-			, int lineSpace,int paragraphSpace,ClickSpanHandler clickSpanHandler) {
+			, int lineSpace,int paragraphSpace,int indent, ClickSpanHandler clickSpanHandler) {
 		this.sourcePaint = sourcePaint;
 		this.pageRect = pageRect;
 		this.lineSpace = lineSpace;
 		this.fullPageRect = fullPageRect;
+		this.indentSize = indent;
 		this.paragraphSpace = paragraphSpace;
 		this.clickSpanHandler = clickSpanHandler;
 		this.contentId = contentId;
@@ -53,6 +56,10 @@ public class SettingParam {
 	
 	public String getKey(){
 		return key;
+	}
+
+	public int getIndentSize(){
+		return indentSize;
 	}
 	/**
 	 * @return the paragraphSpace

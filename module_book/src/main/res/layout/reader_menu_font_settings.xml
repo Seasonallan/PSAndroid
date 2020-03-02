@@ -9,6 +9,8 @@
 		layout="@layout/reader_menu_font_settings_item" />
 	<include  android:id="@+id/line_setting"
 		layout="@layout/reader_menu_font_settings_item" />
+	<include  android:id="@+id/indent_setting"
+		layout="@layout/reader_menu_font_settings_item" />
 	<include  android:id="@+id/paragraph_setting"
 		layout="@layout/reader_menu_font_settings_item" />
 	<include  android:id="@+id/top_bottom_setting"

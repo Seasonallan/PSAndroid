@@ -72,6 +72,12 @@ public class ReadSetting{
     public static final int PARAGRAPH_SPACE_COUNT = 6;
     private int mParagraphSpaceLevel;
 
+    /*		定义首行缩进		*/
+    public static final String SETTING_TYPE_INDENT_SIZE_TYPE = "SETTING_TYPE_INDENT_SIZE_TYPE";
+    public static final int INDENT_SIZE_MIN = 0;
+    public static final int INDENT_SIZE_COUNT = 4;
+    private int mIndentSizeLevel;
+
     /*		定义上下边距		*/
     public static final String SETTING_TYPE_TOPBOTTOM_SPACE_TYPE = "SETTING_TYPE_TOP_BOTTOM_SPACE_TYPE";
     public static final int TOPBOTTOM_SPACE_MIN = 0;
@@ -117,6 +123,7 @@ public class ReadSetting{
         mParagraphSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_FONT_PARAGRAPH_SPACE_TYPE, PARAGRAPH_SPACE_COUNT/2);
         mTopBottomSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_TOPBOTTOM_SPACE_TYPE, TOPBOTTOM_SPACE_COUNT/2);
         mLeftRightSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_LEFTRIGHT_SPACE_TYPE, LEFTRIGHT_SPACE_COUNT/2);
+        mIndentSizeLevel = mSharedPreferences.getInt(SETTING_TYPE_INDENT_SIZE_TYPE, INDENT_SIZE_COUNT/2);
         mThemeType = loadThemeType();
         mUserThemeType = loadUserThemeType();
         mBrightessLevel = loadBrightessLevel();
@@ -218,7 +225,7 @@ public class ReadSetting{
     }
 
     /**
-     * 设置行间距等级
+     * 设置段落间距等级
      * @param level
      */
     public void setParagraphSpaceLevel(int level){
@@ -237,6 +244,28 @@ public class ReadSetting{
     public int getParagraphSpaceSize(){
         int size = getFontSize();
         return size / 3 * (PARAGRAPH_SPACE_MIN + mParagraphSpaceLevel)/2;
+    }
+
+
+    /**
+     * 设置首行等级
+     * @param level
+     */
+    public void setIndentSizeLevel(int level){
+        if(mIndentSizeLevel == level){
+            return;
+        }
+        mIndentSizeLevel = level;
+        mSharedPreferences.edit().putInt(SETTING_TYPE_INDENT_SIZE_TYPE, mIndentSizeLevel).commit();
+        notify(SETTING_TYPE_FONT_SIZE);
+    }
+
+    public int getIndentSizeLevel(){
+        return mIndentSizeLevel;
+    }
+
+    public int getIndentSizeSize(){
+        return INDENT_SIZE_MIN + mIndentSizeLevel;
     }
 
 

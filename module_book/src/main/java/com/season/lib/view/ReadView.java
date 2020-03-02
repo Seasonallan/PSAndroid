@@ -27,7 +27,6 @@ import java.util.ArrayList;
 public class ReadView extends BaseHtmlReadView {
 	private String mSecretKey;
 	private PluginManager mPlugin;
-	private BookInfo mBookInfo;
 
 
 	public ReadView(Context context, BookInfo book, IReadCallback readCallback) {
@@ -46,7 +45,7 @@ public class ReadView extends BaseHtmlReadView {
 	}
 
 	@Override
-	public int decodeBookFromPlugin(final int fRequestCatalogIndex, final int fRequestPageCharIndex, String secretKey) {
+	public BookInfo decodeBookFromPlugin(final int fRequestCatalogIndex, final int fRequestPageCharIndex, String secretKey) {
         mSecretKey = secretKey;
 		try {
             try {
@@ -54,9 +53,10 @@ public class ReadView extends BaseHtmlReadView {
                 mPlugin.init(secretKey);
             }catch (Exception e){
             }
+            String id = mBook.id;
 			// 书籍信息
-			mBookInfo = mPlugin.getBookInfo(mBook);
-			mBookInfo.id = mBook.id;
+			mBook = mPlugin.getBookInfo(mBook);
+			mBook.id = id;
             mReadCallback.setFreeStart_Order_Price(Integer.MAX_VALUE , true, null, null);
 			// 读章节信息
 			runOnUiThread(new Runnable() {
@@ -75,9 +75,9 @@ public class ReadView extends BaseHtmlReadView {
 			});
         } catch (Exception e) {
             LogUtil.e(TAG, e);
-            return ERROR_GET_CONTENT_INFO;
+			mBook.decodeResult = false;
         }
-        return SUCCESS;
+        return mBook;
 	}
 	
 	/** 获取购买点*/
@@ -224,7 +224,7 @@ public class ReadView extends BaseHtmlReadView {
 			if(resource != null){
 				//目前media文件不加密。音视频
 				if (source.endsWith(".mp3")||source.endsWith(".mp4")) {//服务器对此后缀不加密
-					if (mBookInfo.isMediaDecode) {
+					if (mBook.isMediaDecode) {
 						if (TextUtils.isEmpty(mSecretKey)) {
 							return resource.getDataStream();
 						}else {

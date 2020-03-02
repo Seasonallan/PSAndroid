@@ -48,7 +48,7 @@ public class Line extends Patch{
 		mWhiteDotPaint = new Paint();
 		mWhiteDotPaint.setColor(Color.WHITE);
 		mDefaultFontSize = (int) getSourcePaint().measureText("测");
-		mIndentSize = 2;
+		mIndentSize = settingParam.getIndentSize();
 	}
 
 	public void setIndentSize(int indentSize) {

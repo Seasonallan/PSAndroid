@@ -144,10 +144,10 @@ public class CatalogView extends FrameLayout{
 		});
 	}
 
-
+	private String bookName, authorName;
 	public void setBookInfo(String bookName,String authorName){
-		mBookNameTV.setText(bookName);
-		mAuthorNameTV.setText(authorName);
+		this.bookName = bookName;
+		this.authorName = authorName;
 	}
 
 	public void setCatalogData(ArrayList<Catalog> catalogs){
@@ -165,6 +165,8 @@ public class CatalogView extends FrameLayout{
 		if (isShowing){
 			return;
 		}
+		mBookNameTV.setText(bookName);
+		mAuthorNameTV.setText(authorName);
 		setVisibility(View.VISIBLE);
 		isShowing = true;
 
