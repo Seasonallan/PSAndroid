@@ -3,6 +3,7 @@ package com.season.example.catalog;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -148,6 +149,8 @@ public class CatalogView extends FrameLayout{
 	public void setBookInfo(String bookName,String authorName){
 		this.bookName = bookName;
 		this.authorName = authorName;
+		this.bookName = TextUtils.isEmpty(bookName)?"书名":bookName;
+		this.authorName = TextUtils.isEmpty(authorName)?"作者":authorName;
 	}
 
 	public void setCatalogData(ArrayList<Catalog> catalogs){

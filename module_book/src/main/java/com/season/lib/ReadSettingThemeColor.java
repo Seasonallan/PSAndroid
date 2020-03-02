@@ -115,8 +115,6 @@ public class ReadSettingThemeColor {
                 bgColor = 0xffe5d4a8;
                 break;
             case THEME_TYPE_IMAGE_1:
-                bgColor = 0xfff0e4d2;
-                bgColor = 0xffFFF2E2;
                 bgColor = 0xff395268;
                 break;
             case THEME_TYPE_IMAGE_2:
