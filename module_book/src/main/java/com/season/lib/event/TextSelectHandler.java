@@ -1,4 +1,4 @@
-package com.season.lib;
+package com.season.lib.event;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 
 import com.example.book.R;
 import com.season.example.popwindow.BookDigestsRemarksDialog;
+import com.season.lib.BaseContext;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.db.BookDigestsDB;

@@ -6,20 +6,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.season.lib.bean.BookMark;
-import com.season.lib.AbsTextSelectHandler;
+import com.season.lib.event.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.page.span.ColorSpan;
-import com.season.lib.TextSelectHandler;
+import com.season.lib.event.TextSelectHandler;
 import com.season.lib.page.span.media.ReaderMediaPlayer;
 import com.season.lib.dbase.DBConfig;
 import com.season.lib.bean.BookInfo;
@@ -139,6 +137,9 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	public boolean isCurrentPageDrawn() {
+		if(mPageManager == null || mCurrentPageIndex == INDEX_INITIAL_CONTENT || mRequestDrawResult != PageManager.RESULT_SUCCESS){
+			return false;
+		}
 		if (!mPageManager.isFirstDraw()) {
 			return true;
 		}
@@ -376,9 +377,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	public boolean handlerSelectTouchEvent(MotionEvent event,AbsTextSelectHandler.ITouchEventDispatcher touchEventDispatcher) {
-		if(mPageManager == null || mCurrentPageIndex == INDEX_INITIAL_CONTENT || mRequestDrawResult != PageManager.RESULT_SUCCESS){
-			return false;
-		}
 		if(mTextSelectHandler != null && mTextSelectHandler.handlerTouch(event,touchEventDispatcher)){
 			return true;
 		}

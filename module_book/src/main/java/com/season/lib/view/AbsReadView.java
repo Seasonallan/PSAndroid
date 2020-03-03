@@ -103,7 +103,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		return new Rect(getLeft() + mReadSetting.getLeftRightSpaceSize()
 				,getTop() + mReadSetting.getTopBottomSpaceSize() + topChapterNameHeight + mReadSetting.getParagraphSpaceSize()
 				,getRight() - mReadSetting.getLeftRightSpaceSize()
-				,getBottom() - mReadSetting.getTopBottomSpaceSize() - topChapterNameHeight * 3/2);
+				,getBottom() - mReadSetting.getTopBottomSpaceSize() - topChapterNameHeight * 2);
 	}
 
 

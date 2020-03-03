@@ -2,8 +2,6 @@ package com.season.example;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -23,10 +21,9 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.example.book.R;
-import com.season.lib.anim.AbsVerGestureAnimController;
 import com.season.lib.bean.BookMark;
 import com.season.lib.db.BookMarkDB;
-import com.season.lib.AbsTextSelectHandler;
+import com.season.lib.event.AbsTextSelectHandler;
 import com.season.lib.ReadSetting;
 import com.season.example.catalog.CatalogView;
 import com.season.example.popwindow.ImgViewerPopWin;
@@ -43,7 +40,6 @@ import com.season.lib.page.span.AsyncDrawableSpan;
 import com.season.lib.page.span.ClickActionSpan;
 import com.season.lib.page.span.ClickAsyncDrawableSpan;
 import com.season.lib.page.span.UrlSpna;
-import com.season.lib.util.LogUtil;
 import com.season.lib.view.IReadCallback;
 import com.season.lib.view.ReadView;
 import com.season.lib.view.IReaderView;
@@ -65,8 +61,7 @@ import java.util.Calendar;
 
 @Route(path= RoutePath.BOOK)
 public class BaseBookActivity extends Activity implements
-		IReadCallback, AbsTextSelectHandler.ITouchEventDispatcher,
-        PullRefreshLayout.OnPullListener, PullRefreshLayout.OnPullStateListener{
+		IReadCallback, PullRefreshLayout.OnPullStateListener{
 
     private FrameLayout mReadContainerView;
     private IReaderView mReadView;
@@ -75,7 +70,6 @@ public class BaseBookActivity extends Activity implements
 	private BookInfo mBook;
 	private ReaderMenuPopWin mReaderMenuPopWin;
 	private boolean isInit;
-	private ClickDetector mClickDetector;
 	private RectF centerRect;
 
 	@Override
@@ -91,8 +85,8 @@ public class BaseBookActivity extends Activity implements
 		centerRect = new RectF();
 		centerRect.left = ScreenUtils.getScreenWidth()/4;
 		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
-		centerRect.top = ScreenUtils.getScreenHeight()/4;
-		centerRect.bottom = ScreenUtils.getScreenHeight()*3/4;
+		centerRect.top = 0;
+		centerRect.bottom = ScreenUtils.getScreenHeight() * 5/6;
 
 		setContentView(R.layout.activity_reader);
         mReadContainerView = findViewById(R.id.read_view);
@@ -121,15 +115,14 @@ public class BaseBookActivity extends Activity implements
         mRotateDownAnimation = AnimationUtils.loadAnimation(this,
                 R.anim.rotate_down);
 
-        mPullLayout = (PullRefreshLayout) findViewById(R.id.pull_container);
-        mPullLayout.setOnActionPullListener(this);
+        mPullLayout = findViewById(R.id.pull_container);
         mPullLayout.setOnPullStateChangeListener(this);
 
         mProgress = findViewById(android.R.id.progress);
         mActionImage = findViewById(android.R.id.icon);
-        mActionText = (TextView) findViewById(R.id.pull_note);
-        mTimeText = (TextView) findViewById(R.id.refresh_time);
-        mBookMarkSignImage = (ImageView) findViewById(R.id.iv_book_mark_sign);
+        mActionText = findViewById(R.id.pull_note);
+        mTimeText = findViewById(R.id.refresh_time);
+        mBookMarkSignImage = findViewById(R.id.iv_book_mark_sign);
 
         mTimeText.setText(R.string.note_not_update);
         mActionText.setText(R.string.note_pull_down);
@@ -141,34 +134,6 @@ public class BaseBookActivity extends Activity implements
 		if(mReadView != null){
 			mReadView.release();
 		}
-	}
-
-	private void initClickDetector(){
-		mClickDetector = new ClickDetector(new ClickDetector.OnClickCallBack() {
-			@Override
-			public boolean onLongClickCallBack(MotionEvent event) {
-				return false;
-			}
-			
-			@Override
-			public boolean onClickCallBack(MotionEvent ev) {
-				float x = ev.getX();
-				float y = ev.getY();
-				if (mReadView.dispatchClickEvent(ev)) {
-					return true;
-				} else if (centerRect.contains(x, y)) {
-					showMenu();
-					return true;
-				}
-				return false;
-			}
-			
-			@Override
-			public void dispatchTouchEventCallBack(MotionEvent event) {
-				LogUtil.e("Event:" +"dispatchTouchEventCallBack");
-				onTouchEvent(event);
-			}
-		},false);
 	}
 	
 	private void initMenu() {
@@ -230,44 +195,9 @@ public class BaseBookActivity extends Activity implements
 		super.onBackPressed();
 	}
 
-	@Override
-	public boolean dispatchTouchEvent(MotionEvent ev) {
-		LogUtil.e("Event:" +"dispatchTouchEvent");
-		if (!isInit) {
-			return false;
-		}
-		if (ev.getAction() == MotionEvent.ACTION_DOWN){
-			NavigationBarUtil.hideNavigationBar(this);
-		}
-		if(mReadView.isCurrentPageDrawn()){
-			LogUtil.e("Event:" +"布局未完毕");
-			return false;
-		}
-		if(mCatalogLay.isShown()){
-			LogUtil.e("Event:" +"目录排版设置弹窗");
-			return super.dispatchTouchEvent(ev);
-		}
-        if(mReadView.handlerSelectTouchEvent(ev, this)){
-			LogUtil.e("Event:" +"检测长按笔记选中处理事件");
-            return false;
-        }
-		if(mClickDetector.onTouchEvent(ev, false)){
-			LogUtil.e("Event:" +"mClickDetector");
-			return false;
-		}
-		return super.dispatchTouchEvent(ev);
-	}
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
-
-	private AbsVerGestureAnimController mAbsVerGestureAnimController = new AbsVerGestureAnimController();
-    @Override
-	public boolean onTouchEvent(MotionEvent ev) {
-		LogUtil.e("Event:" +"onTouchEvent");
-        if(isPullEnabled() && mAbsVerGestureAnimController.handlerTouch(ev, new  AbsVerGestureAnimController.IVertialTouchEventDispatcher (){
+	AbsTextSelectHandler.ITouchEventDispatcher dispatcher;
+	private void initClickDetector(){
+		dispatcher = new AbsTextSelectHandler.ITouchEventDispatcher() {
 			@Override
 			public void verticalTouchEventCallBack(MotionEvent ev) {
 				mPullLayout.dispatchTouchEvent(ev);
@@ -275,12 +205,64 @@ public class BaseBookActivity extends Activity implements
 
 			@Override
 			public void unVerticalTouchEventCallBack(MotionEvent ev) {
-				onTouchEvent(ev);
+				mReadView.handlerTouchEvent(ev);
 			}
-		})){
-            return false;
-        }
-		return mReadView.handlerTouchEvent(ev);
+
+			@Override
+			public void onClickCallBack(MotionEvent ev) {
+				float x = ev.getX();
+				float y = ev.getY();
+				if (mReadView.dispatchClickEvent(ev)) {
+					//笔记点击处理
+				} else if (centerRect.contains(x, y)) {
+					//笔记点击处理
+					showMenu();
+				}else {
+					//上一页下一页
+					int pageNums = mReadView.getMaxReadProgress();
+					int curPage = mReadView.getCurReadProgress();
+					if(x >= ScreenUtils.getScreenWidth()/2){
+						if (curPage >= pageNums - 1){
+							if (mReadView.getCurChapterIndex() >= mReadView.getLayoutChapterMax() - 1){
+								onNotNextContent();
+							}else{
+								mReadView.gotoNextChapter();
+							}
+						}else{
+							mReadView.gotoPage(curPage + 1, true);
+						}
+					}else{
+						if (curPage <= 0){
+							if (mReadView.getCurChapterIndex() <= 0){
+								onNotPreContent();
+							}else{
+								mReadView.gotoPreChapter();
+							}
+						}else{
+							mReadView.gotoPage(curPage - 1, true);
+						}
+					}
+				}
+			}
+		};
+	}
+
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		if (!isInit) {
+			return false;
+		}
+		if (ev.getAction() == MotionEvent.ACTION_DOWN){
+			NavigationBarUtil.hideNavigationBar(this);
+		}
+		if(mReadView.isCurrentPageDrawn()){
+			return false;
+		}
+		if(mCatalogLay.isShown()){
+			return super.dispatchTouchEvent(ev);
+		}
+		return mReadView.handlerSelectTouchEvent(ev, dispatcher);
+		//return super.dispatchTouchEvent(ev);
 	}
 
     private String getBookFielPath(String fend){
@@ -380,12 +362,6 @@ public class BaseBookActivity extends Activity implements
     public boolean setFreeStart_Order_Price(int feeStart, boolean isOrdered, String price, String limitPrice) {
         return false;
     }
-
-    @Override
-    public void dispatchTouchEventCallBack(MotionEvent ev) {
-        dispatchTouchEvent(ev);
-    }
-
 
 	private ImgViewerPopWin mImgViewerPopWin;
 	private NotePopWin mNotePopWin;
@@ -554,17 +530,7 @@ public class BaseBookActivity extends Activity implements
 			}
 		}, 300);
     }
-    @Override
-    public void onShow() {
 
-    }
-
-    @Override
-    public void onHide() {
-
-    }
-
-    @Override
     public boolean isPullEnabled() {
         return !mReadView.isAnimating();
     }

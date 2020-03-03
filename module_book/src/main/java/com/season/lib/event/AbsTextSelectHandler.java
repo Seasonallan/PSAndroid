@@ -1,6 +1,5 @@
-package com.season.lib;
+package com.season.lib.event;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -16,8 +15,6 @@ import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
-import com.example.book.R;
-import com.season.example.popwindow.BookDigestsRemarksDialog;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.page.span.ColorSpan;
 import com.season.lib.util.LogUtil;
@@ -27,13 +24,11 @@ import java.util.TreeMap;
 
 
 /**
- * @author linyiwei
- * @date 2012-03-23
- * @email 21551594@qq.com
  *
+ * 长按事件处理
  */
 public abstract class AbsTextSelectHandler{
-	private static final String TAG = "TextSelect";
+	private static final String TAG = "TouEvent";
 	
 	private static final float ZOOM_FACTOR = 1.5f;
 	
@@ -108,8 +103,6 @@ public abstract class AbsTextSelectHandler{
 	private String author;
 	
 	private ArrayList<BookDigests> mShowBookDigestsList = new ArrayList<BookDigests>();
-
-	private MotionEvent mTempMotionEvent;
 	
 	public AbsTextSelectHandler(int width , int height){
 		mChaptersId  = -1;
@@ -246,11 +239,9 @@ public abstract class AbsTextSelectHandler{
 			isSelfInvalidate = false;
 		}
 	}
-	
+
+	private boolean mIsVertial = false;
 	public boolean handlerTouch(final MotionEvent ev,ITouchEventDispatcher touchEventDispatcher) {
-        if(mTempMotionEvent == ev){
-            return false;
-        }
         int key = ev.getAction();
         final float[] offset = getRectOffset();
         mCurrentTouchPoint.set(ev.getX() + offset[0], ev.getY() + offset[1]);
@@ -262,6 +253,7 @@ public abstract class AbsTextSelectHandler{
                 mHasConsume = true;
                 mHasLongPress = false;
                 isDown = true;
+				mIsVertial = false;
                 mTouchDownPoint.set(ev.getX(), ev.getY());
 
                 if(!isSelect()){
@@ -269,13 +261,22 @@ public abstract class AbsTextSelectHandler{
                 }else{
                     checkCurrentTouchSelectCursor((int)(ev.getX()+ offset[0]), (int)(ev.getY() + offset[1]));
                 }
+				touchEventDispatcher.verticalTouchEventCallBack(ev);
+				touchEventDispatcher.unVerticalTouchEventCallBack(ev);
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(!mHasConsume || !isDown){
                     mHasConsume = false;
+					if (mIsVertial){
+						touchEventDispatcher.verticalTouchEventCallBack(ev);
+					}else{
+						touchEventDispatcher.unVerticalTouchEventCallBack(ev);
+					}
                     break;
                 }
-                float move = PointF.length(ev.getX() - mTouchDownPoint.x, ev.getY() - mTouchDownPoint.y);
+				int moveX = (int) (mTouchDownPoint.x - ev.getX());
+				int moveY = (int) (mTouchDownPoint.y - ev.getY());
+                float move = PointF.length(moveX, moveY);
 
                 if(move > EFFECTIVE_RECT){
                     isPressInvalid = true;
@@ -285,13 +286,15 @@ public abstract class AbsTextSelectHandler{
                     removeLongPressCallback();
                     if( !isSelect() ){
                         if( !mHasLongPress ){
-							LogUtil.v(TAG, "mTempMotionEvent=ACTION_DOWN");
                             mHasConsume = false;
-                            mTempMotionEvent = MotionEvent.obtain(ev);
-                            mTempMotionEvent.setAction(MotionEvent.ACTION_DOWN);
-                            mTempMotionEvent.setLocation(mTouchDownPoint.x, mTouchDownPoint.y);
-                            touchEventDispatcher.dispatchTouchEventCallBack(mTempMotionEvent);
-                            mTempMotionEvent = null;
+							int distance = Math.abs(moveY) - Math.abs(moveX);
+							if(distance > 0){
+								//确认为纵向滑动
+								mIsVertial = true;
+								touchEventDispatcher.verticalTouchEventCallBack(ev);
+							}else{
+								touchEventDispatcher.unVerticalTouchEventCallBack(ev);
+							}
                             if(isEdit){
                                 closeEdit();
                             }
@@ -317,6 +320,11 @@ public abstract class AbsTextSelectHandler{
                 isFirstTouchPeriod = false;
                 if(!mHasConsume || !isDown){
                     mHasConsume = false;
+					if (mIsVertial){
+						touchEventDispatcher.verticalTouchEventCallBack(ev);
+					}else{
+						touchEventDispatcher.unVerticalTouchEventCallBack(ev);
+					}
                     break;
                 }
                 isDown = false;
@@ -676,7 +684,6 @@ public abstract class AbsTextSelectHandler{
 			}
 		}
 		if(currentBookDigests.isBoundChange(oldPosition, oldCount) || isFirstTouchPeriod){
-//		if(true){
 			invalidate();
 		}
 	}
@@ -735,13 +742,7 @@ public abstract class AbsTextSelectHandler{
 				closeEdit();
 			}else if(mViewInformer != null){
 				LogUtil.i(TAG, " mHasConsume="+mHasConsume);
-				mTempMotionEvent = MotionEvent.obtain(ev);
-				mTempMotionEvent.setAction(MotionEvent.ACTION_DOWN);
-				touchEventDispatcher.dispatchTouchEventCallBack(mTempMotionEvent);
-				mTempMotionEvent = MotionEvent.obtain(ev);
-				mTempMotionEvent.setAction(MotionEvent.ACTION_UP);
-				touchEventDispatcher.dispatchTouchEventCallBack(mTempMotionEvent);
-				mTempMotionEvent = null;
+				touchEventDispatcher.onClickCallBack(ev);
 			}
 		}
 		return true;
@@ -1083,47 +1084,48 @@ public abstract class AbsTextSelectHandler{
 	
 	public interface ISelectorListener{
 		
-		public void onInit(float x, float y, Bitmap bitmap, AbsTextSelectHandler textSelectHandler);
+		void onInit(float x, float y, Bitmap bitmap, AbsTextSelectHandler textSelectHandler);
 		
-		public void onChange(float x, float y, Bitmap bitmap, AbsTextSelectHandler textSelectHandler);
+		void onChange(float x, float y, Bitmap bitmap, AbsTextSelectHandler textSelectHandler);
 		
-		public void onPause(float x, float y, AbsTextSelectHandler textSelectHandler);
+		void onPause(float x, float y, AbsTextSelectHandler textSelectHandler);
 		
-		public void onStop(AbsTextSelectHandler textSelectHandler);
+		void onStop(AbsTextSelectHandler textSelectHandler);
 		
-		public void onOpenEditView(float x, float y, BookDigests bookDigests, AbsTextSelectHandler textSelectHandler);
+		void onOpenEditView(float x, float y, BookDigests bookDigests, AbsTextSelectHandler textSelectHandler);
 		
-		public void onCloseEditView(AbsTextSelectHandler textSelectHandler);
+		void onCloseEditView(AbsTextSelectHandler textSelectHandler);
 
-		public void onOpenDigestView(BookDigests bookDigests, AbsTextSelectHandler textSelectHandler);
+		void onOpenDigestView(BookDigests bookDigests, AbsTextSelectHandler textSelectHandler);
 	}
 	
 	public interface IViewInformer{
-		public void onInvalidate();
+		void onInvalidate();
 		
-		public int getCurrentPage();
+		int getCurrentPage();
 		
-		public String getData(int start, int end);
+		String getData(int start, int end);
 		
-		public void setBookDigestsSpan(ColorSpan span, int start, int end);
+		void setBookDigestsSpan(ColorSpan span, int start, int end);
 		
-		public void deleteBookDigestsSpan(ColorSpan span);
+		void deleteBookDigestsSpan(ColorSpan span);
 		
-		public int findIndexByLocation(int pageIndex, int x, int y);
+		int findIndexByLocation(int pageIndex, int x, int y);
 		
-		public Rect findRectByPosition(int pageIndex, int position);
+		Rect findRectByPosition(int pageIndex, int position);
 		
-		public void stopAinm();
-
+		void stopAinm();
         /**
          * 装饰digest
          * @param digest
          * @return
          */
-        public BookDigests newBookDigest(BookDigests digest);
+        BookDigests newBookDigest(BookDigests digest);
 	}
 	
 	public interface ITouchEventDispatcher{
-		public void dispatchTouchEventCallBack(MotionEvent ev);
+		void onClickCallBack(MotionEvent ev);
+		void unVerticalTouchEventCallBack(MotionEvent ev);
+		void verticalTouchEventCallBack(MotionEvent ev);
 	}
 }

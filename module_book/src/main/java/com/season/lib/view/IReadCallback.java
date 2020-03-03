@@ -2,7 +2,7 @@ package com.season.lib.view;
 
 import android.graphics.RectF;
 
-import com.season.lib.AbsTextSelectHandler;
+import com.season.lib.event.AbsTextSelectHandler;
 import com.season.lib.bean.Catalog;
 import com.season.lib.page.span.ClickActionSpan;
 

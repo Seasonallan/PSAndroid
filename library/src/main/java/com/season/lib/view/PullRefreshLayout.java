@@ -56,8 +56,6 @@ public class PullRefreshLayout extends FrameLayout {
 	private boolean mEnableStopInAction = false;
 	private int mTopState;
 	private OnPullStateListener mPullStateListener;
-	private OnPullListener mActionViewPullListener;
-	private OnPullListener mToolViewPullListener;
 
 	public PullRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -292,9 +290,6 @@ public class PullRefreshLayout extends FrameLayout {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		if (mActionViewPullListener!=null && !mActionViewPullListener.isPullEnabled()) {
-			return super.dispatchTouchEvent(ev);
-		}
 		float eventFloatY = ev.getY();
 		boolean targetOnTop = isOnTargetTop();
 		int scrollY = getScrollY();
@@ -384,25 +379,6 @@ public class PullRefreshLayout extends FrameLayout {
 					mPullStateListener.onPullIn();
 				}
 			}
-
-			if (mActionViewPullListener != null) {
-				if (((mTopState & TOP_IN_ACTION) == 0) && ((newState & TOP_IN_ACTION) != 0))
-					mActionViewPullListener.onShow();
-				else if (((mTopState & TOP_IN_ACTION) != 0)
-						&& ((newState & TOP_IN_ACTION) == 0)) {
-					mActionViewPullListener.onHide();
-				}
-			}
-
-			if (mToolViewPullListener != null) {
-				if (((mTopState & TOP_IN_TOOL) == 0) && ((newState & TOP_IN_TOOL) != 0))
-					mToolViewPullListener.onShow();
-				else if (((mTopState & TOP_IN_TOOL) != 0)
-						&& ((newState & TOP_IN_TOOL) == 0)) {
-					mToolViewPullListener.onHide();
-				}
-			}
-
 			mTopState = newState;
 		}
 
@@ -503,22 +479,6 @@ public class PullRefreshLayout extends FrameLayout {
 	}
 
 	/**
-	 * Set a listener to monitor the pull action on ActionView 
-	 * @param listener - The monitor listener
-	 */
-	public void setOnActionPullListener(OnPullListener listener) {
-		mActionViewPullListener = listener;
-	}
-
-	/**
-	 * Set a listener to monitor the pull action on ToolView 
-	 * @param listener - The monitor listener
-	 */
-	public void setOnToolPullListener(OnPullListener listener) {
-		mToolViewPullListener = listener;
-	}
-
-	/**
 	 * Set a listener to monitor the Pull out/in state. The listener will be call on pull state changed.
 	 * @param listener - The OnPullStateListener
 	 */
@@ -611,8 +571,8 @@ public class PullRefreshLayout extends FrameLayout {
 			return;
 		}
 		smoothScrollTo(top);
-		if (mActionViewPullListener != null)
-			mActionViewPullListener.onSnapToTop();
+		if (mPullStateListener != null)
+			mPullStateListener.onSnapToTop();
 	}
 
 	/**
@@ -625,8 +585,8 @@ public class PullRefreshLayout extends FrameLayout {
 			return;
 		}
 		smoothScrollTo(top);
-		if (mToolViewPullListener != null)
-			mToolViewPullListener.onSnapToTop();
+		if (mPullStateListener != null)
+			mPullStateListener.onSnapToTop();
 	}
 
 	/**
@@ -674,17 +634,9 @@ public class PullRefreshLayout extends FrameLayout {
 		smoothScrollBy(y - getScrollY());
 	}
 
-	public static abstract interface OnPullListener {
+	public static abstract interface OnPullStateListener {
 		public abstract void onSnapToTop();
 
-		public abstract void onShow();
-
-		public abstract void onHide();
-		
-		public abstract boolean isPullEnabled();
-	}
-
-	public static abstract interface OnPullStateListener {
 		public abstract void onPullOut();
 
 		public abstract void onPullIn();

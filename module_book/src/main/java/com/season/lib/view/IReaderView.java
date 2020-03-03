@@ -1,13 +1,12 @@
 package com.season.lib.view;
 
 
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.season.lib.bean.BookInfo;
 import com.season.lib.bean.BookMark;
-import com.season.lib.AbsTextSelectHandler;
+import com.season.lib.event.AbsTextSelectHandler;
 import com.season.lib.bean.Catalog;
 /**
  * ReaderView需要实现的基础方法

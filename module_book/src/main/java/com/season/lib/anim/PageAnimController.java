@@ -68,64 +68,64 @@ public abstract class PageAnimController{
 	 * 页绘制者
 	 * @author lyw
 	 */
-	public static interface PageCarver{
+	public interface PageCarver{
 		/**
 		 * 绘制页内容
 		 * @param index
 		 */
-		public void drawPage(Canvas canvas,int index);
+		void drawPage(Canvas canvas,int index);
 		/**
 		 * 请求翻到上一页
 		 * @return
 		 */
-		public Integer requestPrePage();
+		Integer requestPrePage();
 		/**
 		 * 请求翻到下一页
 		 * @return
 		 */
-		public Integer requestNextPage();
+		Integer requestNextPage();
 		/**
 		 * 刷新界面
 		 */
-		public void requestInvalidate();
+		void requestInvalidate();
 		/**
 		 * 获取当前页
 		 */
-		public int getCurrentPageIndex();
+		int getCurrentPageIndex();
 		/**
 		 * 获取内容区宽度
 		 * @return
 		 */
-		public int getContentWidth();
+		int getContentWidth();
 		/**
 		 * 获取内容区高度
 		 * @return
 		 */
-		public int getContentHeight();
+		int getContentHeight();
 		/**
 		 * 获取屏幕宽度
 		 * @return
 		 */
-		public int getScreenWidth();
+		int getScreenWidth();
 		/**
 		 * 获取屏幕高度
 		 * @return
 		 */
-		public int getScreenHeight();
+		int getScreenHeight();
 		/**
 		 * 获取页背景颜色值
 		 * @return
 		 */
-		public int getPageBackgroundColor();
+		int getPageBackgroundColor();
 		/**
 		 * 开始动画的回调
 		 * @param isCancel 是否是取消动画
 		 */
-		public void onStartAnim(boolean isCancel);
+		void onStartAnim(boolean isCancel);
 		/**
 		 * 结束动画的回调
 		 * @param isCancel 是否是取消动画
 		 */
-		public void onStopAnim(boolean isCancel);
+		void onStopAnim(boolean isCancel);
 	}
 }

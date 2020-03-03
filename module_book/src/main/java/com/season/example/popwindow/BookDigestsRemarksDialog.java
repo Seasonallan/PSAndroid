@@ -14,7 +14,7 @@ import android.widget.GridView;
 
 
 import com.example.book.R;
-import com.season.lib.AbsTextSelectHandler;
+import com.season.lib.event.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
 import com.season.lib.util.NavigationBarUtil;
 

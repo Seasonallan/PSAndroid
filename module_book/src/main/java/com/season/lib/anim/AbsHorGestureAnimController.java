@@ -158,30 +158,6 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 				}else{
 					startAnim(isRequestNextPage, pageCarver);
 				}
-			}else{
-				Integer requestPageIndex = null;
-				int contentWidth = pageCarver.getContentWidth();
-				int contentHeight = pageCarver.getContentHeight();
-				if( (mDownTouchPoint.y<contentHeight/2 && mDownTouchPoint.x > contentWidth*2/3) || (mDownTouchPoint.y>contentHeight/2 && mDownTouchPoint.x>contentWidth/3)){
-					stopAnim(pageCarver);
-					requestPageIndex = pageCarver.requestNextPage();
-					if(requestPageIndex != null){
-						isRequestNextPage = true;
-						int currentPageIndex = pageCarver.getCurrentPageIndex();
-						startAnim(currentPageIndex,requestPageIndex,isRequestNextPage,pageCarver);
-					}
-				}else{
-					stopAnim(pageCarver);
-					requestPageIndex = pageCarver.requestPrePage();
-					if(requestPageIndex != null){
-						isRequestNextPage = false;
-						int currentPageIndex = pageCarver.getCurrentPageIndex();
-						startAnim(currentPageIndex,requestPageIndex,isRequestNextPage,pageCarver);
-					}
-				}
-				if(isRequestNextPage != null){
-					//startAnim(isRequestNextPage,pageCarver);
-				}
 			}
 			isTouchStart = false;
 			break;

@@ -7,7 +7,7 @@ import android.view.View;
 import com.example.book.R;
 import com.season.example.popwindow.BookDigestsPopWin;
 import com.season.example.popwindow.BookDigestsRemarksDialog;
-import com.season.lib.AbsTextSelectHandler;
+import com.season.lib.event.AbsTextSelectHandler;
 import com.season.lib.bean.BookDigests;
 
 
