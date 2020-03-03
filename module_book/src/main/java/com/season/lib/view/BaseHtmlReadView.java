@@ -138,20 +138,8 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 
 	@Override
-	public boolean onActivityDispatchTouchEvent(MotionEvent ev) {
+	public boolean isCurrentPageDrawn() {
 		if (!mPageManager.isFirstDraw()) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean onActivityDispatchKeyEvent(KeyEvent event) {
-		if (!mPageManager.isFirstDraw()) {
-			return false;
-		}
-		if(mTextSelectHandler != null && mTextSelectHandler.isSelect()){
-			mTextSelectHandler.setSelect(false);
 			return true;
 		}
 		return false;

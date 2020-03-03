@@ -257,7 +257,6 @@ public abstract class AbsTextSelectHandler{
 
         switch (key) {
             case MotionEvent.ACTION_DOWN:
-                LogUtil.v(TAG, "ACTION_DOWN"+ev.toString());
                 isPressInvalid = false;
                 mCurrentTouchSelectCursor = null;
                 mHasConsume = true;
@@ -272,7 +271,6 @@ public abstract class AbsTextSelectHandler{
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                LogUtil.v(TAG, "ACTION_MOVE");
                 if(!mHasConsume || !isDown){
                     mHasConsume = false;
                     break;

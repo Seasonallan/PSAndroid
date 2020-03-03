@@ -9,11 +9,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Browser;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -43,6 +41,7 @@ import com.season.lib.page.span.AsyncDrawableSpan;
 import com.season.lib.page.span.ClickActionSpan;
 import com.season.lib.page.span.ClickAsyncDrawableSpan;
 import com.season.lib.page.span.UrlSpna;
+import com.season.lib.util.LogUtil;
 import com.season.lib.view.IReadCallback;
 import com.season.lib.view.ReadView;
 import com.season.lib.view.IReaderView;
@@ -162,6 +161,7 @@ public class BaseBookActivity extends Activity implements
 			
 			@Override
 			public void dispatchTouchEventCallBack(MotionEvent event) {
+				LogUtil.e("Event:" +"dispatchTouchEventCallBack");
 				onTouchEvent(event);
 			}
 		},false);
@@ -227,31 +227,28 @@ public class BaseBookActivity extends Activity implements
 	}
 
 	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		if(mReadView.onActivityDispatchKeyEvent(event)){
-			return true;
-		}
-		return super.dispatchKeyEvent(event);
-	}
-
-	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
+		LogUtil.e("Event:" +"dispatchTouchEvent");
 		if (!isInit) {
 			return false;
 		}
 		if (ev.getAction() == MotionEvent.ACTION_DOWN){
 			NavigationBarUtil.hideNavigationBar(this);
 		}
-		if(mReadView.onActivityDispatchTouchEvent(ev)){
+		if(mReadView.isCurrentPageDrawn()){
+			LogUtil.e("Event:" +"布局未完毕");
 			return false;
 		}
 		if(mCatalogLay.isShown()){
+			LogUtil.e("Event:" +"目录排版设置弹窗");
 			return super.dispatchTouchEvent(ev);
 		}
         if(mReadView.handlerSelectTouchEvent(ev, this)){
+			LogUtil.e("Event:" +"检测长按笔记选中处理事件");
             return false;
         }
 		if(mClickDetector.onTouchEvent(ev, false)){
+			LogUtil.e("Event:" +"mClickDetector");
 			return false;
 		}
 		return super.dispatchTouchEvent(ev);
@@ -265,6 +262,7 @@ public class BaseBookActivity extends Activity implements
 	private AbsVerGestureAnimController mAbsVerGestureAnimController = new AbsVerGestureAnimController();
     @Override
 	public boolean onTouchEvent(MotionEvent ev) {
+		LogUtil.e("Event:" +"onTouchEvent");
         if(isPullEnabled() && mAbsVerGestureAnimController.handlerTouch(ev, new  AbsVerGestureAnimController.IVertialTouchEventDispatcher (){
 			@Override
 			public void verticalTouchEventCallBack(MotionEvent ev) {

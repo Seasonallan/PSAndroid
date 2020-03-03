@@ -220,6 +220,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 
 	@Override
 	protected void onDrawAnim(Canvas canvas,boolean isCancelAnim, boolean isNext, PageCarver pageCarver) {
+		long time = System.currentTimeMillis();
 		if(isCenterTouchAnim){
 			mLastTouchPoint.y = mScreenHeight;
 		}
@@ -254,6 +255,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		drawNextPageAreaAndShadow(canvas, toIndex,!isNext,pageCarver);
 		// 5、绘制翻起页的阴影
 		drawCurrentPageShadow(canvas,!isNext);
+		//LogUtil.e("onDrawAnim>>cost :"+ (System.currentTimeMillis() - time));
 	}
 
 	/**
@@ -347,7 +349,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex,boolean isLeftPage, PageCarver pageCarver) {
         Interpolator interpolatorScale = new AccelerateInterpolator();
         Interpolator interpolatorDx = new LinearInterpolator();
-        int count = 40; float perScale = 1f;
+        int count = 50; float perScale = 1f;
         float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierStart2.y
                 ,mBezierStart1.x - mBezierStart2.x));
         degrees = degrees - 90;

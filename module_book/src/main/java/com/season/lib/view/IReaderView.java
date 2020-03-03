@@ -27,17 +27,11 @@ public interface IReaderView {
      void release();
 
     /**
-     * 派遣Activity DispatchTouchEvent 事件
-     * @param ev
+     * 当前页面是否绘制完毕
      * @return
      */
-     boolean onActivityDispatchTouchEvent(MotionEvent ev);
-    /**
-     * 派遣Activity DispatchKeyEvent 事件
-     * @param event
-     * @return
-     */
-     boolean onActivityDispatchKeyEvent(KeyEvent event);
+     boolean isCurrentPageDrawn();
+
 
     /**
      * 跳章（点击目录）
