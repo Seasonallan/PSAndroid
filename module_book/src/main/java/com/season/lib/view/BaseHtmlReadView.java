@@ -686,9 +686,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	public void onPreDrawContent(Canvas canvas, int chapterIndex,
 			int pageIndex, boolean isFullScreen) {
 		drawBackground(canvas);
-		if(isFullScreen){
-			canvas.drawColor(Color.BLACK);
-		}
 	}
 
 	@Override

@@ -2,6 +2,8 @@ package com.season.example;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -95,6 +97,8 @@ public class BaseBookActivity extends Activity implements
 		setContentView(R.layout.activity_reader);
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
+
+        mReadContainerView.setBackgroundColor(ReadSetting.getInstance(this).getThemeBGColor());
 
 		initClickDetector();
 		initReadView();

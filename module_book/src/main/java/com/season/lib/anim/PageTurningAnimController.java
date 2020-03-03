@@ -2,16 +2,13 @@ package com.season.lib.anim;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
@@ -246,7 +243,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		// 1、绘制当前页面所有区域
 		drawCurrentPageArea(canvas, fromIndex,true,pageCarver);
 		// 2、绘制当前页面扭曲部分区域
-		if (!isFullAnimation) {
+		if (!isAnimStart) {
 			drawCurrentPageWarpingArea(canvas, fromIndex, true, pageCarver);
 		}
 		// 3、绘制翻起页背面//第三个参数表示是否绘制在左边
@@ -256,6 +253,34 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		// 5、绘制翻起页的阴影
 		drawCurrentPageShadow(canvas,!isNext);
 		//LogUtil.e("onDrawAnim>>cost :"+ (System.currentTimeMillis() - time));
+	}
+
+
+	private final void drawCurrentPageArea(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
+		canvas.save();
+		if (!isAnimStart){
+			mPath1.reset();
+			mPath1.moveTo(0, 0);
+			mPath1.lineTo(0, pageCarver.getScreenHeight());
+			if (mBezierStart2.y < mBezierStart1.y){
+				mPath1.lineTo(mBezierStart1.x, mBezierStart1.y);
+				mPath1.lineTo(mBezierStart2.x, mBezierStart2.y);
+				mPath1.lineTo(pageCarver.getScreenWidth(), 0);
+			}else{
+				mPath1.lineTo(pageCarver.getScreenWidth(), pageCarver.getScreenHeight());
+				mPath1.lineTo(mBezierStart2.x, mBezierStart2.y);
+				mPath1.lineTo(mBezierStart1.x, mBezierStart1.y);
+			}
+			mPath1.close();
+			canvas.clipPath(mPath1);
+		}
+		if(isLeftPage){
+			pageCarver.drawPage(canvas, pageIndex);
+		}else{
+			canvas.translate(-mRightPageStartX, 0);
+			pageCarver.drawPage(canvas, pageIndex);
+		}
+		canvas.restore();
 	}
 
 	/**
@@ -346,47 +371,49 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	}
 
 
+	float crossX, dx, dy;
 	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex,boolean isLeftPage, PageCarver pageCarver) {
-        Interpolator interpolatorScale = new AccelerateInterpolator();
-        Interpolator interpolatorDx = new LinearInterpolator();
-        int count = 50; float perScale = 1f;
-        float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierStart2.y
-                ,mBezierStart1.x - mBezierStart2.x));
-        degrees = degrees - 90;
-        for (int i = 0; i < count; i++){
-            drawCurrentPageWarping(canvas,
-                    Math.abs(mBezierControl1.x - mBezierStart1.x) * interpolatorDx.getInterpolation(i * 1.0f / count),
-                    1 - perScale * interpolatorScale.getInterpolation(i * 1.0f / count)
-                    , fromIndex,degrees,pageCarver);
-        }
+		Interpolator interpolatorScale = new AccelerateInterpolator();
+		Interpolator interpolatorDx = new LinearInterpolator();
+		int count = 30; float perScale = 0.5f;
+		float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierStart2.y
+				,mBezierStart1.x - mBezierStart2.x));
+		crossX = getCross(mBeziervertex1, mBeziervertex2, new PointF(0, mCornerY), new PointF(mCornerX, mCornerY)).x;
+		dx = mBezierStart1.x + (mBezierStart2.x - mBezierStart1.x)/2;
+		dy = mBezierStart1.y + (mBezierStart2.y - mBezierStart1.y)/2;
+		degrees = degrees - 90;
+		for (int i = 0; i < count; i++){
+			drawCurrentPageWarping(canvas,
+					Math.abs(crossX - mBezierStart1.x) * interpolatorDx.getInterpolation(i * 1.0f / count),
+					1 - perScale * interpolatorScale.getInterpolation(i * 1.0f / count)
+					, fromIndex,degrees,pageCarver);
+		}
 	}
-    /**
-     * 绘制当前页面扭曲部分
-     */
-    private final void drawCurrentPageWarping(Canvas canvas, float x, float scale, int pageIndex, float degrees, PageCarver pageCarver) {
-        mPath1.reset();
-        mPath1.moveTo(mBezierStart2.x + x, mBezierStart2.y);
-        mPath1.lineTo(mBezierStart1.x  + x, mBezierStart1.y);
-        mPath1.lineTo(mBezierControl1.x  + x, mBezierControl1.y);
-        mPath1.lineTo(mBezierControl2.x  + x, mBezierControl2.y);
-        mPath1.close();
-        canvas.save();
-        canvas.clipPath(mPath1);
+	/**
+	 * 绘制当前页面扭曲部分
+	 */
+	private final void drawCurrentPageWarping(Canvas canvas, float x, float scale, int pageIndex, float degrees, PageCarver pageCarver) {
+		mPath1.reset();
+		mPath1.moveTo(mBezierStart2.x + x, mBezierStart2.y);
+		mPath1.lineTo(mBezierStart1.x  + x, mBezierStart1.y);
+		mPath1.lineTo(mBezierControl1.x  + x, mBezierControl1.y);
+		mPath1.lineTo(mBezierControl2.x  + x, mBezierControl2.y);
+		mPath1.close();
+		canvas.save();
+		canvas.clipPath(mPath1);
 
-        mMatrix.reset();
-        float dx = mBezierStart1.x + (mBezierStart2.x - mBezierStart1.x)/2;
-        float dy = mBezierStart1.y + (mBezierStart2.y - mBezierStart1.y)/2;
-        mMatrix.postTranslate(-dx, -dy);
-        mMatrix.postRotate(-degrees, 0 , 0);
-        mMatrix.postScale(scale, 1, 0,0);
-        mMatrix.postRotate(degrees, 0 , 0);
-        mMatrix.postTranslate(dx, dy);
-        canvas.concat(mMatrix);
+		mMatrix.reset();
+		mMatrix.postTranslate(-dx, -dy);
+		mMatrix.postRotate(-degrees, 0 , 0);
+		mMatrix.postScale(scale, 1, 0,0);
+		mMatrix.postRotate(degrees, 0 , 0);
+		mMatrix.postTranslate(dx, dy);
+		canvas.concat(mMatrix);
 
-        pageCarver.drawPage(canvas, pageIndex);
+		pageCarver.drawPage(canvas, pageIndex);
+		canvas.restore();
+	}
 
-        canvas.restore();
-    }
 
     private final void drawNextPageAreaAndShadow(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
 		if(!isLandscape)isLeftPage = true;
@@ -539,17 +566,6 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 					(int) (mBezierControl2.x  +  mContentHeight ), rightx );
 
 		mCurrentPageShadow.draw(canvas);
-		canvas.restore();
-	}
-	
-	private final void drawCurrentPageArea(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
-		canvas.save();
-		if(isLeftPage){
-			pageCarver.drawPage(canvas, pageIndex);
-		}else{
-			canvas.translate(-mRightPageStartX, 0);
-			pageCarver.drawPage(canvas, pageIndex);
-		}
 		canvas.restore();
 	}
 	
