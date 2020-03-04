@@ -30,4 +30,9 @@
 			android:layout_height="32dp"
 			android:src="@drawable/menu_icon_brightness_no" />
 	</LinearLayout>
+
+	<include  android:id="@+id/animation_setting"
+		layout="@layout/reader_menu_font_settings_item" />
+	<include  android:id="@+id/simplified_setting"
+		layout="@layout/reader_menu_font_settings_item" />
 </LinearLayout>

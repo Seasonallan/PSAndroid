@@ -15,6 +15,7 @@ import com.season.example.view.LRLRView;
 import com.season.lib.RoutePath;
 import com.season.lib.anim.PageAnimController;
 import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.util.NavigationBarUtil;
 import com.season.myapplication.R;
 
 import java.lang.reflect.Field;
@@ -28,6 +29,7 @@ public class MeeActivity extends Activity{
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_mee);
+        NavigationBarUtil.hideNavigationBar(this);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
@@ -54,14 +56,6 @@ public class MeeActivity extends Activity{
                 ARouter.getInstance().build(RoutePath.BOOK).navigation();
             }
         });
-
-        lrlrView.post(new Runnable() {
-            @Override
-            public void run() {
-                lrlrView.start();
-            }
-        });
-
     }
 
     private HAHAView hahaView;

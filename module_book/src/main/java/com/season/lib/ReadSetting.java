@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
@@ -17,31 +16,16 @@ import com.season.lib.anim.PageAnimController;
 
 /**
  * 阅读界面设置管理
- * @author lyw
  */
 public class ReadSetting{
     /** 是否是简体 */
-    public static final String SETTING_TYPE_FONT_SIM = "SETTING_TYPE_FONT_SIM";
+    public static final String SETTING_TYPE_FONT_SIM = "SETTING_TYPE_FONT_SIMP";
     /** 主题设置*/
     public static final String SETTING_TYPE_THEME = "SETTING_TYPE_THEME";
     /** 亮度设置*/
     public static final String SETTING_TYPE_BRIGHTESS_LEVEL = "SETTING_TYPE_BRIGHTESS_LEVEL";
     /** 动画设置*/
     public static final String SETTING_TYPE_ANIM = "SETTING_TYPE_ANIM";
-    /** 自动播放设置 播放暂停之后相关设置不会发起通知*/
-    public static final String SETTING_TYPE_AUTO = "SETTING_TYPE_AUTO";
-    /** 摇一摇切换白天黑夜*/
-    public static final String SETTING_SHAKE_SWITCH = "SETTING_SHAKE_SWITCH";
-    /** 自动播放延迟设置*/
-    private static final String SETTING_TYPE_AUTO_DELAYED_UD = "SETTING_TYPE_AUTO_DELAYED_UD";
-    /** 自动播放延迟设置*/
-    private static final String SETTING_TYPE_AUTO_DELAYED_LR = "SETTING_TYPE_AUTO_DELAYED_LR";
-    /** 横竖屏切换*/
-    public static final String SETTING_TYPE_ORIENTATION = "SETTING_TYPE_ORIENTATION";
-    /*		自动播放类型		*/
-    public static final int AUTO_TYPE_NU = 0;
-    public static final int AUTO_TYPE_UD = 1;
-    public static final int AUTO_TYPE_LR = 2;
 
     /*		定义字体大小类型		*/
     public static final String SETTING_TYPE_FONT_SIZE = "SETTING_TYPE_FONT_SIZE";
@@ -80,27 +64,21 @@ public class ReadSetting{
     private int mLeftRightSpaceLevel;
 
     private static final String PREFS_MODULE_INFO = "read_setting_prefs";
-    private static ReadSetting this_;
+    private static ReadSetting sInstance;
     private Context mContext;
     private LinkedList<WeakReference<SettingListener>> mSettingListenerList;
     private Handler mHandler;
     private SharedPreferences mSharedPreferences;
-    private boolean isSimplified;
+    private int mSimplified;
     private int mThemeType;
-    private int mBrightessLevel;
+    private int mBrightLevel;
     private int mAnimType;
-    private int mAutoType;
-    private int mAutoDelayedUD;
-    private int mAutoDelayedLR;
-    private boolean isAutoPause;
-    private boolean isShakeSwitch;
-    private int mOrientationType;
 
     public static ReadSetting getInstance(Context context){
-        if(this_ == null){
-            this_ = new ReadSetting(context);
+        if(sInstance == null){
+            sInstance = new ReadSetting(context);
         }
-        return this_;
+        return sInstance;
     }
 
     private ReadSetting(Context context){
@@ -113,16 +91,11 @@ public class ReadSetting{
         mLeftRightSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_LEFTRIGHT_SPACE_TYPE, LEFTRIGHT_SPACE_COUNT/2);
         mIndentSizeLevel = mSharedPreferences.getInt(SETTING_TYPE_INDENT_SIZE_TYPE, INDENT_SIZE_COUNT/2);
         mThemeType = loadThemeType();
-        mBrightessLevel = loadBrightessLevel();
-        isShakeSwitch = loadShakeSwitch();
+        mBrightLevel = loadBrightessLevel();
         mAnimType = loadAnimType();
-        mAutoDelayedUD = loadAutoDelayed(SETTING_TYPE_AUTO_DELAYED_UD);
-        mAutoDelayedLR = loadAutoDelayed(SETTING_TYPE_AUTO_DELAYED_LR);
-        mOrientationType = loadOrientationType();
-        mAutoType = AUTO_TYPE_NU;
         mSettingListenerList = new LinkedList<WeakReference<SettingListener>>();
         mHandler = new Handler(Looper.getMainLooper());
-        isSimplified = loadFontFontSimplify();
+        mSimplified = loadFontFontSimplify();
     }
 
     public void clearSetting(){
@@ -303,8 +276,11 @@ public class ReadSetting{
     /**
      * 保存字体是否为简体，并通知界面更新
      */
-    public void setSimplified(boolean isSimplified){
-        this.isSimplified = isSimplified;
+    public void setSimplified(int isSimplified){
+        if(mSimplified == isSimplified){
+            return;
+        }
+        this.mSimplified = isSimplified;
         saveFontSimplify(isSimplified);
         notify(SETTING_TYPE_FONT_SIM);
     }
@@ -312,18 +288,18 @@ public class ReadSetting{
     /**
      * 获取字体是否为简体
      */
-    public boolean isSimplified(){
-        return isSimplified;
+    public int isSimplified(){
+        return mSimplified;
     }
 
 
-    private void saveFontSimplify(boolean isSimplified){
-        mSharedPreferences.edit().putBoolean(SETTING_TYPE_FONT_SIM, isSimplified).commit();
+    private void saveFontSimplify(int isSimplified){
+        mSharedPreferences.edit().putInt(SETTING_TYPE_FONT_SIM, isSimplified).commit();
         notify(SETTING_TYPE_FONT_SIZE);
     }
 
-    private boolean loadFontFontSimplify(){
-        return mSharedPreferences.getBoolean(SETTING_TYPE_FONT_SIM, true);
+    private int loadFontFontSimplify(){
+        return mSharedPreferences.getInt(SETTING_TYPE_FONT_SIM, 0);
     }
 
 
@@ -381,14 +357,10 @@ public class ReadSetting{
 
 
     public int getBrightessLevel(){
-        return mBrightessLevel;
+        return mBrightLevel;
     }
 
-    public void setBrightess(Window window){
-        setBrightess(getBrightessLevel(),window);
-    }
-
-    public void setBrightess(int value,Window window){
+    public void setBrightess(int value, Window window){
         final WindowManager.LayoutParams lp = window.getAttributes();
         lp.screenBrightness = value * 1.0f / 100.0f;
         if(lp.screenBrightness < 0.17){
@@ -398,10 +370,10 @@ public class ReadSetting{
     }
 
     public void setBrightessLevel(int level){
-        if(mBrightessLevel == level){
+        if(mBrightLevel == level){
             return;
         }
-        mBrightessLevel = level;
+        mBrightLevel = level;
         saveBrightessLevel(level);
     }
 
@@ -414,100 +386,6 @@ public class ReadSetting{
         notify(SETTING_TYPE_BRIGHTESS_LEVEL);
     }
 
-    public int getAutoDelayedLR(){
-        return mAutoDelayedLR;
-    }
-
-    public void setAutoDelayedLR(int index){
-        if(mAutoDelayedLR == index){
-            return;
-        }
-        mAutoDelayedLR = index;
-        saveAutoDelayed(SETTING_TYPE_AUTO_DELAYED_LR,index);
-    }
-
-    public int getAutoDelayedUD(){
-        return mAutoDelayedUD;
-    }
-
-    public void setAutoDelayedUD(int index){
-        if(mAutoDelayedUD == index){
-            return;
-        }
-        mAutoDelayedUD = index;
-        saveAutoDelayed(SETTING_TYPE_AUTO_DELAYED_UD,index);
-    }
-
-    private int loadAutoDelayed(String key){
-        return mSharedPreferences.getInt(key,5);
-    }
-
-    private void saveAutoDelayed(String key,int index){
-        mSharedPreferences.edit().putInt(key,index).commit();
-        if(!isAutoPause){
-            notify(SETTING_TYPE_AUTO);
-        }
-    }
-
-    public boolean isAutoStart(){
-        return mAutoType != AUTO_TYPE_NU;
-    }
-
-    public int getAutoType(){
-        return mAutoType;
-    }
-
-    public void setAutoType(){
-        setAutoType(loadAutoType());
-    }
-
-    public void setAutoType(int type){
-        if(mAutoType == type){
-            return;
-        }
-        mAutoType = type;
-        saveAutoType(type);
-    }
-
-    public void clearAutoType(){
-        setAutoType(AUTO_TYPE_NU);
-    }
-
-    public boolean isPause(){
-        return isAutoPause;
-    }
-
-    public void setAutoPause(boolean isPause){
-        if(isAutoPause == isPause){
-            return;
-        }
-        if(mAutoType != AUTO_TYPE_NU){
-            isAutoPause = isPause;
-            notify(SETTING_TYPE_AUTO);
-        }else{
-            isAutoPause = false;
-        }
-    }
-
-    private int loadAutoType(){
-        return mSharedPreferences.getInt(SETTING_TYPE_AUTO,AUTO_TYPE_UD);
-    }
-
-    private void saveAutoType(int type){
-        if(type == AUTO_TYPE_NU){
-            isAutoPause = false;
-        }else{
-            mSharedPreferences.edit().putInt(SETTING_TYPE_AUTO, type).commit();
-        }
-        if(!isAutoPause){
-            notify(SETTING_TYPE_AUTO);
-        }
-    }
-
-    public void clearTempSetting(){
-        mAutoType = AUTO_TYPE_NU;
-        isAutoPause = false;
-    }
 
     public int getAnimType(){
         return mAnimType;
@@ -530,55 +408,32 @@ public class ReadSetting{
         notify(SETTING_TYPE_ANIM);
     }
 
-    public boolean isShakeSwitch(){
-        return isShakeSwitch;
-    }
-
-    public void setShakeSwitch(boolean shakeSwitch){
-        if(isShakeSwitch == shakeSwitch){
-            return;
-        }
-        isShakeSwitch = shakeSwitch;
-        saveShakeSwitche(shakeSwitch);
-    }
-
-    private boolean loadShakeSwitch(){
-        return mSharedPreferences.getBoolean(SETTING_SHAKE_SWITCH,false);
-    }
-
-    private void saveShakeSwitche(boolean isShakeSwitch){
-        mSharedPreferences.edit().putBoolean(SETTING_SHAKE_SWITCH, isShakeSwitch).commit();
-        notify(SETTING_SHAKE_SWITCH);
-    }
-
-    public int getOrientationType() {
-        return mOrientationType;
-    }
-
-    public void changeOrientationType() {
-        if(getOrientationType() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            mOrientationType = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-        } else if (getOrientationType() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            mOrientationType = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-        }
-        saveOrientationType(mOrientationType);
-    }
-
-    private int loadOrientationType() {
-        return mSharedPreferences.getInt(SETTING_TYPE_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-    }
-
-    private void saveOrientationType(int orientationType) {
-        mSharedPreferences.edit().putInt(SETTING_TYPE_ORIENTATION, orientationType);
-        notify(SETTING_TYPE_ORIENTATION);
-    }
-
-
     private final void runOnUiThread(Runnable action) {
         mHandler.post(action);
     }
 
+
+    /**
+     * 获取书籍阅读进度
+     * @param id
+     * @return
+     */
+    public int[] getBookReadProgress(String id){
+        int[] res = {0, 0};
+        String pageStr = mSharedPreferences.getString(id, "0-0");
+        String[] strings = pageStr.split("-");
+        if (strings.length == 2){
+            res[0] = Integer.parseInt(strings[0]);
+            res[1] = Integer.parseInt(strings[1]);
+        }
+        return res;
+    }
+
+    public void saveBookReadProgress(String id, int currentChapterIndex, int currentPageIndex) {
+        mSharedPreferences.edit().putString(id, currentChapterIndex +"-"+ currentPageIndex).commit();
+    }
+
     public interface SettingListener{
-        public void onSettingChange(ReadSetting readSetting,String type);
+        void onSettingChange(ReadSetting readSetting,String type);
     }
 }

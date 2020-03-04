@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 
 /**
@@ -13,11 +14,10 @@ import android.view.animation.Interpolator;
 public abstract class PageAnimController{
 	public static final int ANIM_TYPE_PAGE_TURNING = 0;
 	public static final int ANIM_TYPE_TRANSLATION = 1;
-    public static final int ANIM_TYPE_AUTO = 2;
 	protected Context mContext;
 
 	public static PageAnimController create(Context context,int type){
-		return create(context, null, type);
+		return create(context, new AccelerateInterpolator(), type);
 	}
 
 	public static PageAnimController create(Context context, Interpolator interpolator,int type){
@@ -26,9 +26,6 @@ public abstract class PageAnimController{
 			pageAnimController = new PageTurningAnimController(context, interpolator);
 		}else if(ANIM_TYPE_TRANSLATION == type){
 			pageAnimController = new HorTranslationAnimController(context, interpolator);
-		}else if(ANIM_TYPE_AUTO == type){
-			pageAnimController = new PageTurningAnimController(context, interpolator);
-			//pageAnimController = new AutoAnimController(context);
 		}
 		return pageAnimController;
 	}

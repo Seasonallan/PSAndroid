@@ -6,8 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextPaint;
@@ -16,11 +14,10 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
 import com.season.lib.ReadSetting;
-import com.season.lib.anim.AutoAnimController;
 import com.season.lib.anim.PageAnimController;
 import com.season.lib.util.LogUtil;
 
-public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener {
+public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener, IReaderView{
 	protected static final String TAG = AbsReadView.class.getSimpleName();
 	/** 代表初始界面*/
 	protected static final int INDEX_INITIAL_CONTENT = Integer.MIN_VALUE - 1;
@@ -68,7 +65,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		loadStyleSetting();
 	}
 
-	protected void release(){
+	public void release(){
 		if (mBGBitmap != null){
 			mBGBitmap.recycle();
 			mBGBitmap = null;
@@ -288,12 +285,6 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		}
 		if (type.equals(ReadSetting.SETTING_TYPE_ANIM)) {
 			setAnimType(readSetting.getAnimType());
-		} else if (type.equals(ReadSetting.SETTING_TYPE_AUTO)) {
-			if(readSetting.getAutoType() == ReadSetting.AUTO_TYPE_UD){
-				setAutoStart(readSetting.getAutoDelayedUD(),readSetting.isAutoStart(), readSetting.isPause());
-			}else{
-				setAutoStart(readSetting.getAutoDelayedUD(),false, true);
-			}
 		}
 	}
 
@@ -319,43 +310,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	protected void stopAnim(){
 		mPageAnimController.stopAnim(this);
 	}
-	
-	private void setAutoStart(int autoDelayed ,boolean autoStart,boolean isPause){
-		if(!autoStart){
-			if(mPageAnimController instanceof AutoAnimController){ 
-				setKeepScreenOn(false);
-				setAnimType(mAnimType,true);
-			}
-			return;
-		}
-		AutoAnimController autoAnimController = null;
-		if(mPageAnimController instanceof AutoAnimController){
-			autoAnimController = (AutoAnimController) mPageAnimController;
-		}else{
-			if(mPageAnimController != null){
-				mPageAnimController.stopAnim(this);
-			}
-			mPageAnimController = PageAnimController.create(getContext(), PageAnimController.ANIM_TYPE_AUTO);
-			autoAnimController = (AutoAnimController) mPageAnimController;
-		}
-		
-		if(autoAnimController.isAnimStop()){
-			autoAnimController.setAutoStartDelayedType(autoDelayed);
-			int[] locals = requestNextPage(mCurrentChapterIndex, mCurrentPageIndex);
-			if(!isPause){
-				if(locals != null){
-					if(locals[0] >= 0){
-						gotoPage(locals[0], locals[1], true);
-					}
-				}else{
-					onNotNextContent();
-				}
-			}
-		}else{
-			autoAnimController.updateState(autoDelayed,isPause,this);
-		}
-	}
-	
+
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
@@ -482,6 +437,33 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		}
 		if(hasNextChapter()){
 			gotoPage(mCurrentChapterIndex + 1, 0,true);
+		}
+	}
+
+
+	@Override
+	public void gotoPrePage(){
+		if(!mPageAnimController.isAnimStop()){
+			mPageAnimController.stopAnim(this);
+		}
+		int[] locals = requestPrePage(mCurrentChapterIndex, mCurrentPageIndex);
+		if(locals != null){
+			gotoPage(locals[0], locals[1],true);
+		}else{
+			onNotPreContent();
+		}
+	}
+
+	@Override
+	public void gotoNextPage(){
+		if(!mPageAnimController.isAnimStop()){
+			mPageAnimController.stopAnim(this);
+		}
+		int[] locals = requestNextPage(mCurrentChapterIndex, mCurrentPageIndex);
+		if(locals != null){
+			gotoPage(locals[0], locals[1],true);
+		}else{
+			onNotNextContent();
 		}
 	}
 

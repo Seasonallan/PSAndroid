@@ -2,9 +2,11 @@ package com.season.example;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Browser;
@@ -77,7 +79,13 @@ public class BaseBookActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		BaseContext.init(getApplicationContext());
         NavigationBarUtil.hideNavigationBar(this);
-		StatusBarUtil.setTranslucent(this);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			getWindow().setNavigationBarColor(Color.parseColor("#000000"));
+		}
+
+		//StatusBarUtil.setTranslucent(this, 125);
+        //StatusBarUtil.setTranslucent(this);
         // StatusBarUtil.setColor(this, 0xff30302E);
         // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
 
@@ -185,11 +193,11 @@ public class BaseBookActivity extends Activity implements
 	@Override
 	public void onBackPressed() {
 		if(mCatalogView != null && mCatalogView.isShown()){
-			mCatalogView.dismiss();
+			mCatalogView.dismiss(true);
 			return;
 		}
 		if(mReaderMenuPopWin != null && mReaderMenuPopWin.isShown()){
-			mReaderMenuPopWin.dismiss(true);
+			mReaderMenuPopWin.dismiss(true, true);
 			return;
 		}
 		super.onBackPressed();
@@ -219,28 +227,10 @@ public class BaseBookActivity extends Activity implements
 					showMenu();
 				}else {
 					//上一页下一页
-					int pageNums = mReadView.getMaxReadProgress();
-					int curPage = mReadView.getCurReadProgress();
 					if(x >= ScreenUtils.getScreenWidth()/2){
-						if (curPage >= pageNums - 1){
-							if (mReadView.getCurChapterIndex() >= mReadView.getLayoutChapterMax() - 1){
-								onNotNextContent();
-							}else{
-								mReadView.gotoNextChapter();
-							}
-						}else{
-							mReadView.gotoPage(curPage + 1, true);
-						}
+						mReadView.gotoNextPage();
 					}else{
-						if (curPage <= 0){
-							if (mReadView.getCurChapterIndex() <= 0){
-								onNotPreContent();
-							}else{
-								mReadView.gotoPreChapter();
-							}
-						}else{
-							mReadView.gotoPage(curPage - 1, true);
-						}
+						mReadView.gotoPrePage();
 					}
 				}
 			}
@@ -261,7 +251,8 @@ public class BaseBookActivity extends Activity implements
 		if(mCatalogLay.isShown()){
 			return super.dispatchTouchEvent(ev);
 		}
-		return mReadView.handlerSelectTouchEvent(ev, dispatcher);
+		mReadView.handlerSelectTouchEvent(ev, dispatcher);
+		return false;
 		//return super.dispatchTouchEvent(ev);
 	}
 
@@ -302,7 +293,8 @@ public class BaseBookActivity extends Activity implements
                             new Thread() {
                                 @Override
                                 public void run() {
-									mBook = mReadView.decodeBookFromPlugin(0, 0, "");
+                                	int[] index = ReadSetting.getInstance(BaseBookActivity.this).getBookReadProgress(mBook.id);
+									mBook = mReadView.decodeBookFromPlugin(index[0], index[1], "");
 									mCatalogView.setBookInfo(mBook.title, mBook.author);
 									//mReadView.decodeBookFromPlugin(0, 0, "");
                                 }

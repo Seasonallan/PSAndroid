@@ -82,6 +82,9 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		if (isShowing){
 			return;
 		}
+		topView.clearAnimation();
+		mGridView.clearAnimation();
+		mChildMenuLayout.clearAnimation();
 		hideAllViews();
 		if(!ReaderMediaPlayer.getInstance().isPlayerStop()){
 			mVoiceLayout.setVisibility(View.GONE);
@@ -124,12 +127,15 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	}
 
 
-	public void dismiss(final boolean notify) {
-		if (isDismissing){
+	public void dismiss(boolean force, final boolean notify) {
+		if (!force && isDismissing) {
 			return;
 		}
 		isDismissing = true;
 		setVisibility(View.VISIBLE);
+		topView.clearAnimation();
+		mGridView.clearAnimation();
+		mChildMenuLayout.clearAnimation();
 
 		dowAnimation = new TranslateAnimation(
 				Animation.RELATIVE_TO_SELF,0, Animation.RELATIVE_TO_SELF, 0,
@@ -159,6 +165,9 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			}
 		});
 		mChildMenuLayout.startAnimation(dowAnimation);
+	}
+	public void dismiss(final boolean notify) {
+		dismiss(false, notify);
 	}
 
 	protected void onCreateContentView() {
@@ -242,7 +251,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_CATALOG, R.drawable.menu_icon_mark, "目录"));
 		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_FONT, R.drawable.menu_icon_font, "排版"));
 		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_THEME, R.drawable.menu_icon_background, "背景"));
-		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS, R.drawable.menu_icon_brightness, "亮度"));
+		menuItems.add(new MenuItemAdapter.MenuItem(MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS, R.drawable.menu_icon_brightness, "其他"));
 //		menuItems.add(new MenuItem(MenuItem.MENU_ITEM_ID_SETTING, R.drawable.menu_icon_settings, "设置"));
 		if(menuItems.size() > MAX_MENU_SIZE){
 			mMoreMenuItems = new ArrayList<MenuItemAdapter.MenuItem>(menuItems.subList(MAX_MENU_SIZE - 1, menuItems.size()));
@@ -403,11 +412,12 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		}
 	}
 
+	private SizeChangeTool mAnimationSettingTool, mSimplifiedTool;
 	private void showBrightessSettingView(){
-		SeekBar seekBar = null;
+		SeekBar seekBar;
 		if(mBrightessSettingView == null){
 			mBrightessSettingView = getLayoutInflater().inflate(R.layout.reader_menu_brightness_setting, null);
-			seekBar = (SeekBar) mBrightessSettingView.findViewById(R.id.brightness_seek);
+			seekBar = mBrightessSettingView.findViewById(R.id.brightness_seek);
 			seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 				@Override
@@ -425,7 +435,61 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 					setScreenBrightess(progress);
 				}
 			});
+			mAnimationSettingTool = new SizeChangeTool(mBrightessSettingView.findViewById(R.id.animation_setting)) {
+				@Override
+				public String getDesc() {
+					return "动画";
+				}
+				@Override
+				public int getLevel() {
+					return mReadSetting.getAnimType();
+				}
+
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setAnimType(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.getAnimType();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return 1;
+				}
+			};
+			mAnimationSettingTool.setText("仿真翻页","左右平移");
+			mSimplifiedTool = new SizeChangeTool(mBrightessSettingView.findViewById(R.id.simplified_setting)) {
+				@Override
+				public String getDesc() {
+					return "简繁体";
+				}
+				@Override
+				public int getLevel() {
+					return mReadSetting.isSimplified();
+				}
+
+				@Override
+				public void setLevel(int level) {
+					mReadSetting.setSimplified(level);
+				}
+
+				@Override
+				public int getValue() {
+					return mReadSetting.isSimplified();
+				}
+
+				@Override
+				public int getLevelCount() {
+					return 1;
+				}
+			};
+			mSimplifiedTool.setText("简体", "繁体");
 		}
+		mAnimationSettingTool.resetStatus();
+		mSimplifiedTool.resetStatus();
 		seekBar = (SeekBar) mBrightessSettingView.findViewById(R.id.brightness_seek);
 		WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
 		float oldValue = lp.screenBrightness;
@@ -448,7 +512,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		GridView gridView  = (GridView) mThemeView;
 		final ReadStytleItemAdapter adapter = new ReadStytleItemAdapter(getContext(), ReadSettingThemeColor.sThemeTypes);
 		adapter.selectedType = mReadSetting.getThemeType();
-		gridView.setNumColumns(ReadSettingThemeColor.sThemeTypes.length);
+		gridView.setNumColumns(ReadSettingThemeColor.sThemeTypes.length/2);
 		gridView.setAdapter(adapter);
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 			@Override

@@ -119,7 +119,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 					dx = (int) (mScreenWidth - mTouch.x);
 				}else{
 					dx = (int) - mTouch.x - mScreenWidth;
-					duration = mDuration * 2;
+					duration = mDuration;
 				}
 				if (mCornerY > 0) {
 					dy = (int) (mScreenHeight - mTouch.y);
@@ -129,7 +129,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			}
 			scroller.startScroll((int) mTouch.x, (int) mTouch.y, dx, dy,duration);
 		}else{
-			duration = mDuration * 2;
+			duration = mDuration;
 			if(isLandscape){
 				if(!isRequestNext){
 					dx = (int) (mScreenWidth - mTouch.x);

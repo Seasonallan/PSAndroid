@@ -180,15 +180,17 @@ public class CatalogView extends FrameLayout{
 		mBookMarkAdapter.setData(BookMarkDB.getInstance().getUserBookMark(mBookInfo.id));
 		startAnimation(showAnimation);
 	}
-	public void dismiss(){
-		if (isDismissing){
+	public void dismiss(boolean force){
+		if (!force && isDismissing){
 			return;
 		}
 		isDismissing = true;
 		setVisibility(View.VISIBLE);
 		startAnimation(hideAnimation);
 	}
-
+	public void dismiss(){
+		dismiss(false);
+	}
 	
 	public interface IActionCallBack{
 		void onDismiss();

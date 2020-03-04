@@ -21,7 +21,6 @@
 		android:layout_height="wrap_content"
 		android:paddingLeft="16dp"
 		android:minWidth="48dp"
-		android:text="15.5"
 		android:textColor="@color/normal"
 		android:textSize="13dp" />
 	<TextView

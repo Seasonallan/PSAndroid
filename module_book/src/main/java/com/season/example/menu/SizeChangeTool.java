@@ -7,14 +7,19 @@ import com.season.lib.util.ToastUtil;
 
 public abstract class SizeChangeTool {
     private TextView mSizeView;
-    private View mCutBut;
-    private View mAddBut;
+    private TextView mCutBut;
+    private TextView mAddBut;
     private View mParentView;
 
     public abstract int getLevel();
     public abstract void setLevel(int level);
     public abstract int getValue();
     public abstract String getDesc();
+
+    public void setText(String left, String right){
+        mCutBut.setText(left);
+        mAddBut.setText(right);
+    }
 
     public SizeChangeTool(View parentView){
         this.mParentView = parentView;
@@ -27,38 +32,40 @@ public abstract class SizeChangeTool {
             @Override
             public void onClick(View v) {
                 int temtFontProgress = getLevel();
-                temtFontProgress += 1;
-                if(temtFontProgress > getLevelCount()){
-                    temtFontProgress = getLevelCount();
-                }
-                if(temtFontProgress == getLevelCount()){
-                    ToastUtil.showToast("当前为最大"+getDesc());
-                    v.setEnabled(false);
+                if (getLevelCount() > 1){
+                    temtFontProgress += 1;
+                    if(temtFontProgress > getLevelCount()){
+                        temtFontProgress = getLevelCount();
+                    }
+                    if(temtFontProgress == getLevelCount()){
+                        ToastUtil.showToast("当前为最大"+getDesc());
+                        v.setEnabled(false);
+                    }
+                }else{
+                    temtFontProgress = 1;
                 }
                 setLevel(temtFontProgress);
-                mSizeView.setText(getValue()+"");
-                if(!mCutBut.isEnabled()){
-                    mCutBut.setEnabled(true);
-                }
+                resetStatus();
             }
         });
         mCutBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int temtFontProgress = getLevel();
-                temtFontProgress -= 1;
-                if(temtFontProgress < 0){
-                    ToastUtil.showToast("当前为最小"+getDesc());
+                if (getLevelCount() > 1){
+                    temtFontProgress -= 1;
+                    if(temtFontProgress < 0){
+                        ToastUtil.showToast("当前为最小"+getDesc());
+                        temtFontProgress = 0;
+                    }
+                    if(temtFontProgress == 0){
+                        v.setEnabled(false);
+                    }
+                }else{
                     temtFontProgress = 0;
                 }
-                if(temtFontProgress == 0){
-                    v.setEnabled(false);
-                }
                 setLevel(temtFontProgress);
-                mSizeView.setText(getValue()+"");
-                if(!mAddBut.isEnabled()){
-                    mAddBut.setEnabled(true);
-                }
+                resetStatus();
             }
         });
     }
@@ -66,13 +73,14 @@ public abstract class SizeChangeTool {
     public void resetStatus() {
         //同步字体大小设置状态
         int temtFontProgress = getLevel();
-        if(temtFontProgress == getLevelCount()){
-            mAddBut.setEnabled(false);
-        }else if(temtFontProgress == 0){
-            mCutBut.setEnabled(false);
+        if (getLevelCount() > 1){
+            mAddBut.setEnabled(temtFontProgress != getLevelCount());
+            mCutBut.setEnabled(temtFontProgress != 0);
+            mSizeView.setText(getValue()+"");
+        }else{
+            mCutBut.setSelected(temtFontProgress == 0);
+            mAddBut.setSelected(temtFontProgress == 1);
         }
-        mSizeView.setText(getValue()+"");
-
     }
 
     public abstract int getLevelCount();

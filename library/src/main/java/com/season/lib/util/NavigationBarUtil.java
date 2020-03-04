@@ -61,7 +61,7 @@ public class NavigationBarUtil {
         decorView.setSystemUiVisibility(uiOptions);
     }
 
-    public void showNavigationBar(Activity activity) {
+    public static void showNavigationBar(Activity activity) {
         WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
         attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
         activity.getWindow().setAttributes(attrs);

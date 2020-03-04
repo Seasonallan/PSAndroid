@@ -14,6 +14,7 @@ public class ReadSettingThemeColor {
     public static final int THEME_TYPE_IMAGE_2 = 3;
     public static final int THEME_TYPE_IMAGE_3 = 4;
     public static final int THEME_TYPE_IMAGE_4 = 5;
+    public static final int THEME_TYPE_IMAGE_5 = 6;
 
     public static final int THEME_TYPE_COLOR_1 = 10;
     public static final int THEME_TYPE_COLOR_2 = 11;
@@ -24,7 +25,7 @@ public class ReadSettingThemeColor {
     public static final int[] sThemeTypes = {
             ReadSettingThemeColor.THEME_TYPE_DAY, ReadSettingThemeColor.THEME_TYPE_COLOR_1,
             ReadSettingThemeColor.THEME_TYPE_COLOR_2,ReadSettingThemeColor.THEME_TYPE_COLOR_3,ReadSettingThemeColor.THEME_TYPE_COLOR_4,
-            ReadSettingThemeColor.THEME_TYPE_IMAGE_2, ReadSettingThemeColor.THEME_TYPE_IMAGE_4,
+            ReadSettingThemeColor.THEME_TYPE_IMAGE_2, ReadSettingThemeColor.THEME_TYPE_IMAGE_5, ReadSettingThemeColor.THEME_TYPE_IMAGE_4,
             ReadSettingThemeColor.THEME_TYPE_IMAGE_1, ReadSettingThemeColor.THEME_TYPE_IMAGE_3};
 
     /**
@@ -80,6 +81,9 @@ public class ReadSettingThemeColor {
                 break;
             case THEME_TYPE_IMAGE_4:
                 bgImgRes = R.drawable.read_style_other_bg_4;
+                break;
+            case THEME_TYPE_IMAGE_5:
+                bgImgRes = R.drawable.read_style_other_bg_5;
                 break;
         }
         return bgImgRes;
@@ -145,6 +149,9 @@ public class ReadSettingThemeColor {
                 break;
             case THEME_TYPE_IMAGE_4:
                 bgColor = 0xffdfc6a0;
+                break;
+            case THEME_TYPE_IMAGE_5:
+                bgColor = 0xffeeeeee;
                 break;
         }
         return bgColor;

@@ -10,9 +10,10 @@ import android.text.TextPaint;
 import android.view.View;
 
 import com.example.book.R;
+import com.season.lib.ReadSetting;
 import com.season.lib.bean.BookInfo;
 
-public abstract class BaseReadView extends AbsReadView implements IReaderView{
+public abstract class BaseReadView extends AbsReadView{
     protected IReadCallback mReadCallback;
     protected BookInfo mBook;
 
@@ -46,12 +47,19 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
     @Override
     public void release() {
         super.release();
+        ReadSetting.getInstance(getContext()).saveBookReadProgress(mBook.id, mCurrentChapterIndex, getCurPageStartIndex());
         mBookMarkTip = null;
         if (batteryView != null){
             batteryView.stop();
             batteryView = null;
         }
     }
+
+    /**
+     * 获取章节页面的开始char位置
+     * @return
+     */
+    protected abstract int getCurPageStartIndex();
 
     @Override
     protected void onDetachedFromWindow() {
@@ -155,6 +163,7 @@ public abstract class BaseReadView extends AbsReadView implements IReaderView{
             batteryView = new BatteryView(getContext(), mReadSetting, new Runnable() {
                 @Override
                 public void run() {
+                    ReadSetting.getInstance(getContext()).saveBookReadProgress(mBook.id, mCurrentChapterIndex, getCurPageStartIndex());
                     if (!isAnimating()){
                         postInvalidate();
                     }

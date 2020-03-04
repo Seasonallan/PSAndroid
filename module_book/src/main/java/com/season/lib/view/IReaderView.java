@@ -74,6 +74,16 @@ public interface IReaderView {
      void gotoNextChapter();
 
     /**
+     * 跳转上一页
+     */
+    void gotoPrePage();
+
+    /**
+     * 跳转下一页
+     */
+    void gotoNextPage();
+
+    /**
      * 生成用户书签
      * @return
      */

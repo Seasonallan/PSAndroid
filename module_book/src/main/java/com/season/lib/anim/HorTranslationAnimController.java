@@ -31,7 +31,12 @@ public class HorTranslationAnimController extends AbsHorGestureAnimController {
 		mCurrentRect = new Rect();
 		mNextRect = new Rect();
 	}
-	
+
+	@Override
+	public boolean interruptAnimationEnd(){
+		return false;
+	}
+
 	@Override
 	protected void onAnimStart(boolean isCancelAnim) {
 		
@@ -98,7 +103,7 @@ public class HorTranslationAnimController extends AbsHorGestureAnimController {
 		mShadowDrawableL.setBounds(left, 0, left + 20, mContentHeight);
 		mShadowDrawableL.draw(canvas);
 		canvas.restore();
-		pageCarver.requestInvalidate();
+		//pageCarver.requestInvalidate();
 	}
 	
 	@Override

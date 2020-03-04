@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import taobe.tec.jcc.JChineseConvertor;
+
 
 public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMediaPlayer.PlayerListener, PageManager.PageManagerCallback, ClickSpanHandler {
 	protected PageManager mPageManager;
@@ -357,6 +359,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		return mCurrentChapterIndex;
 	}
 
+	@Override
     protected int getCurPageStartIndex(){
         return getPageStartIndex(mCurrentChapterIndex, mCurrentPageIndex);
     }
@@ -488,9 +491,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		super.onStopAnim(isCancel);
 		if(!isCancel){
 			updateSelectTexts(mCurrentChapterIndex);
-		}
-		if (mReadSetting.getThemeBGImgRes() != -1) {//图片背景时预加载下一页
-			//mPageManager.preLoadNextPage();
 		}
 	}
 	
@@ -729,9 +729,9 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
     @Override
     public String getChapterInputStream(int chapterIndex) {
         String content = getChapterInputStream_(chapterIndex);
-        if (!mReadSetting.isSimplified()){
+        if (mReadSetting.isSimplified() == 1){
             try {
-             //   return JChineseConvertor.getInstance().s2t(content);
+                return JChineseConvertor.getInstance().s2t(content);
             } catch (Exception e) {
                 e.printStackTrace();
             }

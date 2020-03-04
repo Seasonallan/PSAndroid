@@ -3,7 +3,9 @@
 	<item android:state_pressed="true"
 		android:drawable="@drawable/book_bg_corner_dark" />
 	<item android:state_focused="true"
-        android:drawable="@drawable/book_bg_corner_dark" />
+		android:drawable="@drawable/book_bg_corner_dark" />
+	<item android:state_selected="true"
+		android:drawable="@drawable/book_bg_corner_dark" />
 	<item android:state_enabled="false"
 		android:drawable="@drawable/book_bg_corner_disable"/>
 	<item android:drawable="@drawable/book_bg_corner" />
