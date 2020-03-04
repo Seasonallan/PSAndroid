@@ -257,7 +257,8 @@ public class GifMaker {
       Collections.sort(mEncodeOrders);
       if (repeatCount <= 1) {
         for (int i = 0; i < mEncodeOrders.size(); i++) {
-          mFinalOutputStream.write(mEncodeOrders.get(i).getByteArrayOutputStream().toByteArray());
+          if (mEncodeOrders.get(i) != null)
+            mFinalOutputStream.write(mEncodeOrders.get(i).getByteArrayOutputStream().toByteArray());
         }
       } else {
         for (int index = 0; index < repeatCount; index++) {

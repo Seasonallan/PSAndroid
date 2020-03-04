@@ -73,21 +73,11 @@ public class Emojicon implements Parcelable {
         }
     };
 
-    private int icon;
-
-    private char value;
 
     private String emoji;
 
-    public Emojicon(int icon, char value, String emoji) {
-        this.icon = icon;
-        this.value = value;
-        this.emoji = emoji;
-    }
 
     public Emojicon(Parcel in) {
-        this.icon = in.readInt();
-        this.value = (char) in.readInt();
         this.emoji = in.readString();
     }
 
@@ -98,12 +88,6 @@ public class Emojicon implements Parcelable {
         this.emoji = emoji;
     }
 
-    public static Emojicon fromResource(int icon, int value) {
-        Emojicon emoji = new Emojicon();
-        emoji.icon = icon;
-        emoji.value = (char) value;
-        return emoji;
-    }
 
     public static Emojicon fromCodePoint(int codePoint) {
         Emojicon emoji = new Emojicon();
@@ -138,18 +122,9 @@ public class Emojicon implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(icon);
-        dest.writeInt(value);
         dest.writeString(emoji);
     }
 
-    public char getValue() {
-        return value;
-    }
-
-    public int getIcon() {
-        return icon;
-    }
 
     public String getEmoji() {
         return emoji;

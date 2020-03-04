@@ -2,7 +2,6 @@ package com.season.example.layout;
 
 import android.app.Activity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.ps.R;
@@ -11,7 +10,7 @@ import com.season.lib.animation.AnimationProvider;
 /**
  * 字体动画
  */
-public abstract class BottomTextLayout extends FrameLayout {
+public abstract class BottomTextLayout{
 
 
     private Activity activity;
@@ -20,7 +19,6 @@ public abstract class BottomTextLayout extends FrameLayout {
     }
     private View containerView;
     public BottomTextLayout(Activity activity) {
-        super(activity);
         this.activity = activity;
         initView();
         containerView = findView(R.id.layout_text);
@@ -31,6 +29,10 @@ public abstract class BottomTextLayout extends FrameLayout {
                 hide();
             }
         });
+    }
+
+    public boolean isShowing(){
+        return containerView.getVisibility() == View.VISIBLE;
     }
 
     public void show() {

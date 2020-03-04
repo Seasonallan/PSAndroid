@@ -297,30 +297,54 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <ImageView
+                <TextView
                     android:id="@+id/bt_paint"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:layout_weight="1"
-                    android:src="@mipmap/img_tuya"/>
-                <ImageView
+                    android:gravity="center"
+                    android:textColor="@color/tab_item"
+                    android:textSize="16dp"
+                    android:drawableTop="@mipmap/img_tab_tuya"
+                    android:text="涂鸦"/>
+                <TextView
                     android:id="@+id/bt_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:layout_weight="1"
-                    android:src="@mipmap/img_text"/>
-                <ImageView
+                    android:gravity="center"
+                    android:textColor="@color/tab_item"
+                    android:textSize="16dp"
+                    android:drawableTop="@mipmap/img_tab_text"
+                    android:text="文字"/>
+                <TextView
                     android:id="@+id/bt_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:layout_weight="1"
-                    android:src="@mipmap/img_image"/>
+                    android:gravity="center"
+                    android:textColor="@color/tab_item"
+                    android:textSize="16dp"
+                    android:drawableTop="@mipmap/img_tab_image"
+                    android:text="图片" />
+                <TextView
+                    android:id="@+id/bt_tc"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/tab_item"
+                    android:textSize="16dp"
+                    android:drawableTop="@mipmap/img_tab_tc"
+                    android:text="图层" />
             </LinearLayout>
             <include layout="@layout/layout_paint"/>
             <include layout="@layout/layout_text"/>
+            <include layout="@layout/layout_tuceng"/>
         </FrameLayout>
 
     </LinearLayout>

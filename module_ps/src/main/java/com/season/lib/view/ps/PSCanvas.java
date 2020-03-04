@@ -87,7 +87,7 @@ public class PSCanvas extends RelativeLayout{
         bitmap = backgroundView.currentOperate.bitmap;
         if (bitmap != null && !bitmap.isRecycled()) {
             Bitmap bitmapResult = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.RGB_565);
-            bitmap = scaleBitmap(bitmap, getWidth(), getHeight());
+            bitmap = BitmapUtil.scale(bitmap, getWidth(), getHeight());
             Canvas canvas = new Canvas(bitmapResult);
             canvas.drawColor(Color.WHITE);
             canvas.drawBitmap(bitmap, (getWidth() - bitmap.getWidth()) / 2, (getHeight() - bitmap.getHeight()) / 2, null);
@@ -128,39 +128,6 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-
-
-    public boolean hasGif() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View scaleView = getChildAt(i);
-            if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
-                View view = ((PSLayer) scaleView).getChildAt(0);
-                if (view != null) {
-                    if (view instanceof CustomGifMovie) {
-                        String filePath = ((CustomGifMovie) view).file;
-                        if (TextUtils.isEmpty(filePath)) {
-                            continue;
-                        }
-                        if (!FileUtils.isStaticImageFile(filePath)) {
-                            return true;
-                        }
-                    }
-                    if (view instanceof CustomGifFrame) {
-                        String filePath = ((CustomGifFrame) view).file;
-                        if (TextUtils.isEmpty(filePath)) {
-                            continue;
-                        }
-                        if (!FileUtils.isStaticImageFile(filePath)) {
-                            return true;
-                        }
-                    }
-                    //TODO WEB?
-                }
-            }
-            return false;
-        }
-        return false;
-    }
 
     void startDelay(GifMaker.OnGifMakerListener listener) {
         if (mGifMaker != null) {
@@ -317,8 +284,6 @@ public class PSCanvas extends RelativeLayout{
         isMakingGifOrNot = true;//启动标志位，开始合成
         startTime = System.currentTimeMillis();
     }
-
-    //启动合成GIF
 
     //确定合成最终的尺寸
     void makeSize(boolean isGif) {
@@ -1387,28 +1352,4 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-
-    /**
-     */
-    public Bitmap scaleBitmap(Bitmap bitmap, float width, float height) {
-        if (false) {
-            AreaAveragingScale areaAveragingScale = new AreaAveragingScale(bitmap);
-            Bitmap bitmapRes = areaAveragingScale.getScaledBitmap(width, height);
-            return bitmapRes;
-        }
-        try {
-            int w = bitmap.getWidth();
-            int h = bitmap.getHeight();
-            Matrix matrix = new Matrix();
-            float scale = width / w;
-            float scale2 = height / h;
-            scale = scale < scale2 ? scale : scale2;
-            matrix.postScale(scale, scale);
-
-            return Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
 }

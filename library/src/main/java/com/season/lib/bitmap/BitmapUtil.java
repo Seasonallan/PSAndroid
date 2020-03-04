@@ -91,6 +91,11 @@ public class BitmapUtil {
 		return bitmapResult;
 	}
 
+    /**
+     * 获取中间正方形的bitmap
+     * @param bitmap
+     * @return
+     */
 	public static Bitmap centerCropBitmap(Bitmap bitmap)
 	{
 		int w = bitmap.getWidth();
@@ -108,6 +113,7 @@ public class BitmapUtil {
 		bitmap.recycle();
 		return bitmapResult;
 	}
+
 
 	/**
 	 * 缩放bitmap

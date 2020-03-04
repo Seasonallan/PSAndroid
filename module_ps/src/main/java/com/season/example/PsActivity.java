@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -22,6 +23,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.season.example.layout.BottomPaintLayout;
 import com.season.example.layout.BottomTextLayout;
+import com.season.example.layout.BottomTucengLayout;
 import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
 import com.season.lib.BaseContext;
@@ -183,6 +185,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         findViewById(R.id.bt_paint).setOnClickListener(this);
         findViewById(R.id.bt_text).setOnClickListener(this);
         findViewById(R.id.bt_image).setOnClickListener(this);
+        findViewById(R.id.bt_tc).setOnClickListener(this);
     }
 
     int videoWidthHeight, offsetX, offsetY;
@@ -463,6 +466,20 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             }
             return;
         }
+        if (customCanvas.isEnable()) {
+            closeTuya();
+            bottomPaintLayout.hide();
+            return;
+        }
+        if (bottomTucengLayout.isShowing()){
+            bottomTucengLayout.hide();
+            return;
+        }
+        if (bottomTextLayout.isShowing()){
+            bottomTextLayout.hide();
+            return;
+        }
+
         super.onBackPressed();
     }
 
@@ -585,6 +602,10 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
      */
     private void resetBottomStatus() {
         View view = mPsCanvas.getFocusView();
+        if (view == null){
+            bottomTucengLayout.hide();
+        }
+        bottomTucengLayout.statusChange(mPsCanvas.getViewIndex(), mPsCanvas.getChildCount());
         if (view != null && view instanceof CustomTextView) {
             bottomTextLayout.show();
             bottomTextLayout.select(((CustomTextView) view).currentType);
@@ -633,13 +654,39 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
     private BottomPaintLayout bottomPaintLayout;
     private BottomTextLayout bottomTextLayout;
+    private BottomTucengLayout bottomTucengLayout;
     private void initBottomLayout() {
-
         bottomTextLayout = new BottomTextLayout(this) {
             @Override
             public void onItemClick(int position) {
                 mPsCanvas.setTextAnimationType(position);
             }
+        };
+        bottomTucengLayout = new BottomTucengLayout(this){
+            @Override
+            public void onCopy() {
+                PSLayer scaleView = mPsCanvas.getView();
+                if (scaleView != null) {
+                    PSLayer copyView = scaleView.copy();
+                    mPsCanvas.addView(copyView);
+                    resetStatus();
+                } else {
+                    ToastUtil.show("未选中图层");
+                }
+            }
+
+            @Override
+            public void onUpLayer() {
+                mPsCanvas.upLayer(mPsCanvas.getView(), true);
+                resetBottomStatus();
+            }
+
+            @Override
+            public void onDownLayer() {
+                mPsCanvas.downLayer(mPsCanvas.getView(), true);
+                resetBottomStatus();
+            }
+
         };
 
         bottomPaintLayout = new BottomPaintLayout(this) {
@@ -729,6 +776,9 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             }else{
                 addTextPopInput("");
             }
+        }  else if (i == R.id.bt_tc) {
+            bottomTucengLayout.show();
+            bottomTucengLayout.statusChange(mPsCanvas.getViewIndex(), mPsCanvas.getChildCount());
         } else if (i == R.id.iv_confirm) {
             finishTuya();
             bottomPaintLayout.hide();
@@ -783,6 +833,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     if (progressDialog != null && progressDialog.isShowing()){
                         progressDialog.dismiss();
                     }
+                    ToastUtil.showToast("fail");
                 }
             });
         }  else if (i == R.id.iv_undo) {//我们得知道最后的状态，然后对StickerLayer进行相应对处理

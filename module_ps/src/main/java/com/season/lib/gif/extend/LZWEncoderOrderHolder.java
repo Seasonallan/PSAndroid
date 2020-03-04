@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class LZWEncoderOrderHolder implements Comparable<LZWEncoderOrderHolder> {
 
-    private int                   mOrder;
+    private int mOrder;
     private LZWEncoder mLZWEncoder;
     private ByteArrayOutputStream mByteArrayOutputStream;
 
@@ -31,6 +31,9 @@ public class LZWEncoderOrderHolder implements Comparable<LZWEncoderOrderHolder> 
 
     @Override
     public int compareTo(LZWEncoderOrderHolder another) {
+        if (another == null){
+            return 1;
+        }
         return this.mOrder - another.mOrder;
     }
 

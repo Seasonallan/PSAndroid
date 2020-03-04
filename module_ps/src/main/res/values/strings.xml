@@ -8,5 +8,8 @@
     <color name="diy_text_anim">#797979</color>
     <color name="seekbar_blue">#9ad3ff</color>
 
+    <color name="tab_item">#515151</color>
+    <color name="tab_item_gray">#a1a1a1</color>
+    <color name="tab_item_white">#aac9c9c9</color>
     <color name="horizontal_divider">#8f8f8f</color>
 </resources>
