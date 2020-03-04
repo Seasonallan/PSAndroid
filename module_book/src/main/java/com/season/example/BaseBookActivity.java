@@ -42,6 +42,7 @@ import com.season.lib.page.span.AsyncDrawableSpan;
 import com.season.lib.page.span.ClickActionSpan;
 import com.season.lib.page.span.ClickAsyncDrawableSpan;
 import com.season.lib.page.span.UrlSpna;
+import com.season.lib.util.LogUtil;
 import com.season.lib.view.IReadCallback;
 import com.season.lib.view.ReadView;
 import com.season.lib.view.IReaderView;
@@ -179,7 +180,7 @@ public class BaseBookActivity extends Activity implements
 			mCatalogLay.addView(mReaderMenuPopWin);
 		}
 		mCatalogLay.setVisibility(View.VISIBLE);
-		mReaderMenuPopWin.show(mBook);
+		mReaderMenuPopWin.show();
 	}
 
 	protected void showReaderCatalogView() {
@@ -245,7 +246,7 @@ public class BaseBookActivity extends Activity implements
 		if (ev.getAction() == MotionEvent.ACTION_DOWN){
 			NavigationBarUtil.hideNavigationBar(this);
 		}
-		if(mReadView.isCurrentPageDrawn()){
+		if(!mReadView.isCurrentPageDrawn()){
 			return false;
 		}
 		if(mCatalogLay.isShown()){
@@ -258,7 +259,7 @@ public class BaseBookActivity extends Activity implements
 
     private String getBookFielPath(String fend){
         String pathDir = getCacheDir() + File.separator;
-        String path =pathDir + "epub_book."+fend;
+        String path =pathDir + "cache"+fend;
         File fileDir = new File(pathDir);
         if(!fileDir.exists()){
             fileDir.mkdirs();
@@ -317,7 +318,7 @@ public class BaseBookActivity extends Activity implements
 
     @Override
 	public void onPageChange(int totalPageIndex,int max) {
-		mReaderMenuPopWin.setJumpSeekBarProgress(totalPageIndex, max);
+		//mReaderMenuPopWin.setJumpSeekBarProgress(totalPageIndex, max);
 	}
 
     @Override

@@ -58,12 +58,17 @@ public abstract class CatalogViewPagerAdapter  extends BaseViewPagerTabHostAdapt
         return mTags.size();
     }
 
+    public int selectCatalog = 0;
+
     @Override
     public View getItemView(ViewGroup container, int position) {
         final String tag = getTab(position);
         View contentView = LayoutInflater.from(mContext).inflate(R.layout.reader_catalog_tab_item_lay, null);
         final ListView mListView = contentView.findViewById(R.id.reader_catalog_lv);
+        mListView.setTag(getTab(position));
         mListView.setAdapter(getAdapter(tag));
+        if (tag == CatalogView.TAG_CATALOG)
+            mListView.setSelection(selectCatalog);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,

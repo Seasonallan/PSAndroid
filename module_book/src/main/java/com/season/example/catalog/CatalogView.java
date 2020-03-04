@@ -175,6 +175,10 @@ public class CatalogView extends FrameLayout{
 
 		catalogAdapter.selectCatalog = mCatalogList.indexOf(currentCatalog);
 		catalogAdapter.notifyDataSetChanged();
+
+		mViewPagerAdapter.selectCatalog = catalogAdapter.selectCatalog;
+		mViewPagerAdapter.notifyDataSetChanged();
+
 		mBookDigestsAdapter.setData(BookDigestsDB.getInstance().getListBookDigests(
 				mBookInfo.id));
 		mBookMarkAdapter.setData(BookMarkDB.getInstance().getUserBookMark(mBookInfo.id));

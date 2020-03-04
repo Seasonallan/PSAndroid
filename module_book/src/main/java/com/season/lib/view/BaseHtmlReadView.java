@@ -139,13 +139,11 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	public boolean isCurrentPageDrawn() {
-		if(mPageManager == null || mCurrentPageIndex == INDEX_INITIAL_CONTENT || mRequestDrawResult != PageManager.RESULT_SUCCESS){
+		if(mPageManager == null || mCurrentPageIndex == INDEX_INITIAL_CONTENT
+				|| mRequestDrawResult != PageManager.RESULT_SUCCESS){
 			return false;
 		}
-		if (!mPageManager.isFirstDraw()) {
-			return true;
-		}
-		return false;
+		return mPageManager.isFirstDraw();
 	}
 
 	@Override

@@ -37,13 +37,11 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	private static final int MAX_MENU_SIZE = 5;
 	private Activity mActivity;
 	private IReaderView mReadView;
-	private BookInfo mBook;
 	private IActionCallback mActionCallback;
 	private CheckedGridView mGridView;
 	private ViewGroup mChildMenuLayout;
 	private ArrayList<MenuItemAdapter.MenuItem> mMoreMenuItems;
 	private View mJumpPageView;
-	private int mTotalPageNums;
 	private TextView mJumpPageTip;
 	private SeekBar mJumpSeekBar;
 	private View mJumpPreBut;
@@ -77,8 +75,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	private boolean isShowing = false,isDismissing = false;
 	private Animation dowAnimation, upAnimation;
 	private int timeHalf = 200, time = 400;
-	public void show(BookInfo book) {
-		this.mBook = book;
+	public void show() {
 		if (isShowing){
 			return;
 		}
@@ -300,31 +297,6 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		return LayoutInflater.from(getContext());
 	}
 
-	public void setLayoutChapterProgress(int progress,int max){
-		if(mJumpPageView != null){
-			if(progress == max){
-				setJumpSeekBarProgress(mReadView.getCurReadProgress(), mReadView.getMaxReadProgress());
-				mJumpSeekBar.setSecondaryProgress(0);
-				mJumpPageTip.setTextColor(getResources().getColor(R.color.common_white_2));
-			}else{
-				mJumpSeekBar.setProgress(0);
-				mJumpSeekBar.setSecondaryProgress(progress);
-				mJumpSeekBar.setMax(max);
-				mJumpSeekBar.setEnabled(false);
-				mJumpPreBut.setEnabled(mReadView.hasPreChapter());
-				mJumpNextBut.setEnabled(mReadView.hasNextChapter());//正在排版中...%1$s
-				mJumpPageTip.setText("正在排版中..."+(int)(progress * 1f / max * 100)+"%");
-				mJumpPageTip.setTextColor(Color.parseColor("#60ffffff"));
-			}
-		}
-	}
-
-	public void setJumpSeekBarProgress(int progress,int max){
-		if(mJumpPageView != null){
-			mTotalPageNums = max;
-			updateJumpSeekBar(progress, mTotalPageNums);
-		}
-	}
 
 	private void showPageNum(int curPage, int pageNums){
 		if(pageNums > 1){
@@ -340,9 +312,6 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	}
 
 	private void showJumpPageView(){
-		int pageNums = mReadView.getMaxReadProgress();
-		int curPage = mReadView.getCurReadProgress();
-		mTotalPageNums = pageNums;
 		if(mJumpPageView == null){
 			mJumpPageView = getLayoutInflater().inflate(R.layout.reader_menu_jump_page, null);
 			mJumpPageTip = (TextView) mJumpPageView.findViewById(R.id.page_text);
@@ -352,7 +321,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				@Override
 				public void onStopTrackingTouch(SeekBar seekBar) {
 					mJumpPageTip.setVisibility(View.GONE);
-					showPageNum(seekBar.getProgress(), mTotalPageNums);
+					showPageNum(seekBar.getProgress(), mReadView.getMaxReadProgress());
 					gotoPage(seekBar.getProgress(),oldPage);
 				}
 
@@ -365,7 +334,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress,
 						boolean fromUser) {
-					showPageNum(seekBar.getProgress(), mTotalPageNums);
+					showPageNum(seekBar.getProgress(), mReadView.getMaxReadProgress());
 				}
 			});
 			mJumpPreBut = mJumpPageView.findViewById(R.id.jump_pre_but);
@@ -387,13 +356,12 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				}
 			});
 		}
-		updateJumpSeekBar(curPage, mTotalPageNums);
+		updateJumpSeekBar(mReadView.getCurReadProgress(), mReadView.getMaxReadProgress());
 		showChildMenu(mJumpPageView);
 	}
 
 	private void updateJumpSeekBar(int curPage,int max){
 		if(max < 0){
-			setLayoutChapterProgress(mReadView.getLayoutChapterProgress(), mReadView.getLayoutChapterMax());
 		}else{
 			if(max == 1){
 				curPage = 1;

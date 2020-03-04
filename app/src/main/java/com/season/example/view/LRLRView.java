@@ -60,7 +60,7 @@ public class LRLRView extends View implements PageAnimController.PageCarver {
                 if (mPageAnimController == null){
                     mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
                             PageAnimController.ANIM_TYPE_PAGE_TURNING);
-                    // mPageAnimController.setDuration(2468);
+                    mPageAnimController.setDuration(1680);
                 }
                 if (mPageAnimController.isAnimStop())
                     mPageAnimController.startAnim(current, current==0?1:0, true, LRLRView.this);
