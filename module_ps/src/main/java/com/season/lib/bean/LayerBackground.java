@@ -1,42 +1,28 @@
 package com.season.lib.bean;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 public  class LayerBackground implements Serializable {
 
 
+    public String backColorString;
+    public String imgURLPath;
     public String imageURLPathFile;
+    public String gifURLPath;
     public String gifURLPathFile;
-    String backColorString = "";
-    String imgURLPath = "";
-    String gifURLPath ="";
 
-    public String getGifURLPath() {
-        return gifURLPath;
+    public boolean isStaticImage(){
+        return !TextUtils.isEmpty(imgURLPath) ||
+                !TextUtils.isEmpty(imageURLPathFile);
     }
 
-    public void setGifURLPath(String gifURLPath) {
-        this.gifURLPath = gifURLPath;
-    }
-
-    public String getBackColorString()
-    {
-        return backColorString;
-    }
-
-    public void setBackColorString(String backColorString)
-    {
-        this.backColorString = backColorString;
-    }
-
-    public String getImgURLPath()
-    {
-        return imgURLPath;
-    }
-
-    public void setImgURLPath(String imgURLPath)
-    {
-        this.imgURLPath = imgURLPath;
+    public boolean isColor(){
+        return TextUtils.isEmpty(imgURLPath) &&
+                TextUtils.isEmpty(imageURLPathFile)&&
+                TextUtils.isEmpty(gifURLPath)&&
+                TextUtils.isEmpty(gifURLPathFile);
     }
 
 }

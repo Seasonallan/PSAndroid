@@ -63,8 +63,6 @@ public class CustomTextView extends View implements ILayer {
     private int offsetY;//由于Android系统的drawText中的y无法确定，这个值是调节的比较居中的值
     private boolean nullInput = false;
     public boolean isAudio = false;
-    private boolean isDiyBottom = false;//在制作界面，如果有背景就局下，否则居中
-    private boolean isPreViewBottom = false;//在预览界面界面
     //背景图片
     private int backgroudRes = 0;
     private int preBackgroundInfo;
@@ -78,38 +76,9 @@ public class CustomTextView extends View implements ILayer {
     private int paddingLeft, paddingTop, textSpacing, lineSpacing;
     private int emojiWidth = 100;
 
-    private String[] ids = {"text_style_0", "text_style_1"};
     private String startColorStr;
     private String endColorStr;
     private float defaul_textColorSize=0.1f;
-    private float HeightPercent=3f/4;
-    private int offsetY4Diy;
-
-    public boolean isDiyBottom() {
-        return isDiyBottom;
-    }
-
-    public void setisDiyBottom(boolean diyBottom) {
-        isDiyBottom = diyBottom;
-    }
-    public void setisDiyBottomHeightPercent(float HeightPercent) {
-        this.HeightPercent = HeightPercent;
-    }
-    public float getisDiyBottomHeightPercent() {
-        return HeightPercent;
-    }
-
-    public boolean isPreViewBottom() {
-        return isPreViewBottom;
-    }
-
-    public void setPreViewBottom(boolean preViewBottom) {
-        isPreViewBottom = preViewBottom;
-    }
-
-    public void setFontHistory() {
-
-    }
 
     public CustomTextView copy() {
         CustomTextView customTextView = new CustomTextView(context);
@@ -213,12 +182,6 @@ public class CustomTextView extends View implements ILayer {
         init(context);
     }
 
-    public CustomTextView(Context context, String fontName) {
-        super(context);
-        this.fontName = fontName;
-        init(context);
-    }
-
     public CustomTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
@@ -230,7 +193,6 @@ public class CustomTextView extends View implements ILayer {
     }
 
     long drawingCacheSize;
-    String tag = "textstyleview:";
 
     public void init(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -736,14 +698,6 @@ public class CustomTextView extends View implements ILayer {
         }
         return false;
     }
-//    java.lang.NullPointerException: Attempt to invoke virtual method 'int com.biaoqing.BiaoQingShuoShuo.ui.activity.diy.ui.view.a
-// .a.f()' on a null object reference
-//    at com.seaon.lib.view.TextStyleView.getVideoDuration(TextStyleView.java:778)
-//    at com.biaoqing.library.diy.ui.view.scale.ScaleView.c(ScaleView.java:311)
-//    at com.biaoqing.BiaoQingShuoShuo.ui.activity.diy.ui.view.ContainerView.o(ContainerView.java:494)
-//    at com.biaoqing.BiaoQingShuoShuo.ui.activity.diy.ui.view.ContainerView.g(ContainerView.java:62)
-//    at com.biaoqing.BiaoQingShuoShuo.ui.activity.diy.ui.view.ContainerView$d.run(ContainerView.java:598)
-
     /**
      * 非常奇怪的一个异常，按道理来说已经已经判断好了，不可能出现。出现在一加5，8.0.0系统，暂时加一个异常捕获
      *
@@ -1094,13 +1048,6 @@ public class CustomTextView extends View implements ILayer {
         setTextAnimationType(currentType, duration, speed, delay, false);
         requestLayout();
         invalidate();
-    }
-
-    public void setOffsetY4Diy(int offsetY4Diy) {
-        this.offsetY4Diy = offsetY4Diy;
-    }
-    public int getOffsetY4Diy() {
-       return this.offsetY4Diy;
     }
 
     //文字历史记录类

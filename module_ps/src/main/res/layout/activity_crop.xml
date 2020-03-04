@@ -80,25 +80,18 @@
         </FrameLayout>
 
     </LinearLayout>
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/gif_cot"
         android:layout_width="match_parent"
-        android:background="@android:color/white"
+        android:background="@android:color/darker_gray"
         android:layout_height="match_parent"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <com.season.lib.view.ps.CustomGifMovie
             android:id="@+id/gifview"
-            android:visibility="gone" android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <com.season.lib.view.ps.CustomGifFrame
-            android:id="@+id/gifFrameview"
-            android:visibility="gone"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    </FrameLayout>
+    </RelativeLayout>
 </RelativeLayout>

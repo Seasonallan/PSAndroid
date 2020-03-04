@@ -1,5 +1,6 @@
 package com.season.example;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -246,8 +247,11 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 showLayers(layerEntity, items);
                 showBg(backgroundInfo);
             }else{
+               // addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",null);
+                addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",
+                        null);
                 addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-                addImageOrGifFromUrl("http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
+                addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
                 addTextView("新年快乐");
             }
         } catch (Exception e) {
@@ -257,27 +261,20 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 }
 
     private void showBg(LayerBackground backgroundInfo) {
-        if (TextUtils.isEmpty(backgroundInfo.imageURLPathFile) && TextUtils
-                .isEmpty(backgroundInfo.gifURLPathFile)) {
+        if (backgroundInfo.isColor()) {
             //背景是透明图层
-            final String colorStr = backgroundInfo.getBackColorString();
+            final String colorStr = backgroundInfo.backColorString;
             if (!TextUtils.isEmpty(colorStr)) {//背景是纯色
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPsCanvas.showBackground(ColorUtil.getColor(colorStr, 0x000000));
-                        resetStatus();
-                    }
-                });
+                mPsCanvas.showBackground(ColorUtil.getColor(colorStr, 0x000000));
+                resetStatus();
             }
         } else {
-            if (!TextUtils.isEmpty(backgroundInfo.getImgURLPath()) ||
-                    !TextUtils.isEmpty(backgroundInfo.imageURLPathFile)) {
+            if (backgroundInfo.isStaticImage()) {
                 //背景是图片
-                addLocalMessage(backgroundInfo.getImgURLPath(), backgroundInfo.imageURLPathFile);
+                addLocalMessage(backgroundInfo.imgURLPath, backgroundInfo.imageURLPathFile);
             } else {
                 //背景是GIf
-                addLocalMessage(backgroundInfo.getGifURLPath(), backgroundInfo.gifURLPathFile);
+                addLocalMessage(backgroundInfo.gifURLPath, backgroundInfo.gifURLPathFile);
             }
 
         }
@@ -400,34 +397,50 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
     //背景图片 添加
     private void addLocalMessage(final String url, final String filePath) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (!TextUtils.isEmpty(filePath)) {
-                    File file = new File(filePath);
-                    if (file.isFile() && file.length() > 0) {
-                        if (FileUtils.isStaticImageFile(filePath)) {
-                            mPsCanvas.showImage(url, filePath);
-                        } else {
-                            //格式异常了
-                            if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
-                                mPsCanvas.showGIf(url, filePath);
-                            } else {
-                                mPsCanvas.showImage(url, filePath);
-                            }
-                        }
+        LogUtil.e(url);
+        LogUtil.e(filePath);
+        if (!TextUtils.isEmpty(filePath)) {
+            File file = new File(filePath);
+            if (file.isFile() && file.length() > 0) {
+                if (FileUtils.isStaticImageFile(filePath)) {
+                    mPsCanvas.showImage(url, filePath);
+                } else {
+                    //格式异常了
+                    if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
+                        mPsCanvas.showGIf(url, filePath);
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                               ToastUtil.showToast("文件丢失");
-                            }
-                        });
+                        mPsCanvas.showImage(url, filePath);
                     }
-                    resetStatus();
                 }
             }
-        }).start();
+            resetStatus();
+        }else{
+            final File file = FileManager.getPsFile(url.hashCode() + "", FileUtils.getFileType(url));
+            if (file == null) {
+                return;
+            }
+            LogUtil.e("start");
+            DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
+                @Override
+                public void onCompleted() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LogUtil.e("end " +file.length() );
+                            if (file.length() > 0) {
+                                addLocalMessage(url, file.toString());
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onError() {
+                    file.deleteOnExit();
+                    ToastUtil.show("下载失败，请稍候重试");
+                }
+            });
+        }
     }
 
 
@@ -482,11 +495,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     CustomTextView textStyleView = new CustomTextView(PsActivity.this);
                     if (mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible()) {
                         textStyleView.setPaintColorReverse(Color.WHITE, Color.BLACK);
-                        textStyleView.setisDiyBottom(true);
-                        textStyleView.setisDiyBottomHeightPercent(v);
-                        textStyleView.setOffsetY4Diy(offsetY);
                     } else {
-                        textStyleView.setisDiyBottom(false);
                         textStyleView.setPaintColorReverse(Color.BLACK, Color.WHITE);
                     }
                     textStyleView.setText(text);
@@ -697,6 +706,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         customCanvas.setColor(bitmap);
     }
 
+    private ProgressDialog progressDialog;
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -709,7 +719,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }else if (i == R.id.bt_image) {
             int poi = new Random().nextInt(2);
             if (poi == 1) addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-            else    addImageOrGifFromUrl("http://img.gaoxiaogif.cn/GaoxiaoGiffiles/images/2015/08/08/laobabahaizitanchutanchuang.gif");
+            else    addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
 
         }  else if (i == R.id.bt_text) {
             View view = mPsCanvas.getFocusView();
@@ -736,19 +746,43 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             }
             mPsCanvas.start(2, new GifMaker.OnGifMakerListener() {
                 @Override
+                public void onMakeGifStart() {
+                    if (progressDialog == null){
+                        progressDialog = new ProgressDialog(PsActivity.this);
+                        //依次设置标题,内容,是否用取消按钮关闭,是否显示进度
+                        progressDialog.setTitle("正在合成中");
+                        progressDialog.setCancelable(true);
+                        //这里是设置进度条的风格,HORIZONTAL是水平进度条,SPINNER是圆形进度条
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMax(100);
+                    }
+                    progressDialog.show();
+                }
+
+                @Override
                 public void onMakeProgress(int index, int count) {
-                    LogUtil.LOG("onMakeProgress" + index);
+                    LogUtil.LOG(count + "onMakeProgress" + index);
+                    if (progressDialog != null && progressDialog.isShowing()){
+                        progressDialog.setProgress(index * 100/count);
+                    }
                 }
 
                 @Override
                 public void onMakeGifSucceed(String outPath) {
                     LogUtil.LOG(outPath);
+                    if (progressDialog != null && progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
                     CropActivity.start(PsActivity.this, outPath);
                 }
 
                 @Override
                 public void onMakeGifFail() {
                     LogUtil.LOG("onMakeGifFail");
+                    if (progressDialog != null && progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
                 }
             });
         }  else if (i == R.id.iv_undo) {//我们得知道最后的状态，然后对StickerLayer进行相应对处理
@@ -905,11 +939,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         CustomTextView customTextView = new CustomTextView(PsActivity.this);
         if (mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible()) {
             customTextView.setPaintColorReverse(Color.WHITE, Color.BLACK);
-            customTextView.setisDiyBottom(true);
-            customTextView.setisDiyBottomHeightPercent(v);
-            customTextView.setOffsetY4Diy(offsetY);
         } else {
-            customTextView.setisDiyBottom(false);
             customTextView.setPaintColorReverse(Color.BLACK, Color.WHITE);
         }
         customTextView.setText(text);

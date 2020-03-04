@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by JokAr on 16/7/5.
  */
 public class DownloadAPI {
 

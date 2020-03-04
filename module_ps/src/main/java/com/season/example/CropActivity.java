@@ -44,6 +44,7 @@ public class CropActivity extends Activity {
     ImageCropAdapter mAdapter;
     ImageView preView, proView, backView, completeView;
 
+    CustomGifMovie customGifMovie;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,19 +60,12 @@ public class CropActivity extends Activity {
 
         filePath = getIntent().getStringExtra("path");
 
+        customGifMovie = findViewById(R.id.gifview);
         if (filePath.endsWith("gif")){
             findViewById(R.id.gif_cot).setVisibility(View.VISIBLE);
-            CustomGifMovie customGifMovie = findViewById(R.id.gifview);
             customGifMovie.autoPlay = true;
             boolean isSuccess = customGifMovie.setMovieResource(filePath);
-            if (isSuccess) {
-                customGifMovie.setVisibility(View.VISIBLE);
-            } else {
-                CustomGifFrame customGifFrameview = findViewById(R.id.gifFrameview);
-                customGifFrameview.autoPlay = true;
-                customGifFrameview.setVisibility(View.VISIBLE);
-                customGifFrameview.setMovieResource(filePath);
-            }
+            customGifMovie.setVisibility(View.VISIBLE);
             return;
         }
         findViewById(R.id.gif_cot).setVisibility(View.GONE);
@@ -158,6 +152,7 @@ public class CropActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         if (cropView != null)cropView.release();
+        customGifMovie.onRelease();
     }
 
     public void addResView(int choosePosition) {

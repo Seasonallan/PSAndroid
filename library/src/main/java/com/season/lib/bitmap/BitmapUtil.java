@@ -90,6 +90,25 @@ public class BitmapUtil {
 			bitmap.recycle();
 		return bitmapResult;
 	}
+
+	public static Bitmap centerCropBitmap(Bitmap bitmap)
+	{
+		int w = bitmap.getWidth();
+		int h = bitmap.getHeight();
+		if (w == h){
+			return bitmap;
+		}
+		int padding = Math.abs(w - h)/2;
+		Bitmap bitmapResult;
+		if (w > h){
+			bitmapResult = Bitmap.createBitmap(bitmap, padding, 0, h, h);
+		}else{
+			bitmapResult = Bitmap.createBitmap(bitmap, 0, padding, w, w);
+		}
+		bitmap.recycle();
+		return bitmapResult;
+	}
+
 	/**
 	 * 缩放bitmap
 	 * @param bitmap

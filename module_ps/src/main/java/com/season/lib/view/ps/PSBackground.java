@@ -180,27 +180,6 @@ public class PSBackground {
             }
         }
         BgOperate op = new BgOperate(url, path, false);
-        if (context != null && picture != null && !TextUtils.isEmpty(url)) {
-            picture.post(new Runnable() {
-                @Override
-                public void run() {
-                    picture.setVisibility(View.VISIBLE);
-                    final File file = FileManager.getPsFile(null, ".png");
-                    DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
-                        @Override
-                        public void onCompleted() {
-                            currentOperate.bitmap = BitmapFactory.decodeFile(file.toString());
-                            picture.setImageBitmap(currentOperate.bitmap);
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-                }
-            });
-        }
         reset(op);
         addEvent(op);
         return true;
@@ -265,34 +244,16 @@ public class PSBackground {
             });
         }
         if (!TextUtils.isEmpty(op.imageFile) && op.visible2 == View.VISIBLE) {
-            if (Looper.myLooper()==Looper.getMainLooper()){
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (op.bitmap != null && !op.bitmap.isRecycled()) {
-                        } else {
-                            op.bitmap = BitmapFactory.decodeFile(op.imageFile);
-                        }
-                    }
-                });
-                thread.start();
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }else {
-                if (op.bitmap != null && !op.bitmap.isRecycled()) {
-                } else {
-                    op.bitmap = BitmapFactory.decodeFile(op.imageFile);
-                }
+            if (op.bitmap != null && !op.bitmap.isRecycled()) {
+            } else {
+                currentOperate.bitmap = BitmapUtil.centerCropBitmap(BitmapFactory.decodeFile(op.imageFile));
             }
             if (picture != null) {
                 picture.post(new Runnable() {
                     @Override
                     public void run() {
                         if (picture != null)
-                        picture.setImageBitmap(op.bitmap);
+                        picture.setImageBitmap(currentOperate.bitmap);
                     }
                 });
             }
@@ -388,9 +349,6 @@ public class PSBackground {
                     this.visible2 = View.VISIBLE;
                     this.imageFile = imagePath;
                 }
-//                bitmap = ToolBitmapCache.getDefault().getBitmapFromFile(imagePath);
-                //图片或者Gif
-                bitmap = BitmapFactory.decodeFile(imagePath);
             }
         }
 

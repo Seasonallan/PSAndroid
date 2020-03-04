@@ -201,6 +201,22 @@ public class PSLayer extends RelativeLayout {
             if (parentWidth > 0) {
                 int offsetX = parentWidth / 2;
                 int offsetY = parentHeight / 2;
+                if (getChildCount() > 0) {
+                    View child = getChildAt(0);
+                    if (child instanceof CustomImageView) {
+                        if (((CustomImageView) child).changeCenter) {
+                            offsetX = (int) ((CustomImageView) child).getCenterX();
+                            offsetY = (int) ((CustomImageView) child).getCenterY();
+                        }
+                    }
+                    if (child instanceof ILayer) {
+                        offsetX = offsetX - ((ILayer) child).getViewWidth() / 2;
+                        offsetY = offsetY - ((ILayer) child).getViewHeight() / 2;
+                    } else {
+                        offsetX = offsetX - child.getMeasuredWidth() / 2;
+                        offsetY = offsetY - child.getMeasuredHeight() / 2;
+                    }
+                }
                 mCurrentMatrix.postTranslate(offsetX, offsetY);
                 mCurrentMatrix.postScale(scale, scale, parentWidth / 2, parentHeight / 2);
             }

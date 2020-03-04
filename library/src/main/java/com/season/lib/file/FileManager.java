@@ -28,14 +28,10 @@ public class FileManager{
      * @return
      */
     public static File getPsFile(String name, String type) {
-        File parentFile = getPsDir();
-        if (parentFile == null) {
-            return null;
-        }
         if (TextUtils.isEmpty(name)) {
             name = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINESE).format(new Date());
         }
-        return new File(parentFile, name + "." + type);
+        return new File(getPsDir(), name + "." + type);
     }
 
 

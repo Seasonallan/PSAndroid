@@ -46,6 +46,7 @@ public class GifMaker {
   public OnGifMakerListener mOnGifMakerListener;
 
   public interface OnGifMakerListener {
+    void onMakeGifStart();
 
     void onMakeProgress(int index, int count);
 

@@ -247,6 +247,7 @@ public class PSCanvas extends RelativeLayout{
 
     //启动合成GIF
     private void startGifMaker(GifMaker.OnGifMakerListener listener) {
+        listener.onMakeGifStart();
         File outFile;
         if (makeType == LOCAL) {
             outFile = FileManager.getPsFile(null, ".gif");
@@ -321,6 +322,10 @@ public class PSCanvas extends RelativeLayout{
 
     //确定合成最终的尺寸
     void makeSize(boolean isGif) {
+        if (true){
+            finalGifWidthHeight = 680;
+            return;
+        }
         if (isGif) {
             finalGifWidthHeight = makeType == WEIXIN ? 240 : 300;//正好gif分辨率和照片分辨率相等
         } else {
@@ -1249,7 +1254,6 @@ public class PSCanvas extends RelativeLayout{
         View view = getFocusView();
         if (view != null && view instanceof CustomTextView) {
             CustomTextView customTextView = (CustomTextView) view;
-            customTextView.setFontHistory();//设置字体历史记录
             customTextView.editText(params);
             customTextView.requestLayout();
             addEvent(new Operate(customTextView));
@@ -1320,14 +1324,14 @@ public class PSCanvas extends RelativeLayout{
             if (bgOperate.visible1 == View.VISIBLE) {
                 int bgColor = bgOperate.color;
                 if (bgColor != Color.TRANSPARENT) {
-                    backInfoModel.setBackColorString(ColorUtil.getColorStr(bgColor));
+                    backInfoModel.backColorString = ColorUtil.getColorStr(bgColor);
                 }
             } else if (bgOperate.visible2 == View.VISIBLE) {
                 backInfoModel.imageURLPathFile = bgOperate.imageFile;
-                backInfoModel.setImgURLPath(bgOperate.url);
+                backInfoModel.imgURLPath = bgOperate.url;
             } else {
                 backInfoModel.gifURLPathFile = bgOperate.gifFile;
-                backInfoModel.setGifURLPath(bgOperate.url);
+                backInfoModel.imgURLPath = bgOperate.url;
             }
         }
         layerEntity.setBackInfoModel(backInfoModel);
