@@ -111,20 +111,6 @@ public class CustomImageView extends CustomBaseView{
         return 0;
     }
 
-    @Override
-    public void startRecord() {
-
-    }
-
-    @Override
-    public void recordFrame(int time) {
-
-    }
-
-    @Override
-    public void stopRecord() {
-
-    }
 
     @Override
     public int getDelay() {
@@ -134,6 +120,7 @@ public class CustomImageView extends CustomBaseView{
 
     @Override
     public void onRelease() {
+        super.onRelease();
         if (bitmap != null){
             if (!bitmap.isRecycled()){
                 bitmap.recycle();
@@ -143,18 +130,7 @@ public class CustomImageView extends CustomBaseView{
     }
 
     @Override
-    public boolean isSeeking() {
-        return false;
-    }
-
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        drawCanvas(canvas);
-    }
-
-    @Override
-    public void drawCanvas(Canvas canvas) {
+    public void drawCanvasTime(Canvas canvas, int time) {
         if (bitmap != null && !bitmap.isRecycled())
             canvas.drawBitmap(bitmap, 0, 0, null);
     }

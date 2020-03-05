@@ -11,7 +11,6 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,11 +22,9 @@ import com.season.lib.bean.LayerItem;
 import com.season.lib.bean.LayerEntity;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.dimen.ColorUtil;
-import com.season.lib.file.FileUtils;
 import com.season.lib.file.FileManager;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.gif.GifMaker;
-import com.season.lib.bitmap.AreaAveragingScale;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,8 +45,8 @@ import java.util.concurrent.Executors;
  * Time: 2017-12-12 14:44
  */
 public class PSCanvas extends RelativeLayout{
-    private String TAG = "ContainerView,";
-    private long startTime;//合成开始时间，用于超时判断，超时则中断合成并提示合成失败
+
+    private long startMakingGifTime;//合成开始时间，用于超时判断，超时则中断合成并提示合成失败
     private int offsetX = 0, offsetY = 0;//画布边界和屏幕的左边和顶部的距离
     public int videoWidthHeight;//正中画布的宽高
 
@@ -57,7 +54,6 @@ public class PSCanvas extends RelativeLayout{
     private PSLayer focusView;//当前获取焦点拥有操作框的图层
 
     private GifMaker mGifMaker;//Gif合成功能类
-    private ILayer relyView;//Gif合成需要依赖的图层，没有视频或者Gif的情况下，找出所有图层中时长duration最长的图层作为relyView.合成的duration，delay等以relyView为基准。
     private boolean isFullScreen = false;//合成是否是全屏，不是全屏的情况下需要剪切最后的图片
     private float left = Float.MAX_VALUE, top = Float.MAX_VALUE, right = Float.MIN_VALUE, bottom = Float.MIN_VALUE;
     private int makeType = 1; //1是默认静图720 动图360   2是微信分享静图300 动图240   3是本地，文件保存地址修正
@@ -72,7 +68,6 @@ public class PSCanvas extends RelativeLayout{
     List<Operate> list = new ArrayList<>();
     //背景控制
     public PSBackground backgroundView;
-    private List<Bitmap> bitmapListVideoToGif;
 
     public void setOffsetX(int offsetX) {
         this.offsetX = offsetX;
@@ -129,14 +124,13 @@ public class PSCanvas extends RelativeLayout{
     }
 
 
+    int recordDuration, recordDelay;
     void startDelay(GifMaker.OnGifMakerListener listener) {
         if (mGifMaker != null) {
             mGifMaker.reset();
             mGifMaker = null;
         }
-        //遍历图层，判断有没有动态图层
-        boolean LayerhasGif = LayerhasGif();
-        relyView = backgroundView.getBackgroundView();
+        recordDuration = 0;
         if (false) {//背景是视频,且是gif图层或者没有图层
 
         } else {//背景不是视频，找到时长最长的那个图层
@@ -147,8 +141,8 @@ public class PSCanvas extends RelativeLayout{
             bottom = offsetY;
 
             if (backgroundView.isGif()) {
-                //如果是Gif图层，以底图Gif为relyView
-                relyView = backgroundView.getGifView();
+                recordDuration = backgroundView.getGifView().getDuration();
+                recordDelay = backgroundView.getGifView().getDelay();
             } else {
                 for (int i = 0; i < getChildCount(); i++) {
                     View scaleView = getChildAt(i);
@@ -163,12 +157,10 @@ public class PSCanvas extends RelativeLayout{
                             checkPoint(points[6], points[7]);
                         }
                         if (view instanceof ILayer) {//找到时长最长的那个图层
-                            if (relyView == null) {
-                                relyView = (ILayer) view;
-                            }
                             int duration = ((ILayer) view).getDuration();
-                            if (relyView.getDuration() < duration) {
-                                relyView = (ILayer) view;
+                            if (recordDuration < duration) {
+                                recordDuration = duration;
+                                recordDelay = ((ILayer) view).getDelay();
                             }
                         }
                     }
@@ -186,7 +178,7 @@ public class PSCanvas extends RelativeLayout{
                 top = Math.max(offsetY, top);
                 bottom = Math.min(bottom, videoWidthHeight + offsetY);
             }
-            if (relyView == null || relyView.getDuration() <= 0) {//图层最长时长为0表示静图，直接合成一张PNG图片
+            if (recordDuration <= 0) {//图层最长时长为0表示静图，直接合成一张PNG图片
                 get1PngImage(listener);
                 return;
             }
@@ -194,22 +186,6 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-    public boolean LayerhasGif() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View scaleView = getChildAt(i);
-            if (scaleView instanceof PSLayer) {
-                View view = ((PSLayer) scaleView).getChildAt(0);
-                if (view instanceof CustomTextView) {
-                    if (((CustomTextView) view).animationProvider != null) {
-                        return true;
-                    }
-                } else if ((view instanceof CustomGifMovie) || (view instanceof CustomGifFrame)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
 
     //启动合成GIF
@@ -226,8 +202,8 @@ public class PSCanvas extends RelativeLayout{
             return;
         }
         String absolutePath = outFile.getAbsolutePath();
-        int duration = relyView.getDuration();
-        int delay = relyView.getDelay();
+        int duration = recordDuration;
+        int delay = recordDelay;
         int count = 1;
         /**
          * 根据总时长和间隔时间，确定出总帧数
@@ -255,22 +231,12 @@ public class PSCanvas extends RelativeLayout{
         }
 
         makeSize(true);
-        relyView.startRecord();
-        int repeatCount = 1;
-//        if (relyView.isRepeat()) {
-        if (relyView.getDuration() == 0) {
+        if (duration == 0) {
             listener.onMakeGifFail();
             return;
         }
-        repeatCount = duration / relyView.getDuration();
-        if (duration % relyView.getDuration() > 0) {
-            repeatCount++;
-        }
-        long maxTime = 0;
         //TODO 120毫秒对于文字动画有点卡顿，但是缩小帧间隔，意味着要画更多的帧，这时候我们要绘制的是480*480分辨率的argb8888的bitmap，
         //TODO 内存压力比较大， 如果平衡内存的问题 是否可以对文字类采用类似videoview 画完一帧，再seek到下一帧进行绘制？
-       // Logger.t(TAG).e("diy_gifmake_makeType:" + makeType + ",duration:" + duration + ",delay" + delay + ",count:" + count);
-       // Logger.t(TAG).e("repeatCount=" + repeatCount + "," + "resortCount:" + resortCount + ",maxTime:" + maxTime);
         //确定合成总帧数和帧与帧之间的延迟时间
         mGifMaker = new GifMaker(count / resortCount, delay * resortCount, Executors.newCachedThreadPool()).setOutputPath
                 (absolutePath);
@@ -281,8 +247,8 @@ public class PSCanvas extends RelativeLayout{
                 mGifMaker.setGifMakerListener(listener);
             }
         }
-        isMakingGifOrNot = true;//启动标志位，开始合成
-        startTime = System.currentTimeMillis();
+        onStartRecord();
+        startMakingGifTime = System.currentTimeMillis();
     }
 
     //确定合成最终的尺寸
@@ -369,16 +335,25 @@ public class PSCanvas extends RelativeLayout{
         listener.onMakeGifSucceed(filePath);
     }
 
+    //开始合成
+    private void onStartRecord() {
+        isMakingGifOrNot = true;//启动标志位，开始合成
+        for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view instanceof PSLayer) {
+                ((PSLayer) view).recordStart();
+            }
+        }
+    }
 
     //合成完成，重置标志位
     private void onRecordFinish() {
         isMakingGifOrNot = false;
-        if (relyView instanceof CustomGifMovie || relyView instanceof CustomGifFrame) {
-            relyView.stopRecord();
-        }
-        recordViewFinish();
-        if (bitmapListVideoToGif != null) {
-            bitmapListVideoToGif = null;
+        for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view instanceof PSLayer) {
+                ((PSLayer) view).recordFinish();
+            }
         }
     }
 
@@ -481,15 +456,6 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-    private void recordViewFinish() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof PSLayer) {
-                ((PSLayer) view).recordFinish();
-            }
-        }
-    }
-
     private void delay(int time) {
         try {
             Thread.sleep(time);
@@ -532,7 +498,7 @@ public class PSCanvas extends RelativeLayout{
             }
             matrix.postScale(scale, scale);
             canvas.concat(matrix);
-            relyView.drawCanvas(canvas);
+            backgroundView.getGifView().drawCanvas(canvas);
             canvas.restore();
             drawItem4GIf(canvas, width, height, offsetX, offsetY, scale);
             mGifMaker.addBitmap(tBitmap);
@@ -598,6 +564,25 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
+    long startTime;
+    int maxDuration;
+    public void restartTime(){
+        maxDuration = 0;
+        startTime = System.currentTimeMillis();
+        for (int i = 0; i < getChildCount(); i++) {
+            View scaleView = getChildAt(i);
+            if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
+                View view = ((PSLayer) scaleView).getChildAt(0);
+                if (view instanceof ILayer) {//找到时长最长的那个图层
+                    int duration = ((ILayer) view).getDuration();
+                    if (maxDuration < duration) {
+                        maxDuration = duration;
+                    }
+                }
+            }
+        }
+    }
+
     class RefreshRecordThread extends Thread {
         @Override
         public void run() {
@@ -605,14 +590,10 @@ public class PSCanvas extends RelativeLayout{
                 if (running < 0) {
                     return;
                 }
-                if (running == 1 && !isMakingGifOrNot) {
-                    refreshView();
-                    refreshGifBg();
-                }
                 if (running == 1 && isMakingGifOrNot) {
                     if (mGifMaker != null && !mGifMaker.isBitmapFull()) {
                         //最大合成时间控制
-                        if (System.currentTimeMillis() - startTime > mGifMaker.getTotalSize() * 1000) {
+                        if (System.currentTimeMillis() - startMakingGifTime > mGifMaker.getTotalSize() * 1000) {
                             onRecordFinish();
                             if (mGifMaker != null && mGifMaker.mOnGifMakerListener != null) {
                                 if (PSCanvas.this != null) {
@@ -626,13 +607,11 @@ public class PSCanvas extends RelativeLayout{
                                 }
                             }
                         } else if (backgroundView != null && backgroundView.isGif()) {
-                            int time = mGifMaker.getFrameCountNow() * relyView.getDelay() * resortCount;
-
-                            relyView.recordFrame(time);
+                            int time = mGifMaker.getFrameCountNow() * recordDelay * resortCount;
                             recordView(time);
                             drawGif();
                         } else {
-                            int time = mGifMaker.getFrameCountNow() * relyView.getDelay() * resortCount;
+                            int time = mGifMaker.getFrameCountNow() * recordDelay * resortCount;
                             recordView(time);
                             Bitmap tBitmap = null;
                             if (backgroundView.currentOperate != null) {
@@ -684,10 +663,25 @@ public class PSCanvas extends RelativeLayout{
                         }
                     } else {
                         onRecordFinish();
-                        delay(10);
+                        delay(100);
                     }
                 } else {
-                    delay(10);
+                    if (running == 1) {
+                        long currentTime = System.currentTimeMillis();
+                        if (currentTime - startTime > maxDuration){
+                            startTime = currentTime;
+                        }
+                        recordView((int) (currentTime - startTime));
+                        refreshView();
+                        refreshGifBg();
+                        if (maxDuration <= 0){
+                            delay(300);
+                        }else {
+                            delay(10);
+                        }
+                    }else{
+                        delay(100);
+                    }
                 }
             }
         }
@@ -743,6 +737,14 @@ public class PSCanvas extends RelativeLayout{
                     deleteView((PSLayer) view);
                 }
             });
+            if (((PSLayer) child).getChildCount() > 0){
+                View childItemView = ((PSLayer) child).getChildAt(0);
+                if (childItemView instanceof ILayer){
+                    if (((ILayer) childItemView).getDuration() > 0){
+                        restartTime();
+                    }
+                }
+            }
         }
     }
 

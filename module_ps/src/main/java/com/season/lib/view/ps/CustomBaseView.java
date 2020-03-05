@@ -1,6 +1,9 @@
 package com.season.lib.view.ps;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -8,6 +11,13 @@ import androidx.annotation.Nullable;
 
 public abstract class CustomBaseView extends View implements ILayer {
 
+
+    protected boolean isRecording = false;
+    private long mMovieStart;
+    private int startTime = Integer.MIN_VALUE;
+    private int endTime = Integer.MAX_VALUE;
+    private boolean autoPlay = false;
+    private int currentTime = 0;
 
     public CustomBaseView(Context context) {
         super(context);
@@ -21,12 +31,71 @@ public abstract class CustomBaseView extends View implements ILayer {
         super(context, attrs, defStyleAttr);
     }
 
-    public int startTime = -1;
-    public int endTime = -1;
+    @Override
+    public void startRecord() {
+        isRecording = true;
+    }
+
+    @Override
+    public void stopRecord() {
+        isRecording = false;
+    }
+
+    @Override
+    public void recordFrame(int time) {
+        currentTime = time;
+    }
+
+    public void setAutoPlay(){
+        autoPlay = true;
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        if (autoPlay){
+            updateAnimationTime();
+            drawCanvas(canvas);
+            invalidate();
+        }else{
+            drawCanvas(canvas);
+        }
+    }
+
+    @Override
+    public void drawCanvas(Canvas canvas) {
+        if (currentTime >= getStartTime() && (currentTime - getStartTime()) <= getEndTime()) {
+            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+            drawCanvasTime(canvas, currentTime - getStartTime());
+        }
+    }
+
+    /**
+     * 绘制某个时间点的画布
+     * @param canvas
+     * @param time
+     */
+    public abstract void drawCanvasTime(Canvas canvas, int time);
+
+    @Override
+    public void onRelease() {
+        autoPlay = false;
+    }
+
+    protected void updateAnimationTime() {
+        long now = android.os.SystemClock.uptimeMillis();
+        if (mMovieStart == 0) {
+            mMovieStart = now;
+        }
+        int dur = getDuration();
+        if (dur == 0) {
+            dur = 3000;
+        }
+        currentTime = (int) ((now - mMovieStart) % dur);
+    }
 
     @Override
     public int getStartTime() {
-        if (startTime < 0){
+        if (startTime == Integer.MIN_VALUE){
             return 0;
         }
         return startTime;
@@ -34,7 +103,7 @@ public abstract class CustomBaseView extends View implements ILayer {
 
     @Override
     public int getEndTime() {
-        if (endTime < 0){
+        if (endTime == Integer.MAX_VALUE){
             return getDuration();
         }
         return endTime;

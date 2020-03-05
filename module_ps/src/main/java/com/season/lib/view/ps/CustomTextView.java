@@ -454,21 +454,11 @@ public class CustomTextView extends CustomBaseView{
         }
     }
 
-
     @Override
-    protected void onDraw(Canvas canvas) {
-//        if (BuildConfig.DEBUG) {
-//            canvas.drawColor(getResources().getColor(R.color.xml.scroll_red));
-//        }
-        drawCanvas(canvas);
-    }
-
-    @Override
-    public void drawCanvas(Canvas canvas) {
+    public void drawCanvasTime(Canvas canvas, int time) {
         if (textEmojiList == null || textEmojiList.size() == 0) {
             return;
         }
-//        Log.d("drawtext", "字符数：" + textEmojiList.size());
         drawBackground(canvas);
         if (animationProvider == null || !AnimationProvider.isDurationValiable(duration, speed)) {
             //没有动画绘制文字
@@ -482,24 +472,12 @@ public class CustomTextView extends CustomBaseView{
 
                     int drawTextRow;
                     int perRowTime = animationProvider.getPerRowTime();
-                    if (recordTime >= 0) {
-                        drawTextRow = (recordTime / perRowTime);
-                    } else {
-                        drawTextRow = (mCurrentAnimationTime / perRowTime);
-                    }
+                    drawTextRow = (time / perRowTime);
 //                    Logger.d("drawTextRow:"+drawTextRow+",allrownum:"+allrownum);
                     for (EmojiconHandler.TextEmoji emoji : textEmojiList) {
 //                        Logger.d("drawText:" + emoji.text + ",row:" + emoji.row);
                         if (emoji.row == drawTextRow) {
-                            int drawTextCount;
-                            if (recordTime >= 0) {
-                                drawTextCount = animationProvider.setTime(recordTime, true);
-                            } else {
-                                drawTextCount = animationProvider.setTime(mCurrentAnimationTime, false);
-                            }
-//                            if (j > drawTextCount) {
-//                                break;
-//                            }
+                            animationProvider.setTime(time, false);
                             animationProvider.preCanvas(canvas, emoji.offsetX + emojiWidth / 2, emoji.offsetY + emojiWidth / 2);
                             emoji.onDraw(canvas, animationProvider.getPaint(paint), animationProvider.getStrokePaint(strokepaint),
                                     offsetY, startColorStr, endColorStr, lineSpacing);
@@ -513,12 +491,7 @@ public class CustomTextView extends CustomBaseView{
                     for (EmojiconHandler.TextEmoji emoji : textEmojiList) {
                         i++;
                         animationProvider.setPosition(i - 1);//设置positon,进而影响setTime（）产生的效果。来达到对每个字动画的控制。
-                        int drawTextCount;
-                        if (recordTime >= 0) {
-                            drawTextCount = animationProvider.setTime(recordTime, true);
-                        } else {
-                            drawTextCount = animationProvider.setTime(mCurrentAnimationTime, false);
-                        }
+                        int drawTextCount = animationProvider.setTime(time, true);
                         if (i > drawTextCount) {
                             break;
                         }
@@ -530,22 +503,10 @@ public class CustomTextView extends CustomBaseView{
                     }
                 } else {
                     //文字动画统一处理
-                    int showTextCount;
-                    if (recordTime >= 0) {
-                        showTextCount = animationProvider.setTime(recordTime, true);
-                        if (animationProvider.clipPath()) {
-                            //受硬件加速的影响
-                            canvas.clipRect(new Rect(0, 0, finalWidth, finalHeight));
-                        }
-                    } else {
-                        //TODO 从天而降的动画，在预览界面不加clipPath相关代码，效果和制作界面不同，为什么呢？
-                        //可能原因是预览页面，ScaleView-->MatchParent。而制作页面ScaleView-->WrapContent
-                        //但是是否关闭硬件加速，也产生了影响，这也奇怪。
-                        if (animationProvider.clipPath()) {
-                            //受硬件加速的影响
-                            canvas.clipRect(new Rect(0, 0, finalWidth, finalHeight));
-                        }
-                        showTextCount = animationProvider.setTime(mCurrentAnimationTime, false);
+                    int showTextCount = animationProvider.setTime(time, true);
+                    if (animationProvider.clipPath()) {
+                        //受硬件加速的影响
+                        canvas.clipRect(new Rect(0, 0, finalWidth, finalHeight));
                     }
                     animationProvider.preCanvas(canvas, getViewWidth() / 2, getViewHeight() / 2);
                     drawText(canvas, showTextCount, animationProvider.getPaint(paint), animationProvider.getStrokePaint(strokepaint)
@@ -554,7 +515,6 @@ public class CustomTextView extends CustomBaseView{
                 }
             }
         }
-        isSeeking = false;
     }
 
     void drawText(Canvas canvas, int drawTextCount, Paint paint, Paint strokePaint, String startColorStr, String endColorStr, int
@@ -569,19 +529,6 @@ public class CustomTextView extends CustomBaseView{
         }
     }
 
-    private long mMovieStart = 0;
-    private int mCurrentAnimationTime = 0;
-
-    //重要方法，刷新当前动效的时间
-    private void updateAnimationTime() {
-        long now = System.currentTimeMillis();
-        if (mMovieStart == 0) {
-            mMovieStart = now;
-        }
-        if (getDuration() > 0) {
-            mCurrentAnimationTime = (int) ((now - mMovieStart) % getDuration());
-        }
-    }
 
     void drawBackground(Canvas canvas) {
         if (backgroudRes != 0) {
@@ -622,7 +569,6 @@ public class CustomTextView extends CustomBaseView{
 
     private void setTextAnimationType(int type, int duration, float speed, int delay, boolean addEvent) {
         currentType = type;
-        mMovieStart = System.currentTimeMillis();
         animationProvider = AnimationProvider.getProvider(type);
         changeAnimationTime(duration, delay, speed);
         /**
@@ -716,29 +662,6 @@ public class CustomTextView extends CustomBaseView{
         }
     }
 
-    @Override
-    public void startRecord() {
-    }
-
-    private int recordTime = -1;
-
-    @Override
-    public boolean isSeeking() {
-        return isSeeking;
-    }
-
-    boolean isSeeking = false;
-
-    @Override
-    public void recordFrame(int time) {
-        recordTime = time;
-        isSeeking = true;
-    }
-
-    @Override
-    public void stopRecord() {
-        recordTime = -1;
-    }
 
     @Override
     public int getDelay() {
@@ -774,6 +697,7 @@ public class CustomTextView extends CustomBaseView{
 
     @Override
     public void onRelease() {
+        super.onRelease();
         BitmapUtil.recycleBitmaps(backgroundBitmap);
     }
 

@@ -63,7 +63,7 @@ public class CropActivity extends Activity {
         customGifMovie = findViewById(R.id.gifview);
         if (filePath.endsWith("gif")){
             findViewById(R.id.gif_cot).setVisibility(View.VISIBLE);
-            customGifMovie.autoPlay = true;
+            customGifMovie.setAutoPlay();
             boolean isSuccess = customGifMovie.setMovieResource(filePath);
             customGifMovie.setVisibility(View.VISIBLE);
             return;

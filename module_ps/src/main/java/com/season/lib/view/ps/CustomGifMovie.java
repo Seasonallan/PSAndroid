@@ -32,15 +32,12 @@ import java.io.InputStream;
 public class CustomGifMovie extends CustomBaseView{
     private static final int DEFAULT_MOVIE_DURATION = 1000;
     private Movie mMovie;
-    private long mMovieStart;
-    private int mCurrentAnimationTime = 0;
     private float mLeft;
     private float mTop;
     private float mScale = 1;
     private int mMeasuredMovieWidth;
     private int mMeasuredMovieHeight;
     private boolean mVisible = true;
-    private volatile boolean mPaused = false;
     Paint paint;
     int resourceId;
     public String file;
@@ -103,40 +100,6 @@ public class CustomGifMovie extends CustomBaseView{
         return false;
     }
 
-    /**
-     * @return Movie
-     */
-    public Movie getMovie() {
-        return mMovie;
-    }
-
-    /**
-     * @param time
-     */
-    public void setMovieTime(int time) {
-        mCurrentAnimationTime = time;
-        invalidate();
-    }
-
-    /**
-     * @param paused
-     */
-    public void setPaused(boolean paused) {
-        this.mPaused = paused;
-        if (!paused) {
-            mMovieStart = android.os.SystemClock.uptimeMillis()
-                    - mCurrentAnimationTime;
-        }
-        invalidate();
-    }
-
-    /**
-     * @return
-     */
-    public boolean isPaused() {
-        return this.mPaused;
-    }
-    public String TAG="GifMovieView,";
     public boolean isGifEditMode;
     public void setisGifEditMode(boolean isGifEditMode){
         this.isGifEditMode=isGifEditMode;
@@ -178,37 +141,23 @@ public class CustomGifMovie extends CustomBaseView{
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-        drawCanvas(canvas);
-    }
-
-    @Override
-    public void drawCanvas(Canvas canvas) {
+    public void drawCanvasTime(Canvas canvas, int time) {
         if (mMovie != null) {
-            if (!mPaused) {
-                updateAnimationTime();
-                drawMovieFrame(canvas);
-                if (autoPlay){
-                    invalidate();
-                }
-            } else {
-                drawMovieFrame(canvas);
-            }
+            if (isGifEditMode)
+                canvas.save();
+            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
+            mMovie.setTime(time);
+            if (isGifEditMode)
+                canvas.scale(mScale, mScale);
+            mMovie.draw(canvas, mLeft / mScale, mTop / mScale, paint);
+            if (isGifEditMode)
+                canvas.restore();
         }
-        isSeeking = false;
     }
-
-    @Override
-    public boolean isSeeking(){
-        return isSeeking;
-    }
-    boolean isSeeking = false;
-
-    public boolean autoPlay = false;
 
     @Override
     public void onRelease(){
-        autoPlay = false;
+        super.onRelease();
         if (mMovie != null){
             mMovie = null;
         }
@@ -278,7 +227,6 @@ public class CustomGifMovie extends CustomBaseView{
     @Override
     public int getViewWidth() {
         if ( mMovie == null){
-//        if (isFullScreen || mMovie == null){
             return 0;
         }
         return mMovie.width();
@@ -287,7 +235,6 @@ public class CustomGifMovie extends CustomBaseView{
     @Override
     public int getViewHeight() {
         if ( mMovie == null){
-//        if (isFullScreen  || mMovie == null){
             return 0;
         }
         return mMovie.height();
@@ -308,69 +255,6 @@ public class CustomGifMovie extends CustomBaseView{
         return duration;
     }
 
-
-    /**
-     */
-    private void updateAnimationTime() {
-        long now = System.currentTimeMillis();
-        if (mMovieStart == 0) {
-            mMovieStart = now;
-        }
-        mCurrentAnimationTime = (int) ((now - mMovieStart) % getDuration());
-    }
-    /**
-     */
-    private void drawMovieFrame(Canvas canvas) {
-        canvas.save();
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
-        if (recordTime >= 0){
-            //合成
-            mMovie.setTime(recordTime);
-        }else{
-            //显示
-            mMovie.setTime(mCurrentAnimationTime);
-        }
-        //
-        if (isGifEditMode)
-            canvas.scale(mScale, mScale);
-        mMovie.draw(canvas, mLeft / mScale, mTop / mScale, paint);
-        canvas.restore();
-    }
-
-
-    boolean isRecordRelyView = false;
-    @Override
-    public void startRecord() {
-        isRecordRelyView = true;
-    }
-
-    private int recordTime = -1;
-    @Override
-    public void recordFrame(int time) {
-        if (getDuration() <= 0){
-            recordTime = 0;
-            return;
-        }
-        /**
-         * 如果是主依赖View，时间如果大于总时间，就取最后一帧（中间可能有延迟或者不刚好）
-         */
-        if (time > getDuration()){
-            if (isRecordRelyView){
-                recordTime = getDuration();
-            }else{
-                recordTime = time % getDuration();
-            }
-        }else{
-            recordTime = time;
-        }
-        isSeeking = true;
-    }
-
-    @Override
-    public void stopRecord() {
-        isRecordRelyView = false;
-        recordTime = -1;
-    }
 
     @Override
     public int getDelay() {

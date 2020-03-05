@@ -67,13 +67,6 @@ public interface ILayer {
     void onRelease();
 
     /**
-     * 是否正在绘制，当前合成模式没有用到这个方法
-     * @return
-     */
-    @Deprecated
-    boolean isSeeking();
-
-    /**
      * 合成的时候绘制，之前是使用draw然后调用View的onDraw，由于锯齿问题，现在的合成是直接调用onDraw。
      * @param canvas
      */

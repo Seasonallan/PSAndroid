@@ -30,8 +30,6 @@ public class CustomGifFrame extends CustomBaseView{
     public String url;
     private boolean isGifEditMode;
     private float mScale = 1;
-    private int recordTime = -1;
-    boolean isRecordRelyView = false;
     private int mMeasuredMovieWidth;
     private int mMeasuredMovieHeight;
     private float mLeft;
@@ -90,9 +88,10 @@ public class CustomGifFrame extends CustomBaseView{
         if (firstFrame != null) BitmapUtil.recycleBitmaps(firstFrame);
     }
 
+
     @Override
     public void onRelease() {
-        autoPlay = false;
+        super.onRelease();
         destroy();
     }
 
@@ -124,15 +123,6 @@ public class CustomGifFrame extends CustomBaseView{
         }
     }
 
-    private long mMovieStart;
-    private int mCurrentAnimationTime = 0;
-
-    public boolean autoPlay = false;
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        drawCanvas(canvas);
-    }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -142,16 +132,12 @@ public class CustomGifFrame extends CustomBaseView{
     }
 
     @Override
-    public void drawCanvas(Canvas canvas) {
-        updateAnimationTime();
-        if (recordTime >= 0) {
-            mCurrentAnimationTime = recordTime;
-        }
+    public void drawCanvasTime(Canvas canvas, int time) {
         canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         if (gifDecoder==null){
             return;
         }
-        GifFrame gifFrame = gifDecoder.getFrame(mCurrentAnimationTime);
+        GifFrame gifFrame = gifDecoder.getFrame(time);
         if (gifFrame != null) {
             if (gifFrame.image != null && gifFrame.image.isRecycled() == false) {
                 if (isGifEditMode){
@@ -163,31 +149,12 @@ public class CustomGifFrame extends CustomBaseView{
                 canvas.restore();
             }
         }
-        if (autoPlay) {
-            invalidate();
-        }
-        isSeeking = false;
     }
 
-    /**
-     */
-    private void updateAnimationTime() {
-        long now = android.os.SystemClock.uptimeMillis();
-        if (mMovieStart == 0) {
-            mMovieStart = now;
-        }
-        int dur = gifDecoder.getDuration();
-        if (dur == 0) {
-            dur = 3000;
-        }
-        mCurrentAnimationTime = (int) ((now - mMovieStart) % dur);
-    }
 
     @Override
     public int getViewWidth() {
         try {
-//			GifFrame gifFrame = gifDecoder.getFrame(0);
-//			return gifFrame.image.getWidth();
             return firstFrame.getWidth();
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,8 +165,6 @@ public class CustomGifFrame extends CustomBaseView{
     @Override
     public int getViewHeight() {
         try {
-//			GifFrame gifFrame = gifDecoder.getFrame(0);
-//			return gifFrame.image.getHeight();
             return firstFrame.getHeight();
         } catch (Exception e) {
             e.printStackTrace();
@@ -217,43 +182,6 @@ public class CustomGifFrame extends CustomBaseView{
         return gifDecoder.getDelay();
     }
 
-    @Override
-    public void startRecord() {
-        isRecordRelyView = true;
-    }
-
-    @Override
-    public boolean isSeeking() {
-        return isSeeking;
-    }
-
-    boolean isSeeking = false;
-
-    @Override
-    public void recordFrame(int time) {
-        if (getDuration() <= 0) {
-            recordTime = 0;
-            return;
-        }
-        if (time > getDuration()) {
-            if (isRecordRelyView) {
-                recordTime = getDuration();
-            } else {
-                recordTime = time % getDuration();
-            }
-        } else {
-            recordTime = time;
-        }
-        isSeeking = true;
-    }
-
-    ;
-
-    @Override
-    public void stopRecord() {
-        isRecordRelyView = false;
-        recordTime = -1;
-    }
 
     public CustomGifFrame copy() {
         CustomGifFrame gifView = new CustomGifFrame(getContext());

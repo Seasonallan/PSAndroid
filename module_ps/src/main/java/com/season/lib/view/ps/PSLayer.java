@@ -229,23 +229,13 @@ public class PSLayer extends RelativeLayout {
         return !copy;
     }
 
-    public boolean isSeekingTo() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof ILayer && ((ILayer) view).isSeeking()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void refresh() {
         if (matrixAnimation != null && matrixAnimation.isAnimating()) {
             postInvalidate();
         } else {
             for (int i = 0; i < getChildCount(); i++) {
                 View view = getChildAt(i);
-                if (view instanceof ILayer && ((ILayer) view).getDuration() > 0) {
+                if (view instanceof ILayer) {
                     view.postInvalidate();
                 }
             }
@@ -255,8 +245,17 @@ public class PSLayer extends RelativeLayout {
     public void record(int time) {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof ILayer && ((ILayer) view).getDuration() > 0) {
+            if (view instanceof ILayer) {
                 ((ILayer) view).recordFrame(time);
+            }
+        }
+    }
+
+    public void recordStart() {
+        for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view instanceof ILayer) {
+                ((ILayer) view).startRecord();
             }
         }
     }
