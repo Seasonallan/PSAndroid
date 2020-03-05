@@ -29,10 +29,32 @@ public interface ILayer {
      */
     int getViewHeight();
 
+    /**
+     * 获取动画开始时间点
+     * @return
+     */
     int getStartTime();
+
+    /**
+     * 获取动画结束时间点
+     * @return
+     */
     int getEndTime();
+
+    /**
+     * 设置动画开始时间点
+     * @param time
+     * @return
+     */
     boolean setStartTime(int time);
+
+    /**
+     * 设置动画结束时间点
+     * @param time
+     * @return
+     */
     boolean setEndTime(int time);
+
     /**
      * 获取动画的时长,单位毫秒
      * @return
@@ -46,20 +68,10 @@ public interface ILayer {
     int getDelay();
 
     /**
-     * 开始合成，用于重置动画到第一帧和重置标志位
-     */
-    void startRecord();
-
-    /**
      * 合成第几帧，通过时间算出显示的是第几帧
      * @param time
      */
     void recordFrame(int time);
-
-    /**
-     * 合成结束，重置标志位
-     */
-    void stopRecord();
 
     /**
      * 释放内存

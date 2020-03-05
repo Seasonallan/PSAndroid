@@ -9,10 +9,11 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+/**
+ * 图层基类
+ */
 public abstract class CustomBaseView extends View implements ILayer {
 
-
-    protected boolean isRecording = false;
     private long mMovieStart;
     private int startTime = Integer.MIN_VALUE;
     private int endTime = Integer.MAX_VALUE;
@@ -32,16 +33,6 @@ public abstract class CustomBaseView extends View implements ILayer {
     }
 
     @Override
-    public void startRecord() {
-        isRecording = true;
-    }
-
-    @Override
-    public void stopRecord() {
-        isRecording = false;
-    }
-
-    @Override
     public void recordFrame(int time) {
         currentTime = time;
     }
@@ -53,7 +44,15 @@ public abstract class CustomBaseView extends View implements ILayer {
     @Override
     public void onDraw(Canvas canvas) {
         if (autoPlay){
-            updateAnimationTime();
+            long now = android.os.SystemClock.uptimeMillis();
+            if (mMovieStart == 0) {
+                mMovieStart = now;
+            }
+            int dur = getDuration();
+            if (dur == 0) {
+                dur = 3000;
+            }
+            currentTime = (int) ((now - mMovieStart) % dur);
             drawCanvas(canvas);
             invalidate();
         }else{
@@ -63,7 +62,7 @@ public abstract class CustomBaseView extends View implements ILayer {
 
     @Override
     public void drawCanvas(Canvas canvas) {
-        if (currentTime >= getStartTime() && (currentTime - getStartTime()) <= getEndTime()) {
+        if (currentTime >= getStartTime() && currentTime <= getEndTime()) {
             canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
             drawCanvasTime(canvas, currentTime - getStartTime());
         }
@@ -79,18 +78,6 @@ public abstract class CustomBaseView extends View implements ILayer {
     @Override
     public void onRelease() {
         autoPlay = false;
-    }
-
-    protected void updateAnimationTime() {
-        long now = android.os.SystemClock.uptimeMillis();
-        if (mMovieStart == 0) {
-            mMovieStart = now;
-        }
-        int dur = getDuration();
-        if (dur == 0) {
-            dur = 3000;
-        }
-        currentTime = (int) ((now - mMovieStart) % dur);
     }
 
     @Override

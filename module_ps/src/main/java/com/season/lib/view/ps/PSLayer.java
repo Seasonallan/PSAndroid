@@ -251,26 +251,7 @@ public class PSLayer extends RelativeLayout {
         }
     }
 
-    public void recordStart() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof ILayer) {
-                ((ILayer) view).startRecord();
-            }
-        }
-    }
-
-    public void recordFinish() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof ILayer) {
-                ((ILayer) view).stopRecord();
-            }
-        }
-    }
-
     MatrixAnimation matrixAnimation;
-
     public void resetMatrix(float[] matrix) {
         matrixAnimation = new MatrixAnimation(mCurrentMatrix, matrix);
         //mCurrentMatrix.setValues(matrix);

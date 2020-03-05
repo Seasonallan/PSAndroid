@@ -464,8 +464,6 @@ public class CustomTextView extends CustomBaseView{
             //没有动画绘制文字
             drawText(canvas, textEmojiList.size(), paint, strokepaint, startColorStr, endColorStr, lineSpacing);
         } else {
-            //更新时间
-            updateAnimationTime();
             if (animationProvider.isRowSplited()) {
                 //设置行号
                 if (!TextUtils.isEmpty(text)) {

@@ -7,10 +7,8 @@ import android.widget.TextView;
 
 import com.example.ps.R;
 import com.season.lib.util.LogUtil;
-import com.season.lib.view.ps.CustomTextView;
 import com.season.lib.view.ps.ILayer;
 import com.season.lib.view.ps.PSCanvas;
-import com.season.lib.view.ps.PSLayer;
 
 
 public class BottomVipLayout {
@@ -144,19 +142,7 @@ public class BottomVipLayout {
         endMinDuration = 0;
         if (view != null && view instanceof ILayer){
             currentView = (ILayer) view;
-            for (int i = 0; i < psCanvas.getChildCount(); i++) {
-                View scaleView = psCanvas.getChildAt(i);
-                if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
-                    //((ScaleView) scaleView).startRecord();
-                    View item = ((PSLayer) scaleView).getChildAt(0);
-                    if (item instanceof ILayer) {//找到时长最长的那个图层
-                        int duration = ((ILayer) item).getDuration();
-                        if (totalDuration < duration) {
-                            totalDuration = duration;
-                        }
-                    }
-                }
-            }
+            totalDuration = psCanvas.maxDuration;
             startMaxDuration = totalDuration - currentView.getDuration();
             endMinDuration = currentView.getDuration();
             LogUtil.e(""+ currentView.getStartTime() + ", "+ currentView.getEndTime());

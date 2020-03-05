@@ -4,10 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PaintFlagsDrawFilter;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.gif.frame.GifDecoder;
@@ -133,7 +131,6 @@ public class CustomGifFrame extends CustomBaseView{
 
     @Override
     public void drawCanvasTime(Canvas canvas, int time) {
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         if (gifDecoder==null){
             return;
         }
@@ -146,7 +143,7 @@ public class CustomGifFrame extends CustomBaseView{
                 }
                 canvas.drawBitmap(gifFrame.image, mLeft / mScale, mTop / mScale, mPaint);
                 if (isGifEditMode)
-                canvas.restore();
+                    canvas.restore();
             }
         }
     }

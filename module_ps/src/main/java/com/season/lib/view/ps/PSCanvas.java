@@ -338,23 +338,11 @@ public class PSCanvas extends RelativeLayout{
     //开始合成
     private void onStartRecord() {
         isMakingGifOrNot = true;//启动标志位，开始合成
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof PSLayer) {
-                ((PSLayer) view).recordStart();
-            }
-        }
     }
 
     //合成完成，重置标志位
     private void onRecordFinish() {
         isMakingGifOrNot = false;
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof PSLayer) {
-                ((PSLayer) view).recordFinish();
-            }
-        }
     }
 
     //获取剪切上下左右位置
@@ -565,7 +553,7 @@ public class PSCanvas extends RelativeLayout{
     }
 
     long startTime;
-    int maxDuration;
+    public int maxDuration;
     public void restartTime(){
         maxDuration = 0;
         startTime = System.currentTimeMillis();

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.graphics.Paint;
-import android.graphics.PaintFlagsDrawFilter;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -37,7 +36,6 @@ public class CustomGifMovie extends CustomBaseView{
     private float mScale = 1;
     private int mMeasuredMovieWidth;
     private int mMeasuredMovieHeight;
-    private boolean mVisible = true;
     Paint paint;
     int resourceId;
     public String file;
@@ -130,7 +128,6 @@ public class CustomGifMovie extends CustomBaseView{
         super.onLayout(changed, l, t, r, b);
         mLeft = (getWidth() - mMeasuredMovieWidth) / 2f;
         mTop = (getHeight() - mMeasuredMovieHeight) / 2f;
-        mVisible = getVisibility() == View.VISIBLE;
         if (getParent() instanceof PSLayer){
             int width = r - l;
             int height = b - t;
@@ -143,12 +140,11 @@ public class CustomGifMovie extends CustomBaseView{
     @Override
     public void drawCanvasTime(Canvas canvas, int time) {
         if (mMovie != null) {
-            if (isGifEditMode)
-                canvas.save();
-            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
             mMovie.setTime(time);
-            if (isGifEditMode)
+            if (isGifEditMode){
+                canvas.save();
                 canvas.scale(mScale, mScale);
+            }
             mMovie.draw(canvas, mLeft / mScale, mTop / mScale, paint);
             if (isGifEditMode)
                 canvas.restore();
@@ -161,40 +157,6 @@ public class CustomGifMovie extends CustomBaseView{
         if (mMovie != null){
             mMovie = null;
         }
-    }
-
-    /**
-     */
-    private void invalidateView() {
-        if (mVisible) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                postInvalidateOnAnimation();
-            } else {
-                invalidate();
-            }
-        }
-    }
-
-
-    @Override
-    public void onScreenStateChanged(int screenState) {
-        super.onScreenStateChanged(screenState);
-        mVisible = screenState == SCREEN_STATE_ON;
-        invalidateView();
-    }
-
-    @Override
-    protected void onVisibilityChanged(View changedView, int visibility) {
-        super.onVisibilityChanged(changedView, visibility);
-        mVisible = visibility == View.VISIBLE;
-        invalidateView();
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        mVisible = visibility == View.VISIBLE;
-        invalidateView();
     }
 
     /**
