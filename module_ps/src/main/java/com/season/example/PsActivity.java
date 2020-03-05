@@ -22,6 +22,7 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.season.example.layout.BottomPaintLayout;
 import com.season.example.layout.BottomTextLayout;
 import com.season.example.layout.BottomTucengLayout;
+import com.season.example.layout.BottomVipLayout;
 import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
 import com.season.lib.BaseContext;
@@ -120,10 +121,11 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         mPsCanvas.setFocusChangeListener(new PSCanvas.IFocusChangeListener() {
             @Override
             public void onFocusLose(ViewGroup view) {
+
             }
 
             @Override
-            public void onFocusGet(ViewGroup parent) {
+            public void onFocusGet(ViewGroup view) {
                 resetBottomStatus();
             }
 
@@ -152,11 +154,14 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     ImageView iv_redo;
     ImageView iv_undo;
     ImageView iv_delete;
+
+    private View vipView;
     private void initView(){
         mPsCoverView = findViewById(R.id.layout_container);
         mPsCanvas = findViewById(R.id.layout_stickLayout);
         customCanvas = findViewById(R.id.tuya);
 
+        vipView = findViewById(R.id.vip);
         del_container = findViewById(R.id.del_container);
 
         iv_redo = findViewById(R.id.iv_redo);
@@ -168,6 +173,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         iv_close = findViewById(R.id.iv_close);
         iv_confirm = findViewById(R.id.iv_confirm);
 
+        vipView.setOnClickListener(this);
         iv_close.setOnClickListener(this);
         iv_confirm.setOnClickListener(this);
 
@@ -342,6 +348,10 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             bottomPaintLayout.hide();
             return;
         }
+        if (bottomVipLayout.isShowing()){
+            bottomVipLayout.hide();
+            return;
+        }
         if (bottomTucengLayout.isShowing()){
             bottomTucengLayout.hide();
             return;
@@ -405,6 +415,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     iv_redo.setImageResource(
                             customCanvas.canRedo() ? R.drawable.selector_crop_pro : R.mipmap.icon_op_pro_sel);
                     iv_delete.setImageResource(R.mipmap.icon_top_delete_sel);
+                    vipView.setVisibility(View.GONE);
                     return;
                 }
 
@@ -426,14 +437,23 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     private void resetBottomStatus() {
         View view = mPsCanvas.getFocusView();
         if (view == null){
+            vipView.setVisibility(View.GONE);
             bottomTucengLayout.hide();
-        }
-        bottomTucengLayout.statusChange(mPsCanvas.getViewIndex(), mPsCanvas.getChildCount());
-        if (view != null && view instanceof CustomTextView) {
-            bottomTextLayout.show();
-            bottomTextLayout.select(((CustomTextView) view).currentType);
+            bottomVipLayout.hide();
         }else{
+            vipView.setVisibility(View.VISIBLE);
+        }
+        bottomVipLayout.statusChange(mPsCanvas);
+        bottomTucengLayout.statusChange(mPsCanvas.getViewIndex(), mPsCanvas.getChildCount());
+        if (bottomVipLayout.isShowing() || bottomTucengLayout.isShowing()){
             bottomTextLayout.hide();
+        }else{
+            if (view != null && view instanceof CustomTextView) {
+                bottomTextLayout.show();
+                bottomTextLayout.select(((CustomTextView) view).currentType);
+            }else{
+                bottomTextLayout.hide();
+            }
         }
     }
 
@@ -478,6 +498,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     private BottomPaintLayout bottomPaintLayout;
     private BottomTextLayout bottomTextLayout;
     private BottomTucengLayout bottomTucengLayout;
+    private BottomVipLayout bottomVipLayout;
     private void initBottomLayout() {
         bottomTextLayout = new BottomTextLayout(this) {
             @Override
@@ -485,6 +506,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 mPsCanvas.setTextAnimationType(position);
             }
         };
+        bottomVipLayout = new BottomVipLayout(this);
         bottomTucengLayout = new BottomTucengLayout(this){
             @Override
             public void onCopy() {
@@ -500,14 +522,24 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
 
             @Override
             public void onUpLayer() {
-                mPsCanvas.upLayer(mPsCanvas.getView(), true);
-                resetBottomStatus();
+                PSLayer focusView = mPsCanvas.getView();
+                if (focusView != null){
+                    mPsCanvas.upLayer(mPsCanvas.getView(), true);
+                    resetBottomStatus();
+                }else{
+                    ToastUtil.show("未选中图层");
+                }
             }
 
             @Override
             public void onDownLayer() {
-                mPsCanvas.downLayer(mPsCanvas.getView(), true);
-                resetBottomStatus();
+                PSLayer focusView = mPsCanvas.getView();
+                if (focusView != null){
+                    mPsCanvas.downLayer(mPsCanvas.getView(), true);
+                    resetBottomStatus();
+                }else{
+                    ToastUtil.show("未选中图层");
+                }
             }
 
         };
@@ -577,18 +609,27 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     }
 
     private ProgressDialog progressDialog;
+    int testPoi = 0;
     @Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.iv_close) {
             closeTuya();
             bottomPaintLayout.hide();
+        } else if (i == R.id.vip) {
+            if (bottomVipLayout.isShowing()){
+                bottomVipLayout.hide();
+            }else{
+                bottomVipLayout.show();
+                bottomVipLayout.statusChange(mPsCanvas);
+            }
         } else if (i == R.id.bt_paint) {
             startTuya();
             bottomPaintLayout.show();
-        }else if (i == R.id.bt_image) {
-            int poi = new Random().nextInt(2);
-            if (poi == 1) viewExtend.addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
+        } else if (i == R.id.bt_image) {
+            testPoi++;testPoi=testPoi>2?0:testPoi;
+            if (testPoi == 0) viewExtend.addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
+            if (testPoi == 1) viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583398707311&di=0d84c3ca3c68291c6a78e533f20c4fb0&imgtype=0&src=http%3A%2F%2Fn.sinaimg.cn%2Fsinacn17%2F480%2Fw240h240%2F20180618%2F5c4d-heauxvz1011485.gif");
             else    viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
 
         }  else if (i == R.id.bt_text) {

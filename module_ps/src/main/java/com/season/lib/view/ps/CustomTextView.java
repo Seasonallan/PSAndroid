@@ -59,7 +59,7 @@ import io.github.rockerhieu.emojicon.EmojiconHandler;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 14:44
  */
-public class CustomTextView extends View implements ILayer {
+public class CustomTextView extends CustomBaseView{
     private int offsetY;//由于Android系统的drawText中的y无法确定，这个值是调节的比较居中的值
     private boolean nullInput = false;
     public boolean isAudio = false;

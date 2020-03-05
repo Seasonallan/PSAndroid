@@ -811,6 +811,10 @@ public class PSLayer extends RelativeLayout {
         //适配IOS的viewWidth数值， 本来该字段应该是图片的宽高，可是实际IOS存储的图片宽高却是viewwidth * scaleX
         layerItem.setSizeWidth(view.getWidth());
         layerItem.setSizeHeight(view.getHeight());
+        if (view instanceof ILayer){
+            layerItem.startTime = ((ILayer) view).getStartTime();
+            layerItem.endTime = ((ILayer) view).getEndTime();
+        }
         if (view instanceof CustomTextView) {
             //该字段应该是文字的宽高
             layerItem.setSizeWidth(view.getWidth());

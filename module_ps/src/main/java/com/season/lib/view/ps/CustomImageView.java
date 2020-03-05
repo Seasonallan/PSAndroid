@@ -6,11 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-import androidx.appcompat.widget.AppCompatImageView;
 
-
-public class CustomImageView extends AppCompatImageView
-        implements ILayer {
+public class CustomImageView extends CustomBaseView{
     private float centerX;
     private float centerY;
     public String url;
@@ -91,7 +88,6 @@ public class CustomImageView extends AppCompatImageView
     private void setBitmap(Bitmap bitmap)
     {
         this.bitmap = bitmap;
-        this.setImageBitmap(bitmap);
     }
 
     @Override
@@ -151,9 +147,16 @@ public class CustomImageView extends AppCompatImageView
         return false;
     }
 
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        drawCanvas(canvas);
+    }
+
     @Override
     public void drawCanvas(Canvas canvas) {
-        draw(canvas);
+        if (bitmap != null && !bitmap.isRecycled())
+            canvas.drawBitmap(bitmap, 0, 0, null);
     }
 
 }

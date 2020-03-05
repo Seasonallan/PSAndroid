@@ -494,7 +494,7 @@ public class PSCanvas extends RelativeLayout{
         try {
             Thread.sleep(time);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -751,6 +751,10 @@ public class PSCanvas extends RelativeLayout{
         super.removeView(view);
         if (view == focusView) {//移除焦点图层的时候需要重置为null
             focusView = null;
+            if (mOnFocusChangeListener != null){
+                mOnFocusChangeListener.onFocusLose((ViewGroup) view);
+                mOnFocusChangeListener.onFocusClear();
+            }
         }
     }
 

@@ -58,6 +58,8 @@ public abstract class ViewExtend {
                                     boolean res = customGifMovie.setMovieResource(path);
                                     if (res) {//sometimes movie decode gif error url duration = 0
                                         customGifMovie.url = url;
+                                        customGifMovie.setStartTime(item.startTime);
+                                        customGifMovie.setEndTime(item.endTime);
                                         imageWidth = customGifMovie.getViewWidth();
                                         imageHeight = customGifMovie.getViewHeight();
                                         PSLayer.addView(customGifMovie,
@@ -67,6 +69,8 @@ public abstract class ViewExtend {
                                         CustomGifFrame customGifFrame = new CustomGifFrame(context);
                                         customGifFrame.setMovieResource(path);
                                         customGifFrame.url = url;
+                                        customGifFrame.setStartTime(item.startTime);
+                                        customGifFrame.setEndTime(item.endTime);
                                         imageWidth = customGifFrame.getViewWidth();
                                         imageHeight = customGifFrame.getViewHeight();
                                         PSLayer.addView(customGifFrame,
@@ -78,6 +82,8 @@ public abstract class ViewExtend {
                                     imageView.setImageFile(path);
                                     imageWidth = imageView.getViewWidth();
                                     imageHeight = imageView.getViewHeight();
+                                    imageView.setStartTime(item.startTime);
+                                    imageView.setEndTime(item.endTime);
                                     imageView.url = url;
                                     imageView.isTuya = false;
                                     PSLayer
@@ -92,6 +98,8 @@ public abstract class ViewExtend {
                                 CustomImageView customImageView = new CustomImageView(context);
                                 customImageView.setImageFile(path);
                                 customImageView.url = url;
+                                customImageView.setStartTime(item.startTime);
+                                customImageView.setEndTime(item.endTime);
                                 customImageView.isTuya = true;
                                 PSLayer
                                         .addView(customImageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
@@ -111,7 +119,7 @@ public abstract class ViewExtend {
                     boolean scaleOrNot = customTextView.setTextEntry(item, layerEntity.getWidth());
                     int duration = 0;
                     int delayVideo = 0;
-                    int animationType = 0;
+                    int animationType = item.animationType;
                     float speed = 1.0f;
                     customTextView.setTextAnimationType(animationType, duration, delayVideo, speed);
                     PSLayer.addView(customTextView,
@@ -120,6 +128,8 @@ public abstract class ViewExtend {
                     PSLayer.bindMatrix(item, videoWidthHeight, offsetX, offsetY, layerEntity.getWidth(),
                             layerEntity.getHeight(),
                             scaleOrNot);
+                    customTextView.setStartTime(item.startTime);
+                    customTextView.setEndTime(item.endTime);
                     addViewPost(PSLayer, i * 100, i == items.size() - 1);
                 }
             }

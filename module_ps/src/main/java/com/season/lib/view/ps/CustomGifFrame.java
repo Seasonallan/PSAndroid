@@ -24,9 +24,7 @@ import java.util.List;
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 18:37
  */
-public class CustomGifFrame extends View implements ILayer {
-
-    private final String TAG = "GifFrameView";
+public class CustomGifFrame extends CustomBaseView{
     private GifDecoder gifDecoder = null;
     private Paint mPaint;
     public String url;

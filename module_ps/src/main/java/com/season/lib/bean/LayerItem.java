@@ -13,6 +13,9 @@ public class LayerItem implements Serializable {
         int ContentViewTypeDraw = 3;//涂鸦，绘图
     }
 
+    public int startTime;
+    public int endTime;
+
     public int animationType;
     private double xScale;
     private int index;

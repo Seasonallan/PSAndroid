@@ -7,12 +7,11 @@ import android.graphics.Canvas;
 /**
  * Disc: 用于合成的统一操作
  *
-// * 继承这个接口的类有：
-// * @see TextStyleView 文字图层
-// * @see LayerImageView 静图图层，包含涂鸦
-// * @see GifMovieView gif动图图层
-// * @see GifFrameView gif动图图层，只有在GifMovieView解析失败的情况下会用
-// * @see GifWebpView webp动图图层
+ * 继承这个接口的类有：
+ * @see CustomTextView 文字图层
+ * @see CustomImageView 静图图层，包含涂鸦
+ * @see CustomGifMovie gif动图图层
+ * @see CustomGifFrame gif动图图层，只有在CustomGifMovie解析失败的情况下会用
  *
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 14:44
@@ -30,6 +29,10 @@ public interface ILayer {
      */
     int getViewHeight();
 
+    int getStartTime();
+    int getEndTime();
+    boolean setStartTime(int time);
+    boolean setEndTime(int time);
     /**
      * 获取动画的时长,单位毫秒
      * @return

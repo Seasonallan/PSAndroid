@@ -29,7 +29,7 @@ import java.io.InputStream;
  *
  * 这里如果需要让Gif动起来，必须在View外部调用重绘。onDraw()中根据当前时间，准备需要绘制的帧数据。
  */
-public class CustomGifMovie extends View implements ILayer {
+public class CustomGifMovie extends CustomBaseView{
     private static final int DEFAULT_MOVIE_DURATION = 1000;
     private Movie mMovie;
     private long mMovieStart;

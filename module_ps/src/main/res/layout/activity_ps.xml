@@ -354,6 +354,7 @@
             <include layout="@layout/layout_paint"/>
             <include layout="@layout/layout_text"/>
             <include layout="@layout/layout_tuceng"/>
+            <include layout="@layout/layout_vip"/>
         </FrameLayout>
 
     </LinearLayout>
