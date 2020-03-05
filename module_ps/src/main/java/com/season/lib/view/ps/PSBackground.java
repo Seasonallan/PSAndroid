@@ -80,10 +80,6 @@ public class PSBackground {
                 .getVisibility() == View.VISIBLE));
     }
 
-    public int getDuration() {
-        return 0;
-    }
-
     public int getGifWidth() {
         if (isGif()) {
             if (customGifMovie.getVisibility() == View.VISIBLE) {
@@ -106,10 +102,6 @@ public class PSBackground {
             }
         }
         return 0;
-    }
-
-    public float getSpeed() {
-        return 1.0f;
     }
 
     public ILayer getBackgroundView() {

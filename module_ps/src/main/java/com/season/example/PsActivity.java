@@ -3,7 +3,6 @@ package com.season.example;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -34,11 +32,8 @@ import com.season.lib.dimen.ColorUtil;
 import com.season.lib.gif.GifMaker;
 import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
-import com.season.lib.view.ps.CustomGifFrame;
-import com.season.lib.view.ps.ILayer;
 import com.season.lib.http.DownloadAPI;
 import com.season.example.layout.PopInputLayout;
-import com.season.lib.view.ps.CustomGifMovie;
 import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerEntity;
 import com.season.lib.view.ps.PSLayer;
@@ -48,7 +43,6 @@ import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.view.ps.PSCanvas;
 import com.season.example.layout.TopDeleteLayout;
 import com.season.lib.view.ps.PSCoverView;
-import com.season.lib.view.ps.CustomImageView;
 import com.season.lib.view.ps.CustomTextView;
 import com.season.lib.view.ps.CustomCanvas;
 import com.example.ps.R;
@@ -188,6 +182,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         findViewById(R.id.bt_tc).setOnClickListener(this);
     }
 
+    ViewExtend viewExtend;
     int videoWidthHeight, offsetX, offsetY;
     private void fixCanvasHeight() {
         View canvasArea = findViewById(R.id.opview);
@@ -232,10 +227,52 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         mPsCanvas.videoWidthHeight = videoWidthHeight;
         mPsCanvas.setOffsetX(offsetX);
         mPsCanvas.setOffsetY(offsetY);
+        viewExtend = new ViewExtend(this, videoWidthHeight, offsetX, offsetY){
+            //post一个一个显示图层，比较好看
+            @Override
+            public void addViewPost(final PSLayer PSLayer, int delay, final boolean isLast) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (PSLayer.getChildCount() > 0) {
+                            mPsCanvas.addView(PSLayer);
+                            if (isLast) {
+                                resetStatus();
+                            }
+                        }
+                        if (isLast) {
+                            resetStatus();
+                        }
+                    }
+                }, delay);
+            }
+            @Override
+            public void addLayer(PSLayer view) {
+                mPsCanvas.addView(view);
+                resetStatus();
+            }
+
+            @Override
+            protected void setBackground(String url, String filePath) {
+                File file = new File(filePath);
+                if (file.isFile() && file.length() > 0) {
+                    if (FileUtils.isStaticImageFile(filePath)) {
+                        mPsCanvas.showImage(url, filePath);
+                    } else {
+                        //格式异常了
+                        if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
+                            mPsCanvas.showGIf(url, filePath);
+                        } else {
+                            mPsCanvas.showImage(url, filePath);
+                        }
+                    }
+                }
+                resetStatus();
+            }
+        };
         LogUtil.LOG(""+ offsetX +"----"+ offsetY);
     }
 
-    private Handler handler = new Handler();
     private void bindData2Canvas() {
 
         try {
@@ -247,15 +284,15 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             if (layerEntity != null){
                 LayerBackground backgroundInfo = layerEntity.getBackInfoModel();
                 List<LayerItem> items = layerEntity.getItemArray();
-                showLayers(layerEntity, items);
+                viewExtend.showLayers(layerEntity, items);
                 showBg(backgroundInfo);
             }else{
-               // addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",null);
-                addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",
+               // viewExtend.addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",null);
+                viewExtend.addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",
                         null);
-                addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-                addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
-                addTextView("新年快乐");
+                viewExtend.addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
+                viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
+                viewExtend.addTextView("新年快乐", mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -274,184 +311,18 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         } else {
             if (backgroundInfo.isStaticImage()) {
                 //背景是图片
-                addLocalMessage(backgroundInfo.imgURLPath, backgroundInfo.imageURLPathFile);
+                viewExtend.addLocalMessage(backgroundInfo.imgURLPath, backgroundInfo.imageURLPathFile);
             } else {
                 //背景是GIf
-                addLocalMessage(backgroundInfo.gifURLPath, backgroundInfo.gifURLPathFile);
+                viewExtend.addLocalMessage(backgroundInfo.gifURLPath, backgroundInfo.gifURLPathFile);
             }
 
         }
     }
-
-    private void showLayers(LayerEntity layerEntity, List<LayerItem> items) {
-        if (items.size() > 0) {//图层信息转化
-            for (int i = 0; i < items.size(); i++) {
-                LayerItem item = items.get(i);
-                PSLayer PSLayer = new PSLayer(this, handler);
-                if (item.getContentViewType() != LayerItem.ILayerType.ContentViewTypeTextbox) {//不是文字图层
-                    String path = item.filePath;
-                    String url = item.getImageURL();
-                    File file = new File(path);
-                    if (file.isFile() && file.length() > 0) {
-                        switch (item.getContentViewType()) {
-                            //本地素材 绘图 要上传图片
-                            case LayerItem.ILayerType.ContentViewTypeImage:
-                            case LayerItem.ILayerType.ContentViewTypeLocaImage://贴纸图层
-                                int imageWidth;
-                                int imageHeight;
-                                if (!FileUtils.isStaticImageFile(path)) {//图片是Gif
-                                    CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
-                                    boolean res = customGifMovie.setMovieResource(path);
-                                    if (res) {//sometimes movie decode gif error url duration = 0
-                                        customGifMovie.url = url;
-                                        imageWidth = customGifMovie.getViewWidth();
-                                        imageHeight = customGifMovie.getViewHeight();
-                                        PSLayer.addView(customGifMovie,
-                                                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
-                                                        .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                    } else {
-                                        CustomGifFrame customGifFrame = new CustomGifFrame(PsActivity.this);
-                                        customGifFrame.setMovieResource(path);
-                                        customGifFrame.url = url;
-                                        imageWidth = customGifFrame.getViewWidth();
-                                        imageHeight = customGifFrame.getViewHeight();
-                                        PSLayer.addView(customGifFrame,
-                                                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
-                                                        .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                    }
-                                } else {//图片是静图
-                                    CustomImageView imageView = new CustomImageView(this);
-                                    imageView.setImageFile(path);
-                                    imageWidth = imageView.getViewWidth();
-                                    imageHeight = imageView.getViewHeight();
-                                    imageView.url = url;
-                                    imageView.isTuya = false;
-                                    PSLayer
-                                            .addView(imageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
-                                                    .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                }
-                                PSLayer.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
-                                        layerEntity.getWidth(),
-                                        layerEntity.getHeight(), imageWidth, imageHeight);
-                                break;
-                            case LayerItem.ILayerType.ContentViewTypeDraw://图层是涂鸦，静图，设置标志位isTuya=true
-                                CustomImageView customImageView = new CustomImageView(this);
-                                customImageView.setImageFile(path);
-                                customImageView.url = url;
-                                customImageView.isTuya = true;
-                                PSLayer
-                                        .addView(customImageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
-                                                .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                PSLayer.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
-                                        layerEntity.getWidth(),
-                                        layerEntity.getHeight(), customImageView.getViewWidth(),
-                                        customImageView.getViewHeight());
-                                break;
-                        }
-                        addViewPost(PSLayer, i * 100, i == items.size() - 1);
-                    } else {
-                    }
-                } else {
-                    //图层是文字
-                    CustomTextView customTextView = new CustomTextView(this);
-                    boolean scaleOrNot = customTextView.setTextEntry(item, layerEntity.getWidth());
-                    int duration = 0;
-                    int delayVideo = 0;
-                    int animationType = 0;
-                    float speed = 1.0f;
-                    try {//视频时长，用于动效效果
-                        animationType = item.animationType;
-                        duration = mPsCanvas.backgroundView.getDuration();
-                       // delayVideo = mPsCanvas.backgroundView.videoView.getDelay();
-                        speed = mPsCanvas.backgroundView.getSpeed();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    customTextView.setTextAnimationType(animationType, duration, delayVideo, speed);
-                    PSLayer.addView(customTextView,
-                            new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
-                                    .LayoutParams.WRAP_CONTENT));
-                    PSLayer.bindMatrix(item, videoWidthHeight, offsetX, offsetY, layerEntity.getWidth(),
-                            layerEntity.getHeight(),
-                            scaleOrNot);
-                    addViewPost(PSLayer, i * 100, i == items.size() - 1);
-                }
-            }
-        }
-    }
-
-    //post一个一个显示图层，比较好看
-    private void addViewPost(final PSLayer PSLayer, int delay, final boolean isLast) {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (PSLayer.getChildCount() > 0) {
-                    mPsCanvas.addView(PSLayer);
-                    if (isLast) {
-                        resetStatus();
-                    }
-                }
-                if (isLast) {
-                    resetStatus();
-                }
-            }
-        }, delay);
-    }
-
-    //背景图片 添加
-    private void addLocalMessage(final String url, final String filePath) {
-        LogUtil.e(url);
-        LogUtil.e(filePath);
-        if (!TextUtils.isEmpty(filePath)) {
-            File file = new File(filePath);
-            if (file.isFile() && file.length() > 0) {
-                if (FileUtils.isStaticImageFile(filePath)) {
-                    mPsCanvas.showImage(url, filePath);
-                } else {
-                    //格式异常了
-                    if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
-                        mPsCanvas.showGIf(url, filePath);
-                    } else {
-                        mPsCanvas.showImage(url, filePath);
-                    }
-                }
-            }
-            resetStatus();
-        }else{
-            final File file = FileManager.getPsFile(url.hashCode() + "", FileUtils.getFileType(url));
-            if (file == null) {
-                return;
-            }
-            LogUtil.e("start");
-            DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
-                @Override
-                public void onCompleted() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            LogUtil.e("end " +file.length() );
-                            if (file.length() > 0) {
-                                addLocalMessage(url, file.toString());
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onError() {
-                    file.deleteOnExit();
-                    ToastUtil.show("下载失败，请稍候重试");
-                }
-            });
-        }
-    }
-
 
     private boolean editTextView(View view) {
         if (view != null && view instanceof CustomTextView) {
-            CustomTextView obj = (CustomTextView) view;
-            String text = obj.getText();
-            addTextPopInput(text);
+            addTextPopInput(((CustomTextView) view).getText());
             return true;
         }
         return false;
@@ -507,16 +378,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                     mPsCanvas.editText(text);
                     isEditText = false;
                 } else {
-                    float aspect = videoWidthHeight * 1f / mPsCanvas.getHeight();
-                    float v = (1f - aspect) / 2 + aspect;
-                    CustomTextView textStyleView = new CustomTextView(PsActivity.this);
-                    if (mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible()) {
-                        textStyleView.setPaintColorReverse(Color.WHITE, Color.BLACK);
-                    } else {
-                        textStyleView.setPaintColorReverse(Color.BLACK, Color.WHITE);
-                    }
-                    textStyleView.setText(text);
-                    addLayer(textStyleView);
+                    viewExtend.addTextView(text, mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible());
                 }
             }
         };
@@ -527,45 +389,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             isEditText = true;
         }
         mPsCoverView.addView(popInputLayout);
-    }
-
-    private void addLayer(View view) {
-        PSLayer scaleView = new PSLayer(this);
-        scaleView.addView(view,
-                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
-                        .WRAP_CONTENT));
-        mPsCanvas.addView(scaleView);
-        resetStatus();
-    }
-
-    int DIY_STICKER_BASE_SIZE = 480;//贴纸缩放比例尺寸
-    private float getInitScale(ILayer scaleView) {
-        float width = scaleView.getViewWidth() * 1.0f;
-        if (width >= DIY_STICKER_BASE_SIZE) {
-            return videoWidthHeight / width;
-        } else {
-            return videoWidthHeight / DIY_STICKER_BASE_SIZE;
-        }
-    }
-
-
-    private void addView(View view, float scale) {
-        PSLayer PSLayer = new PSLayer(this);
-        PSLayer.scaleInit(scale);
-        PSLayer.addView(view,
-                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
-                        .WRAP_CONTENT));
-        mPsCanvas.addView(PSLayer);
-        resetStatus();
-    }
-
-    private void addView(View view) {
-        PSLayer PSLayer = new PSLayer(this);
-        PSLayer.addView(view,
-                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams
-                        .WRAP_CONTENT));
-        mPsCanvas.addView(PSLayer);
-        resetStatus();
     }
 
 
@@ -765,8 +588,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             bottomPaintLayout.show();
         }else if (i == R.id.bt_image) {
             int poi = new Random().nextInt(2);
-            if (poi == 1) addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-            else    addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
+            if (poi == 1) viewExtend.addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
+            else    viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
 
         }  else if (i == R.id.bt_text) {
             View view = mPsCanvas.getFocusView();
@@ -900,7 +723,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 float[] center = customCanvas.getBitmapcenter();
                 float centerX = (center[0] + center[1]) / 2;
                 float centerY = (center[2] + center[3]) / 2;
-                addImageViewFromFile(true, null, filePath, centerX, centerY);
+                viewExtend.addImageViewFromFile(true, null, filePath, centerX, centerY);
             }
             customCanvas.clear();
             customCanvas.changeStatus(false);
@@ -910,92 +733,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         resetStatus();
     }
 
-
-    private void addImageViewFromFile(boolean isTuya, String url, String filePath, float x, float y) {
-        CustomImageView imageView = new CustomImageView(this);
-        imageView.setImageFile(filePath);
-        imageView.isTuya = isTuya;
-        imageView.url = url;
-        if (x >= 0 && y >= 0) {
-            imageView.setCenterXY(x, y);
-        }
-        if (isTuya) {
-            addView(imageView);
-        } else {
-            addView(imageView, getInitScale(imageView));
-        }
-    }
-
-    public void addImageOrGifFromUrl(final String url) {
-        if (TextUtils.isEmpty(url)) {
-            return;
-        }
-        final File file = FileManager.getPsFile(url.hashCode() + "", FileUtils.getFileType(url));
-        if (file == null) {
-            return;
-        }
-        if (file.length() > 0) {
-            addImageOrGifFromFile(url, file.toString());
-        } else {
-            ToastUtil.show("下载素材中，请稍候");
-            DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
-                @Override
-                public void onCompleted() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (file.length() > 0) {
-                                addImageOrGifFromFile(url, file.toString());
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onError() {
-                    file.deleteOnExit();
-                    ToastUtil.show("下载失败，请稍候重试");
-                }
-
-            });
-        }
-    }
-
-    public void addImageOrGifFromFile(String url, String filePath) {
-        if (!FileUtils.isStaticImageFile(filePath)) {
-            CustomGifMovie customGifMovie = new CustomGifMovie(PsActivity.this, false);
-            boolean res = customGifMovie.setMovieResource(filePath);
-            if (res) {//sometimes movie decode gif error url duration = 0
-                customGifMovie.url = url;
-                addView(customGifMovie, getInitScale(customGifMovie));
-            } else {
-                CustomGifFrame customGifFrame = new CustomGifFrame(PsActivity.this);
-                customGifFrame.setMovieResource(filePath);
-                customGifFrame.url = url;
-                addView(customGifFrame, getInitScale(customGifFrame));
-            }
-        } else {
-            addImageViewFromFile(false, url, filePath);
-        }
-    }
-
-    public void addImageViewFromFile(boolean isTuya, String url, String filePath) {
-        addImageViewFromFile(isTuya, url, filePath, -1, -1);
-    }
-
-    private void addTextView(String text){
-        float aspect = videoWidthHeight * 1f / mPsCanvas.getHeight();
-        float v = (1f - aspect) / 2 + aspect;
-        //
-        CustomTextView customTextView = new CustomTextView(PsActivity.this);
-        if (mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible()) {
-            customTextView.setPaintColorReverse(Color.WHITE, Color.BLACK);
-        } else {
-            customTextView.setPaintColorReverse(Color.BLACK, Color.WHITE);
-        }
-        customTextView.setText(text);
-        addView(customTextView);
-    }
 
     //取消涂鸦
     private void closeTuya() {
@@ -1028,6 +765,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         statesbarGoInEditMode(false);
         resetStatus();
     }
+
     private void statesbarGoInEditMode(boolean isedit) {
         iv_back.setVisibility(isedit ? View.GONE : View.VISIBLE);
         iv_next.setVisibility(isedit ? View.GONE : View.VISIBLE);

@@ -1150,8 +1150,7 @@ public class PSCanvas extends RelativeLayout{
         View view = getFocusView();
         if (view != null && view instanceof CustomTextView) {
             CustomTextView textObjectView = (CustomTextView) view;
-            int duration = backgroundView.getDuration();
-            if (textObjectView.setTextAnimationType(type, duration, 300, 10)) {
+            if (textObjectView.setTextAnimationType(type, 0, 300, 10)) {
                 addEvent(new Operate(textObjectView));
             }
         }
@@ -1168,7 +1167,7 @@ public class PSCanvas extends RelativeLayout{
                 if (PSLayer.getChildCount() > 0) {
                     View childView = PSLayer.getChildAt(0);
                     if (childView instanceof CustomTextView) {
-                        ((CustomTextView) childView).changeAnimationTime(backgroundView.getDuration(), 10, backgroundView.getSpeed());
+                        ((CustomTextView) childView).changeAnimationTime(0, 10, 1);
                     }
                 }
             }

@@ -286,6 +286,15 @@
                         android:textSize="12dp" />
                 </LinearLayout>
             </LinearLayout>
+            <ImageView
+                android:id="@+id/vip"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:visibility="gone"
+                android:src="@mipmap/app_icon_user_type_third"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true" />
 
         </RelativeLayout>
 
