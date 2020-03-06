@@ -10,39 +10,6 @@ import android.graphics.Paint;
  */
 public class AnimationProvider {
 
-    protected int delayDefault = 80;//默认的帧延迟
-    protected float transMax = 24;
-    protected int stayTime = 500;//动效最后保留时间
-    protected String[] textRows;//动效最后保留时间
-    protected int position;
-    protected int row;//行数
-    protected int allrownum;//总行数
-    protected int perRowTime;//行时间
-    protected boolean isShort;//是不是短动画
-    public boolean getisShort(){
-        return isShort;
-    }
-
-
-    /**
-     * 视频时间是否是有效时间，静图0秒或1.5秒以上有效
-     *
-     * @param duration
-     * @return
-     */
-    public static boolean isDurationValiable(int duration, float speed) {
-        if (duration > 0 && duration * speed < 1500) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isDurationValiable(float duration, float speed) {
-        if (duration > 0 && duration * speed < 1500) {
-            return false;
-        }
-        return true;
-    }
 
     /**
      * 显示的顺序， 可调整,"摇头晃脑","颜色闪变"被隐藏了
@@ -185,6 +152,18 @@ public class AnimationProvider {
     public void init() {
     }
 
+
+
+    protected int delayDefault = 10;//默认的帧延迟
+    protected int durationDefault = 1500;//默认的帧延迟
+
+    protected float transMax = 24;
+    protected int stayTime = 500;//动效最后保留时间
+    protected String[] textRows;//动效最后保留时间
+    protected int position;
+    protected int row;//行数
+    protected int perRowTime;//行时间
+
     /**
      * 获取动效每一帧之间的延迟
      *
@@ -200,8 +179,9 @@ public class AnimationProvider {
      * @return
      */
     public int getDuration() {
-        return 0;
+        return durationDefault;
     }
+
     public String getClassName() {
         return "";
     }
@@ -224,15 +204,6 @@ public class AnimationProvider {
     }
 
     /**
-     * 是否需要画布剪切，用于从天而降和底部升起的动效要切割画布
-     *
-     * @return
-     */
-    public boolean clipPath() {
-        return false;
-    }
-
-    /**
      * 画布操作
      *
      * @param canvas
@@ -249,6 +220,7 @@ public class AnimationProvider {
      * @param canvas
      */
     public void proCanvas(Canvas canvas) {
+        canvas.restore();
     }
 
 
@@ -268,7 +240,7 @@ public class AnimationProvider {
      *
      * @return
      */
-    public boolean isWordSplited() {
+    public boolean isWordSplit() {
         return false;
     }
 
@@ -301,25 +273,8 @@ public class AnimationProvider {
         return this.perRowTime;
     }
 
-    /**
-     * 设置视频时长
-     *
-     * @param duration
-     */
-    public void setDurationDelay(int duration, int delay) {
-        duration = duration == 0 ? 1600 : duration;
-        delay = delay == 0 ? 120 : delay;
-        duration = Math.min(3000, duration);
-        this.totalTime = duration;
-//        if(delay > 80){
-//            delay = delay/2;
-//        }
-        delay = 60;
-        this.delayDefault = delay;
-    }
 
     protected int totalSize = 3;
-
     /**
      * 设置文字数量
      *
@@ -349,6 +304,6 @@ public class AnimationProvider {
      * @return
      */
     public boolean isRepeat() {
-        return false;
+        return true;
     }
 }

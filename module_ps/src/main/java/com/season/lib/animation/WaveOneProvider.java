@@ -13,24 +13,14 @@ public class WaveOneProvider extends AnimationProvider {
     public String getClassName() {
         return "WaveOneProvider";
     }
-    /**
-     * 每个字有不同的动画
-     * @return
-     */
+
     @Override
-    public boolean isWordSplited(){
+    public boolean isWordSplit(){
         return true;
     }
 
     int wordDelay = 50;
     float dy = 0;
-    int count = 4;
-
-    @Override
-    public void init() {
-        wordDelay = (totalTime - stayTime)/totalSize - getDelay() * count;
-        //wordDelay = Math.min(wordDelay, 100);
-    }
 
     @Override
     public int getDuration() {
@@ -38,7 +28,7 @@ public class WaveOneProvider extends AnimationProvider {
     }
 
     private int getPerTime(){
-        return getDelay() * count + wordDelay;
+        return 150 + wordDelay;
     }
 
     @Override
@@ -48,17 +38,12 @@ public class WaveOneProvider extends AnimationProvider {
     }
 
     @Override
-    public void proCanvas(Canvas canvas) {
-        canvas.restore();
-    }
-
-    @Override
     public int setTime(int time, boolean record) {
         int perTime = getPerTime();
         int display = time/perTime;
         if (display == position){
             time = time % perTime;
-            if (time > getDelay() * count){
+            if (time > perTime - wordDelay){
                 dy = transMax;
             }else{
                 if (time < (perTime - wordDelay)/2){

@@ -433,7 +433,7 @@ public class PSLayer extends RelativeLayout {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-        // setClipChildren(false);
+        setClipChildren(false);
         mPSOpView = new PSOpView(getContext());
 
         mCurrentMatrix = new Matrix();

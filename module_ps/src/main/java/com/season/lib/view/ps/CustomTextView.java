@@ -93,7 +93,7 @@ public class CustomTextView extends CustomBaseView{
         customTextView.endColorStr=endColorStr;
         customTextView.fixEmoji();
         customTextView.calculateWidthHeight();
-        customTextView.setTextAnimationType(currentType, duration, delay, speed);
+        customTextView.setTextAnimationType(currentType);
         customTextView.resetAnimationPaint();
         customTextView.addEvent();
         return customTextView;
@@ -422,21 +422,10 @@ public class CustomTextView extends CustomBaseView{
             if (width > 0 && height > 0) {
                 if (nullInput || isAudio) {
                     resetPosition = true;
-//                    int offsetY = 0;
                     int offsetY = 0;
-//                    int offsetY = AutoUtils.getPercentWidthSize(0);
-//                    int offsetY = AutoUtils.getPercentWidthSize(20);
                     float scale = ((PSLayer) getParent()).showBottomCenter(width, height, offsetY, isAudio ? getText() : null);
                     ((PSLayer) getParent()).rebindOpView(height, scale);
                     isAudio = false;
-//                    ((ScaleView) getParent()).showBottomCenter(width, height, offsetY, isAudio ? getText() : null);
-//                    ((ScaleView) getParent()).rebindOpView();
-//                } else if (isDiyBottom){
-//                    resetPosition = true;
-//                    int offsetY = AutoUtils.getPercentWidthSize(30);
-//                    ((ScaleView) getParent()).showBottomCenter(width, height, offsetY, isDiyBottom?getText():null);
-//                    isDiyBottom = false;
-//                    ((ScaleView) getParent()).rebindOpView();
                 } else {
                     float[] offset = ((PSLayer) getParent()).rebindOpView();
                     if (offset != null && offset.length == 2) {
@@ -460,22 +449,19 @@ public class CustomTextView extends CustomBaseView{
             return;
         }
         drawBackground(canvas);
-        if (animationProvider == null || !AnimationProvider.isDurationValiable(duration, speed)) {
+        if (animationProvider == null) {
             //没有动画绘制文字
             drawText(canvas, textEmojiList.size(), paint, strokepaint, startColorStr, endColorStr, lineSpacing);
         } else {
             if (animationProvider.isRowSplited()) {
                 //设置行号
                 if (!TextUtils.isEmpty(text)) {
-
                     int drawTextRow;
                     int perRowTime = animationProvider.getPerRowTime();
                     drawTextRow = (time / perRowTime);
-//                    Logger.d("drawTextRow:"+drawTextRow+",allrownum:"+allrownum);
                     for (EmojiconHandler.TextEmoji emoji : textEmojiList) {
-//                        Logger.d("drawText:" + emoji.text + ",row:" + emoji.row);
                         if (emoji.row == drawTextRow) {
-                            animationProvider.setTime(time, false);
+                            animationProvider.setTime(time, true);
                             animationProvider.preCanvas(canvas, emoji.offsetX + emojiWidth / 2, emoji.offsetY + emojiWidth / 2);
                             emoji.onDraw(canvas, animationProvider.getPaint(paint), animationProvider.getStrokePaint(strokepaint),
                                     offsetY, startColorStr, endColorStr, lineSpacing);
@@ -484,7 +470,7 @@ public class CustomTextView extends CustomBaseView{
                     }
                 }
             } else {
-                if (animationProvider.isWordSplited()) {//文字如果每个字的动画不一样的话，需要对每个字进行动画
+                if (animationProvider.isWordSplit()) {//文字如果每个字的动画不一样的话，需要对每个字进行动画
                     int i = 0;
                     for (EmojiconHandler.TextEmoji emoji : textEmojiList) {
                         i++;
@@ -502,10 +488,6 @@ public class CustomTextView extends CustomBaseView{
                 } else {
                     //文字动画统一处理
                     int showTextCount = animationProvider.setTime(time, true);
-                    if (animationProvider.clipPath()) {
-                        //受硬件加速的影响
-                        canvas.clipRect(new Rect(0, 0, finalWidth, finalHeight));
-                    }
                     animationProvider.preCanvas(canvas, getViewWidth() / 2, getViewHeight() / 2);
                     drawText(canvas, showTextCount, animationProvider.getPaint(paint), animationProvider.getStrokePaint(strokepaint)
                             , startColorStr, endColorStr, lineSpacing);
@@ -543,42 +525,20 @@ public class CustomTextView extends CustomBaseView{
 
     public AnimationProvider animationProvider;
     public int currentType = 0;
-    private int duration = 1600;
-    public float speed = 1.0f;
-    private int delay = 80;
 
-    public boolean setTextAnimationType(int type, int duration, int delay, float speed) {
+    public boolean setTextAnimationType(int type) {
         if (currentType == type) {
             return false;
         }
-        setTextAnimationType(type, duration, speed, delay, true);
+        setTextAnimationType(type,true);
         return true;
     }
 
-    //是否有动效，且时长够以运行动效
-    public boolean canAnimating() {
-        if (currentType > 0) {
-            if (AnimationProvider.isDurationValiable(duration, speed)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void setTextAnimationType(int type, int duration, float speed, int delay, boolean addEvent) {
+    private void setTextAnimationType(int type, boolean addEvent) {
         currentType = type;
         animationProvider = AnimationProvider.getProvider(type);
-        changeAnimationTime(duration, delay, speed);
-        /**
-         * 单行显示
-         */
-//        if (animationProvider.isSingleLine()){
         calculateWidthHeight();
-//        if (animationProvider==null){
-//            Logger.d("==null");
-//        }else {
-//            Logger.d("=!=null");
-//        }
+        resetAnimationParams();
         if (animationProvider != null && animationProvider.isRowSplited()) {
             int allrownum = 1;
             String[] split = text.split("\n");
@@ -588,41 +548,15 @@ public class CustomTextView extends CustomBaseView{
             if (!TextUtils.isEmpty(split[split.length - 1])) {
                 allrownum++;//多一帧的不显示
             }
-//                    animationProvider.
-            int drawTextRow;//正在绘制的行
             int perRowTime = getDuration() / allrownum;
             animationProvider.setPerRowTime(perRowTime);
         }
         requestLayout();
-//        invalidate();
-//        }
         if (addEvent) {
             addEvent();
         }
     }
 
-    /**
-     * 重要方法：视频的时长，视频的播放快慢都将影响到文字动效。在时长和播放速度变化变化的时候，都要调用这个方法。
-     *
-     * @param duration
-     * @param delay
-     * @param speed
-     */
-    public void changeAnimationTime(int duration, int delay, float speed) {
-        this.duration = duration;//视频时长
-        this.delay = delay;
-        this.speed = speed;
-        if (animationProvider != null) {
-            animationProvider.setDurationDelay(duration, delay);
-            resetAnimationParams();
-        }
-        CustomTextView.this.post(new Runnable() {
-            @Override
-            public void run() {
-                invalidate();
-            }
-        });
-    }
 
     private void resetAnimationParams() {
         if (animationProvider != null) {
@@ -632,10 +566,6 @@ public class CustomTextView extends CustomBaseView{
         }
     }
 
-    public int getTotalTime() {
-        return duration;
-    }
-
     @Override
     public boolean isRepeat() {
         if (animationProvider != null) {
@@ -643,22 +573,13 @@ public class CustomTextView extends CustomBaseView{
         }
         return true;
     }
-    /**
-     * 非常奇怪的一个异常，按道理来说已经已经判断好了，不可能出现。出现在一加5，8.0.0系统，暂时加一个异常捕获
-     *
-     * @return
-     */
+
     @Override
     public int getDuration() {
-        try {
-            if (animationProvider == null || !AnimationProvider.isDurationValiable(duration, speed)) {
-                return 0;
-            }
-            return animationProvider.getDuration();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (animationProvider == null) {
             return 0;
         }
+        return animationProvider.getDuration();
     }
 
 
@@ -670,10 +591,6 @@ public class CustomTextView extends CustomBaseView{
         return animationProvider.getDelay();
     }
 
-
-    public int getVideoDelay() {
-        return (int) (120 / speed);
-    }
 
     public Typeface getTypeface(Typeface typefaceDefault) {
         if (!TextUtils.isEmpty(fontName)) {
@@ -776,51 +693,11 @@ public class CustomTextView extends CustomBaseView{
         fixEmoji();
         calculateWidthHeight();
         resetAnimationParams();
-//        if (paint.getShader() != null && paint.getShader() instanceof LinearGradient) {
-//            setLinearGradient(startColorStr, endColorStr);
-//           LinearGradient shader = (LinearGradient) paint.getShader();
-//            try {
-//                Bitmap bitmap = Bitmap.createBitmap(8, getViewHeight(), Bitmap.Config.ARGB_8888);
-//                Canvas canvas = new Canvas(bitmap);
-//                canvas.drawRect(0, 0, bitmap.getWidth(), bitmap.getHeight(), paint);
-//                String startcolor = PsUtil.getColorStr(bitmap.getPixel(0, 0));
-//                String endcolor = PsUtil.getColorStr(bitmap.getPixel(bitmap.getWidth()-1 , getViewHeight()-1));
-//                Logger.d("startcolor:"+startcolor+",endcolor:"+endcolor);
-//                setLinearGradient(startcolor,endcolor );
-//                PsUtil.recycleBitmaps(bitmap);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                Logger.d("startcolor:"+e.toString());
-//            }
-//        }
-        addEvent();
-        boolean hardwareAccelerated = this.isHardwareAccelerated();
-        requestLayout();
-        invalidate();
-        return finalWidth;
-    }
-
-    public int editTextWithCal(String text) {
-        if (text != null && text.equals(this.text)) {
-            return finalWidth;
-        }
-        this.text = text;
-        fixEmoji();
-
-        paint.setStrokeWidth(getPaintStrokeWidth(0.2f));
-        strokepaint.setStrokeWidth(getStrokePaintStrokeWidth(0.2f, 0.4f));
-
-        calculateWidthHeight();
-        resetAnimationParams();
-
-        boolean hardwareAccelerated = this.isHardwareAccelerated();
-
         addEvent();
         requestLayout();
         invalidate();
         return finalWidth;
     }
-
 
     public boolean setStrokealpha(int strokealpha) {
         int alpha = strokepaint.getAlpha();
@@ -850,7 +727,6 @@ public class CustomTextView extends CustomBaseView{
 
     public boolean setTextcolor(int textcolor) {
         if (paint.getShader() != null) {
-//            paint.setShader(null);
             startColorStr="";
             endColorStr="";
             paint.setColor(textcolor);
@@ -968,7 +844,7 @@ public class CustomTextView extends CustomBaseView{
         fixEmoji();
         calculateWidthHeight();
         this.currentType = op.animationType;
-        setTextAnimationType(currentType, duration, speed, delay, false);
+        setTextAnimationType(currentType, false);
         requestLayout();
         invalidate();
     }

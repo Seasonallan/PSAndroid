@@ -1035,12 +1035,10 @@ public class PSCanvas extends RelativeLayout{
                     if (views[i] != null) addView(views[i]);
                 }
                 if (backgroundView.pre()) {
-                    changeAnimationTime();
                 }
                 break;
             case IType.BACKGROUND:
                 if (backgroundView.pre()) {
-                    changeAnimationTime();
                 }
                 break;
             case IType.TEXT_OBJECT:
@@ -1083,13 +1081,11 @@ public class PSCanvas extends RelativeLayout{
                     if (views[i] != null) removeView(views[i]);
                 }
                 if (backgroundView.pro()) {
-                    changeAnimationTime();
                 }
                 //removeAllViews();
                 break;
             case IType.BACKGROUND:
                 if (backgroundView.pro()) {
-                    changeAnimationTime();
                 }
                 break;
             case IType.TEXT_OBJECT:
@@ -1109,7 +1105,6 @@ public class PSCanvas extends RelativeLayout{
         if (backgroundView != null) {
             if (backgroundView.showImage(url, path)) addEvent(new Operate(IType.BACKGROUND));
         }
-        changeAnimationTime();
     }
 
     public void showGIf(String url, String path) {
@@ -1122,7 +1117,6 @@ public class PSCanvas extends RelativeLayout{
                 }
             })) addEvent(new Operate(IType.BACKGROUND));
         }
-        changeAnimationTime();
     }
 
     public void showBackground(int color) {
@@ -1130,7 +1124,6 @@ public class PSCanvas extends RelativeLayout{
             return;
         }
         if (backgroundView.showBackground(color)) addEvent(new Operate(IType.BACKGROUND));
-        changeAnimationTime();
     }
 
     public void showVideoOrImage() {
@@ -1142,28 +1135,17 @@ public class PSCanvas extends RelativeLayout{
 
 
     public void setTextAnimationType(int type) {
-        View view = getFocusView();
-        if (view != null && view instanceof CustomTextView) {
-            CustomTextView textObjectView = (CustomTextView) view;
-            if (textObjectView.setTextAnimationType(type, 0, 300, 10)) {
-                addEvent(new Operate(textObjectView));
-                restartTime();
-            }
-        }
-    }
-
-    /**
-     * 改变所有文字动效的时间
-     */
-    public void changeAnimationTime() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof PSLayer) {
-                PSLayer PSLayer = (PSLayer) view;
-                if (PSLayer.getChildCount() > 0) {
-                    View childView = PSLayer.getChildAt(0);
-                    if (childView instanceof CustomTextView) {
-                        ((CustomTextView) childView).changeAnimationTime(0, 10, 1);
+        if (focusView != null && focusView.getChildCount() > 0){
+            View view  = focusView.getChildAt(0);
+            if (view != null && view instanceof CustomTextView) {
+                CustomTextView textObjectView = (CustomTextView) view;
+                if (textObjectView.setTextAnimationType(type)) {
+                    addEvent(new Operate(textObjectView));
+                    restartTime();
+                    int duration = textObjectView.getDuration();
+                    if (duration > 0){
+                        textObjectView.setStartTime(0);
+                        textObjectView.setEndTime(textObjectView.getDuration());
                     }
                 }
             }

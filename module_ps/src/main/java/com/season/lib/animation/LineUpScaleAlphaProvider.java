@@ -13,17 +13,13 @@ public class LineUpScaleAlphaProvider extends AnimationProvider {
     public String getClassName() {
         return "LineUpScaleAlphaProvider";
     }
-    /**
-     * 每个字有不同的动画
-     * @return
-     */
+
     @Override
-    public boolean isWordSplited(){
+    public boolean isWordSplit(){
         return true;
     }
 
     int wordDelay = 50;//每个字之间的延迟， 不同的时长的视频，这个值会动态改变，以达到动画效果凑满视频时长
-    int count = 4;
     final float scaleMax = 0.4f;
     float scale = 1;
     int alpha = 0;
@@ -33,14 +29,8 @@ public class LineUpScaleAlphaProvider extends AnimationProvider {
     }
 
     private int getPerTime(){
-        return getDelay() * count + wordDelay;
+        return 150 + wordDelay;
     }
-
-    @Override
-    public void init() {
-        wordDelay = (totalTime - stayTime)/ (totalSize + 1) - getDelay() * count;
-    }
-
 
     @Override
     public int getAlpha() {
@@ -54,26 +44,13 @@ public class LineUpScaleAlphaProvider extends AnimationProvider {
     }
 
     @Override
-    public void proCanvas(Canvas canvas) {
-        canvas.restore();
-    }
-
-    @Override
     public int setTime(int time, boolean record) {
         int perTime = getPerTime();
         int display = time/perTime;
-        if (display == 0){//解决分享后保存为表情看不到的问题，第一帧设置为显示
-            scale = 1;
-            alpha = 255;
-            return super.setTime(time, record);
-        }
-        if (display == 1){
-            return 0;
-        }
-        display -= 2;
+
         if (display == position){
             time = time % perTime;
-            if (time > getDelay() * count){
+            if (time > perTime - wordDelay){
                 scale = 1;
                 alpha = 255;
             }else{

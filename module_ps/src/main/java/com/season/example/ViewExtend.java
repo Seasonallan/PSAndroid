@@ -116,11 +116,7 @@ public abstract class ViewExtend {
                     //图层是文字
                     CustomTextView customTextView = new CustomTextView(context);
                     boolean scaleOrNot = customTextView.setTextEntry(item, layerEntity.getWidth());
-                    int duration = 0;
-                    int delayVideo = 0;
-                    int animationType = item.animationType;
-                    float speed = 1.0f;
-                    customTextView.setTextAnimationType(animationType, duration, delayVideo, speed);
+                    customTextView.setTextAnimationType(item.animationType);
                     itemLayerView.addView(customTextView,
                             new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                                     .LayoutParams.WRAP_CONTENT));

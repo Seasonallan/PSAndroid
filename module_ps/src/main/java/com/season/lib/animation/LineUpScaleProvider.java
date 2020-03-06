@@ -13,23 +13,12 @@ public class LineUpScaleProvider extends AnimationProvider {
         return "LineUpScaleProvider";
     }
 
-    /**
-     * 每个字有不同的动画
-     *
-     * @return
-     */
     @Override
-    public boolean isWordSplited() {
-        return true;
-    }
-
-    @Override
-    public boolean getisShort() {
+    public boolean isWordSplit() {
         return true;
     }
 
     int wordDelay = 50;//每个字之间的延迟， 不同的时长的视频，这个值会动态改变，以达到动画效果凑满视频时长
-    int count = 4;
     final float scaleMax = 0.4f;
     float scale = 1;
 
@@ -39,21 +28,9 @@ public class LineUpScaleProvider extends AnimationProvider {
     }
 
     private int getPerTime() {
-        return getDelay() * count + wordDelay;
+        return 150 + wordDelay;
     }
 
-    @Override
-    public int getDelay() {
-//        if (delayDefault<70){
-//            return 70;
-//        }
-        return delayDefault;
-    }
-
-    @Override
-    public void init() {
-        wordDelay = (totalTime - stayTime) / totalSize - getDelay() * count;
-    }
 
     @Override
     public void preCanvas(Canvas canvas, int centerX, int centerY) {
@@ -61,10 +38,6 @@ public class LineUpScaleProvider extends AnimationProvider {
         canvas.scale(scale, scale, centerX, centerY);
     }
 
-    @Override
-    public void proCanvas(Canvas canvas) {
-        canvas.restore();
-    }
 
     @Override
     public int setTime(int time, boolean record) {
@@ -72,7 +45,7 @@ public class LineUpScaleProvider extends AnimationProvider {
         int display = time / perTime;
         if (display == position) {
             time = time % perTime;
-            if (time > getDelay() * count) {
+            if (time > perTime - wordDelay) {
                 scale = 1;
             } else {
                 if (time < (perTime - wordDelay) / 2) {//缩小

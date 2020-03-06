@@ -17,7 +17,7 @@ public class SingleLineScaleProvider extends AnimationProvider {
      * @return
      */
     @Override
-    public boolean isWordSplited(){
+    public boolean isWordSplit(){
         return false;
     }
     @Override
@@ -74,40 +74,6 @@ public class SingleLineScaleProvider extends AnimationProvider {
         {
             alpha= (int) ((1-(percent-0.5f)/0.5f)*255f);
         }
-//        int rowPertime=getVideoDuration()/allrownum;
-//        //第一行 0～rowPertime
-//        //第二行 1～2rowPertime
-//        //第i行 i-1~irowPertime
-//        int perTime = getPerTime();
-//        int display = time/perTime;//第几个字
-//        if (display == 0){
-//            alpha = 255;
-//            return super.setTime(time, record);
-//        }
-//        if (display == 1){
-//            return 0;
-//        }
-//        display -= 2;
-//        if (display == position){
-//            time = time % perTime;
-//            if (time > getDelay() * count){
-//                alpha = 255;
-//            }else{
-//                if (time < (perTime - wordDelay)/2){//缩小
-//                    float percent = time * 1.0f/ ((perTime - wordDelay)/2);
-////                    alpha = (int) (percent * 130);
-//                }else{
-//                    float percent = (time - (perTime - wordDelay)/2) * 1.0f/ ((perTime - wordDelay)/2);
-////                    alpha = 130 + (int) (percent * 125);
-//                }
-//            }
-//        }else{
-//            if (display > position){
-//                alpha = 255;
-//            }else{
-//                alpha = 0;
-//            }
-//        }
         return super.setTime(time, record);
     }
 
