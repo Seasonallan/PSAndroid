@@ -37,6 +37,7 @@ import com.season.lib.http.DownloadAPI;
 import com.season.example.layout.PopInputLayout;
 import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerEntity;
+import com.season.lib.view.ps.ILayer;
 import com.season.lib.view.ps.PSLayer;
 import com.season.lib.file.FileManager;
 import com.season.lib.file.FileUtils;
@@ -255,6 +256,13 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             @Override
             public void addLayer(PSLayer view) {
                 mPsCanvas.addView(view);
+                if (view.getChildCount() > 0){
+                    View cView = view.getChildAt(0);
+                    if (cView instanceof ILayer){
+                        ((ILayer) cView).setStartTime(0);
+                        ((ILayer) cView).setEndTime(mPsCanvas.maxDuration);
+                    }
+                }
                 resetStatus();
             }
 

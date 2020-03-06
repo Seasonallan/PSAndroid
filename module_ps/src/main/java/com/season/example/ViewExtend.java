@@ -41,7 +41,7 @@ public abstract class ViewExtend {
         if (items.size() > 0) {//图层信息转化
             for (int i = 0; i < items.size(); i++) {
                 LayerItem item = items.get(i);
-                PSLayer PSLayer = new PSLayer(context);
+                PSLayer itemLayerView = new PSLayer(context);
                 if (item.getContentViewType() != LayerItem.ILayerType.ContentViewTypeTextbox) {//不是文字图层
                     String path = item.filePath;
                     String url = item.getImageURL();
@@ -58,22 +58,18 @@ public abstract class ViewExtend {
                                     boolean res = customGifMovie.setMovieResource(path);
                                     if (res) {//sometimes movie decode gif error url duration = 0
                                         customGifMovie.url = url;
-                                        customGifMovie.setStartTime(item.startTime);
-                                        customGifMovie.setEndTime(item.endTime);
                                         imageWidth = customGifMovie.getViewWidth();
                                         imageHeight = customGifMovie.getViewHeight();
-                                        PSLayer.addView(customGifMovie,
+                                        itemLayerView.addView(customGifMovie,
                                                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                         .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                     } else {
                                         CustomGifFrame customGifFrame = new CustomGifFrame(context);
                                         customGifFrame.setMovieResource(path);
                                         customGifFrame.url = url;
-                                        customGifFrame.setStartTime(item.startTime);
-                                        customGifFrame.setEndTime(item.endTime);
                                         imageWidth = customGifFrame.getViewWidth();
                                         imageHeight = customGifFrame.getViewHeight();
-                                        PSLayer.addView(customGifFrame,
+                                        itemLayerView.addView(customGifFrame,
                                                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                         .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                     }
@@ -82,15 +78,13 @@ public abstract class ViewExtend {
                                     imageView.setImageFile(path);
                                     imageWidth = imageView.getViewWidth();
                                     imageHeight = imageView.getViewHeight();
-                                    imageView.setStartTime(item.startTime);
-                                    imageView.setEndTime(item.endTime);
                                     imageView.url = url;
                                     imageView.isTuya = false;
-                                    PSLayer
+                                    itemLayerView
                                             .addView(imageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                     .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                 }
-                                PSLayer.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
+                                itemLayerView.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
                                         layerEntity.getWidth(),
                                         layerEntity.getHeight(), imageWidth, imageHeight);
                                 break;
@@ -98,19 +92,24 @@ public abstract class ViewExtend {
                                 CustomImageView customImageView = new CustomImageView(context);
                                 customImageView.setImageFile(path);
                                 customImageView.url = url;
-                                customImageView.setStartTime(item.startTime);
-                                customImageView.setEndTime(item.endTime);
                                 customImageView.isTuya = true;
-                                PSLayer
+                                itemLayerView
                                         .addView(customImageView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
                                                 .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                PSLayer.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
+                                itemLayerView.bindMatrixImage(item, videoWidthHeight, offsetX, offsetY,
                                         layerEntity.getWidth(),
                                         layerEntity.getHeight(), customImageView.getViewWidth(),
                                         customImageView.getViewHeight());
                                 break;
                         }
-                        addViewPost(PSLayer, i * 100, i == items.size() - 1);
+                        if (itemLayerView.getChildCount() > 0){
+                            View cView = itemLayerView.getChildAt(0);
+                            if (cView instanceof ILayer){
+                                ((ILayer) cView).setStartTime(item.startTime);
+                                ((ILayer) cView).setEndTime(item.endTime);
+                            }
+                        }
+                        addViewPost(itemLayerView, i * 100, i == items.size() - 1);
                     } else {
                     }
                 } else {
@@ -122,15 +121,15 @@ public abstract class ViewExtend {
                     int animationType = item.animationType;
                     float speed = 1.0f;
                     customTextView.setTextAnimationType(animationType, duration, delayVideo, speed);
-                    PSLayer.addView(customTextView,
+                    itemLayerView.addView(customTextView,
                             new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                                     .LayoutParams.WRAP_CONTENT));
-                    PSLayer.bindMatrix(item, videoWidthHeight, offsetX, offsetY, layerEntity.getWidth(),
+                    itemLayerView.bindMatrix(item, videoWidthHeight, offsetX, offsetY, layerEntity.getWidth(),
                             layerEntity.getHeight(),
                             scaleOrNot);
                     customTextView.setStartTime(item.startTime);
                     customTextView.setEndTime(item.endTime);
-                    addViewPost(PSLayer, i * 100, i == items.size() - 1);
+                    addViewPost(itemLayerView, i * 100, i == items.size() - 1);
                 }
             }
         }

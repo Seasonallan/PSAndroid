@@ -18,6 +18,8 @@ public abstract class BottomPaintLayout extends BaseBottomView{
         return R.id.layout_paint;
     }
 
+
+    private LinearLayout topLinear, bottomLinear;
     public BottomPaintLayout(Activity activity) {
         super(activity);
 
@@ -28,8 +30,8 @@ public abstract class BottomPaintLayout extends BaseBottomView{
                 onClose();
             }
         });
-        topLinear = (LinearLayout) findView(R.id.paint_l1);
-        bottomLinear = (LinearLayout) findView(R.id.paint_l2);
+        topLinear = findView(R.id.paint_l1);
+        bottomLinear =  findView(R.id.paint_l2);
 
         ((VerticalSeekBar)(findView(R.id.paint_sb))).setOnSeekBarChangeListener(new VerticalSeekBar.OnSeekBarChangeListener() {
             @Override
@@ -121,9 +123,6 @@ public abstract class BottomPaintLayout extends BaseBottomView{
             }
         });
     }
-
-
-    private LinearLayout topLinear, bottomLinear;
 
     public abstract void onClose();
     public abstract void onColorChange(int color);

@@ -2,7 +2,6 @@ package com.season.lib.animation;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 /**
  * Disc: 文字动效 模型伪抽象工厂类
@@ -48,16 +47,18 @@ public class AnimationProvider {
     /**
      * 显示的顺序， 可调整,"摇头晃脑","颜色闪变"被隐藏了
      */
-    public static final String[] strsTextShow = {"无状态", "突然闪现", "从天而降", "底部升起", "上下颠簸", "左右晃动", "放大缩小", "波浪跳动", "逐字放大", "逐字跳动",
-            "排队出现", "排队登场", "单行播放1", "单行播放2", "摇头晃脑", "颜色闪变"};
+    public static final String[] strsTextShow = {
+            "无状态", "突然闪现", "从天而降", "底部升起","上下颠簸", "左右晃动", "放大缩小", "波浪跳动",
+            "逐字放大", "逐字跳动","排队出现", "排队登场", "单行播放1", "单行播放2", "摇头晃脑", "颜色闪变"};
 
     /**
      * 标注AnimationProvider要使用的动画顺序，用于switch中的位置判断，不可调整,
-     * <p>
-     * 这里出现的都是实际项目在使用中的的效果。不包括隐藏的。
      */
-    public static final String[] strsText = {"无状态", "底部升起", "放大缩小", "波浪跳动", "上下颠簸", "突然闪现", "逐字放大", "逐字跳动", "排队出现", "排队登场", "摇头晃脑",
-            "颜色闪变", "从天而降", "左右晃动", "单行播放1", "单行播放2"};
+    public static final String[] strsText = {
+            "无状态", "底部升起", "放大缩小", "波浪跳动",
+            "上下颠簸", "突然闪现", "逐字放大", "逐字跳动",
+            "排队出现", "排队登场", "摇头晃脑","颜色闪变",
+            "从天而降", "左右晃动", "单行播放1", "单行播放2"};
 
     public static AnimationProvider getProvider(int type) {
         if (type < 0 || type >= strsText.length) {
@@ -71,7 +72,6 @@ public class AnimationProvider {
                 break;
             }
         }
-        Log.d("getProvider", position + ",clickText:" + clickText);
         switch (position) {
             case 0:
                 break;

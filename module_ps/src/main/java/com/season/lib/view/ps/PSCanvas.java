@@ -746,6 +746,7 @@ public class PSCanvas extends RelativeLayout{
                 mOnFocusChangeListener.onFocusClear();
             }
         }
+        restartTime();
     }
 
 
@@ -1146,6 +1147,7 @@ public class PSCanvas extends RelativeLayout{
             CustomTextView textObjectView = (CustomTextView) view;
             if (textObjectView.setTextAnimationType(type, 0, 300, 10)) {
                 addEvent(new Operate(textObjectView));
+                restartTime();
             }
         }
     }
