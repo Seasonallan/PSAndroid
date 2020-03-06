@@ -64,8 +64,24 @@ public abstract class CustomBaseView extends View implements ILayer {
     public void drawCanvas(Canvas canvas) {
         if (currentTime >= getStartTime() && currentTime <= getEndTime()) {
             canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-            drawCanvasTime(canvas, currentTime - getStartTime());
+            int time = currentTime - getStartTime();
+            if (getDuration() > 0 && time > getDuration()){
+                if (isRepeat()){
+                    time = time % getDuration();
+                }else{
+                    time = getDuration();
+                }
+            }
+            drawCanvasTime(canvas, time);
         }
+    }
+
+    /**
+     * 是否
+     * @return
+     */
+    public boolean isRepeat(){
+        return true;
     }
 
     /**

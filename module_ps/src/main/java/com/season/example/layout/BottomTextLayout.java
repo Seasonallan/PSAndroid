@@ -10,37 +10,23 @@ import com.season.lib.animation.AnimationProvider;
 /**
  * 字体动画
  */
-public abstract class BottomTextLayout{
+public abstract class BottomTextLayout extends BaseBottomView{
 
-
-    private Activity activity;
-    private View findView(int id){
-        return activity.findViewById(id);
+    @Override
+    protected int getContentId() {
+        return R.id.layout_text;
     }
-    private View containerView;
+
+
     public BottomTextLayout(Activity activity) {
-        this.activity = activity;
+        super(activity);
         initView();
-        containerView = findView(R.id.layout_text);
-        containerView.setVisibility(View.GONE);
         findView(R.id.text_iv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hide();
             }
         });
-    }
-
-    public boolean isShowing(){
-        return containerView.getVisibility() == View.VISIBLE;
-    }
-
-    public void show() {
-        containerView.setVisibility(View.VISIBLE);
-    }
-
-    public void hide() {
-        containerView.setVisibility(View.GONE);
     }
 
     int[] ids = {R.id.animation_1, R.id.animation_2, R.id.animation_3, R.id.animation_4, R.id.animation_5, R.id.animation_6, R.id

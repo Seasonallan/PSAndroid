@@ -11,18 +11,16 @@ import com.example.ps.R;
 import com.season.lib.view.VerticalSeekBar;
 
 
-public abstract class BottomPaintLayout {
+public abstract class BottomPaintLayout extends BaseBottomView{
 
-    private View containerView;
-
-    private Activity activity;
-    private View findView(int id){
-        return activity.findViewById(id);
+    @Override
+    protected int getContentId() {
+        return R.id.layout_paint;
     }
+
     public BottomPaintLayout(Activity activity) {
-        this.activity = activity;
-        containerView = findView(R.id.layout_paint);
-        containerView.setVisibility(View.GONE);
+        super(activity);
+
         findView(R.id.paint_iv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,11 +133,4 @@ public abstract class BottomPaintLayout {
     public abstract void onColorShape(int color);
     public abstract void onPaintSizeChange(float size);
 
-    public void show() {
-        containerView.setVisibility(View.VISIBLE);
-    }
-
-    public void hide() {
-        containerView.setVisibility(View.GONE);
-    }
 }

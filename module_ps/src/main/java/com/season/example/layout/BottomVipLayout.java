@@ -11,18 +11,17 @@ import com.season.lib.view.ps.ILayer;
 import com.season.lib.view.ps.PSCanvas;
 
 
-public class BottomVipLayout {
 
-    private View containerView;
-    private Activity activity;
-    private <T extends View> T findView(int id){
-        return activity.findViewById(id);
+public class BottomVipLayout extends BaseBottomView{
+
+
+    @Override
+    protected int getContentId() {
+        return R.id.layout_vip;
     }
-    public BottomVipLayout(Activity activity) {
-        this.activity = activity;
-        containerView = findView(R.id.layout_vip);
-        containerView.setVisibility(View.GONE);
 
+    public BottomVipLayout(Activity activity) {
+        super(activity);
 
         findView(R.id.tc_copy).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,20 +35,16 @@ public class BottomVipLayout {
         mEndTime = findView(R.id.vip_end_time);
         mStartSeek = findView(R.id.vip_sb_start);
         mEndSeek = findView(R.id.vip_sb_end);
-        findView(R.id.vip_btn_next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mRepeatSeek = findView(R.id.vip_sb_count);
 
-            }
-        });
         mStartSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (!seeking){
                     return;
                 }
-                if (progress > startMaxDuration){
-                    seekBar.setProgress(startMaxDuration);
+                if (progress > getStartMaxProgress()){
+                    seekBar.setProgress(getStartMaxProgress());
                     return;
                 }
                 if (currentView == null){
@@ -58,9 +53,8 @@ public class BottomVipLayout {
                 mStartTime.setText("开始时间:"+ progress +"ms");
                 currentView.setStartTime(progress);
                 int endProgress = mEndSeek.getProgress();
-                int duration = currentView.getDuration();
                 if (duration > 0){
-                    mEndSeek.setProgress(progress + duration);
+                    mEndSeek.setProgress(progress + duration * (repeatCount + 1));
                 }else{
                     if (endProgress < progress){
                         mEndSeek.setProgress(progress);
@@ -83,8 +77,8 @@ public class BottomVipLayout {
                 if (!seeking){
                     return;
                 }
-                if (progress < endMinDuration){
-                    seekBar.setProgress(endMinDuration);
+                if (progress < getEndMinProgress()){
+                    seekBar.setProgress(getEndMinProgress());
                     return;
                 }
                 if (currentView == null){
@@ -93,9 +87,8 @@ public class BottomVipLayout {
                 mEndTime.setText("结束时间:"+ progress +"ms");
                 currentView.setEndTime(progress);
                 int startProgress = mStartSeek.getProgress();
-                int duration = currentView.getDuration();
                 if (duration > 0){
-                    mStartSeek.setProgress(progress - duration);
+                    mStartSeek.setProgress(progress - duration*(repeatCount + 1));
                 }else{
                     if (startProgress > progress){
                         mStartSeek.setProgress(progress);
@@ -112,48 +105,88 @@ public class BottomVipLayout {
                 seeking = false;
             }
         });
+        mRepeatSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (!seekingRepeat){
+                    return;
+                }
+                if (duration > 0){
+                    repeatCount = progress;
+                    mStartSeek.setProgress(0);
+                    mStartTime.setText("开始时间:"+ 0 +"ms");
+                    currentView.setStartTime(0);
+
+                    int end = duration * (repeatCount + 1);
+                    mEndSeek.setProgress(end);
+                    mEndTime.setText("结束时间:"+ end +"ms");
+                    currentView.setEndTime(end);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                seekingRepeat = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                seekingRepeat = false;
+            }
+        });
     }
-    private boolean seeking = false;
+    private boolean seeking = false, seekingRepeat = false;
     private TextView mTotalTime, mCurrentTime, mStartTime, mEndTime;
-    private SeekBar mStartSeek, mEndSeek;
+    private SeekBar mStartSeek, mEndSeek, mRepeatSeek;
 
 
-    public boolean isShowing(){
-        return containerView.getVisibility() == View.VISIBLE;
+    int getStartMaxProgress(){
+        if (duration > 0){
+            return totalDuration - duration * (repeatCount + 1);
+        }else{
+            return totalDuration;
+        }
     }
-
-    public void show() {
-        containerView.setVisibility(View.VISIBLE);
+    int getEndMinProgress(){
+        if (duration > 0){
+            return duration * (repeatCount + 1);
+        }else{
+            return 0;
+        }
     }
-
-    public void hide() {
-        containerView.setVisibility(View.GONE);
-    }
-
 
     ILayer currentView;
     int totalDuration = 0;
-    int startMaxDuration = 0;
-    int endMinDuration = 0;
+    int duration = 0;
+
+    int repeatCount = Integer.MAX_VALUE;
+    int maxRepeatCount = 1;
     public void statusChange(PSCanvas psCanvas) {
         View view = psCanvas.getFocusView();
         totalDuration = 0;
-        startMaxDuration = 0;
-        endMinDuration = 0;
+        duration = 0;
+        repeatCount = 0; maxRepeatCount = 0;
         if (view != null && view instanceof ILayer){
             currentView = (ILayer) view;
             totalDuration = psCanvas.maxDuration;
-            startMaxDuration = totalDuration - currentView.getDuration();
-            endMinDuration = currentView.getDuration();
+            duration = currentView.getDuration();
+            if (duration > 0){
+                repeatCount = (currentView.getEndTime() - currentView.getStartTime())/ duration - 1;
+                maxRepeatCount = totalDuration/ duration - 1;
+            }
+
             LogUtil.e(""+ currentView.getStartTime() + ", "+ currentView.getEndTime());
+            LogUtil.e("-->>>"+ maxRepeatCount + ", "+ repeatCount);
             mTotalTime.setText("画布时长:"+ totalDuration +"ms");
-            mStartSeek.setMax(totalDuration);
-            mEndSeek.setMax(totalDuration);
-            mCurrentTime.setText("图层时长:"+ currentView.getDuration()+"ms");
+            mCurrentTime.setText("图层时长:"+ duration +"ms");
             mStartTime.setText("开始时间:"+ currentView.getStartTime()+"ms");
             mEndTime.setText("结束时间:"+ currentView.getEndTime()+"ms");
+            mStartSeek.setMax(totalDuration);
+            mEndSeek.setMax(totalDuration);
             mStartSeek.setProgress(currentView.getStartTime());
             mEndSeek.setProgress(currentView.getEndTime());
+            mRepeatSeek.setMax(maxRepeatCount);
+            mRepeatSeek.setProgress(repeatCount);
         }
     }
 }

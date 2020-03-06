@@ -636,11 +636,12 @@ public class CustomTextView extends CustomBaseView{
         return duration;
     }
 
+    @Override
     public boolean isRepeat() {
         if (animationProvider != null) {
             return animationProvider.isRepeat();
         }
-        return false;
+        return true;
     }
     /**
      * 非常奇怪的一个异常，按道理来说已经已经判断好了，不可能出现。出现在一加5，8.0.0系统，暂时加一个异常捕获

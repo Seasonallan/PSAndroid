@@ -61,6 +61,7 @@ public interface ILayer {
      */
     int getDuration();
 
+    boolean isRepeat();
     /**
      * 获取动画每一帧的延迟
      * @return

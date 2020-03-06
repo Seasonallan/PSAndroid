@@ -57,18 +57,14 @@
         <SeekBar
             android:id="@+id/vip_sb_start"
             android:layout_width="match_parent"
-            android:layout_margin="4dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="29dp"/>
         <SeekBar
             android:id="@+id/vip_sb_end"
             android:layout_width="match_parent"
-            android:layout_margin="4dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="29dp"/>
+        <SeekBar
+            android:id="@+id/vip_sb_count"
+            android:layout_width="match_parent"
+            android:layout_height="29dp"/>
     </LinearLayout>
-    <ImageView
-        android:id="@+id/vip_btn_next"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="4dp"
-        android:src="@mipmap/icon_next_sel" />
 </LinearLayout>

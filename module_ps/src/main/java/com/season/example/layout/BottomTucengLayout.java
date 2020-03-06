@@ -6,17 +6,16 @@ import android.view.View;
 import com.example.ps.R;
 
 
-public abstract class BottomTucengLayout {
+public abstract class BottomTucengLayout extends BaseBottomView{
 
-    private View containerView;
-    private Activity activity;
-    private View findView(int id){
-        return activity.findViewById(id);
+    @Override
+    protected int getContentId() {
+        return R.id.layout_tuceng;
     }
+
     public BottomTucengLayout(Activity activity) {
-        this.activity = activity;
-        containerView = findView(R.id.layout_tuceng);
-        containerView.setVisibility(View.GONE);
+        super(activity);
+
         findView(R.id.tc_copy).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,18 +45,6 @@ public abstract class BottomTucengLayout {
     public abstract void onCopy();
     public abstract void onUpLayer();
     public abstract void onDownLayer();
-
-    public boolean isShowing(){
-        return containerView.getVisibility() == View.VISIBLE;
-    }
-
-    public void show() {
-        containerView.setVisibility(View.VISIBLE);
-    }
-
-    public void hide() {
-        containerView.setVisibility(View.GONE);
-    }
 
     public void statusChange(int viewIndex, int childCount) {
         downView.setEnabled(viewIndex != 0);
