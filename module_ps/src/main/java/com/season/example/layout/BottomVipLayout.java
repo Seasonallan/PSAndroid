@@ -6,7 +6,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.ps.R;
-import com.season.lib.util.LogUtil;
 import com.season.lib.view.ps.ILayer;
 import com.season.lib.view.ps.PSCanvas;
 
@@ -175,8 +174,8 @@ public class BottomVipLayout extends BaseBottomView{
                 maxRepeatCount = totalDuration/ duration - 1;
             }
 
-            LogUtil.e(""+ currentView.getStartTime() + ", "+ currentView.getEndTime());
-            LogUtil.e("-->>>"+ maxRepeatCount + ", "+ repeatCount);
+           // LogUtil.e(""+ currentView.getStartTime() + ", "+ currentView.getEndTime());
+           // LogUtil.e("-->>>"+ maxRepeatCount + ", "+ repeatCount);
             mTotalTime.setText("画布时长:"+ totalDuration +"ms");
             mCurrentTime.setText("图层时长:"+ duration +"ms");
             mStartTime.setText("开始时间:"+ currentView.getStartTime()+"ms");

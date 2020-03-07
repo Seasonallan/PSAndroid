@@ -246,7 +246,7 @@ public class CustomTextView extends CustomBaseView{
         return ScreenUtils.getScreenWidth() / 2 * 1.0f / width;
     }
 
-    private int finalWidth = 0, finalHeight = 0, lineHeight = 1;
+    private int finalWidth = 0, finalHeight = 0;
     int row = 0;
     int xoffsetCenter = 0;
 
@@ -306,7 +306,6 @@ public class CustomTextView extends CustomBaseView{
         }
         finalHeight = paddingTop;
         int size = textEmojiList.size();
-        lineHeight = paddingTop + emojiWidth + paddingTop + lineSpacing;
         for (int i = 0; i < size; i++) {
             EmojiconHandler.TextEmoji emoji = textEmojiList.get(i);
             if (emoji.icon != null) {
@@ -316,17 +315,6 @@ public class CustomTextView extends CustomBaseView{
                 emoji.offsetY = finalHeight;
                 emoji.setSize(emojiWidth);
                 offsetX += (emoji.width + textSpacing);//x坐标加一个字符宽度和文件间隙
-                //这里做自动换行
-                if (offsetX >= ToolPaint.getDefault().getMaxTextLength() && i < size - 1) {//fix problem: OpenGLRenderer: Bitmap too
-                    // large to be uploaded into a texture 宽度太大无法绘制问题
-                    EmojiconHandler.TextEmoji emojiNext = textEmojiList.get(i + 1);
-                    if (emojiNext.text == null || !emojiNext.text.equals("\n")) {
-                        EmojiconHandler.TextEmoji emojiEnter = new EmojiconHandler.TextEmoji();
-                        emojiEnter.text = "\n";
-                        textEmojiList.add(i + 1, emojiEnter);
-                        size++;
-                    }
-                }
             } else {
                 //文字
                 String itemText = emoji.text;
@@ -338,13 +326,12 @@ public class CustomTextView extends CustomBaseView{
                         finalWidth = Math.max(finalWidth, offsetX);
                         offsetX = paddingLeft;//换行的时候重置一下offsetX
                         //这里做换行
-                        if (animationProvider == null || !animationProvider.isSingleLine()) {
+                        if (animationProvider == null || !animationProvider.isRowSplited()) {
                             //如果没有动画或者不是单行显示
                             finalHeight += (emojiWidth + lineSpacing);
                         }
                         String currentrow = split[row];
                         if (!TextUtils.isEmpty(currentrow)) {
-//                        currentRowleng = currentrow.length() * (emojiWidth + textSpacing);
                             currentRowleng = (int) paint.measureText(currentrow);
                             if (currentrow.length() > 0) {
                                 offset = (currentrow.length() - 1) * textSpacing;
@@ -364,17 +351,6 @@ public class CustomTextView extends CustomBaseView{
                     emoji.fontTotalWidth = (int) paint.measureText(itemText);
                     emoji.fontTotalHeight = emojiWidth;
                     offsetX += fontTotalWidth + textSpacing;//x坐标加一个字符宽度和文件间隙
-//                    if (offsetX >= ToolPaint.getDefault().getMaxTextLength() && i < size - 1) {//fix problem: OpenGLRenderer: Bitmap
-//                        // too large to be uploaded into a texture 宽度太大无法绘制问题
-//                        EmojiconHandler.TextEmoji emojiNext = textEmojiList.TopicGroupAPIAOP(i + 1);
-//                        if (emojiNext.text == null || !emojiNext.text.equals("\n")) {
-//                            EmojiconHandler.TextEmoji emojiEnter = new EmojiconHandler.TextEmoji();
-//                            emojiEnter.text = "\n";
-//                            textEmojiList.add(i + 1, emojiEnter);
-//                            size++;
-//                            //自动换行了，split必须变更，否则可能越界
-//                        }
-//                    }
                 }
             }
             emoji.ready = true;
@@ -539,18 +515,6 @@ public class CustomTextView extends CustomBaseView{
         animationProvider = AnimationProvider.getProvider(type);
         calculateWidthHeight();
         resetAnimationParams();
-        if (animationProvider != null && animationProvider.isRowSplited()) {
-            int allrownum = 1;
-            String[] split = text.split("\n");
-            if (split == null || split.length >= 2) {
-                allrownum = split.length;
-            }
-            if (!TextUtils.isEmpty(split[split.length - 1])) {
-                allrownum++;//多一帧的不显示
-            }
-            int perRowTime = getDuration() / allrownum;
-            animationProvider.setPerRowTime(perRowTime);
-        }
         requestLayout();
         if (addEvent) {
             addEvent();
@@ -562,6 +526,10 @@ public class CustomTextView extends CustomBaseView{
         if (animationProvider != null) {
             animationProvider.setTextWidthHeight(finalWidth, finalHeight);
             animationProvider.setTextCount(textEmojiList.size());
+            if (animationProvider.isRowSplited()) {
+                String[] split = text.split("\n");
+                animationProvider.setRowCount(split == null?1:split.length);
+            }
             animationProvider.init();
         }
     }
@@ -693,6 +661,11 @@ public class CustomTextView extends CustomBaseView{
         fixEmoji();
         calculateWidthHeight();
         resetAnimationParams();
+        if (getDuration() > 0){
+            setStartTime(0);
+            setEndTime(getDuration());
+        }
+
         addEvent();
         requestLayout();
         invalidate();

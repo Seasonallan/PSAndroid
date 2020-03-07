@@ -159,10 +159,7 @@ public class AnimationProvider {
 
     protected float transMax = 24;
     protected int stayTime = 500;//动效最后保留时间
-    protected String[] textRows;//动效最后保留时间
     protected int position;
-    protected int row;//行数
-    protected int perRowTime;//行时间
 
     /**
      * 获取动效每一帧之间的延迟
@@ -194,13 +191,6 @@ public class AnimationProvider {
      */
     public void setPosition(int position) {
         this.position = position;
-    }
-
-    /**
-     * 设置当前动画的行
-     */
-    public void setRow(int row) {
-        this.row = row;
     }
 
     /**
@@ -253,27 +243,20 @@ public class AnimationProvider {
         return false;
     }
 
-    public void setTextRows(String[] textRows) {
-        this.textRows = textRows;
+    protected int rowCount = 1;
+    public void setRowCount(int count) {
+        if (count <= 0){
+            count = 1;
+        }
+        this.rowCount = count;
+    }
+
+    public int getPerRowTime() {
+        return getDuration()/rowCount;
     }
 
     //配置动画信息
     protected int totalTime = 3000;
-
-    //是否单行显示
-    public boolean isSingleLine() {
-        return false;
-    }
-
-    public void setPerRowTime(int perRowTime) {
-        this.perRowTime = perRowTime;
-    }
-
-    public int getPerRowTime() {
-        return this.perRowTime;
-    }
-
-
     protected int totalSize = 3;
     /**
      * 设置文字数量
@@ -306,4 +289,5 @@ public class AnimationProvider {
     public boolean isRepeat() {
         return true;
     }
+
 }

@@ -202,20 +202,23 @@ public class PSCanvas extends RelativeLayout{
             return;
         }
         String absolutePath = outFile.getAbsolutePath();
-        int duration = recordDuration;
-        int delay = recordDelay;
+
+        int delays = recordDelay;
+        while (recordDelay < 80){
+            recordDelay = recordDelay + delays;
+        }
         int count = 1;
         /**
          * 根据总时长和间隔时间，确定出总帧数
          * Gifmaker中添加的帧数等于总帧数，就结束添加帧了。
          */
-        if (delay != 0) {
-            count = duration / delay;
-            if (duration % delay != 0) {
+        if (recordDelay != 0) {
+            count = recordDuration / recordDelay;
+            if (recordDuration % recordDelay != 0) {
                 count++;
             }
             //fix 部分gif 只显示一帧
-            if (count == 1 && duration < delay) {
+            if (count == 1 && recordDuration < recordDelay) {
                 count = 2;
             }
 
@@ -224,21 +227,20 @@ public class PSCanvas extends RelativeLayout{
             get1PngImage(listener);
             return;
         }
-        //不是视频的情况下，有长gif的情况下：
         if (count > maxCount) {
             resortCount = count / maxCount;
             resortCount++;
         }
 
         makeSize(true);
-        if (duration == 0) {
+        if (recordDuration == 0) {
             listener.onMakeGifFail();
             return;
         }
         //TODO 120毫秒对于文字动画有点卡顿，但是缩小帧间隔，意味着要画更多的帧，这时候我们要绘制的是480*480分辨率的argb8888的bitmap，
         //TODO 内存压力比较大， 如果平衡内存的问题 是否可以对文字类采用类似videoview 画完一帧，再seek到下一帧进行绘制？
         //确定合成总帧数和帧与帧之间的延迟时间
-        mGifMaker = new GifMaker(count / resortCount, delay * resortCount, Executors.newCachedThreadPool()).setOutputPath
+        mGifMaker = new GifMaker(count / resortCount, recordDelay * resortCount, Executors.newCachedThreadPool()).setOutputPath
                 (absolutePath);
         if (mGifMaker != null) {
             if (mGifMaker.isGifMaded) {
@@ -1199,6 +1201,7 @@ public class PSCanvas extends RelativeLayout{
             customTextView.editText(params);
             customTextView.requestLayout();
             addEvent(new Operate(customTextView));
+            restartTime();
         }
     }
 

@@ -395,6 +395,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 if (isEditText) {
                     mPsCanvas.editText(text);
                     isEditText = false;
+                    resetBottomStatus();
                 } else {
                     viewExtend.addTextView(text, mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible());
                 }

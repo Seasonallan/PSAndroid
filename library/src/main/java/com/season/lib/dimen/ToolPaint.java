@@ -41,14 +41,6 @@ public class ToolPaint {
     }
 
 
-    private float maxTextLength = -1;
-    public float getMaxTextLength(){
-        if (maxTextLength <= 0){
-            maxTextLength = ScreenUtils.getScreenWidth() * 2.75f;
-        }
-        return maxTextLength;
-    }
-
     public float getScale(int singleLinemaxCount){
         int paintSize = getPaintSize();
         int showWidth = paintSize * singleLinemaxCount;
