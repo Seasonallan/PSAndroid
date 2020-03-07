@@ -53,7 +53,9 @@ public class BottomVipLayout extends BaseBottomView{
                 currentView.setStartTime(progress);
                 int endProgress = mEndSeek.getProgress();
                 if (duration > 0){
-                    mEndSeek.setProgress(progress + duration * (repeatCount + 1));
+                    if (mEndSeek.getProgress() < progress + duration * (repeatCount + 1)){
+                        mEndSeek.setProgress(progress + duration * (repeatCount + 1));
+                    }
                 }else{
                     if (endProgress < progress){
                         mEndSeek.setProgress(progress);
@@ -87,7 +89,9 @@ public class BottomVipLayout extends BaseBottomView{
                 currentView.setEndTime(progress);
                 int startProgress = mStartSeek.getProgress();
                 if (duration > 0){
-                    mStartSeek.setProgress(progress - duration*(repeatCount + 1));
+                    if (mStartSeek.getProgress() > progress - duration*(repeatCount + 1)){
+                        mStartSeek.setProgress(progress - duration*(repeatCount + 1));
+                    }
                 }else{
                     if (startProgress > progress){
                         mStartSeek.setProgress(progress);
@@ -169,9 +173,14 @@ public class BottomVipLayout extends BaseBottomView{
             currentView = (ILayer) view;
             totalDuration = psCanvas.maxDuration;
             duration = currentView.getDuration();
-            if (duration > 0){
-                repeatCount = (currentView.getEndTime() - currentView.getStartTime())/ duration - 1;
-                maxRepeatCount = totalDuration/ duration - 1;
+            if (currentView.isRepeat()){
+                if (duration > 0){
+                    repeatCount = (currentView.getEndTime() - currentView.getStartTime())/ duration - 1;
+                    maxRepeatCount = totalDuration/ duration - 1;
+                }
+            }else{
+                repeatCount = 0;
+                maxRepeatCount = 0;
             }
 
            // LogUtil.e(""+ currentView.getStartTime() + ", "+ currentView.getEndTime());

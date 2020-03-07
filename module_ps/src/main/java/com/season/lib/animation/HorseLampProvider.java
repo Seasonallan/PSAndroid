@@ -20,6 +20,11 @@ public class HorseLampProvider extends AnimationProvider {
     }
 
     @Override
+    public boolean isRepeat() {
+        return false;
+    }
+
+    @Override
     public void preCanvas(Canvas canvas, int centerX, int centerY) {
         canvas.save();
         canvas.translate(dx, 0);

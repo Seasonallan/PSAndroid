@@ -12,10 +12,6 @@ public class RotateProvider extends AnimationProvider {
     public String getClassName() {
         return "RotateProvider";
     }
-    @Override
-    public boolean isRepeat() {
-        return true;
-    }
 
     float rotateDegree = 8f;
     float degree = 0;

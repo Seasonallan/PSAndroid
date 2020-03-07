@@ -24,6 +24,10 @@ public class TranslateShowDownProvider extends AnimationProvider {
         decelerateInterpolator = new BounceInterpolator();
         upTime = (getDuration() - stayTime);
     }
+    @Override
+    public boolean isRepeat() {
+        return false;
+    }
 
     @Override
     public void preCanvas(Canvas canvas, int centerX, int centerY) {

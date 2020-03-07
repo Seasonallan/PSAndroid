@@ -10,10 +10,6 @@ public class FlushProvider extends AnimationProvider {
     public String getClassName() {
         return "FlushProvider";
     }
-    @Override
-    public boolean isRepeat() {
-        return true;
-    }
 
     @Override
     public int getDuration() {

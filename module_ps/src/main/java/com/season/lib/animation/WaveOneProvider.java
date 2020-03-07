@@ -19,6 +19,10 @@ public class WaveOneProvider extends AnimationProvider {
         return true;
     }
 
+    @Override
+    public boolean isRepeat() {
+        return false;
+    }
     int wordDelay = 50;
     float dy = 0;
 

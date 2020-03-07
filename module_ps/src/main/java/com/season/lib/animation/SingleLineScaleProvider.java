@@ -13,12 +13,6 @@ public class SingleLineScaleProvider extends AnimationProvider {
         return "SingleLineScaleProvider";
     }
 
-
-    @Override
-    public boolean isRowSplited(){
-        return true;
-    }
-
     @Override
     public int getAlpha() {
         return alpha;
@@ -27,6 +21,15 @@ public class SingleLineScaleProvider extends AnimationProvider {
     int wordDelay = 50;
     int alpha = 255;
 
+    @Override
+    public boolean isRowSplited(){
+        return true;
+    }
+
+    @Override
+    public boolean isRepeat() {
+        return false;
+    }
     @Override
     public int getDuration() {
         return rowCount * (950 + wordDelay);

@@ -282,7 +282,7 @@ public class AnimationProvider {
     }
 
     /**
-     * 动效是否要重复，暂时废弃的方法
+     * 动效是否要重复
      *
      * @return
      */

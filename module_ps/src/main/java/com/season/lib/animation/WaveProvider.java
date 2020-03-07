@@ -14,11 +14,6 @@ public class WaveProvider extends AnimationProvider {
         return "WaveProvider";
     }
 
-    @Override
-    public boolean isRepeat() {
-        return true;
-    }
-
     float dy = 0;
 
     @Override

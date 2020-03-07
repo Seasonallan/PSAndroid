@@ -13,11 +13,6 @@ public class ScaleProvider extends AnimationProvider {
         return "ScaleProvider";
     }
 
-    @Override
-    public boolean isRepeat() {
-        return true;
-    }
-
     final float scaleMax = 0.2f;
     float scale = 1;
 

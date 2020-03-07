@@ -18,6 +18,10 @@ public class LineUpScaleProvider extends AnimationProvider {
         return true;
     }
 
+    @Override
+    public boolean isRepeat() {
+        return false;
+    }
     int wordDelay = 50;//每个字之间的延迟， 不同的时长的视频，这个值会动态改变，以达到动画效果凑满视频时长
     final float scaleMax = 0.4f;
     float scale = 1;

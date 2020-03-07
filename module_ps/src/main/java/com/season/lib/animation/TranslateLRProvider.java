@@ -13,11 +13,6 @@ public class TranslateLRProvider extends AnimationProvider {
         return "TranslateLRProvider";
     }
 
-    @Override
-    public boolean isRepeat() {
-        return true;
-    }
-
     float dx = 0;
 
     @Override

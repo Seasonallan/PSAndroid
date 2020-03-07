@@ -13,10 +13,6 @@ public class ColorProvider extends AnimationProvider {
     public String getClassName() {
         return "ColorProvider";
     }
-    @Override
-    public boolean isRepeat() {
-        return true;
-    }
 
     @Override
     public int getDuration() {

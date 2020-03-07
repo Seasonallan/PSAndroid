@@ -15,6 +15,11 @@ public class LineUpScaleAlphaProvider extends AnimationProvider {
     }
 
     @Override
+    public boolean isRepeat() {
+        return false;
+    }
+
+    @Override
     public boolean isWordSplit(){
         return true;
     }

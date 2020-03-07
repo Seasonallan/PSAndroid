@@ -15,6 +15,10 @@ public class TranslateShowUpProvider extends AnimationProvider {
         return "TranslateShowUpProvider";
     }
 
+    @Override
+    public boolean isRepeat() {
+        return false;
+    }
     float upTime;
     Interpolator decelerateInterpolator;
     @Override

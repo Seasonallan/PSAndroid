@@ -13,10 +13,6 @@ public class TranslateUpDownProvider extends AnimationProvider {
     public String getClassName() {
         return "TranslateUpDownProvider";
     }
-    @Override
-    public boolean isRepeat() {
-        return true;
-    }
 
     @Override
     public int getDuration() {

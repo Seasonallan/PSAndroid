@@ -19,6 +19,10 @@ public class LineUpShowProvider extends AnimationProvider {
     }
 
     @Override
+    public boolean isRepeat() {
+        return false;
+    }
+    @Override
     public int getAlpha() {
         return alpha;
     }
