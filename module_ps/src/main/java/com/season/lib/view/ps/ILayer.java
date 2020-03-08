@@ -61,7 +61,18 @@ public interface ILayer {
      */
     int getDuration();
 
+    /**
+     * 是否重复动画
+     * @return
+     */
     boolean isRepeat();
+
+    /**
+     * 获取保持状态的时间
+     * @return
+     */
+    int getStayTime();
+
     /**
      * 获取动画每一帧的延迟
      * @return

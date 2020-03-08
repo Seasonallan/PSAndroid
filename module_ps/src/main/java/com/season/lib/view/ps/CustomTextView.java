@@ -42,6 +42,7 @@ import com.season.lib.animation.AnimationProvider;
 import com.season.lib.file.FileManager;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.dimen.ToolPaint;
+import com.season.lib.util.LogUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -435,6 +436,9 @@ public class CustomTextView extends CustomBaseView{
                     int drawTextRow;
                     int perRowTime = animationProvider.getPerRowTime();
                     drawTextRow = (time / perRowTime);
+                    if (drawTextRow > animationProvider.getRowCount() - 1){
+                        drawTextRow = animationProvider.getRowCount() - 1;
+                    }
                     for (EmojiconHandler.TextEmoji emoji : textEmojiList) {
                         if (emoji.row == drawTextRow) {
                             animationProvider.setTime(time, true);
@@ -540,6 +544,15 @@ public class CustomTextView extends CustomBaseView{
             return animationProvider.isRepeat();
         }
         return true;
+    }
+
+
+    @Override
+    public int getStayTime() {
+        if (animationProvider != null) {
+            return animationProvider.getStayTime();
+        }
+        return getDuration();
     }
 
     @Override

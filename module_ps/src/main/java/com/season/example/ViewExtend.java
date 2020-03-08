@@ -13,6 +13,7 @@ import com.season.lib.bean.LayerItem;
 import com.season.lib.file.FileManager;
 import com.season.lib.file.FileUtils;
 import com.season.lib.http.DownloadAPI;
+import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
 import com.season.lib.view.ps.CustomGifFrame;
 import com.season.lib.view.ps.CustomGifMovie;

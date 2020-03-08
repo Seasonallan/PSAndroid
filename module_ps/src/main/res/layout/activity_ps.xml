@@ -42,18 +42,7 @@
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:visibility="gone" />
-                    <com.season.lib.view.ps.CustomGifMovie
-                        android:id="@+id/gifview"
-                        android:visibility="gone"
-                        android:layout_centerInParent="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
-                    <com.season.lib.view.ps.CustomGifFrame
-                        android:id="@+id/gifFrameview"
-                        android:visibility="gone"
-                        android:layout_centerInParent="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+
                 </RelativeLayout>
 
             </FrameLayout>

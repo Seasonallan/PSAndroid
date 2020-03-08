@@ -20,6 +20,7 @@ public class SingleLineProvider extends AnimationProvider {
         return true;
     }
 
+
     @Override
     public boolean isRepeat() {
         return false;

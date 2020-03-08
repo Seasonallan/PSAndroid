@@ -69,17 +69,20 @@ public abstract class CustomBaseView extends View implements ILayer {
                 if (isRepeat()){
                     time = time % getDuration();
                 }else{
-                    time = getDuration();
+                    time = getStayTime();
                 }
             }
             drawCanvasTime(canvas, time);
         }
     }
 
-    /**
-     * 是否
-     * @return
-     */
+    @Override
+    public int getStayTime() {
+        return getDuration();
+    }
+
+
+    @Override
     public boolean isRepeat(){
         return true;
     }

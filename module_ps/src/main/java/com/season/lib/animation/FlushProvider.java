@@ -1,5 +1,7 @@
 package com.season.lib.animation;
 
+import android.graphics.Canvas;
+
 /**
  * Disc: 动效：突然闪现
  * User: SeasonAllan(451360508@qq.com)
@@ -14,6 +16,14 @@ public class FlushProvider extends AnimationProvider {
     @Override
     public int getDuration() {
         return 500;
+    }
+
+    /**
+     * 画布重置
+     *
+     * @param canvas
+     */
+    public void proCanvas(Canvas canvas) {
     }
 
     @Override

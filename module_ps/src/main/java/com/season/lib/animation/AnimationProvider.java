@@ -251,6 +251,10 @@ public class AnimationProvider {
         this.rowCount = count;
     }
 
+    public int getRowCount(){
+        return rowCount;
+    }
+
     public int getPerRowTime() {
         return getDuration()/rowCount;
     }
@@ -290,4 +294,7 @@ public class AnimationProvider {
         return true;
     }
 
+    public int getStayTime() {
+        return getDuration();
+    }
 }

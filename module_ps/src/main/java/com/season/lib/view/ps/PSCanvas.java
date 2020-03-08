@@ -140,28 +140,23 @@ public class PSCanvas extends RelativeLayout{
             right = offsetX;
             bottom = offsetY;
 
-            if (backgroundView.isGif()) {
-                recordDuration = backgroundView.getGifView().getDuration();
-                recordDelay = backgroundView.getGifView().getDelay();
-            } else {
-                for (int i = 0; i < getChildCount(); i++) {
-                    View scaleView = getChildAt(i);
-                    if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
-                        //((ScaleView) scaleView).startRecord();
-                        View view = ((PSLayer) scaleView).getChildAt(0);
-                        if (!isFullScreen) {//不是全屏，需要定位上下左右用于剪切
-                            float[] points = ((PSLayer) scaleView).mPSOpView.desPoints;
-                            checkPoint(points[0], points[1]);
-                            checkPoint(points[2], points[3]);
-                            checkPoint(points[4], points[5]);
-                            checkPoint(points[6], points[7]);
-                        }
-                        if (view instanceof ILayer) {//找到时长最长的那个图层
-                            int duration = ((ILayer) view).getDuration();
-                            if (recordDuration < duration) {
-                                recordDuration = duration;
-                                recordDelay = ((ILayer) view).getDelay();
-                            }
+            for (int i = 0; i < getChildCount(); i++) {
+                View scaleView = getChildAt(i);
+                if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
+                    //((ScaleView) scaleView).startRecord();
+                    View view = ((PSLayer) scaleView).getChildAt(0);
+                    if (!isFullScreen) {//不是全屏，需要定位上下左右用于剪切
+                        float[] points = ((PSLayer) scaleView).mPSOpView.desPoints;
+                        checkPoint(points[0], points[1]);
+                        checkPoint(points[2], points[3]);
+                        checkPoint(points[4], points[5]);
+                        checkPoint(points[6], points[7]);
+                    }
+                    if (view instanceof ILayer) {//找到时长最长的那个图层
+                        int duration = ((ILayer) view).getDuration();
+                        if (recordDuration < duration) {
+                            recordDuration = duration;
+                            recordDelay = ((ILayer) view).getDelay();
                         }
                     }
                 }
@@ -456,58 +451,6 @@ public class PSCanvas extends RelativeLayout{
 
     boolean isDrawing = false;
 
-    private void drawGif() {
-        try {
-            //一种是Gif作为底图，或者是静态图作为底图，图层是动态的Gif
-            if (backgroundView == null) {
-                if (onGifMakerListener != null) {
-                    onGifMakerListener.onMakeGifFail();
-                }
-                return;
-            }
-            int width = backgroundView.getGifWidth();
-            int height = backgroundView.getGifHeight();
-            if (width == 0 || height == 0) {
-                return;
-            }
-            isDrawing = true;
-            Bitmap tBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            Canvas canvas = new Canvas(tBitmap);
-            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-
-            canvas.save();
-            Matrix matrix = new Matrix();
-            float scale = 1f;
-            /**
-             * 必须用Gifmoveie的layoutParams做缩放比例
-             */
-            if (width >= height) {
-                scale = width * 1f / videoWidthHeight * 1.0f;
-            } else {
-                scale = height * 1f / videoWidthHeight * 1.0f;
-            }
-            matrix.postScale(scale, scale);
-            canvas.concat(matrix);
-            backgroundView.getGifView().drawCanvas(canvas);
-            canvas.restore();
-            drawItem4GIf(canvas, width, height, offsetX, offsetY, scale);
-            mGifMaker.addBitmap(tBitmap);
-            isDrawing = false;
-        } catch (Exception e) {
-            //PAD必须在主线程中调用TextureView.getBitmap
-            //否则出现错误java.lang.IllegalStateException: Hardware acceleration can only be used url a single UI thread.
-            e.printStackTrace();
-            if (onGifMakerListener != null) {
-                onGifMakerListener.onMakeGifFail();
-            }
-        }
-        if (Looper.getMainLooper() != Looper.myLooper()) {
-            while (isDrawing) {
-                delay(10);
-            }
-        }
-    }
-
     private void drawItem(Canvas canvas, float showWidth, float left, float top) {
         float scale = finalGifWidthHeight * 1.0f / showWidth;
         for (int i = 0; i < getChildCount(); i++) {
@@ -596,11 +539,7 @@ public class PSCanvas extends RelativeLayout{
                                     }, 300);
                                 }
                             }
-                        } else if (backgroundView != null && backgroundView.isGif()) {
-                            int time = mGifMaker.getFrameCountNow() * recordDelay * resortCount;
-                            recordView(time);
-                            drawGif();
-                        } else {
+                        }  else {
                             int time = mGifMaker.getFrameCountNow() * recordDelay * resortCount;
                             recordView(time);
                             Bitmap tBitmap = null;
@@ -663,7 +602,6 @@ public class PSCanvas extends RelativeLayout{
                         }
                         recordView((int) (currentTime - startTime));
                         refreshView();
-                        refreshGifBg();
                         if (maxDuration <= 0){
                             delay(300);
                         }else {
@@ -674,12 +612,6 @@ public class PSCanvas extends RelativeLayout{
                     }
                 }
             }
-        }
-    }
-
-    private void refreshGifBg() {
-        if (backgroundView != null) {
-            backgroundView.refreshGifbg();
         }
     }
 
@@ -1109,18 +1041,6 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-    public void showGIf(String url, String path) {
-        if (backgroundView != null) {
-            if (backgroundView.showGIf(url, path, new PSBackground.decoderGifDoneListener() {
-                @Override
-                public void decoder(int offset_x, int offset_y) {
-                    offsetX += offset_x;
-                    offsetY += offset_y;
-                }
-            })) addEvent(new Operate(IType.BACKGROUND));
-        }
-    }
-
     public void showBackground(int color) {
         if (backgroundView == null) {
             return;
@@ -1271,11 +1191,8 @@ public class PSCanvas extends RelativeLayout{
                 if (bgColor != Color.TRANSPARENT) {
                     backInfoModel.backColorString = ColorUtil.getColorStr(bgColor);
                 }
-            } else if (bgOperate.visible2 == View.VISIBLE) {
-                backInfoModel.imageURLPathFile = bgOperate.imageFile;
-                backInfoModel.imgURLPath = bgOperate.url;
             } else {
-                backInfoModel.gifURLPathFile = bgOperate.gifFile;
+                backInfoModel.imageURLPathFile = bgOperate.imageFile;
                 backInfoModel.imgURLPath = bgOperate.url;
             }
         }

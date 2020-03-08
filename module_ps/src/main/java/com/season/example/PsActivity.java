@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,13 +32,11 @@ import com.season.lib.dimen.ColorUtil;
 import com.season.lib.gif.GifMaker;
 import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
-import com.season.lib.http.DownloadAPI;
 import com.season.example.layout.PopInputLayout;
 import com.season.lib.bean.LayerBackground;
 import com.season.lib.bean.LayerEntity;
 import com.season.lib.view.ps.ILayer;
 import com.season.lib.view.ps.PSLayer;
-import com.season.lib.file.FileManager;
 import com.season.lib.file.FileUtils;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.view.ps.PSCanvas;
@@ -52,7 +49,6 @@ import com.example.ps.R;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 @Route(path= RoutePath.PS)
 public class PsActivity extends FragmentActivity implements View.OnClickListener {
@@ -270,16 +266,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             protected void setBackground(String url, String filePath) {
                 File file = new File(filePath);
                 if (file.isFile() && file.length() > 0) {
-                    if (FileUtils.isStaticImageFile(filePath)) {
-                        mPsCanvas.showImage(url, filePath);
-                    } else {
-                        //格式异常了
-                        if (filePath.endsWith(".gif") || FileUtils.isGifFile(filePath)) {
-                            mPsCanvas.showGIf(url, filePath);
-                        } else {
-                            mPsCanvas.showImage(url, filePath);
-                        }
-                    }
+                    mPsCanvas.showImage(url, filePath);
                 }
                 resetStatus();
             }
@@ -301,11 +288,8 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
                 viewExtend.showLayers(layerEntity, items);
                 showBg(backgroundInfo);
             }else{
-               // viewExtend.addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",null);
-                viewExtend.addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg",
-                        null);
+                viewExtend.addLocalMessage("https://mmbiz.qpic.cn/mmbiz_jpg/AXZeJ2O2X1ibibQcd4C5EYT8XDqN7FdSnLMiaicvPIAutj5JjnbTn4lIBicdiadw8yQUmAZgpR5SNQGc3ov276GNeiatQ/640?wx_fmt=jpeg", null);
                 viewExtend.addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-                viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
                 viewExtend.addTextView("新年快乐", mPsCanvas.backgroundView.isBackgroundVideoImageViewVisible());
             }
         } catch (Exception e) {
