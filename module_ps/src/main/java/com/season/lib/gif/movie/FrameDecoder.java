@@ -54,7 +54,7 @@ public class FrameDecoder {
         private int lastDispose = 0;
         private boolean transparency = false; // use transparent color.xml
         private int delay = 0; // delay in milliseconds
-        private int transIndex; // transparent color.xml index
+        private int transIndex = -1; // transparent color.xml index
 
         private static final int MaxStackSize = 4096;
         // max decoder pixel stack size
@@ -80,6 +80,14 @@ public class FrameDecoder {
         } catch (Exception ex) {
             Log.e("open failed", ex.toString());
         }
+    }
+
+    public int getTransIndex(){
+        if (transparency){
+            return transIndex;
+        }
+        return -1;
+       // return transIndex;
     }
 
     public Bitmap getFrame() {

@@ -15,8 +15,7 @@ import com.season.lib.file.FileUtils;
 import com.season.lib.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
-import com.season.lib.view.ps.CustomGifFrame;
-import com.season.lib.view.ps.CustomGifMovie;
+import com.season.lib.view.ps.CustomGifView;
 import com.season.lib.view.ps.CustomImageView;
 import com.season.lib.view.ps.CustomTextView;
 import com.season.lib.view.ps.ILayer;
@@ -55,25 +54,14 @@ public abstract class ViewExtend {
                                 int imageWidth;
                                 int imageHeight;
                                 if (!FileUtils.isStaticImageFile(path)) {//图片是Gif
-                                    CustomGifMovie customGifMovie = new CustomGifMovie(context, false);
-                                    boolean res = customGifMovie.setMovieResource(path);
-                                    if (res) {//sometimes movie decode gif error url duration = 0
-                                        customGifMovie.url = url;
-                                        imageWidth = customGifMovie.getViewWidth();
-                                        imageHeight = customGifMovie.getViewHeight();
-                                        itemLayerView.addView(customGifMovie,
-                                                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
-                                                        .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                    } else {
-                                        CustomGifFrame customGifFrame = new CustomGifFrame(context);
-                                        customGifFrame.setMovieResource(path);
-                                        customGifFrame.url = url;
-                                        imageWidth = customGifFrame.getViewWidth();
-                                        imageHeight = customGifFrame.getViewHeight();
-                                        itemLayerView.addView(customGifFrame,
-                                                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
-                                                        .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                    }
+                                    CustomGifView customGifView = new CustomGifView(context);
+                                    customGifView.setMovieResource(path);
+                                    customGifView.url = url;
+                                    imageWidth = customGifView.getViewWidth();
+                                    imageHeight = customGifView.getViewHeight();
+                                    itemLayerView.addView(customGifView,
+                                            new RelativeLayout.LayoutParams(ViewGroup.LayoutParams
+                                                    .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                 } else {//图片是静图
                                     CustomImageView imageView = new CustomImageView(context);
                                     imageView.setImageFile(path);
@@ -215,17 +203,10 @@ public abstract class ViewExtend {
 
     public void addImageOrGifFromFile(String url, String filePath) {
         if (!FileUtils.isStaticImageFile(filePath)) {
-            CustomGifMovie customGifMovie = new CustomGifMovie(context, false);
-            boolean res = customGifMovie.setMovieResource(filePath);
-            if (res) {//sometimes movie decode gif error url duration = 0
-                customGifMovie.url = url;
-                addView(customGifMovie, getInitScale(customGifMovie));
-            } else {
-                CustomGifFrame customGifFrame = new CustomGifFrame(context);
-                customGifFrame.setMovieResource(filePath);
-                customGifFrame.url = url;
-                addView(customGifFrame, getInitScale(customGifFrame));
-            }
+            CustomGifView customGifView = new CustomGifView(context);
+            customGifView.setMovieResource(filePath);
+            customGifView.url = url;
+            addView(customGifView, getInitScale(customGifView));
         } else {
             addImageViewFromFile(false, url, filePath);
         }

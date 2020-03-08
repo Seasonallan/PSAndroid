@@ -10,8 +10,7 @@ import android.graphics.Canvas;
  * 继承这个接口的类有：
  * @see CustomTextView 文字图层
  * @see CustomImageView 静图图层，包含涂鸦
- * @see CustomGifMovie gif动图图层
- * @see CustomGifFrame gif动图图层，只有在CustomGifMovie解析失败的情况下会用
+ * @see CustomGifView gif动图图层
  *
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 14:44
@@ -83,7 +82,7 @@ public interface ILayer {
      * 合成第几帧，通过时间算出显示的是第几帧
      * @param time
      */
-    void recordFrame(int time);
+    void recordFrame(int time, int maxTime);
 
     /**
      * 释放内存

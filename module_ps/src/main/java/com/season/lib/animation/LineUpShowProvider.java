@@ -20,7 +20,7 @@ public class LineUpShowProvider extends AnimationProvider {
 
     @Override
     public boolean isRepeat() {
-        return false;
+        return true;
     }
     @Override
     public int getAlpha() {

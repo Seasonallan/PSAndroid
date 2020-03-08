@@ -29,8 +29,7 @@ import com.season.lib.dimen.ToolPaint;
  * 可以放置的视图有：
  * @see CustomTextView 文字图层
  * @see CustomImageView 静图图层，包含涂鸦
- * @see CustomGifMovie gif动图图层
- * @see CustomGifFrame gif动图图层，只有在GifMovieView解析失败的情况下会用
+ * @see CustomGifView gif动图图层
  * <p>
  * //TODO 未来可以做图层的动效，做法参照回撤的时候的矩阵动画
  * @see MatrixAnimation 矩阵动画
@@ -242,11 +241,11 @@ public class PSLayer extends RelativeLayout {
         }
     }
 
-    public void record(int time) {
+    public void record(int time, int maxTime) {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
             if (view instanceof ILayer) {
-                ((ILayer) view).recordFrame(time);
+                ((ILayer) view).recordFrame(time, maxTime);
             }
         }
     }
@@ -810,21 +809,8 @@ public class PSLayer extends RelativeLayout {
                 layerItem.setTextFontName(((CustomTextView) view).fontName);
             }
             layerItem.animationType = ((CustomTextView) view).currentType;
-        } else if (view instanceof CustomImageView) {
-            CustomImageView customImageView = (CustomImageView) view;
-            if (customImageView.isTuya) {
-                layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeDraw);
-            } else {
-                if (TextUtils.isEmpty(customImageView.url)) {
-                    layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeLocaImage);
-                } else {
-                    layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeImage);
-                }
-            }
-            layerItem.filePath = customImageView.filePath;
-            layerItem.setImageURL(customImageView.url);
-        } else if (view instanceof CustomGifMovie) {
-            CustomGifMovie customGifMovie = (CustomGifMovie) view;
+        }  else if (view instanceof CustomGifView) {
+            CustomGifView customGifMovie = (CustomGifView) view;
             if (TextUtils.isEmpty(customGifMovie.url)) {
                 layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeLocaImage);
             } else {
@@ -849,13 +835,8 @@ public class PSLayer extends RelativeLayout {
             PSLayer.addView(customTextView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                     .LayoutParams.WRAP_CONTENT));
         }
-        if (currentview instanceof CustomGifMovie) {
-            CustomGifMovie textStyleView = ((CustomGifMovie) currentview).copy();
-            PSLayer.addView(textStyleView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
-                    .LayoutParams.WRAP_CONTENT));
-        }
-        if (currentview instanceof CustomGifFrame) {
-            CustomGifFrame textStyleView = ((CustomGifFrame) currentview).copy();
+        if (currentview instanceof CustomGifView) {
+            CustomGifView textStyleView = ((CustomGifView) currentview).copy();
             PSLayer.addView(textStyleView, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                     .LayoutParams.WRAP_CONTENT));
         }

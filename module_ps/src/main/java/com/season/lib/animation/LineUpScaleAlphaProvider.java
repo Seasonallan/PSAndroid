@@ -16,7 +16,7 @@ public class LineUpScaleAlphaProvider extends AnimationProvider {
 
     @Override
     public boolean isRepeat() {
-        return false;
+        return true;
     }
 
     @Override

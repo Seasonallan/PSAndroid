@@ -21,8 +21,7 @@ import com.example.ps.R;
 import com.season.example.support.TextModeUtil;
 import com.season.lib.RoutePath;
 import com.season.lib.crop.CropView;
-import com.season.lib.view.ps.CustomGifFrame;
-import com.season.lib.view.ps.CustomGifMovie;
+import com.season.lib.view.ps.CustomGifView;
 
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class CropActivity extends Activity {
     ImageCropAdapter mAdapter;
     ImageView preView, proView, backView, completeView;
 
-    CustomGifMovie customGifMovie;
+    CustomGifView customGifMovie;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,14 +60,6 @@ public class CropActivity extends Activity {
         filePath = getIntent().getStringExtra("path");
 
         customGifMovie = findViewById(R.id.gifview);
-        if (filePath.endsWith("gif")){
-            findViewById(R.id.gif_cot).setVisibility(View.VISIBLE);
-            customGifMovie.setAutoPlay();
-            boolean isSuccess = customGifMovie.setMovieResource(filePath);
-            customGifMovie.setVisibility(View.VISIBLE);
-            return;
-        }
-        findViewById(R.id.gif_cot).setVisibility(View.GONE);
 
         preView = (ImageView) findViewById(R.id.iv_pre);
         proView = (ImageView) findViewById(R.id.iv_pro);
@@ -113,6 +104,16 @@ public class CropActivity extends Activity {
                 Toast.makeText(CropActivity.this, path , Toast.LENGTH_SHORT).show();
             }
         });
+        if (filePath.endsWith("gif")){
+            findViewById(R.id.gif_cot).setVisibility(View.VISIBLE);
+            customGifMovie.setAutoPlay();
+            customGifMovie.setMovieResource(filePath);
+            customGifMovie.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        findViewById(R.id.gif_cot).setVisibility(View.GONE);
+
         cropView = (CropView) findViewById(R.id.mask_view);
         boolean res = cropView.setBitmap(BitmapFactory.decodeFile(filePath));
         if (!res){

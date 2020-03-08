@@ -17,8 +17,9 @@ public abstract class CustomBaseView extends View implements ILayer {
     private long mMovieStart;
     private int startTime = Integer.MIN_VALUE;
     private int endTime = Integer.MAX_VALUE;
-    private boolean autoPlay = false;
+    protected boolean autoPlay = false;
     private int currentTime = 0;
+    private int maxTime = 0;
 
     public CustomBaseView(Context context) {
         super(context);
@@ -33,8 +34,9 @@ public abstract class CustomBaseView extends View implements ILayer {
     }
 
     @Override
-    public void recordFrame(int time) {
-        currentTime = time;
+    public void recordFrame(int time, int maxTime) {
+        this.currentTime = time;
+        this.maxTime = maxTime;
     }
 
     public void setAutoPlay(){
@@ -44,7 +46,7 @@ public abstract class CustomBaseView extends View implements ILayer {
     @Override
     public void onDraw(Canvas canvas) {
         if (autoPlay){
-            long now = android.os.SystemClock.uptimeMillis();
+            long now = System.currentTimeMillis();
             if (mMovieStart == 0) {
                 mMovieStart = now;
             }
@@ -53,7 +55,7 @@ public abstract class CustomBaseView extends View implements ILayer {
                 dur = 3000;
             }
             currentTime = (int) ((now - mMovieStart) % dur);
-            drawCanvas(canvas);
+            drawCanvasTime(canvas, currentTime);
             invalidate();
         }else{
             drawCanvas(canvas);
@@ -65,11 +67,17 @@ public abstract class CustomBaseView extends View implements ILayer {
         if (currentTime >= getStartTime() && currentTime <= getEndTime()) {
             canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
             int time = currentTime - getStartTime();
-            if (getDuration() > 0 && time > getDuration()){
-                if (isRepeat()){
-                    time = time % getDuration();
-                }else{
+            int duration = getDuration();
+            if (duration > 0 && time > duration){
+                if (maxTime - (time/duration)*duration < duration){
                     time = getStayTime();
+                }else{
+                    time = time % duration;
+                }
+                if (isRepeat()){
+                   // time = time % duration;
+                }else{
+                  //  time = getStayTime();
                 }
             }
             drawCanvasTime(canvas, time);

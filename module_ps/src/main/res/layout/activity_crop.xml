@@ -87,7 +87,7 @@
         android:layout_height="match_parent"
         android:visibility="visible" >
 
-        <com.season.lib.view.ps.CustomGifMovie
+        <com.season.lib.view.ps.CustomGifView
             android:id="@+id/gifview"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"

@@ -25,6 +25,7 @@ import com.season.lib.dimen.ColorUtil;
 import com.season.lib.file.FileManager;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.gif.GifMaker;
+import com.season.lib.util.LogUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,6 +148,7 @@ public class PSCanvas extends RelativeLayout{
                     View view = ((PSLayer) scaleView).getChildAt(0);
                     if (!isFullScreen) {//不是全屏，需要定位上下左右用于剪切
                         float[] points = ((PSLayer) scaleView).mPSOpView.desPoints;
+                        LogUtil.e("---------------");
                         checkPoint(points[0], points[1]);
                         checkPoint(points[2], points[3]);
                         checkPoint(points[4], points[5]);
@@ -344,6 +346,7 @@ public class PSCanvas extends RelativeLayout{
 
     //获取剪切上下左右位置
     private void checkPoint(float x, float y) {
+        LogUtil.e(x + ", " + y);
         if (Float.isNaN(x) || Float.isNaN(y)) {
             return;
         }
@@ -432,11 +435,11 @@ public class PSCanvas extends RelativeLayout{
         }
     }
 
-    private void recordView(int time) {
+    private void recordView(int time, int maxTime) {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
             if (view instanceof PSLayer) {
-                ((PSLayer) view).record(time);
+                ((PSLayer) view).record(time, maxTime);
             }
         }
     }
@@ -541,7 +544,7 @@ public class PSCanvas extends RelativeLayout{
                             }
                         }  else {
                             int time = mGifMaker.getFrameCountNow() * recordDelay * resortCount;
-                            recordView(time);
+                            recordView(time, recordDuration);
                             Bitmap tBitmap = null;
                             if (backgroundView.currentOperate != null) {
                                 //图片
@@ -600,7 +603,7 @@ public class PSCanvas extends RelativeLayout{
                         if (currentTime - startTime > maxDuration){
                             startTime = currentTime;
                         }
-                        recordView((int) (currentTime - startTime));
+                        recordView((int) (currentTime - startTime), maxDuration);
                         refreshView();
                         if (maxDuration <= 0){
                             delay(300);

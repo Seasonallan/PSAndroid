@@ -26,7 +26,7 @@ public class TranslateShowDownProvider extends AnimationProvider {
     }
     @Override
     public boolean isRepeat() {
-        return false;
+        return true;
     }
 
     @Override

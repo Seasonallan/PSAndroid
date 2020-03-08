@@ -21,7 +21,7 @@ public class WaveOneProvider extends AnimationProvider {
 
     @Override
     public boolean isRepeat() {
-        return false;
+        return true;
     }
     int wordDelay = 50;
     float dy = 0;

@@ -23,7 +23,7 @@ public class SingleLineProvider extends AnimationProvider {
 
     @Override
     public boolean isRepeat() {
-        return false;
+        return true;
     }
     int wordDelay = 50;
 

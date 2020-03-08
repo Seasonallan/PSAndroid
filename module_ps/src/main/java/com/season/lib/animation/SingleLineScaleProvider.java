@@ -28,7 +28,7 @@ public class SingleLineScaleProvider extends AnimationProvider {
 
     @Override
     public boolean isRepeat() {
-        return false;
+        return true;
     }
     @Override
     public int getDuration() {
