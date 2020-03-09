@@ -1,4 +1,4 @@
-package com.season.lib.view.ps;
+package com.season.lib.view.gif;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,34 +9,38 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.gif.frame.GifDecoder;
+import com.season.lib.gif.frame.GifDecoderOneByOne;
+import com.season.lib.gif.frame.GifFrame;
 import com.season.lib.gif.movie.FrameDecoder;
 import com.season.lib.util.LogUtil;
-import com.season.lib.view.gif.GifPlugin;
-import com.season.lib.view.gif.MoviePlugin;
+import com.season.lib.view.ps.CustomBaseView;
+import com.season.lib.view.ps.PSLayer;
 
 
 /**
- * @see CustomGifView
+ * @see GifFrameView
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 18:37
  */
-public class CustomGifView extends CustomBaseView{
+public class GifFrameView extends View{
 
     public String url;
+    private int position;
 
-    public CustomGifView(Context context) {
+    public GifFrameView(Context context) {
         super(context);
     }
 
-    public CustomGifView(Context context, AttributeSet attrs) {
+    public GifFrameView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomGifView(Context context, AttributeSet attrs, int defStyle) {
+    public GifFrameView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    private GifPlugin gifPlugin;
+    private GifDecoderOneByOne gifDecoder = null;
     public String file;
     private int width = 0, height = 0;
 
@@ -49,14 +53,10 @@ public class CustomGifView extends CustomBaseView{
             height = firstFrame.getHeight();
             BitmapUtil.recycleBitmaps(firstFrame);
         }
-        gifPlugin = GifPlugin.getPlugin(frameDecoder.getTransIndex() >= 0, file, autoPlay);
-        if (gifPlugin instanceof MoviePlugin){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                this.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-            }
-        }
+        gifDecoder = new GifDecoderOneByOne();
+        gifDecoder.setGifImage(file);
+        gifDecoder.start();
         requestLayout();
-        LogUtil.e(""+ gifPlugin.getDescription());
     }
 
     @Override
@@ -76,49 +76,28 @@ public class CustomGifView extends CustomBaseView{
         }
     }
 
-    @Override
     public void onRelease() {
-        super.onRelease();
-        gifPlugin.onRelease();
-    }
-
-
-    @Override
-    public void drawCanvasTime(Canvas canvas, int time) {
-        gifPlugin.drawCanvasTime(canvas, time);
-    }
-
-
-    @Override
-    public int getViewWidth() {
-        return width;
-    }
-
-    @Override
-    public int getViewHeight() {
-        return height;
-    }
-
-    @Override
-    public int getDuration() {
-        return gifPlugin.getDuration();
-    }
-
-    @Override
-    public int getDelay() {
-        return gifPlugin.getDelay();
-    }
-
-
-    public CustomGifView copy() {
-        CustomGifView gifView = new CustomGifView(getContext());
-        if (!TextUtils.isEmpty(file)) {
-            gifView.setMovieResource(file);
-        } else {
+        if (gifDecoder != null && gifDecoder.getState() != Thread.State.TERMINATED) {
+            gifDecoder.release();
+            gifDecoder.interrupt();
         }
-        gifView.file = file;
-        gifView.url = url;
-        return gifView;
+        gifDecoder = null;
     }
 
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        if (gifDecoder==null){
+            return;
+        }
+        Bitmap gifFrame = gifDecoder.getFrame(position);
+        if (gifFrame != null && gifFrame.isRecycled() == false) {
+            canvas.drawBitmap(gifFrame, 0, 0, null);
+        }
+        invalidate();
+    }
+
+    public void setPosition(int i) {
+        this.position = i;
+    }
 }

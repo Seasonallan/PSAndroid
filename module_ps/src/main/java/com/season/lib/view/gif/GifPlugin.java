@@ -6,6 +6,11 @@ public abstract class GifPlugin {
 
     public static GifPlugin getPlugin(boolean isTransparent, String file, boolean autoPlay){
         GifPlugin plugin;
+        if (true){
+            plugin = new FramePlugin();
+            plugin.init(file);
+            return plugin;
+        }
         if (!isTransparent || autoPlay){
             plugin = new MoviePlugin();
             if (plugin.init(file)){

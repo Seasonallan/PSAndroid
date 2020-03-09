@@ -20,6 +20,9 @@
         <activity android:name="com.season.example.CropActivity"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name="com.season.example.BigGifActivity"
+            android:screenOrientation="portrait">
+        </activity>
 
     </application>
 

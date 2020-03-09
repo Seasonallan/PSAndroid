@@ -1,28 +1,23 @@
 package com.season.lib.gif.frame;
-
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.util.Log;
-
-import java.io.ByteArrayInputStream;
+import com.season.lib.util.LogUtil;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Gif解码器
  * @author liao
  */
-public class GifDecoder extends Thread {
+public class GifDecoderOneByOne extends Thread {
 
 	public boolean isDestroy = false;
 
 	private InputStream in;
 
-	public int width; // full image width
-	public int height; // full image height
+	public int width; // full currentImage width
+	public int height; // full currentImage height
 	private boolean gctFlag; // global color.xml table used
 	private int gctSize; // size of global color.xml table
 
@@ -39,10 +34,8 @@ public class GifDecoder extends Thread {
 	private boolean interlace; // interlace flag
 	private int lctSize; // local color.xml table size
 
-	private int ix, iy, iw, ih; // current image rectangle
+	private int ix, iy, iw, ih; // current currentImage rectangle
 	private int lrx, lry, lrw, lrh;
-	private Bitmap image; // current frame
-	private Bitmap lastImage; // previous frame
 
 	private byte[] block = new byte[256]; // current data block
 	private int blockSize = 0; // block size
@@ -64,99 +57,118 @@ public class GifDecoder extends Thread {
 	private byte[] pixelStack;
 	private byte[] pixels;
 
-	private int frameCount;
-	private List<GifFrame> frameCache = new ArrayList<>();
-	private byte[] gifData = null;
-
-	private int fileType = 0; // 1:resource,2:file,3:byte[]
-
-	private Resources res = null;
-	private int resId = 0;
 	private String strFileName = null;
-
-	private void openInputstream() {
-		in = new ByteArrayInputStream(gifData);
-	}
-
-
-	public void setDecodeCount(){
-
-	}
-
-	public void setGifImage(Resources res, int resId) {
-		this.res = res;
-		this.resId = resId;
-		openResourceFile();
-		fileType = 1;
-	}
-
-	private void openResourceFile() {
-		in = res.openRawResource(resId);
-	}
 
 	public void setGifImage(String strFileName) {
 		this.strFileName = strFileName;
-		fileType = 2;
-		openFile();
 	}
 
-	private void openFile() {
-		try {
-			in = new FileInputStream(strFileName);
-		} catch (Exception ex) {
-			Log.e("open failed", ex.toString());
-		}
-	}
 
 	public void run() {
+		gct = null;
+		lct = null;
 		try {
-			readStream();
+			in = new FileInputStream(strFileName);
+			startReadBytes();
+			if (in != null)
+				in.close();
+			in = null;
 		} catch (Exception ex) {
-			Log.e("GifView decode run", ex.toString());
-			ex.printStackTrace();
+			LogUtil.e("exception"+ex.toString());
+		}
+		LogUtil.e("end");
+	}
+
+	private void startReadBytes() throws Exception {
+		readHeader();
+		// read GIF file content blocks
+		while (isDestroy == false) {
+			if (empty) LogUtil.e(currentBitmap + " -->>"+ position);
+			int code = read();
+			switch (code) {
+				case 0x2C: // currentImage separator
+					readImage();
+					break;
+				case 0x21: // extension
+					code = read();
+					switch (code) {
+						case 0xf9: // graphics control extension
+							readGraphicControlExt();
+							break;
+						case 0xff: // application extension
+							readBlock();
+							String app = "";
+							for (int i = 0; i < 11; i++) {
+								app += (char) block[i];
+							}
+							if (app.equals("NETSCAPE2.0")) {
+								readNetscapeExt();
+							} else {
+								skip(); // don't care
+							}
+							break;
+						default: // uninteresting extension
+							skip();
+					}
+					break;
+				case 0x3b: // terminator
+					in = new FileInputStream(strFileName);
+					readHeader();
+					break;
+				case 0x00: // bad byte, but keep going and see what happens
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
-	public void setFrameList(List<GifFrame> frameList){
-		frameCache = frameList;
-		frameCount = frameList.size();
-		if (frameList.size() > 0){
-			delay = frameList.get(0).delay;
-		}
-	}
-
-	public int getDuration(){
-		return getDelay() * frameCount;
-	}
 
 	public int getDelay(){
 		return delay;
 	}
 
-	public int getFrameIndex(int positionTime){
-		int position = 0;
-		if (delay != 0){
-			position = positionTime/delay;
-		}
-		return position;
-	}
-
-	/**
-	 */
-	public GifFrame getFrame(int positionTime) {
-		int position = getFrameIndex(positionTime);
-		if (delay != 0){
-			position = positionTime/delay;
-		}
-		GifFrame gif;
-		if (position >= frameCount) {
-			position = 0;
-		}
-		if (position >= frameCache.size()){
+	Bitmap currentBitmap, nextBitmap;
+	long currentTime;
+	boolean empty;
+	int position = -1;
+	public Bitmap getFrame(int position) {
+		this.position = position;
+		if (currentBitmap == null){
 			return null;
 		}
-		gif = frameCache.get(position);
-		return gif;
+		if (currentTime <= 0){
+			currentTime = System.currentTimeMillis();
+			return currentBitmap;
+		}
+		if (System.currentTimeMillis() - currentTime > delay){
+			currentBitmap.recycle();
+			currentBitmap = null;
+			if (nextBitmap == null){
+				currentTime = -1;
+				notifyThread();
+				empty = true;
+				LogUtil.e(currentBitmap + " findNext>>"+ position);
+				return null;
+			}
+			currentBitmap = nextBitmap;
+			nextBitmap = null;
+			currentTime = System.currentTimeMillis();
+			notifyThread();
+			return currentBitmap;
+		}
+		return currentBitmap;
+	}
+
+	private void notifyThread(){
+		synchronized(this){
+			notify();
+		}
+	}
+	private void waitThread() throws InterruptedException {
+		synchronized(this){
+			wait();
+		}
 	}
 
 	/**
@@ -170,87 +182,45 @@ public class GifDecoder extends Thread {
 			}
 			in = null;
 		}
-		if (image != null){
-			if (!image.isRecycled()){
-				image.recycle();
+
+		if (currentBitmap != null) {
+			if (!currentBitmap.isRecycled()){
+				currentBitmap.recycle();
 			}
-			image = null;
+			currentBitmap = null;
 		}
-		if (lastImage != null){
-			if (!lastImage.isRecycled()){
-				lastImage.recycle();
+		if (nextBitmap != null) {
+			if (!nextBitmap.isRecycled()){
+				nextBitmap.recycle();
 			}
-			lastImage = null;
-		}
-		gifData = null;
-		if (frameCache != null) {
-			for (GifFrame frame : frameCache){
-				frame.release();
-			}
-			frameCache.clear();
-			frameCache = null;
+			nextBitmap = null;
 		}
 	}
 
-	public void destroy() {
-			isDestroy = true;
-			free();
+	public void release() {
+		isDestroy = true;
+		free();
 	}
 
 
 	private int[] dest = null;
 
-	private void setPixels() {
-		try {
-			// int[] dest = new int[width * height];
-			if (dest == null) {
-				dest = new int[width * height];
-			}
+	private void setPixels() throws Exception {
+// int[] dest = new int[width * height];
+		if (dest == null) {
+			dest = new int[width * height];
+		}
 
-			// fill in starting image contents based on last image's dispose
-			// code
-
-			if (lastDispose > 0) {
-				if (lastDispose == 3) {
-					// use image before last
-					int n = frameCount - 2;
-					if (n > 0) {
-						// lastImage = getFrameImage(n - 1);
-					} else {
-						lastImage = null;
-					}
-					lastImage = null;
-				}
-				if (lastImage != null) {
-					lastImage.getPixels(dest, 0, width, 0, 0, width, height);
-					// copy pixels
-					if (lastDispose == 2) {
-						// fill last image rect area url background color.xml
-						int c = 0;
-						if (!transparency) {
-							c = lastBgColor;
-						}
-						for (int i = 0; i < lrh; i++) {
-							int n1 = (lry + i) * width + lrx;
-							int n2 = n1 + lrw;
-							for (int k = n1; k < n2; k++) {
-								dest[k] = c;
-							}
-						}
-					}
-				}
-			}
-
-			// copy each source line to the appropriate place in the destination
-			int pass = 1;
-			int inc = 8;
-			int iline = 0;
-			for (int i = 0; i < ih; i++) {
-				int line = i;
-				if (interlace) {
-					if (iline >= ih) {
-						pass++;
-						switch (pass) {
+		// copy each source line to the appropriate place in the destination
+		int pass = 1;
+		int inc = 8;
+		int iline = 0;
+		for (int i = 0; i < ih; i++) {
+			int line = i;
+			if (interlace) {
+				if (iline >= ih) {
+					pass++;
+					switch (pass) {
 						case 2:
 							iline = 4;
 							break;
@@ -261,70 +231,43 @@ public class GifDecoder extends Thread {
 						case 4:
 							iline = 1;
 							inc = 2;
-						}
-					}
-					line = iline;
-					iline += inc;
-				}
-				line += iy;
-				if (line < height) {
-					int k = line * width;
-					int dx = k + ix; // start of line in dest
-					int dlim = dx + iw; // end of dest line
-					if ((k + width) < dlim) {
-						dlim = k + width; // past dest edge
-					}
-					int sx = i * iw; // start of line in source
-					while (dx < dlim) {
-						// map color.xml and insert in destination
-						int index = ((int) pixels[sx++]) & 0xff;
-						int c = act[index];
-						if (c != 0) {
-							dest[dx] = c;
-						}
-						dx++;
 					}
 				}
+				line = iline;
+				iline += inc;
 			}
-
-			image = Bitmap.createBitmap(dest, width, height, Config.ARGB_8888);  // Config.RGB_565
-		} catch (OutOfMemoryError e) {
-			e.printStackTrace();
-		} catch (StackOverflowError ee) {
-			ee.printStackTrace();
-		} catch (Exception ex) {
-			Log.e("GifView decode setpixel", ex.toString());
-		}
-	}
-
-	private void readStream() {
-		init();
-		switch (fileType) {
-			case 1: // resource
-				openResourceFile();
-				break;
-			case 2:
-				openFile();
-				break;
-			case 3:
-				openInputstream();
-				break;
-		}
-		if (in != null) {
-			readHeader();
-			readContents();
-			try {
-				if (null != in)
-					in.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+			line += iy;
+			if (line < height) {
+				int k = line * width;
+				int dx = k + ix; // start of line in dest
+				int dlim = dx + iw; // end of dest line
+				if ((k + width) < dlim) {
+					dlim = k + width; // past dest edge
+				}
+				int sx = i * iw; // start of line in source
+				while (dx < dlim) {
+					// map color.xml and insert in destination
+					int index = ((int) pixels[sx++]) & 0xff;
+					int c = act[index];
+					if (c != 0) {
+						dest[dx] = c;
+					}
+					dx++;
+				}
 			}
-			in = null;
+		}
+		if (currentBitmap == null){
+			currentBitmap = Bitmap.createBitmap(dest, width, height, Config.ARGB_8888);  // Config.RGB_565
+			if (empty) LogUtil.e(currentBitmap + " find>>"+ position);
+			empty = false;
+		}else{
+			nextBitmap = Bitmap.createBitmap(dest, width, height, Config.ARGB_8888);  // Config.RGB_565
+			waitThread();
 		}
 	}
 
 
-	private void decodeImageData() {
+	private void decodeImageData() throws IOException {
 		int NullCode = -1;
 		int npix = iw * ih;
 		int available, clear, code_mask, code_size, end_of_information, in_code, old_code, bits, code, count, i, datum, data_size, first, top, bi, pi;
@@ -432,36 +375,21 @@ public class GifDecoder extends Thread {
 		}
 	}
 
-	private void init() {
-		frameCount = 0;
-		gct = null;
-		lct = null;
+	private int read() throws IOException {
+		return in.read();
 	}
 
-	private int read() {
-		int curByte = 0;
-		try {
-			curByte = in.read();
-		} catch (Exception e) {
-		}
-		return curByte;
-	}
-
-	private int readBlock() {
+	private int readBlock() throws IOException {
 		blockSize = read();
 		int n = 0;
 		if (blockSize > 0) {
-			try {
-				int count = 0;
-				while (n < blockSize) {
-					count = in.read(block, n, blockSize - n);
-					if (count == -1) {
-						break;
-					}
-					n += count;
+			int count = 0;
+			while (n < blockSize) {
+				count = in.read(block, n, blockSize - n);
+				if (count == -1) {
+					break;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				n += count;
 			}
 		}
 		return n;
@@ -469,16 +397,11 @@ public class GifDecoder extends Thread {
 
 	private int[] tab = new int[256];
 
-	private int[] readColorTable(int ncolors) {
+	private int[] readColorTable(int ncolors) throws IOException {
 		int nbytes = 3 * ncolors;
 		// int[] tab = null;
 		byte[] c = new byte[nbytes];
-		int n = 0;
-		try {
-			n = in.read(c);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		int n = in.read(c);
 		if (n < nbytes) {
 
 		} else {
@@ -495,54 +418,12 @@ public class GifDecoder extends Thread {
 		return tab;
 	}
 
-	private void readContents() {
-		// read GIF file content blocks
-		boolean done = false;
-		while (!(done) && isDestroy == false) {
-				int code = read();
-				switch (code) {
-				case 0x2C: // image separator
-					readImage();
-					break;
-				case 0x21: // extension
-					code = read();
-					switch (code) {
-					case 0xf9: // graphics control extension
-						readGraphicControlExt();
-						break;
-					case 0xff: // application extension
-						readBlock();
-						String app = "";
-						for (int i = 0; i < 11; i++) {
-							app += (char) block[i];
-						}
-						if (app.equals("NETSCAPE2.0")) {
-							readNetscapeExt();
-						} else {
-							skip(); // don't care
-						}
-						break;
-					default: // uninteresting extension
-						skip();
-					}
-					break;
-				case 0x3b: // terminator
-					done = true;
-					break;
-				case 0x00: // bad byte, but keep going and see what happens
-					break;
-				default:
-					break;
-				}
-		}
-	}
-
-	private void readGraphicControlExt() {
+	private void readGraphicControlExt() throws IOException {
 		read(); // block size
 		int packed = read(); // packed fields
 		dispose = (packed & 0x1c) >> 2; // disposal method
 		if (dispose == 0) {
-			dispose = 1; // elect to keep old image if discretionary
+			dispose = 1; // elect to keep old currentImage if discretionary
 		}
 		transparency = (packed & 1) != 0;
 		delay = readShort() * 10; // delay in milliseconds
@@ -553,7 +434,7 @@ public class GifDecoder extends Thread {
 		read(); // block terminator
 	}
 
-	private void readHeader() {
+	private void readHeader() throws Exception {
 		String id = "";
 		for (int i = 0; i < 6; i++) {
 			id += (char) read();
@@ -568,8 +449,8 @@ public class GifDecoder extends Thread {
 		}
 	}
 
-	private void readImage() {
-		ix = readShort(); // (sub)image position & size
+	private void readImage() throws Exception {
+		ix = readShort(); // (sub)currentImage position & size
 		iy = readShort();
 		iw = readShort();
 		ih = readShort();
@@ -597,14 +478,10 @@ public class GifDecoder extends Thread {
 		}
 		decodeImageData(); // decode pixel data
 		skip();
-		frameCount++;
-		// url new image to receive frame data
-		//image = Bitmap.createBitmap(width, height, Config.ARGB_4444);
+		// url new currentImage to receive frame data
+		//currentImage = Bitmap.createBitmap(width, height, Config.ARGB_4444);
 		// createImage(width, height);
-		setPixels(); // transfer pixel data to image
-
-		GifFrame gif = new GifFrame(image, delay);
-		frameCache.add(gif);
+		setPixels(); // transfer pixel data to currentImage
 
 		if (transparency) {
 			act[transIndex] = save;
@@ -613,7 +490,7 @@ public class GifDecoder extends Thread {
 
 	}
 
-	private void readLSD() {
+	private void readLSD() throws IOException {
 		// logical screen size
 		width = readShort();
 		height = readShort();
@@ -627,7 +504,7 @@ public class GifDecoder extends Thread {
 		pixelAspect = read(); // pixel aspect ratio
 	}
 
-	private void readNetscapeExt() {
+	private void readNetscapeExt() throws IOException {
 		do {
 			readBlock();
 			if (block[0] == 1) {
@@ -639,7 +516,7 @@ public class GifDecoder extends Thread {
 		} while (blockSize > 0);
 	}
 
-	private int readShort() {
+	private int readShort() throws IOException {
 		// read 16-bit value, LSB first
 		int s = read();
 		int f = read();
@@ -654,7 +531,6 @@ public class GifDecoder extends Thread {
 		lry = iy;
 		lrw = iw;
 		lrh = ih;
-		lastImage = image;
 		lastBgColor = bgColor;
 		dispose = 0;
 		transparency = false;
@@ -665,7 +541,7 @@ public class GifDecoder extends Thread {
 	/**
 	 * Skips variable length blocks up to and including next zero length block.
 	 */
-	private void skip() {
+	private void skip() throws IOException {
 		do {
 			readBlock();
 		} while (blockSize > 0);
