@@ -55,7 +55,7 @@ public class BigGifActivity extends Activity {
                     @Override
                     public void run() {
                         if (file.length() > 0) {
-                            for (int i=0;i< 40;i++){
+                            for (int i=0;i< 1;i++){
                                 GifFrameView gifView = new GifFrameView(BigGifActivity.this);
                                 gifView.setMovieResource(file.toString());
                                 gifView.setPosition(i);

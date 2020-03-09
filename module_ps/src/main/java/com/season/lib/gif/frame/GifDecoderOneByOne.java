@@ -1,7 +1,6 @@
 package com.season.lib.gif.frame;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import com.season.lib.util.LogUtil;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,16 +73,13 @@ public class GifDecoderOneByOne extends Thread {
 				in.close();
 			in = null;
 		} catch (Exception ex) {
-			LogUtil.e("exception"+ex.toString());
 		}
-		LogUtil.e("end");
 	}
 
 	private void startReadBytes() throws Exception {
 		readHeader();
 		// read GIF file content blocks
 		while (isDestroy == false) {
-			if (empty) LogUtil.e(currentBitmap + " -->>"+ position);
 			int code = read();
 			switch (code) {
 				case 0x2C: // currentImage separator
@@ -142,15 +138,12 @@ public class GifDecoderOneByOne extends Thread {
 			return currentBitmap;
 		}
 		if (System.currentTimeMillis() - currentTime > delay){
+			if (nextBitmap == null){
+				notifyThread();
+				return currentBitmap;
+			}
 			currentBitmap.recycle();
 			currentBitmap = null;
-			if (nextBitmap == null){
-				currentTime = -1;
-				notifyThread();
-				empty = true;
-				LogUtil.e(currentBitmap + " findNext>>"+ position);
-				return null;
-			}
 			currentBitmap = nextBitmap;
 			nextBitmap = null;
 			currentTime = System.currentTimeMillis();
@@ -258,8 +251,6 @@ public class GifDecoderOneByOne extends Thread {
 		}
 		if (currentBitmap == null){
 			currentBitmap = Bitmap.createBitmap(dest, width, height, Config.ARGB_8888);  // Config.RGB_565
-			if (empty) LogUtil.e(currentBitmap + " find>>"+ position);
-			empty = false;
 		}else{
 			nextBitmap = Bitmap.createBitmap(dest, width, height, Config.ARGB_8888);  // Config.RGB_565
 			waitThread();
