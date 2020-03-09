@@ -61,6 +61,16 @@ public class CropActivity extends Activity {
 
         customGifMovie = findViewById(R.id.gifview);
 
+        if (filePath.endsWith("gif")){
+            findViewById(R.id.gif_cot).setVisibility(View.VISIBLE);
+            customGifMovie.setAutoPlay();
+            customGifMovie.setMovieResource(filePath);
+            customGifMovie.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        findViewById(R.id.gif_cot).setVisibility(View.GONE);
+
         preView = (ImageView) findViewById(R.id.iv_pre);
         proView = (ImageView) findViewById(R.id.iv_pro);
         mRv= (RecyclerView) findViewById(R.id.rv);
@@ -104,16 +114,6 @@ public class CropActivity extends Activity {
                 Toast.makeText(CropActivity.this, path , Toast.LENGTH_SHORT).show();
             }
         });
-        if (filePath.endsWith("gif")){
-            findViewById(R.id.gif_cot).setVisibility(View.VISIBLE);
-            customGifMovie.setAutoPlay();
-            customGifMovie.setMovieResource(filePath);
-            customGifMovie.setVisibility(View.VISIBLE);
-            return;
-        }
-
-        findViewById(R.id.gif_cot).setVisibility(View.GONE);
-
         cropView = (CropView) findViewById(R.id.mask_view);
         boolean res = cropView.setBitmap(BitmapFactory.decodeFile(filePath));
         if (!res){

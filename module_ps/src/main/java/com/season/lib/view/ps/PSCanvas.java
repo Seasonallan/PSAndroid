@@ -148,7 +148,6 @@ public class PSCanvas extends RelativeLayout{
                     View view = ((PSLayer) scaleView).getChildAt(0);
                     if (!isFullScreen) {//不是全屏，需要定位上下左右用于剪切
                         float[] points = ((PSLayer) scaleView).mPSOpView.desPoints;
-                        LogUtil.e("---------------");
                         checkPoint(points[0], points[1]);
                         checkPoint(points[2], points[3]);
                         checkPoint(points[4], points[5]);
@@ -346,7 +345,6 @@ public class PSCanvas extends RelativeLayout{
 
     //获取剪切上下左右位置
     private void checkPoint(float x, float y) {
-        LogUtil.e(x + ", " + y);
         if (Float.isNaN(x) || Float.isNaN(y)) {
             return;
         }

@@ -16,8 +16,6 @@ import com.season.lib.view.gif.MoviePlugin;
 
 
 /**
- * Disc: 使用解码器GifDecoder解析出每一帧，然后逐帧显示刷新
- *
  * @see CustomGifView
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 18:37
@@ -38,15 +36,19 @@ public class CustomGifView extends CustomBaseView{
         super(context, attrs, defStyle);
     }
 
-    GifPlugin gifPlugin;
-
-    public Bitmap firstFrame;
+    private GifPlugin gifPlugin;
     public String file;
+    private int width = 0, height = 0;
 
     public void setMovieResource(String strFileName) {
         this.file = strFileName;
         FrameDecoder frameDecoder  = new FrameDecoder(file);
-        firstFrame = frameDecoder .getFrame();
+        Bitmap firstFrame = frameDecoder .getFrame();
+        if (firstFrame != null) {
+            width = firstFrame.getWidth();
+            height = firstFrame.getHeight();
+            BitmapUtil.recycleBitmaps(firstFrame);
+        }
         gifPlugin = GifPlugin.getPlugin(frameDecoder.getTransIndex() >= 0, file, autoPlay);
         if (gifPlugin instanceof MoviePlugin){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -59,13 +61,7 @@ public class CustomGifView extends CustomBaseView{
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (firstFrame != null) {
-            int movieWidth = firstFrame.getWidth();
-            int movieHeight = firstFrame.getHeight();
-            setMeasuredDimension(movieWidth, movieHeight);
-        } else {
-            setMeasuredDimension(0, 0);
-        }
+        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -83,7 +79,6 @@ public class CustomGifView extends CustomBaseView{
     @Override
     public void onRelease() {
         super.onRelease();
-        if (firstFrame != null) BitmapUtil.recycleBitmaps(firstFrame);
         gifPlugin.onRelease();
     }
 
@@ -96,22 +91,12 @@ public class CustomGifView extends CustomBaseView{
 
     @Override
     public int getViewWidth() {
-        try {
-            return firstFrame.getWidth();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
+        return width;
     }
 
     @Override
     public int getViewHeight() {
-        try {
-            return firstFrame.getHeight();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
+        return height;
     }
 
     @Override
