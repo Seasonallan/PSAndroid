@@ -298,6 +298,7 @@ public class GifEncoder {
             indexedPixels[i] = (byte) index;
         }
         pixels = null;
+        nq = null;
         colorDepth = 8;
         palSize = 7;
         // TopicGroupAPIAOP closest match to transparent color.xml if specified

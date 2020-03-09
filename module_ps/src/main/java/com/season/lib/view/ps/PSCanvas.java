@@ -586,9 +586,6 @@ public class PSCanvas extends RelativeLayout{
                                     e.printStackTrace();
                                 }
                             }
-                            /**
-                             * 为底图是静态图或者透明层，做GIF图
-                             */
                             if (mGifMaker != null) mGifMaker.addBitmap(tBitmap);
                         }
                     } else {

@@ -48,4 +48,10 @@ public class LZWEncoderOrderHolder implements Comparable<LZWEncoderOrderHolder> 
     public void setByteArrayOutputStream(ByteArrayOutputStream byteArrayOutputStream) {
         this.mByteArrayOutputStream = byteArrayOutputStream;
     }
+
+    public void release() {
+        this.mByteArrayOutputStream = null;
+        this.mLZWEncoder.release();
+        this.mLZWEncoder = null;
+    }
 }

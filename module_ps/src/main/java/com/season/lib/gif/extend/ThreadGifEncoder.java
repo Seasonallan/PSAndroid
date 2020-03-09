@@ -2,6 +2,7 @@ package com.season.lib.gif.extend;
 
 import android.graphics.Bitmap;
 
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.gif.base.GifEncoder;
 import com.season.lib.gif.base.LZWEncoder;
 
@@ -115,10 +116,9 @@ public class ThreadGifEncoder extends GifEncoder {
             ok = false;
         }
 
-        // reset for subsequent use
         transIndex = 0;
         out = null;
-        image = null;
+        BitmapUtil.recycleBitmaps(image);
         pixels = null;
         indexedPixels = null;
         colorTab = null;

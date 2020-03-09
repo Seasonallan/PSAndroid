@@ -19,6 +19,8 @@ import com.season.lib.view.ps.PSLayer;
 
 
 /**
+ *
+ * 可解析大GIF图片，只缓存两帧bitmap
  * @see GifFrameView
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-12-12 18:37

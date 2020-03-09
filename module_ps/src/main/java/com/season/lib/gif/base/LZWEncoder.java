@@ -105,6 +105,14 @@ public class LZWEncoder {
     // Define the storage for the packet accumulator
     byte[] accum = new byte[256];
 
+
+    public void release(){
+        accum = null;
+        pixAry = null;
+        htab = null;
+        codetab = null;
+    }
+
     // ----------------------------------------------------------------------------
     public LZWEncoder(int width, int height, byte[] pixels, int color_depth) {
         imgW = width;
