@@ -41,7 +41,7 @@ public class GifEncoder {
 
     private Integer transparentColor = 0xFF09FF31; // transparent color.xml if given
 
-    private boolean hasTransparentPixels;
+    protected boolean hasTransparentPixels;
 
     protected int transIndex; // transparent index in color.xml table
     protected int     repeat  = -1; // no repeat

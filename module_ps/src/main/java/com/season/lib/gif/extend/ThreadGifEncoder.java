@@ -1,7 +1,6 @@
 package com.season.lib.gif.extend;
 
 import android.graphics.Bitmap;
-
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.gif.base.GifEncoder;
 import com.season.lib.gif.base.LZWEncoder;
@@ -19,11 +18,9 @@ import java.io.OutputStream;
 public class ThreadGifEncoder extends GifEncoder {
 
     public LZWEncoderOrderHolder addFrame(Bitmap im, int order) {
-
         if (im == null || !started) {
             return null;
         }
-
         boolean ok = true;
         LZWEncoder lzwEncoder = null;
         try {
@@ -49,6 +46,7 @@ public class ThreadGifEncoder extends GifEncoder {
             // writePixels(); // encode and write pixel data
             lzwEncoder = waitWritePixels();
         } catch (IOException e) {
+            e.printStackTrace();
             ok = false;
         }
         if (ok) {
@@ -57,6 +55,7 @@ public class ThreadGifEncoder extends GifEncoder {
             return null;
         }
     }
+
 
     public void setSize(int w, int h) {
         width = w;

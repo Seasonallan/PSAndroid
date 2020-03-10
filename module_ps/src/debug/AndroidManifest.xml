@@ -23,6 +23,9 @@
         <activity android:name="com.season.example.BigGifActivity"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name="com.season.example.video.VideoActivity"
+            android:screenOrientation="portrait">
+        </activity>
 
     </application>
 

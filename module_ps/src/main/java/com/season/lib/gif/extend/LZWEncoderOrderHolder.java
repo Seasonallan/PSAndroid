@@ -51,7 +51,8 @@ public class LZWEncoderOrderHolder implements Comparable<LZWEncoderOrderHolder> 
 
     public void release() {
         this.mByteArrayOutputStream = null;
-        this.mLZWEncoder.release();
+        if (mLZWEncoder != null)
+            this.mLZWEncoder.release();
         this.mLZWEncoder = null;
     }
 }

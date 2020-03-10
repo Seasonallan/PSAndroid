@@ -24,6 +24,7 @@ import com.season.example.layout.BottomTucengLayout;
 import com.season.example.layout.BottomVipLayout;
 import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
+import com.season.example.video.VideoActivity;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.bean.LayerItem;
@@ -63,6 +64,11 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (true){
+            VideoActivity.start(this);
+            finish();
+            return;
+        }
         if (false){
             BigGifActivity.start(this,"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
             finish();

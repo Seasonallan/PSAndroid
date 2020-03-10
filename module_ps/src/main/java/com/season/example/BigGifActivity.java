@@ -28,7 +28,7 @@ public class BigGifActivity extends Activity {
         context.startActivity(intent);
     }
 
-    String urlPath;
+    String path;
     LinearLayout linearLayout;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,39 +39,50 @@ public class BigGifActivity extends Activity {
 
         BaseContext.init(getApplicationContext());
 
-        urlPath = getIntent().getStringExtra("path");
+        path = getIntent().getStringExtra("path");
 
         linearLayout = findViewById(R.id.gif_cot);
 
-
-        final File file = FileManager.getPsFile(urlPath.hashCode() + "", "gif");
-        if (file == null) {
-            return;
-        }
-        DownloadAPI.downloadFile(urlPath, file, new DownloadAPI.IDownloadListener() {
-            @Override
-            public void onCompleted() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (file.length() > 0) {
-                            for (int i=0;i< 1;i++){
-                                GifFrameView gifView = new GifFrameView(BigGifActivity.this);
-                                gifView.setMovieResource(file.toString());
-                                gifView.setPosition(i);
-                                linearLayout.addView(gifView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        if (!path.startsWith("http")){
+            GifFrameView gifView = new GifFrameView(BigGifActivity.this);
+            gifView.setMovieResource(path);
+            linearLayout.addView(gifView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }else{
+            final File file = FileManager.getPsFile(path.hashCode() + "", "gif");
+            if (file == null) {
+                return;
+            }
+            DownloadAPI.downloadFile(path, file, new DownloadAPI.IDownloadListener() {
+                @Override
+                public void onCompleted() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (file.length() > 0) {
+                                for (int i=0;i< 1;i++){
+                                    GifFrameView gifView = new GifFrameView(BigGifActivity.this);
+                                    gifView.setMovieResource(file.toString());
+                                    gifView.setPosition(i);
+                                    linearLayout.addView(gifView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                }
                             }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-            @Override
-            public void onError() {
-                file.deleteOnExit();
-                ToastUtil.show("下载失败，请稍候重试");
-            }
-        });
+                @Override
+                public void onError() {
+                    file.deleteOnExit();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtil.show("下载失败，请稍候重试");
+                        }
+                    });
+                }
+            });
+        }
+
     }
 
 

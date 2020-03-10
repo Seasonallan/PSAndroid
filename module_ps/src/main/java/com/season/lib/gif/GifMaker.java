@@ -238,8 +238,12 @@ public class GifMaker {
             Collections.sort(mEncodeOrders);
             if (repeatCount <= 1) {
                 for (int i = 0; i < mEncodeOrders.size(); i++) {
-                    if (mEncodeOrders.get(i) != null)
-                        mFinalOutputStream.write(mEncodeOrders.get(i).getByteArrayOutputStream().toByteArray());
+                    LZWEncoderOrderHolder item = mEncodeOrders.get(i);
+                    if (item != null){
+                        mFinalOutputStream.write(item.getByteArrayOutputStream().toByteArray());
+                        item.release();
+                        item = null;
+                    }
                 }
             } else {
                 for (int index = 0; index < repeatCount; index++) {
