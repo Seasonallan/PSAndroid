@@ -33,6 +33,7 @@ public class BitmapUtil {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			bitmaps = null;
 		}
 	}
 
