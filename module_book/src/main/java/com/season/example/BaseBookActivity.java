@@ -447,7 +447,12 @@ public class BaseBookActivity extends Activity implements
         }
     }
 
-    @Override
+	@Override
+	public void onPullUp() {
+		showMenu();
+	}
+
+	@Override
     public void onSnapToTop() {
         if (!mInLoading) {
             mInLoading = true;

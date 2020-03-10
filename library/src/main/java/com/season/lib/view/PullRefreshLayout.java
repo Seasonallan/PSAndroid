@@ -323,7 +323,12 @@ public class PullRefreshLayout extends FrameLayout {
 				mIsMotioned = false;
 			}
 			if ((mIsMotioned) && (targetOnTop)) {
-				float d = (mMotionScrollY - eventFloatY + mLastMotionY)/FRICTION;//TODO:
+				float d = (mMotionScrollY - eventFloatY + mLastMotionY)/FRICTION;
+				if (d > 120){
+					if (mPullStateListener != null){
+						mPullStateListener.onPullUp();
+					}
+				}
 				scrollTo(0, (int) d);
 			}
 
@@ -522,6 +527,58 @@ public class PullRefreshLayout extends FrameLayout {
 			snapToToolViewBottom();
 	}
 
+	/**
+	 * Scroll to hide Action View if no touch event.
+	 */
+	public void hideActionView() {
+		int y = getScrollY();
+		int bottom = -mToolViewHeight;
+		if ((y >= bottom) || (mInTouch)) {
+			return;
+		}
+
+		smoothScrollTo(bottom);
+	}
+
+	/**
+	 * Snap to Top of Action View if no touch event.
+	 */
+	public void snapToActionViewTop() {
+		int y = getScrollY();
+		int top = -mToolViewHeight - mActionViewHeight;
+		if ((y >= top) || (mInTouch)) {
+			return;
+		}
+		smoothScrollTo(top);
+		if (mPullStateListener != null)
+			mPullStateListener.onSnapToTop();
+	}
+
+	/**
+	 * Snap to Top of Tool View if no touch event.
+	 */
+	public void snapToToolViewTop() {
+		int y = getScrollY();
+		int top = -mToolViewHeight;
+		if ((y >= 0) || (mInTouch)) {
+			return;
+		}
+		smoothScrollTo(top);
+		if (mPullStateListener != null)
+			mPullStateListener.onSnapToTop();
+	}
+
+	/**
+	 * Snap to hide all view if no touch event.
+	 */
+	public void snapToToolViewBottom() {
+		int y = getScrollY();
+		if ((y >= 0) || (mInTouch)) {
+			return;
+		}
+		smoothScrollTo(0);
+	}
+
 	protected int computeVerticalScrollRange() {
 		int scrollRange = getHeight();
 		if (mTargetView != null) {
@@ -548,57 +605,6 @@ public class PullRefreshLayout extends FrameLayout {
 		return Math.max(0, super.computeVerticalScrollOffset());
 	}
 
-	/**
-	 * Scroll to hide Action View if no touch event. 
-	 */
-	public void hideActionView() {
-		int y = getScrollY();
-		int bottom = -mToolViewHeight;
-		if ((y >= bottom) || (mInTouch)) {
-			return;
-		}
-
-		smoothScrollTo(bottom);
-	}
-
-	/**
-	 * Snap to Top of Action View if no touch event. 
-	 */
-	public void snapToActionViewTop() {
-		int y = getScrollY();
-		int top = -mToolViewHeight - mActionViewHeight;
-		if ((y >= top) || (mInTouch)) {
-			return;
-		}
-		smoothScrollTo(top);
-		if (mPullStateListener != null)
-			mPullStateListener.onSnapToTop();
-	}
-
-	/**
-	 * Snap to Top of Tool View if no touch event. 
-	 */
-	public void snapToToolViewTop() {
-		int y = getScrollY();
-		int top = -mToolViewHeight;
-		if ((y >= 0) || (mInTouch)) {
-			return;
-		}
-		smoothScrollTo(top);
-		if (mPullStateListener != null)
-			mPullStateListener.onSnapToTop();
-	}
-
-	/**
-	 * Snap to hide all view if no touch event. 
-	 */
-	public void snapToToolViewBottom() {
-		int y = getScrollY();
-		if ((y >= 0) || (mInTouch)) {
-			return;
-		}
-		smoothScrollTo(0);
-	}
 
 	/**
 	 * Indicates whether all children view has been pull down under the top of layout.
@@ -634,11 +640,13 @@ public class PullRefreshLayout extends FrameLayout {
 		smoothScrollBy(y - getScrollY());
 	}
 
-	public static abstract interface OnPullStateListener {
-		public abstract void onSnapToTop();
+	public interface OnPullStateListener {
+		void onSnapToTop();
 
-		public abstract void onPullOut();
+		void onPullOut();
 
-		public abstract void onPullIn();
+		void onPullIn();
+
+		void onPullUp();
 	}
 }
