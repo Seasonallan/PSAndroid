@@ -1,7 +1,5 @@
 package com.season.example.video;
 
-
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,14 +13,13 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 
 import androidx.annotation.RequiresApi;
 
-import com.season.lib.BaseContext;
-import com.season.lib.gif.base.LZWEncoder;
+import com.season.lib.gif.GifMaker;
 import com.season.lib.gif.extend.LZWEncoderOrderHolder;
 import com.season.lib.gif.extend.ThreadGifEncoder;
-import com.season.lib.util.LogUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,21 +28,31 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+/**
+ * mp4视频转化为Gif文件
+ */
 public class Mp4ToGif {
 
     private static final long DEFAULT_TIMEOUT_US = 10000;
-
-    private  static final int COLOR_FormatI420 = 1;
-    public  static final int COLOR_FormatNV21 = 2;
+    private static final int COLOR_FormatI420 = 1;
+    public static final int COLOR_FormatNV21 = 2;
 
     BufferedOutputStream bosToFile;
-    public String filePath;
-    public Mp4ToGif(String filePath){
+    final GifMaker.OnGifMakerListener listener;
+    final String filePath;
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    final Handler handler;
+
+    public Mp4ToGif(String filePath, GifMaker.OnGifMakerListener listener) {
+        this.listener = listener;
         this.filePath = filePath;
+        handler = new Handler();
         File file = new File(filePath);
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
@@ -57,7 +64,20 @@ public class Mp4ToGif {
         }
     }
 
-    public List<String> videoDecode(Context context, Uri uri, int startTime, int endTime) throws IOException {
+    private int endTime;
+
+    public int getEndTime() {
+        return endTime;
+    }
+
+    public void videoDecode(Context context, Uri uri, int endTime) {
+        this.endTime = endTime;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onMakeGifStart();
+            }
+        });
         final int decodeColorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
         MediaExtractor extractor = null;
         MediaCodec decoder = null;
@@ -75,9 +95,20 @@ public class Mp4ToGif {
             if (isColorFormatSupported(decodeColorFormat, decoder.getCodecInfo().getCapabilitiesForType(mime))) {
                 mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, decodeColorFormat);
             }
-
-            return decodeFramesToImage(decoder, extractor, mediaFormat, startTime, endTime);
-
+            decodeFramesToImage(decoder, extractor, mediaFormat);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onMakeGifSucceed(filePath);
+                }
+            });
+        } catch (Exception ex) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onMakeGifFail();
+                }
+            });
         } finally {
             if (decoder != null) {
                 decoder.stop();
@@ -103,22 +134,20 @@ public class Mp4ToGif {
 
     private long current = 0;
     private final long MI_SECOND = 1000;
-    private final long SECOND = MI_SECOND * MI_SECOND;
-    public boolean isLowerDivice = false;
-    public int hightQ = 20;
-    public int lowQ = 50;//质量1～255，1最高清
-    public long dts = 0;
-    private List<String> decodeFramesToImage(MediaCodec decoder, MediaExtractor extractor, MediaFormat mediaFormat, int startTime, int endTime) throws IOException {
-        List<String> list = new ArrayList<>();
+    boolean isLowerDivice = false;
+    int hightQ = 20;
+    int lowQ = 50;//质量1～255，1最高清
+    long dts = 0;
+    int outputFrameCount = 0;
+
+    private void decodeFramesToImage(MediaCodec decoder, MediaExtractor extractor, MediaFormat mediaFormat) throws IOException {
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         boolean sawInputEOS = false;
         boolean sawOutputEOS = false;
         decoder.configure(mediaFormat, null, null, 0);
         decoder.start();
         dts = 0;
-        final int width = mediaFormat.getInteger(MediaFormat.KEY_WIDTH);
-        final int height = mediaFormat.getInteger(MediaFormat.KEY_HEIGHT);
-        int outputFrameCount = 0;
+        outputFrameCount = 0;
         while (!sawOutputEOS) {
             if (!sawInputEOS) {
                 int inputBufferId = decoder.dequeueInputBuffer(DEFAULT_TIMEOUT_US);
@@ -138,24 +167,22 @@ public class Mp4ToGif {
             int outputBufferId = decoder.dequeueOutputBuffer(info, DEFAULT_TIMEOUT_US);
             if (outputBufferId >= 0) {
                 if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-                    LogUtil.e( "------------end>>" );
                     sawOutputEOS = true;
                 }
                 boolean doRender = (info.size != 0);
                 if (doRender) {
-                    LogUtil.e(dts + ">>" + current +"<<"+ endTime * MI_SECOND);
                     Image image = decoder.getOutputImage(outputBufferId);
-                    if (current == 0){
+                    if (current == 0) {
                         current = dts;
-                    }if(dts < current){
+                    }
+                    if (dts < current) {
 
-                    }else{
+                    } else {
                         sawOutputEOS = dts + (dts - current) > endTime * MI_SECOND;
-                        LogUtil.e(sawOutputEOS + ">>"+ (int) ((dts - current)/MI_SECOND) + "   " + outputFrameCount);
                         ByteArrayOutputStream currentStream = new ByteArrayOutputStream();
                         ThreadGifEncoder encoder = new ThreadGifEncoder();
                         encoder.setQuality(isLowerDivice ? lowQ : hightQ);
-                        encoder.setDelay((int) ((dts - current)/MI_SECOND));
+                        encoder.setDelay((int) ((dts - current) / MI_SECOND));
                         encoder.start(currentStream, outputFrameCount);
                         encoder.setFirstFrame(outputFrameCount == 0);
                         encoder.setRepeat(0);
@@ -166,6 +193,12 @@ public class Mp4ToGif {
                         holder.release();
                         current = dts;
                         outputFrameCount++;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onMakeProgress(outputFrameCount, (int) (current / MI_SECOND));
+                            }
+                        });
                     }
 
                     image.close();
@@ -175,9 +208,7 @@ public class Mp4ToGif {
         }
         bosToFile.flush();
         bosToFile.close();
-        return list;
     }
-
 
 
     private int selectTrack(MediaExtractor extractor) {
@@ -277,11 +308,10 @@ public class Mp4ToGif {
     private Bitmap compressToJpeg(Image image) {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         Rect rect = image.getCropRect();
-         YuvImage yuvImage = new YuvImage(getDataFromImage(image, COLOR_FormatNV21), ImageFormat.NV21, rect.width(), rect.height(), null);
+        YuvImage yuvImage = new YuvImage(getDataFromImage(image, COLOR_FormatNV21), ImageFormat.NV21, rect.width(), rect.height(), null);
         yuvImage.compressToJpeg(rect, 100, outStream);
         byte[] jdata = outStream.toByteArray();
         return BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
     }
-
 
 }
