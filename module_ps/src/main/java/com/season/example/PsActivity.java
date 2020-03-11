@@ -64,7 +64,7 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (true){
+        if (false){
             VideoActivity.start(this);
             finish();
             return;

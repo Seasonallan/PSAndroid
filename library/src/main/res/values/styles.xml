@@ -27,6 +27,7 @@
         <attr name="text_color" format="color" />
     </declare-styleable>
     <item type="id" name="center_text" />
+    <item type="id" name="line_left" />
 
     <declare-styleable name="IconText">
         <attr name="it_desc" format="string" />
