@@ -818,6 +818,19 @@ public class PSLayer extends RelativeLayout {
             }
             layerItem.filePath = customGifMovie.file;
             layerItem.setImageURL(customGifMovie.url);
+        } else if (view instanceof CustomImageView) {
+            CustomImageView customImageView = (CustomImageView) view;
+            if (customImageView.isTuya) {
+                layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeDraw);
+            } else {
+                if (TextUtils.isEmpty(customImageView.url)) {
+                    layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeLocaImage);
+                } else {
+                    layerItem.setContentViewType(LayerItem.ILayerType.ContentViewTypeImage);
+                }
+            }
+            layerItem.filePath = customImageView.filePath;
+            layerItem.setImageURL(customImageView.url);
         }
         return layerItem;
     }
