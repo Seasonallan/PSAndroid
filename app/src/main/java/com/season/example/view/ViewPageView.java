@@ -40,10 +40,13 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     /** 当前绑定页缓存*/
     private ViewBitmapPicture mBindPagePicture;
     private List<View> viewList;
+    private PageAnimController mPageAnimController;
+
     private void init(){
         mTouchDownPoint = new PointF();
         mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
                 PageAnimController.ANIM_TYPE_PAGE_TURNING);
+        mPageAnimController.setBgPureColor(false);
         //mPageAnimController.setDuration(1680);
         viewList = new ArrayList<>();
         mPagePicture = new ViewBitmapPicture(-1);
@@ -95,8 +98,6 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     }
 
     private int currentPage = 0;
-    private PageAnimController mPageAnimController;
-
 
     public void addPageView(View view) {
         viewList.add(view);
@@ -202,7 +203,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     }
 
     //int[] colors = {0xff142537, 0xff13b0a5, 0xfffc9d9a};
-    int[] colors = {0, 0xff13b0a5, 0xfffc9d9a};
+    int[] colors = {0x00ffffff, 0xff13b0a5, 0xfffc9d9a};
     @Override
     public int getPageBackgroundColor() {
         if (requestPage > currentPage){

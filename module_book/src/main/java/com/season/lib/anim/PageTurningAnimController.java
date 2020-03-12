@@ -348,7 +348,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			}
 		}
 		int bgColor = pageCarver.getPageBackgroundColor();
-		if(!isLandscape){
+		if(!isLandscape && bgPureColor){
 			canvas.drawColor(bgColor);
 		}
 		canvas.save();

@@ -1,4 +1,6 @@
 <resources>
   <string name="camera_app_name">moduleCamera</string>
+  <string name="name_ps"><u>图层动图合成</u></string>
+  <string name="name_book"><u>书籍阅读器</u></string>
 
 </resources>

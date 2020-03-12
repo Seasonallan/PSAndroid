@@ -30,6 +30,16 @@ public abstract class PageAnimController{
 		return pageAnimController;
 	}
 
+	protected boolean bgPureColor = true;
+
+	/**
+	 * 背景是不是纯色
+	 * @param isPure
+	 */
+	public void setBgPureColor(boolean isPure){
+		bgPureColor = isPure;
+	}
+
 	public abstract void setDuration(int duration);
 	
 	PageAnimController(Context context) {

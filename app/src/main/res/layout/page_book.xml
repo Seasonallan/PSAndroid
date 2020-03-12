@@ -1,18 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/global_pink"
+android:gravity="center"
+android:orientation="vertical">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fffc9d9a"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:layout_weight="2"
+    android:gravity="center_vertical"
+    android:padding="8dp"
+    android:background="#f7f7f7">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:scaleType="fitCenter"
+        android:src="@drawable/top_book"  />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="2"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="32dp"
+            android:textStyle="bold"
+            android:textColor="@color/global_pink"
+            android:text="@string/name_book" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="6dp"
+            android:textSize="16dp"
+            android:textColor="@color/global_pink"
+            android:text="乐阅 2014" />
+    </LinearLayout>
+
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingTop="38dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="48dp"
+        android:textSize="38dp"
         android:textColor="@color/white"
+        android:text="· 功能" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
         android:text="书籍阅读" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
+        android:text="书签" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
+        android:text="笔记" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
+        android:text="动画" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="38dp"
+        android:paddingTop="18dp"
+        android:textColor="@color/white"
+        android:text="· 核心" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
+        android:text="触屏事件派发" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
+        android:text="书籍解析" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
+        android:text="页面排版" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:paddingLeft="28dp"
+        android:text="动画控制" />
+</LinearLayout>
 
 
 </LinearLayout>
+
