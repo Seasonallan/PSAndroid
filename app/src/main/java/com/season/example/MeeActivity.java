@@ -2,6 +2,7 @@ package com.season.example;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,11 +37,20 @@ public class MeeActivity extends Activity{
             }
         });
         mainPageView.addPageView(LayoutInflater.from(this).inflate(R.layout.page_splash, null));
-        mainPageView.addPageView(LayoutInflater.from(this).inflate(R.layout.page_ps, null));
-        mainPageView.addPageView(LayoutInflater.from(this).inflate(R.layout.page_book, null));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mainPageView.addPageView(LayoutInflater.from(MeeActivity.this).inflate(R.layout.page_ps, null));
+                mainPageView.addPageView(LayoutInflater.from(MeeActivity.this).inflate(R.layout.page_book, null));
+            }
+        }, 10);
 
         setContentView(mainPageView);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mainPageView.release();
+    }
 }

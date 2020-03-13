@@ -31,7 +31,6 @@ public abstract class PageAnimController{
 	}
 
 	protected boolean bgPureColor = true;
-
 	/**
 	 * 背景是不是纯色
 	 * @param isPure
@@ -40,6 +39,20 @@ public abstract class PageAnimController{
 		bgPureColor = isPure;
 	}
 
+
+	protected boolean touchStickMode = true;
+	/**
+	 * 触屏距离重绘严格模式, 严格模式下有最小距离判断
+	 * @param stickMode
+	 */
+	public void setTouchStickMode(boolean stickMode){
+		touchStickMode = stickMode;
+	}
+
+	/**
+	 * 设置动画的时长
+	 * @param duration
+	 */
 	public abstract void setDuration(int duration);
 	
 	PageAnimController(Context context) {

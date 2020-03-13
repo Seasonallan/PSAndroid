@@ -13,8 +13,11 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
-import com.season.lib.util.LogUtil;
 
+/**
+ * 仿真翻页动画
+ * 贝塞尔曲线原理
+ */
 public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private Integer mFromIndex;
 	private Integer mToIndex;
@@ -98,10 +101,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int dx, dy;
 		// dx 水平方向滑动的距离，负值会使滚动向左滚动
 		// dy 垂直方向滑动的距离，负值会使滚动向上滚动
-		//LogUtil.i(TAG,"startAnim mLastTouchPointX="+mLastTouchPoint.x+" mLastTouchPoint.y="+mLastTouchPoint.y);
 		mTouch.set(mLastTouchPoint);
 		calcPoints(!isRequestNext);
-		int duration = mDuration;
 		if(isCancelAnim){
 			if(isLandscape){
 				if(isRequestNext){
@@ -119,7 +120,6 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 					dx = (int) (mScreenWidth - mTouch.x);
 				}else{
 					dx = (int) - mTouch.x - mScreenWidth;
-					duration = mDuration;
 				}
 				if (mCornerY > 0) {
 					dy = (int) (mScreenHeight - mTouch.y);
@@ -127,9 +127,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 					dy = (int) (1 - mTouch.y); // 防止mTouch.y最终变为0
 				}
 			}
-			scroller.startScroll((int) mTouch.x, (int) mTouch.y, dx, dy,duration);
 		}else{
-			duration = mDuration;
 			if(isLandscape){
 				if(!isRequestNext){
 					dx = (int) (mScreenWidth - mTouch.x);
@@ -153,9 +151,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 					dy = (int) (1 - mTouch.y); // 防止mTouch.y最终变为0
 				}
 			}
-			//LogUtil.i(TAG,"startAnim startX="+mTouch.x+" dx="+dx+" dy="+dy+" mLastTouchPoint.y="+mTouch.y);
-			scroller.startScroll((int) mTouch.x, (int) mTouch.y, dx, dy,duration);
 		}
+		scrollerDecorator(scroller, (int)mTouch.x, (int)mTouch.y, dx, dy, mDuration);
 	}
 
 	@Override
@@ -185,7 +182,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		}
 		mDownTouchPoint.y = mContentHeight / 8 * 7;
 
-//全部展现
+		//全部展现
 		if(isNext){
 			mDownTouchPoint.x = mContentWidth -1;
 		}else{

@@ -9,7 +9,6 @@ import android.widget.Scroller;
 
 /**
  * 水分平滑翻页动画
- * @author lyw
  *
  */
 public class HorTranslationAnimController extends AbsHorGestureAnimController {
@@ -108,7 +107,26 @@ public class HorTranslationAnimController extends AbsHorGestureAnimController {
 	
 	@Override
 	protected void setScroller(Scroller scroller,boolean isRequestNext,boolean isCancelAnim, PageCarver pageCarver){
-		super.setScroller(scroller, isRequestNext, isCancelAnim, pageCarver);
+		int dx = 0;
+		int dy = 0;
+		if(isCancelAnim){
+			if(isRequestNext){
+				dx = (int)(mDownTouchPoint.x - mLastTouchPoint.x);
+			}else{
+				dx = (int)-(mLastTouchPoint.x - mDownTouchPoint.x);
+			}
+//			LogUtil.i(TAG,"startCancelAnim dx="+dx+" isDown="+isTouchStart+" mLastTouchPoint.x="+mLastTouchPoint.x);
+			dy = 0;
+		}else{
+			if(isRequestNext){
+				dx = (int) -(pageCarver.getContentWidth() - (mDownTouchPoint.x - mLastTouchPoint.x));
+			}else{
+				dx = (int) (pageCarver.getContentWidth() - (mLastTouchPoint.x - mDownTouchPoint.x));
+			}
+			dy = 0;
+		}
+		scrollerDecorator(scroller, (int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, mDuration);
+
 		if(isCancelAnim){
 			if(!isRequestNext){
 				scroller.setFinalX(scroller.getFinalX() - 20);

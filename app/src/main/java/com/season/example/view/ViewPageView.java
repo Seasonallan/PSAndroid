@@ -3,22 +3,27 @@ package com.season.example.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PointF;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.LinearInterpolator;
+import android.widget.Scroller;
 
 import androidx.annotation.Nullable;
 
 import com.season.lib.anim.PageAnimController;
-import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * 可动态添加的翻页类ViewPager
+ * 阅读器的简易使用，不涉及高级排版和矩阵点击
+ *
+ */
 public class ViewPageView extends View implements PageAnimController.PageCarver {
 
     public ViewPageView(Context context) {
@@ -42,17 +47,76 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     private List<View> viewList;
     private PageAnimController mPageAnimController;
 
+    private Scroller mScroller;
     private void init(){
+        mScroller = new Scroller(getContext(), new LinearInterpolator());
         mTouchDownPoint = new PointF();
         mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
                 PageAnimController.ANIM_TYPE_PAGE_TURNING);
+
         mPageAnimController.setBgPureColor(false);
+        mPageAnimController.setTouchStickMode(false);
         //mPageAnimController.setDuration(1680);
         viewList = new ArrayList<>();
         mPagePicture = new ViewBitmapPicture(-1);
         mBindPagePicture = new ViewBitmapPicture(-1);
+
+        scrollShowDelay(1000);
     }
 
+
+    private MotionEvent createEvent(int action, int x, int y){
+        long downTime = SystemClock.uptimeMillis();
+        long eventTime = SystemClock.uptimeMillis();
+        int metaState = 0;
+        return MotionEvent.obtain(downTime, eventTime, action, x, y, metaState);
+    }
+
+    /**
+     * 展现动画
+     * @param delay
+     */
+    private void scrollShowDelay(int delay){
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isTouchStart){
+                    return;
+                }
+                mPageAnimController.dispatchTouchEvent(createEvent(MotionEvent.ACTION_DOWN,
+                        getWidth(), getHeight()), ViewPageView.this);
+                mScroller.startScroll(getWidth(), getHeight(), -240, -240, 800);
+                invalidate();
+            }
+        },delay);
+    }
+
+    boolean isTouchStart = false;
+    boolean isScrolling = false;
+    @Override
+    public void computeScroll() {
+        if (isTouchStart){
+            return;
+        }
+        if(mScroller.computeScrollOffset()){
+            isScrolling = true;
+            mPageAnimController.dispatchTouchEvent(createEvent(MotionEvent.ACTION_MOVE,
+                    mScroller.getCurrX(), mScroller.getCurrY()), this);
+        }else{
+            if (isScrolling){
+                isScrolling = false;
+                mPageAnimController.dispatchTouchEvent(createEvent(MotionEvent.ACTION_MOVE,
+                        mScroller.getFinalX() + 1, mScroller.getFinalY() + 1), this);
+                mPageAnimController.dispatchTouchEvent(createEvent(MotionEvent.ACTION_UP,
+                        mScroller.getCurrX(), mScroller.getCurrY()), this);
+                scrollShowDelay(3000);
+            }
+        }
+    }
+
+    /**
+     * 跳转到下一页
+     */
     public void gotoNextPage(){
         if (!mPageAnimController.isAnimStop())
             mPageAnimController.stopAnim(this);
@@ -65,9 +129,11 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     private boolean isPressInvalid;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (mPageAnimController != null){
-            mPageAnimController.dispatchTouchEvent(ev, this);
+        isTouchStart = true;
+        if (!mScroller.isFinished()){
+            mScroller.abortAnimation();
         }
+        mPageAnimController.dispatchTouchEvent(ev, this);
         int key = ev.getAction();
         switch (key) {
             case MotionEvent.ACTION_DOWN:
@@ -93,20 +159,33 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         return true;
     }
 
+    private int currentPage = 0;
+    /**
+     * 获取当前页面页码
+     * @return
+     */
     public int getCurrentPage(){
         return currentPage;
     }
 
-    private int currentPage = 0;
 
+    /**
+     * 添加一个页面
+     * @param view
+     */
     public void addPageView(View view) {
         viewList.add(view);
         if (getWidth() > 0){
-            view.measure(0,0);
+            view.measure(widthMeasureSpec, heightMeasureSpec);
             view.layout(getLeft(), getTop(),getRight(),getBottom());
         }else{
             requestLayout();
         }
+    }
+
+    public void release(){
+        mBindPagePicture.release();
+        mPagePicture.release();
     }
 
     @Override
@@ -117,8 +196,12 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         }
     }
 
+    int widthMeasureSpec;
+    int heightMeasureSpec;
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        this.widthMeasureSpec = widthMeasureSpec;
+        this.heightMeasureSpec = heightMeasureSpec;
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         for (View view: viewList){
             view.measure(widthMeasureSpec, heightMeasureSpec);

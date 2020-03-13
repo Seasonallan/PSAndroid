@@ -13,11 +13,15 @@ import com.season.lib.util.LogUtil;
 
 /**
  * 水分平滑翻页动画
- * @author lyw
+ * @see PageTurningAnimController 仿真动画
+ * @see HorTranslationAnimController 水平平移
+ *
  */
 public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected static final String TAG = "TouEvent";
-	protected int mDuration = 600;
+	public static final int DURATION_DEFAULT = 600;
+
+	protected int mDuration = DURATION_DEFAULT;
 	private Scroller mScroller;
 	private boolean isCancelAnim;
 	private Boolean isRequestNextPage;
@@ -94,7 +98,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		case MotionEvent.ACTION_MOVE:
 			int moveX = (int) (mDownTouchPoint.x - event.getX());
 			if(isRequestNextPage == null){
-				if(Math.abs(moveX) > 5){
+				if(!touchStickMode || Math.abs(moveX) > 5){
 					Integer requestPageIndex = null;
 					if(moveX > 0){
 						requestPageIndex = pageCarver.requestNextPage();
@@ -133,7 +137,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
             final int deltaX = (int) (event.getX() - mLastTouchPoint.x);
             final int deltaY = (int) (event.getY() - mLastTouchPoint.y);
             int distance = (deltaX * deltaX) + (deltaY * deltaY);
-            if (distance > mTouchSlopSquare) {
+            if (!touchStickMode || distance > mTouchSlopSquare) {
                 mLastTouchPoint.set(event.getX(), event.getY());
                 pageCarver.requestInvalidate();
             }
@@ -161,7 +165,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		checkInit(pageCarver);
 		boolean isUnFinished = !mScroller.isFinished() && mScroller.computeScrollOffset();
 		if(isUnFinished){
-		    if (isFullAnimation){
+		    if (isFullAnimation && !isCancelAnim){
 		        float percent = (mScroller.getCurrX() -  mScroller.getStartX()) * 1.0f
                         /(mScroller.getFinalX() - mScroller.getStartX());
                 float y = Math.abs(mContentHeight/2 * percent);
@@ -195,7 +199,10 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	 * @return
 	 */
 	public boolean interruptAnimationEnd(){
-		return isAnimStart && Math.abs(mScroller.getCurrX() - mScroller.getFinalX()) <  100;
+		if (isCancelAnim){
+			return false;
+		}
+		return isAnimStart && Math.abs(mScroller.getCurrX() - mScroller.getFinalX()) < 100;
 	}
 	
 	private void dispatchAnimStart(PageCarver pageCarver){
@@ -216,43 +223,17 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		isCancelAnim = false;
 		pageCarver.requestInvalidate();
 	}
-	
+
 	/**
-	 * onRequestPage() -> onAnimStart() -> onAnimEnd()
+	 * 滑动器时长 装饰
 	 */
-	protected abstract void onAnimStart(boolean isCancelAnim);
-	/**
-	 * onRequestPage() -> onAnimStart() -> onAnimEnd()
-	 */
-	protected abstract void onAnimEnd(boolean isCancelAnim);
-	/**
-	 * onRequestPage() -> onAnimStart() -> onAnimEnd()
-	 */
-	protected abstract void onRequestPage(boolean isRequestNext,int fromIndex,int toIndex,float x,float y);
-	
-	protected abstract void onDrawAnim(Canvas canvas,boolean isCancelAnim,boolean isNext,PageCarver pageCarver);
-	
-	protected void setScroller(Scroller scroller,boolean isRequestNext,boolean isCancelAnim, PageCarver pageCarver){
-		int dx = 0;
-		int dy = 0;
-		if(isCancelAnim){
-			if(isRequestNext){
-				dx = (int)(mDownTouchPoint.x - mLastTouchPoint.x);
-			}else{
-				dx = (int)-(mLastTouchPoint.x - mDownTouchPoint.x);
-			}
-//			LogUtil.i(TAG,"startCancelAnim dx="+dx+" isDown="+isTouchStart+" mLastTouchPoint.x="+mLastTouchPoint.x);
-			dy = (int) mLastTouchPoint.y;
-			scroller.startScroll((int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, mDuration);
-		}else{
-			if(isRequestNext){
-				dx = (int) -(pageCarver.getContentWidth() - (mDownTouchPoint.x - mLastTouchPoint.x));
-			}else{
-				dx = (int) (pageCarver.getContentWidth() - (mLastTouchPoint.x - mDownTouchPoint.x));
-			}
-			dy = (int) mLastTouchPoint.y;
-			scroller.startScroll((int)mLastTouchPoint.x, (int)mLastTouchPoint.y, dx, dy, mDuration);
+	protected void scrollerDecorator(Scroller scroller, int x, int y, int dx, int dy, int duration){
+		double length =  Math.sqrt(dx * dx + dy * dy);
+		int maxLength = mContentWidth;
+		if (length < maxLength && touchStickMode){
+			duration = (int) (length * duration /maxLength);
 		}
+		scroller.startScroll(x, y, dx, dy, duration);
 	}
 	
 	protected void startCancelAnim(boolean isRequestNext, PageCarver pageCarver){
@@ -301,4 +282,31 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	public boolean isAnimStop() {
 		return isRequestNextPage == null;
 	}
+
+
+	/**
+	 * onRequestPage() -> onAnimStart() -> onAnimEnd()
+	 */
+	protected abstract void onRequestPage(boolean isRequestNext,int fromIndex,int toIndex,float x,float y);
+	protected abstract void onAnimStart(boolean isCancelAnim);
+	protected abstract void onAnimEnd(boolean isCancelAnim);
+
+	/**
+	 * View的onDraw中调用，绘制当前状态的画布
+	 * @param canvas
+	 * @param isCancelAnim
+	 * @param isNext
+	 * @param pageCarver
+	 */
+	protected abstract void onDrawAnim(Canvas canvas,boolean isCancelAnim,boolean isNext,PageCarver pageCarver);
+
+	/**
+	 * 设置动画开始结束点和时间
+	 * @param scroller
+	 * @param isRequestNext
+	 * @param isCancelAnim
+	 * @param pageCarver
+	 */
+	protected abstract void setScroller(Scroller scroller,boolean isRequestNext,boolean isCancelAnim, PageCarver pageCarver);
+
 }

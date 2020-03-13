@@ -4,11 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
-import com.season.lib.page.layout.Page;
 
+/**
+ * 页面缓存
+ */
 public class ViewBitmapPicture{
 	private int mViewIndex;
-	private Page mPage;
 	private Bitmap mBitmap;
 	private Canvas mCanvas;
 

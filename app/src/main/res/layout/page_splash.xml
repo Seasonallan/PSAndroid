@@ -60,14 +60,14 @@
             android:paddingBottom="8dp"
             android:text="451360508@qq.com"
             android:textColor="@color/me_dark"
-            android:textSize="21dp" />
+            android:textSize="22dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TEL: 15080319470"
             android:textColor="@color/me_dark"
-            android:textSize="21dp"  />
+            android:textSize="26dp"  />
 
     </LinearLayout>
 
