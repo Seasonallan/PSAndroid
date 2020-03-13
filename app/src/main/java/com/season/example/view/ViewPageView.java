@@ -286,7 +286,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     }
 
     //int[] colors = {0xff142537, 0xff13b0a5, 0xfffc9d9a};
-    int[] colors = {0x00ffffff, 0xff13b0a5, 0xfffc9d9a};
+    int[] colors = {0xffffffff, 0x55ffffff, 0xffffffff};
     @Override
     public int getPageBackgroundColor() {
         if (requestPage > currentPage){
