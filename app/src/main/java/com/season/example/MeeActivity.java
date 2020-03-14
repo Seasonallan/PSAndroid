@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.example.view.PageItem;
@@ -32,12 +34,18 @@ public class MeeActivity extends Activity {
         mainPageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mainPageView.getCurrentPage() == 0) {
-                    mainPageView.gotoNextPage();
-                } else if (mainPageView.getCurrentPage() == 1) {
-                    ARouter.getInstance().build(RoutePath.PS).navigation();
-                } else {
-                    ARouter.getInstance().build(RoutePath.BOOK).navigation();
+                if (v instanceof ViewPageView){
+                    View itemView = ((ViewPageView) v).getCurrentView();
+                    if (itemView instanceof PageItemView){
+                        int position = ((PageItemView) itemView).getPage();
+                        if (position == 1) {
+                            ARouter.getInstance().build(RoutePath.PS).navigation();
+                        } else {
+                            ARouter.getInstance().build(RoutePath.BOOK).navigation();
+                        }
+                    }else{
+                        mainPageView.gotoNextPage();
+                    }
                 }
             }
         });
@@ -47,24 +55,35 @@ public class MeeActivity extends Activity {
             public void run() {
                 mainPageView.addPageView(new PageItemView(MeeActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
-                                .decorateContent("功能", "涂鸦", "图片裁剪", "文字动效", "静动图合成")
-                                .decorateContent("核心", "时间轴控制", "页面重绘派发")
+                                .decorateContent(" • 功能 •", "涂鸦", "图片裁剪", "文字动效", "静动图合成")
+                                .decorateContent(" • 核心 •", "时间轴控制", "页面重绘派发")
                                 .page(1)
                                 .color(getResources().getColor(R.color.global_blue))
-                ).getView());
+                ));
+                ImageView imageView = new ImageView(MeeActivity.this);
+                imageView.setImageResource(R.drawable.image_1);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                mainPageView.addPageView(imageView);
                 mainPageView.addPageView(new PageItemView(MeeActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
-                                .decorateContent("功能", "书签", "笔记", "动画", "阅读器")
-                                .decorateContent("核心", "书籍解析", "页面排版", "动画控制", "事件派发")
+                                .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
+                                .decorateContent(" • 核心 •", "书籍解析", "页面排版", "动画控制", "事件派发")
                                 .page(2)
                                 .color(getResources().getColor(R.color.global_pink))
-                ).getView());
+                ));
             }
         }, 10);
 
         setContentView(mainPageView);
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            NavigationBarUtil.hideNavigationBar(this);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -168,6 +168,11 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         return currentPage;
     }
 
+    public View getCurrentView(){
+        currentPage = currentPage < 0 ? 0 : currentPage;
+        currentPage = (currentPage > viewList.size() - 1)? viewList.size() - 1 : currentPage;
+        return viewList.get(currentPage);
+    }
 
     /**
      * 添加一个页面
