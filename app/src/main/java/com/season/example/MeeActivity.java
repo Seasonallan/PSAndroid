@@ -60,10 +60,7 @@ public class MeeActivity extends Activity {
                                 .page(1)
                                 .color(getResources().getColor(R.color.global_blue))
                 ));
-                ImageView imageView = new ImageView(MeeActivity.this);
-                imageView.setImageResource(R.drawable.image_1);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                mainPageView.addPageView(imageView);
+                mainPageView.addPageView(get1ImageView(R.drawable.image_1));
                 mainPageView.addPageView(new PageItemView(MeeActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
                                 .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
@@ -71,10 +68,18 @@ public class MeeActivity extends Activity {
                                 .page(2)
                                 .color(getResources().getColor(R.color.global_pink))
                 ));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_2));
             }
         }, 10);
 
         setContentView(mainPageView);
+    }
+
+    private ImageView get1ImageView(int id){
+        ImageView imageView = new ImageView(MeeActivity.this);
+        imageView.setImageResource(id);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        return imageView;
     }
 
     @Override

@@ -118,6 +118,10 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
      * 跳转到下一页
      */
     public void gotoNextPage(){
+        if (currentPage >= viewList.size() - 1){
+            ToastUtil.showToast("最后一页");
+            return;
+        }
         if (!mPageAnimController.isAnimStop())
             mPageAnimController.stopAnim(this);
         mPageAnimController.startAnim(currentPage, requestNextPage(), true, ViewPageView.this);
@@ -133,12 +137,12 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         if (!mScroller.isFinished()){
             mScroller.abortAnimation();
         }
-        mPageAnimController.dispatchTouchEvent(ev, this);
         int key = ev.getAction();
         switch (key) {
             case MotionEvent.ACTION_DOWN:
                 isPressInvalid = false;
                 mTouchDownPoint.set(ev.getX(), ev.getY());
+                mPageAnimController.dispatchTouchEvent(ev, this);
                 break;
             case MotionEvent.ACTION_MOVE:
                 int moveX = (int) (mTouchDownPoint.x - ev.getX());
@@ -148,11 +152,16 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
                 if(move > ViewConfiguration.getTouchSlop()){
                     isPressInvalid = true;
                 }
+                if (isPressInvalid){
+                    mPageAnimController.dispatchTouchEvent(ev, this);
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 if (!isPressInvalid){
                     performClick();
+                }else{
+                    mPageAnimController.dispatchTouchEvent(ev, this);
                 }
                 break;
         }
