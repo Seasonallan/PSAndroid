@@ -19,7 +19,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <com.season.lib.view.CircleImageView
+            <com.example.lib.view.CircleImageView
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:layout_margin="10dp"

@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom">
 
-        <com.season.lib.crop.CropView
+        <com.example.lib.crop.CropView
             android:id="@+id/mask_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -87,7 +87,7 @@
         android:layout_height="match_parent"
         android:visibility="visible" >
 
-        <com.season.lib.view.ps.CustomGifView
+        <com.example.lib.view.ps.CustomGifView
             android:id="@+id/gifview"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"

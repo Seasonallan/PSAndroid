@@ -29,7 +29,7 @@
 		android:layout_above="@id/reader_menu_gv"
 		android:background="@drawable/menu_child_background" />
 
-	<com.season.lib.view.CheckedGridView
+	<com.example.lib.view.CheckedGridView
 		android:id="@+id/reader_menu_gv"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"

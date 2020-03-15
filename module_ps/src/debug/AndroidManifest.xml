@@ -10,20 +10,20 @@
         android:icon="@drawable/emoji_00a9"
         android:theme="@style/Theme.AppCompat.Light"
         android:supportsRtl="true" >
-        <activity android:name="com.season.example.PsActivity"
+        <activity android:name="com.example.example.PsActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.season.example.CropActivity"
+        <activity android:name="com.example.example.CropActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.season.example.BigGifActivity"
+        <activity android:name="com.example.example.BigGifActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.season.example.video.VideoActivity"
+        <activity android:name="com.example.example.video.VideoActivity"
             android:screenOrientation="portrait">
         </activity>
 

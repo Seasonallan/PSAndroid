@@ -10,7 +10,7 @@
         android:icon="@drawable/ic_launcher"
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
         android:supportsRtl="true">
-        <activity android:name="com.season.example.BaseBookActivity"  android:screenOrientation="portrait">
+        <activity android:name="com.example.example.BaseBookActivity"  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
