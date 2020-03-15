@@ -1,4 +1,4 @@
-package com.example.xposed;
+package com.season.xposed;
 
 import org.junit.Test;
 

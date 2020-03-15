@@ -25,7 +25,7 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.example.ps.R;
+import com.season.ps.R;
 
 
 /**

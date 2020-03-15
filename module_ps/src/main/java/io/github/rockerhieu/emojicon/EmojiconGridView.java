@@ -25,7 +25,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 
-import com.example.ps.R;
+import com.season.ps.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

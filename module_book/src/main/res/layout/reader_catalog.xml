@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" >
 	
-	<com.example.example.catalog.BaseViewPagerTabHost
+	<com.season.example.catalog.BaseViewPagerTabHost
 		android:id="@android:id/tabhost"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" >
@@ -34,7 +34,7 @@
 				android:text="author_name"
 				android:textColor="#88464646"
 				android:textSize="16dp" />
-			<com.example.example.popwindow.SlideTabWidget
+			<com.season.example.popwindow.SlideTabWidget
 				android:id="@android:id/tabs"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
 				android:layout_below="@android:id/tabs"
 				android:background="@drawable/ic_reader_catalog_bg_shadow" />
 		</RelativeLayout>
-	</com.example.example.catalog.BaseViewPagerTabHost>
+	</com.season.example.catalog.BaseViewPagerTabHost>
 	<ImageButton
 		android:id="@+id/left_suspension_but"
 		android:layout_width="wrap_content"

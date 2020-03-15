@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.myapplication">
+    package="com.season.myapplication">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -9,34 +9,40 @@
         android:allowBackup="true"
         android:icon="@mipmap/img_me"
         android:label="season"
-        android:name="com.example.example.SeasonApplication"
+        android:name="com.season.example.SeasonApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:theme,android:label,android:icon,android:name">
-        <activity android:name="com.example.example.SplashActivity" android:screenOrientation="portrait">
+        <activity android:name="com.season.example.SplashActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.example.BallActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.example.example.MeeActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.season.example.BallActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.season.example.MeeActivity" android:screenOrientation="portrait"/>
 
 
-        <activity android:name="com.example.example.PsActivity"
+        <activity android:name="com.season.example.PsActivity"
             tools:node="replace"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.example.BaseBookActivity"
+        <activity android:name="com.season.example.BaseBookActivity"
             tools:node="replace"
             android:screenOrientation="portrait">
         </activity>
+
+        <activity android:name="com.season.example.PluginActivity"
+            tools:node="replace"
+            android:screenOrientation="portrait">
+        </activity>
+
         <provider
-            android:name="com.example.example.provider.BookContentProvider"
+            android:name="com.season.example.provider.BookContentProvider"
             android:exported="true"
-            android:authorities="com.example.example.provider.BookContentProvider" />
+            android:authorities="com.season.example.provider.BookContentProvider" />
     </application>
 
 </manifest>

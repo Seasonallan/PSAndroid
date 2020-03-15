@@ -18,10 +18,10 @@ android {
             if (this.name.equals("app")) {
                 applicationId "com.season.myapplication"
             } else if (this.name.equals("library")) {
-                applicationId "com.example.library"
+                applicationId "com.season.library"
                 println("this == ${this.name} , applicationId")
             } else {
-                applicationId "com.example.${this.name}"
+                applicationId "com.season.${this.name}"
                 println("this == ${this.name} , applicationId")
             }
         }

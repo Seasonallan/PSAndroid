@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 
-import com.example.ps.R;
+import com.season.ps.R;
 
 import io.github.rockerhieu.emojicon.emoji.Emojicon;
 

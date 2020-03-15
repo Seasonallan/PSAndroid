@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.lib.view.CheckedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.season.lib.view.CheckedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:padding="6dp"
@@ -39,4 +39,4 @@
 		android:text="内容"
 		android:textColor="@color/common_blue_4"
 		android:textSize="18dp" />
-</com.example.lib.view.CheckedLinearLayout>
+</com.season.lib.view.CheckedLinearLayout>

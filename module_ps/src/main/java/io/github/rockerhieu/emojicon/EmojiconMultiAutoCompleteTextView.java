@@ -23,7 +23,7 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 
-import com.example.ps.R;
+import com.season.ps.R;
 
 
 public class EmojiconMultiAutoCompleteTextView extends AppCompatMultiAutoCompleteTextView {

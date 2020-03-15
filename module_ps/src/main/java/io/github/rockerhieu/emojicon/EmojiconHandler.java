@@ -30,7 +30,7 @@ import android.text.TextUtils;
 import android.util.SparseIntArray;
 
 
-import com.example.ps.R;
+import com.season.ps.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
