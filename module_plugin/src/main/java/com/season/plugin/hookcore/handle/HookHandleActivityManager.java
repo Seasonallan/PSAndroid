@@ -518,11 +518,12 @@ public class HookHandleActivityManager extends BaseHookHandle {
 
         protected boolean doReplaceIntentForStartActivityAPIHigh(Object[] args) throws RemoteException {
             int intentOfArgIndex = findFirstIntentIndexInArgs(args);
+            LogUtil.i("---start>>" + intentOfArgIndex);
             if (args != null && args.length > 1 && intentOfArgIndex >= 0) {
                 Intent intent = (Intent) args[intentOfArgIndex];
 
                 ActivityInfo activityInfo = resolveActivity(intent);
-//                LogTool.log("activityInfo " + activityInfo.packageName);
+                //LogUtil.i("start>>" + activityInfo);
                 if (activityInfo != null && isPackagePlugin(activityInfo.packageName)) {
                     ComponentName component = selectProxyActivity(intent);
                     if (component != null) {
@@ -1097,9 +1098,9 @@ public class HookHandleActivityManager extends BaseHookHandle {
 //                List runningTaskInfo = (List) invokeResult;
 //                if (runningTaskInfo.size() > 0) {
 //                    for (Object obj : runningTaskInfo) {
-//                        RunningTaskInfo info = (RunningTaskInfo) obj;
-//                        info.baseActivity =;
-//                        info.topActivity =;
+//                        RunningTaskInfo infoView = (RunningTaskInfo) obj;
+//                        infoView.baseActivity =;
+//                        infoView.topActivity =;
 //                    }
 //                }
 //            }

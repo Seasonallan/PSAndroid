@@ -40,7 +40,7 @@ public class PluginDirHelper {
 
     private static void init(Context context) {
         if (sBaseDir == null) {
-            sBaseDir = new File(context.getCacheDir().getParentFile(), "Plugin");
+            sBaseDir = new File(context.getCacheDir().getParentFile(), "plugin");
             enforceDirExists(sBaseDir);
         }
     }

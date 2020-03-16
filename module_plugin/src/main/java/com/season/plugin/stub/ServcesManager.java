@@ -102,7 +102,7 @@ public class ServcesManager {
     private void handleCreateServiceOne(Context hostContext, Intent stubIntent, ServiceInfo info) throws Exception {
         //            CreateServiceData data = new CreateServiceData();
         //            data.token = fakeToken;// IBinder
-        //            data.info =; //ServiceInfo
+        //            data.infoView =; //ServiceInfo
         //            data.compatInfo =; //CompatibilityInfo
         //            data.intent =; //Intent
         //            activityThread.handleCreateServiceOne(data);
@@ -122,7 +122,7 @@ public class ServcesManager {
         Object data = init.newInstance();
 
         FieldUtils.writeField(data, "token", fakeToken);
-        FieldUtils.writeField(data, "info", info);
+        FieldUtils.writeField(data, "infoView", info);
         if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
             FieldUtils.writeField(data, "compatInfo", CompatibilityInfoCompat.DEFAULT_COMPATIBILITY_INFO());
         }

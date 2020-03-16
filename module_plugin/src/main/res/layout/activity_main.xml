@@ -1,20 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#142537">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/id_swipe_ly"
+    <LinearLayout
+        android:id="@+id/item_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/id_listview"
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.season.lib.view.CircleImageView
+                    android:id="@+id/item_icon"
+                    android:layout_width="128dp"
+                    android:layout_height="128dp"
+                    android:layout_margin="10dp"
+                    app:border_color="#FF7F24"
+                    app:border_width="4dp"
+                    app:is_circle="true" />
+
+                <TextView
+                    android:id="@+id/item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:textSize="24dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:text="名称"  />
+
+
+                <TextView
+                    android:id="@+id/item_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:textColor="#ccc"
+                    android:textStyle="bold"
+                    android:text="V1.0"  />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:padding="18dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/item_btn_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/book_bg_selecter"
+                    android:gravity="center"
+                    android:text="打开"
+                    android:textColor="@drawable/book_color_selecter"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/item_btn_install"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/book_bg_selecter"
+                    android:gravity="center"
+                    android:text="安装"
+                    android:textColor="@drawable/book_color_selecter"
+                    android:textSize="15dp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </ListView>
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="7"
+            android:background="@color/white"
+            android:orientation="horizontal">
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            <TextView
+                android:id="@+id/item_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="状态"
+                android:textColor="#142537"
+                android:textSize="28dp" />
 
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.season.example.view.LoadingView
+        android:id="@+id/loadView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:loadingText="加载中..." />
 </RelativeLayout>

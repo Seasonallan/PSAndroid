@@ -13,17 +13,17 @@
     <application
         android:allowBackup="true"
         android:label="plugin"
-        android:icon="@drawable/plugin_activity_loading_bitmap"
+        android:icon="@drawable/plugin_icon"
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
         android:name=".PluginSupportApplication"
         android:supportsRtl="true">
+
         <activity android:name="com.season.example.PluginActivity"  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
 
         <!--插件管理服务，提供插件的包管理，进程管理。-->

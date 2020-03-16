@@ -1,8 +1,10 @@
 package com.season.lib.file;
 
+import android.content.res.AssetManager;
 import android.text.TextUtils;
 import com.season.lib.BaseContext;
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -70,6 +72,46 @@ public final class FileUtils {
         //        mFileTypes.put("4D546864", "mid");
         //        mFileTypes.put("1F8B08", "gz");
         //        mFileTypes.put("", "");
+    }
+
+
+
+    /**
+     * 把Assets里面得文件复制到 /data/data/files 目录下
+     *
+     * @param sourceName
+     */
+    public static File copyAssets(String sourceName) {
+        AssetManager am = BaseContext.getInstance().getAssets();
+        InputStream is = null;
+        FileOutputStream fos = null;
+        try {
+            is = am.open(sourceName);
+            File extractFile = BaseContext.getInstance().getFileStreamPath(sourceName);
+            fos = new FileOutputStream(extractFile);
+            byte[] buffer = new byte[1024];
+            int count = 0;
+            while ((count = is.read(buffer)) > 0) {
+                fos.write(buffer, 0, count);
+            }
+            fos.flush();
+            return extractFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeSilently(is);
+            closeSilently(fos);
+        }
+        return null;
+    }
+    private static void closeSilently(Closeable closeable) {
+        if (closeable == null) {
+            return;
+        }
+        try {
+            closeable.close();
+        } catch (Throwable e) {
+        }
     }
 
     public static boolean isGif(String type){

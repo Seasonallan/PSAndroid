@@ -27,7 +27,7 @@ public class MeeActivity extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        NavigationBarUtil.hideNavigationBar(this);
+        //NavigationBarUtil.hideNavigationBar(this);
 
         mainPageView = new ViewPageView(this);
         mainPageView.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +93,7 @@ public class MeeActivity extends Activity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            NavigationBarUtil.hideNavigationBar(this);
+           // NavigationBarUtil.hideNavigationBar(this);
         }
         return super.dispatchTouchEvent(ev);
     }

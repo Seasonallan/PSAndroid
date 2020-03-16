@@ -10,4 +10,5 @@ dependencies {
     annotationProcessor aroutercompiler
     implementation project(':library')
     implementation files('libs/layoutlib.jar')
+    implementation 'com.nineoldandroids:library:2.4.0'
 }

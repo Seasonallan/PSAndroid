@@ -20,6 +20,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.season.lib.util.LogUtil;
 import com.season.plugin.hookcore.BaseHook;
 import com.season.plugin.hookcore.HookHandlerCallback;
 import com.season.plugin.hookcore.HookInstrumentation;
@@ -94,7 +95,8 @@ public class PluginManager implements ServiceConnection {
         try {
             hook.onInstall();
         } catch (Throwable throwable) {
-            // Log.e(TAG, "installHook %s error", throwable, hook);
+            throwable.printStackTrace();
+             LogUtil.e(TAG, hook.toString());
         }
     }
 

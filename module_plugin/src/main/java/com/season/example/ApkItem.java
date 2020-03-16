@@ -1,4 +1,4 @@
-package com.season.example.adapter;
+package com.season.example;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -10,14 +10,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 public class ApkItem {
-    Drawable icon;
-    CharSequence title;
-    String versionName;
-    int versionCode;
-    String apkfile;
-    PackageInfo packageInfo;
-
-    boolean installing = false;
+    public Drawable icon;
+    public CharSequence title;
+    public String versionName;
+    public int versionCode;
+    public String apkFile;
+    public PackageInfo packageInfo;
 
     public ApkItem(Context context, PackageInfo info, String path) {
         PackageManager pm = context.getPackageManager();
@@ -43,20 +41,7 @@ public class ApkItem {
 
         versionName = info.versionName;
         versionCode = info.versionCode;
-        apkfile = path;
-        packageInfo = info;
-    }
-
-    ApkItem(PackageManager pm, PackageInfo info, String path) {
-        try {
-            icon = pm.getApplicationIcon(info.applicationInfo);
-        } catch (Exception e) {
-            icon = pm.getDefaultActivityIcon();
-        }
-        title = pm.getApplicationLabel(info.applicationInfo);
-        versionName = info.versionName;
-        versionCode = info.versionCode;
-        apkfile = path;
+        apkFile = path;
         packageInfo = info;
     }
 

@@ -21,6 +21,9 @@
         <attr name="mask_color" format="color" />
     </declare-styleable>
 
+    <color name="normal">#dadada</color>
+    <color name="pressed">#dd9025</color>
+    <color name="disable">#818081</color>
 
     <declare-styleable name="LineText">
         <attr name="text" format="string" />

@@ -240,7 +240,7 @@ class RunningProcesList {
                 pkgs.add(info.packageName);
             }
 
-            //stub map to activity info
+            //stub map to activity infoView
             Set<ActivityInfo> list = activityInfosMap.get(stubActivityName);
             if (list == null) {
                 list = new TreeSet<ActivityInfo>(sComponentInfoComparator);
@@ -276,7 +276,7 @@ class RunningProcesList {
                     pkgs.add(info.packageName);
                 }
 
-                //stub map to activity info
+                //stub map to activity infoView
                 Set<ServiceInfo> list = serviceInfosMap.get(stubServiceName);
                 if (list == null) {
                     list = new TreeSet<ServiceInfo>(sComponentInfoComparator);
@@ -313,7 +313,7 @@ class RunningProcesList {
                     pkgs.add(info.packageName);
                 }
 
-                //stub map to activity info
+                //stub map to activity infoView
                 Set<ProviderInfo> list = providerInfosMap.get(stubAuthority);
                 if (list == null) {
                     list = new TreeSet<ProviderInfo>(sProviderInfoComparator);

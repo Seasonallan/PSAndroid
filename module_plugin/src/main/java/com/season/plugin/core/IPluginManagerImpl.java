@@ -58,6 +58,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import dalvik.system.DexFile;
+
 /**
  * 此服务模仿系统的PackageManagerService，提供对插件简单的管理服务。
  */
@@ -906,8 +908,8 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         String optimizedDirectory = PluginDirHelper.getPluginDalvikCacheDir(hostContext, packageName);
         String libraryPath = PluginDirHelper.getPluginNativeLibraryDir(hostContext, packageName);
         ClassLoader classloader = new PluginClassLoader(apkfile, optimizedDirectory, libraryPath, ClassLoader.getSystemClassLoader());
-//        DexFile dexFile = DexFile.loadDex(apkfile, PluginDirHelper.getPluginDalvikCacheFile(mContext, parser.getPackageName()), 0);
-//        LogUtil.e(TAG, "dexFile=%s,1=%s,2=%s", dexFile, DexFile.isDexOptNeeded(apkfile), DexFile.isDexOptNeeded(PluginDirHelper.getPluginDalvikCacheFile(mContext, parser.getPackageName())));
+        DexFile dexFile = DexFile.loadDex(apkfile, PluginDirHelper.getPluginDalvikCacheFile(mContext, parser.getPackageName()), 0);
+        LogUtil.i(TAG, "dexFile=%s", dexFile);
     }
 
     private void saveSignatures(PackageInfo pkgInfo) {

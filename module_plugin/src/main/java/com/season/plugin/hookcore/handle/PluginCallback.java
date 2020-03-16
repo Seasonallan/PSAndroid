@@ -323,11 +323,11 @@ public class PluginCallback implements Handler.Callback {
 //        // handleCreateService((CreateServiceData)msg.obj);
 //        try {
 //            Object obj = msg.obj;
-//            ServiceInfo info = (ServiceInfo) FieldUtils.readField(obj, "info", true);
-//            if (info != null) {
-//                ServiceInfo newServiceInfo = PluginManager.getInstance().getTargetServiceInfo(info);
+//            ServiceInfo infoView = (ServiceInfo) FieldUtils.readField(obj, "infoView", true);
+//            if (infoView != null) {
+//                ServiceInfo newServiceInfo = PluginManager.getInstance().getTargetServiceInfo(infoView);
 //                if (newServiceInfo != null) {
-//                    FieldUtils.writeDeclaredField(msg.obj, "info", newServiceInfo, true);
+//                    FieldUtils.writeDeclaredField(msg.obj, "infoView", newServiceInfo, true);
 //                }
 //            }
 //        } catch (Exception e) {

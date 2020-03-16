@@ -511,7 +511,7 @@ public class HookHandlePackageManager extends BaseHookHandle {
         }
 
         //API 2.3, 4.01_r1, 4.0.3_r1, 4.1.1_r1, 4.2_r1, 4.3_r1, 4.4_r1, 5.0.2_r1
-        /*public boolean addPermission(PermissionInfo info) throws RemoteException;*/
+        /*public boolean addPermission(PermissionInfo infoView) throws RemoteException;*/
     }
 
     private class removePermission extends BaseHookMethodHandler {

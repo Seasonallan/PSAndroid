@@ -1,129 +1,197 @@
 package com.season.example;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.widget.ListView;
-
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import android.os.Handler;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.season.example.view.LoadingView;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
+import com.season.lib.file.FileUtils;
+import com.season.lib.util.LogUtil;
+import com.season.lib.util.NavigationBarUtil;
+import com.season.lib.util.ToastUtil;
+import com.season.lib.view.CircleImageView;
+import com.season.plugin.PluginCodeDefine;
+import com.season.plugin.PluginHelper;
 import com.season.plugin.R;
-import com.season.example.adapter.ApkItem;
-import com.season.example.adapter.MainAdapter;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Route(path= RoutePath.PLUGIN)
-public class PluginActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
+public class PluginActivity extends Activity {
 
-    private SwipeRefreshLayout mSwipeLayout;
-    private ListView mListView;
-    private MainAdapter mAdapter;
+    
+    private LoadingView mLoadingView;
 
+    private View containerView;
+    private CircleImageView iconView;
+    private TextView nameView;
+    private TextView infoView;
+    private TextView btnStart, btnInstall;
+
+    private TextView statusView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NavigationBarUtil.hideNavigationBar(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(Color.parseColor("#000000"));
+        }
         setContentView(R.layout.activity_main);
 
-        mListView = (ListView) findViewById(R.id.id_listview);
-        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_ly);
+        containerView = findViewById(R.id.item_container);
+        mLoadingView = findViewById(R.id.loadView);
 
-        mSwipeLayout.setOnRefreshListener(this);
+        iconView = findViewById(R.id.item_icon);
+        nameView = findViewById(R.id.item_name);
+        infoView = findViewById(R.id.item_version);
+        btnStart = findViewById(R.id.item_btn_start);
+        btnInstall = findViewById(R.id.item_btn_install);
 
+        statusView = findViewById(R.id.item_status);
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (!PluginHelper.getInstance().isPluginInstall()){
+                    ToastUtil.showToast("服务未启动");
+                    return;
+                }
+                PackageManager pm = getPackageManager();
+                Intent intent = pm.getLaunchIntentForPackage(item.packageInfo.packageName);
+                LogUtil.i(item.packageInfo.packageName);
+                if (intent == null){
+                    intent = new Intent();
+                    intent.setPackage(item.packageInfo.packageName);
+                    intent.setClassName(item.packageInfo.packageName, "com.season.genglish.ui.SplashActivity");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }else{
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btnInstall.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (!PluginHelper.getInstance().isPluginInstall()){
+                    ToastUtil.showToast("服务未启动");
+                    return;
+                }
+                if (PluginHelper.getInstance().isPackageInstall(item.packageInfo.packageName)) {
+                    btnInstall.setText("正在卸载中");
+                }else{
+                    btnInstall.setText("正在安装中");
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (PluginHelper.getInstance().isPackageInstall(item.packageInfo.packageName)){
+                            final int resultCode =  PluginHelper.getInstance().deletePackage(item.packageInfo.packageName);
+                            BaseContext.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtil.showToast(PluginCodeDefine.getCodeMessage(resultCode));
+                                    resetStartButton();
+                                }
+                            });
+                        }else{
+                            final int resultCode =  PluginHelper.getInstance().installApkFile(item.apkFile);
+                            BaseContext.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtil.showToast(PluginCodeDefine.getCodeMessage(resultCode));
+                                    resetStartButton();
+                                }
+                            });
+                        }
+                    }
+                }).start();
+
+            }
+        });
         new LoadApkInfoAsyncTask().execute();
+
+        statusView.setText("插件服务正在启动");
+        checkServer();
     }
 
-    public class LoadApkInfoAsyncTask extends AsyncTask<Void, Void, List<ApkItem>>{
+    void checkServer(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (PluginHelper.getInstance().isPluginInstall()){
+                    statusView.setText("插件服务已启动");
+                }else{
+                    checkServer();
+                }
+            }
+        }, 500);
+    }
+
+    private ApkItem item;
+    public class LoadApkInfoAsyncTask extends AsyncTask<Void, Void, Void>{
 
         @Override
-        protected List<ApkItem> doInBackground(Void... params) {
-            List<ApkItem> result = new ArrayList<>();
-
-            //assets目录apk文件测试
-            String[] assetsNames = {"english.apk"};
-            PackageManager pm = getPackageManager();
-            for (String assetsName : assetsNames) {
-                copyAssets(assetsName);
-                File apkFile = getFileStreamPath(assetsName);
-                PackageInfo info = pm.getPackageArchiveInfo(apkFile.getPath(), 0);
-                ApkItem apkItem = new ApkItem(PluginActivity.this, info, apkFile.getPath());
-                result.add(apkItem);
+        protected Void doInBackground(Void... params) {
+            File apkFile = FileUtils.copyAssets("english.apk");
+            PackageInfo info = getPackageManager().getPackageArchiveInfo(apkFile.getPath(), 0);
+            item = new ApkItem(PluginActivity.this, info, apkFile.getPath());
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            //sdcard目录apk文件测试
-//            String[] assetsNames = {"KuaifangTVOnline.apk","plugindemo-debug.apk","app-debug.apk"};
-//            PackageManager pm = getPackageManager();
-//            for (String assetsName : assetsNames) {
-//                File apkFile = new File(android.os.Environment.getExternalStorageDirectory() ,assetsName);
-//                PackageInfo info = pm.getPackageArchiveInfo(apkFile.getPath(), 0);
-//                ApkItem apkItem = new ApkItem(PluginActivity.this, info, apkFile.getPath());
-//                result.add(apkItem);
-//            }
-            return result;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(List<ApkItem> apkItems) {
-            super.onPostExecute(apkItems);
-            mSwipeLayout.setRefreshing(false);
-            mAdapter = new MainAdapter(PluginActivity.this, apkItems);
-            mListView.setAdapter(mAdapter);
+        protected void onPreExecute() {
+            super.onPreExecute();
+            containerView.setVisibility(View.GONE);
+            mLoadingView.setLoadingText("复制apk文件");
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            mLoadingView.setVisibility(View.GONE);
+            containerView.setVisibility(View.VISIBLE);
+
+            iconView.setImageDrawable(item.icon);
+            nameView.setText(item.title);
+            //infoView.setText(String.format("%s(%s)", item.versionName, item.versionCode));
+            infoView.setText(item.apkFile);
+
+            resetStartButton();
+        }
+    }
+
+    private void resetStartButton(){
+        if (PluginHelper.getInstance().isPackageInstall(item.packageInfo.packageName)){
+            btnStart.setEnabled(true);
+            btnInstall.setText("卸载");
+        }else{
+            btnInstall.setText("安装");
+            btnStart.setEnabled(false);
         }
     }
 
 
-    /**
-     * 把Assets里面得文件复制到 /data/data/files 目录下
-     *
-     * @param sourceName
-     */
-    public static void copyAssets(String sourceName) {
-        AssetManager am = BaseContext.getInstance().getAssets();
-        InputStream is = null;
-        FileOutputStream fos = null;
-        try {
-            is = am.open(sourceName);
-            File extractFile = BaseContext.getInstance().getFileStreamPath(sourceName);
-            fos = new FileOutputStream(extractFile);
-            byte[] buffer = new byte[1024];
-            int count = 0;
-            while ((count = is.read(buffer)) > 0) {
-                fos.write(buffer, 0, count);
-            }
-            fos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            closeSilently(is);
-            closeSilently(fos);
-        }
-
-    }
-    private static void closeSilently(Closeable closeable) {
-        if (closeable == null) {
-            return;
-        }
-        try {
-            closeable.close();
-        } catch (Throwable e) {
-            // ignore
-        }
-    }
-
-    @Override
-    public void onRefresh() {
-        new LoadApkInfoAsyncTask().execute();
-    }
 }

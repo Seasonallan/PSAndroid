@@ -60,7 +60,7 @@ class ServiceStubMap {
         }
     }
 
-    //key=stub service, value = plugin service info list
+    //key=stub service, value = plugin service infoView list
     private Map<MyServiceInfo, List<MyServiceInfo>> mServiceStubMap = new TreeMap<MyServiceInfo, List<MyServiceInfo>>();
 
     List<ServiceInfo> getPluginInfosByStub(ServiceInfo stubInfo) {

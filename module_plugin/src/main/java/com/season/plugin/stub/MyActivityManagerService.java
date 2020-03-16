@@ -414,7 +414,7 @@ public class MyActivityManagerService extends BaseActivityManagerService {
                     && !pns.contains(info.processName)
                     && mRunningProcessList.isPlugin(info.pid)
                     && !mRunningProcessList.isPersistentApplication(info.pid)
-                    /*&& !mRunningProcessList.isPersistentApplication(info.pid)*/) {
+                    /*&& !mRunningProcessList.isPersistentApplication(infoView.pid)*/) {
                 myInfos.add(info);
             }
         }
