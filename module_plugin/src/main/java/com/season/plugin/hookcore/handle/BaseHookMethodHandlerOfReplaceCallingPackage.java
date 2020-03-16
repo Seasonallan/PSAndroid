@@ -9,7 +9,7 @@ import com.season.plugin.core.PluginManager;
 
 import java.lang.reflect.Method;
 
-class BaseHookMethodHandlerOfReplaceCallingPackage extends BaseHookMethodHandler {
+public class BaseHookMethodHandlerOfReplaceCallingPackage extends BaseHookMethodHandler {
 
     public BaseHookMethodHandlerOfReplaceCallingPackage(Context hostContext) {
         super(hostContext);

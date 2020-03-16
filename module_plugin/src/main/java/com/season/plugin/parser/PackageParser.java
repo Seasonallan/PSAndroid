@@ -37,6 +37,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
 
+import com.season.lib.util.LogUtil;
 import com.season.plugin.compat.SystemPropertiesCompat;
 
 import java.io.File;
@@ -69,8 +70,10 @@ abstract class PackageParser {
     public static PackageParser newPluginParser(Context context) throws Exception {
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP_MR1) {
             if ("1".equals(SystemPropertiesCompat.get("ro.build.version.preview_sdk", ""))) {
+                LogUtil.i("PackageParserApi22Preview1");
                 return new PackageParserApi22Preview1(context);
             } else {
+                LogUtil.i("PackageParserApi22");
                 return new PackageParserApi22(context);//API 20
             }
         } else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {

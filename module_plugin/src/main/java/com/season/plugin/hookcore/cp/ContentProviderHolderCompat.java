@@ -20,32 +20,31 @@
 **
 **/
 
-package com.season.plugin.compat;
+package com.season.plugin.hookcore.cp;
 
-import com.season.lib.reflect.MethodUtils;
+import android.content.pm.ProviderInfo;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/4/13.
+ * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/5/4.
  */
-public class ActivityManagerCompat {
-    public static final int INTENT_SENDER_SERVICE = 4;
-
-    public static final int INTENT_SENDER_ACTIVITY = 2;
-
+public class ContentProviderHolderCompat {
 
     private static Class sClass;
 
     public static Class Class() throws ClassNotFoundException {
         if (sClass == null) {
-            sClass = Class.forName("android.app.ActivityManager");
+            sClass = Class.forName("android.app.IActivityManager$ContentProviderHolder");
         }
         return sClass;
     }
 
-    public static Object getDefault() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        return MethodUtils.invokeStaticMethod(Class(), "IActivityManagerSingleton");
-    }
+    public static Object newInstance(Object target) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, ClassNotFoundException {
+        Class clazz = Class();
+        Constructor constructor = clazz.getConstructor(ProviderInfo.class);
+        return constructor.newInstance(target);
 
+    }
 }

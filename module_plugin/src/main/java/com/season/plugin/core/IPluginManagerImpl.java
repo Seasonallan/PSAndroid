@@ -85,6 +85,28 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         mActivityManagerService = new MyActivityManagerService(mContext);
     }
 
+
+    public void onCreate() {
+        new Thread() {
+            @Override
+            public void run() {
+                onCreateInner();
+            }
+        }.start();
+    }
+
+    private void onCreateInner() {
+        loadAllPlugin(mContext);
+        loadHostRequestedPermission();
+        try {
+            mHasLoadedOk.set(true);
+            synchronized (mLock) {
+                mLock.notifyAll();
+            }
+        } catch (Exception e) {
+        }
+    }
+
     public void loadPluginsInThread(final Runnable runnable) {
         final Handler handler = new Handler();
         new Thread() {
@@ -850,7 +872,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
 //                    }
 //                }
                 copyNativeLibs(mContext, apkfile, parser.getApplicationInfo(0));
-                dexOpt(mContext, apkfile, parser);
+                //dexOpt(mContext, apkfile, parser);
                 mPluginCache.put(parser.getPackageName(), parser);
                 mActivityManagerService.onPkgInstalled(mPluginCache, parser, parser.getPackageName());
                 sendInstalledBroadcast(info.packageName);
@@ -887,7 +909,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
 //                    }
 
                     copyNativeLibs(mContext, apkfile, parser.getApplicationInfo(0));
-                    dexOpt(mContext, apkfile, parser);
+                    //dexOpt(mContext, apkfile, parser);
                     mPluginCache.put(parser.getPackageName(), parser);
                     mActivityManagerService.onPkgInstalled(mPluginCache, parser, parser.getPackageName());
                     sendInstalledBroadcast(info.packageName);

@@ -21,7 +21,7 @@ public class FieldUtils {
         return sb.toString();
     }
 
-    private static Field getField(Class<?> cls, String fieldName, final boolean forceAccess) {
+    public static Field getField(Class<?> cls, String fieldName, final boolean forceAccess) {
         Validate.isTrue(cls != null, "The class must not be null");
         Validate.isTrue(!TextUtils.isEmpty(fieldName), "The field name must not be blank/empty");
 

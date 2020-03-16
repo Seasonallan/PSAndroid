@@ -1,9 +1,12 @@
 package com.season.plugin.hookcore;
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
 import android.util.AndroidRuntimeException;
 
 import com.season.lib.util.LogUtil;
+import com.season.plugin.compat.ActivityManagerCompat;
 import com.season.plugin.compat.ActivityManagerNativeCompat;
 import com.season.plugin.compat.IActivityManagerCompat;
 import com.season.plugin.compat.SingletonCompat;
@@ -12,6 +15,7 @@ import com.season.plugin.hookcore.handle.BaseHookHandle;
 import com.season.lib.reflect.FieldUtils;
 import com.season.lib.reflect.Utils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -48,6 +52,60 @@ public class ProxyHookActivityManager extends BaseHookProxy {
 
     @Override
     public void onInstall() throws Throwable {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//26，27，28的ams获取方式是通过ActivityManager.getService()
+            onInstall28();
+        } else {//25往下，是ActivityManagerNative.getDefault()
+            onInstall25();
+        }
+    }
+
+    public void onInstall28() throws Throwable {
+        Class cls = ActivityManagerCompat.Class();
+        Object obj = FieldUtils.readStaticField(cls, "IActivityManagerSingleton");
+        if (obj == null) {
+            ActivityManagerCompat.getDefault();
+            obj = FieldUtils.readStaticField(cls, "IActivityManagerSingleton");
+        }
+
+        if (IActivityManagerCompat.isIActivityManager(obj)) {
+            setOldObj(obj);
+            Class<?> objClass = mOldObj.getClass();
+            List<Class<?>> interfaces = Utils.getAllInterfaces(objClass);
+            Class[] ifs = interfaces != null && interfaces.size() > 0 ? interfaces.toArray(new Class[interfaces.size()]) : new Class[0];
+            Object proxyActivityManager = Proxy.newProxyInstance(objClass.getClassLoader(), ifs,
+                    this);
+            FieldUtils.writeStaticField(cls, "IActivityManagerSingleton", proxyActivityManager);
+            LogUtil.i(TAG, "28 Install ActivityManager BaseHook 1 old=%s,new=%s", mOldObj, proxyActivityManager);
+        } else if (SingletonCompat.isSingleton(obj)) {
+            Object obj1 = FieldUtils.readField(obj, "mInstance");
+            if (obj1 == null) {
+                SingletonCompat.get(obj);
+                obj1 = FieldUtils.readField(obj, "mInstance");
+            }
+            setOldObj(obj1);
+            List<Class<?>> interfaces = Utils.getAllInterfaces(mOldObj.getClass());
+            Class[] ifs = interfaces != null && interfaces.size() > 0 ? interfaces.toArray(new Class[interfaces.size()]) : new Class[0];
+            final Object object = Proxy.newProxyInstance(mOldObj.getClass().getClassLoader(), ifs,
+                    this);
+
+            //这里先写一次，防止后面找不到Singleton类导致的挂钩子失败的问题。
+            FieldUtils.writeField(obj, "mInstance", object);
+
+            //这里使用方式1，如果成功的话，会导致上面的写操作被覆盖。
+            FieldUtils.writeStaticField(cls, "IActivityManagerSingleton", new android.util.Singleton<Object>() {
+                @Override
+                protected Object create() {
+                    LogUtil.i(TAG, "28 Install ActivityManager 3 BaseHook  old=%s,new=%s", mOldObj, object);
+                    return object;
+                }
+            });
+
+        } else {
+            throw new AndroidRuntimeException("Can not install IActivityManagerNative hook");
+        }
+    }
+
+    public void onInstall25() throws Throwable {
         Class cls = ActivityManagerNativeCompat.Class();
         Object obj = FieldUtils.readStaticField(cls, "gDefault");
         if (obj == null) {

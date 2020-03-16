@@ -57,7 +57,7 @@ class PackageParserApi22 extends PackageParserApi21 {
         try {
             return super.generatePackageInfo(gids, flags, firstInstallTime, lastUpdateTime, grantedPermissions);
         } catch (Exception e) {
-            //Log.i(TAG, "generatePackageInfo fail", e);
+            e.printStackTrace();
         }
 
         Method method = MethodUtils.getAccessibleMethod(sPackageParserClass, "generatePackageInfo",

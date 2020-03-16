@@ -59,7 +59,7 @@ public class BaseHookMethodHandler {
             }
         } finally {
             long time = System.currentTimeMillis() - b;
-            if (time > 5) {
+            if (time > 0) {
                 LogUtil.i(TAG, "doHookInner method(%s.%s) cost %s ms", method.getDeclaringClass().getName(), method.getName(), time);
             }
         }

@@ -22,6 +22,7 @@
 
 package com.season.plugin.hookcore.handle;
 
+import android.app.AppOpsManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -340,6 +341,7 @@ public class PluginCallback implements Handler.Callback {
         try {
             Object obj = msg.obj;
             Intent stubIntent = (Intent) FieldUtils.readField(obj, "intent");
+            LogUtil.i(TAG, "handleLaunchActivity stubIntent=" + stubIntent.toString());
             //ActivityInfo activityInfo = (ActivityInfo) FieldUtils.readField(obj, "activityInfo", true);
             stubIntent.setExtrasClassLoader(mHostContext.getClassLoader());
             Intent targetIntent = stubIntent.getParcelableExtra(Env.EXTRA_TARGET_INTENT);

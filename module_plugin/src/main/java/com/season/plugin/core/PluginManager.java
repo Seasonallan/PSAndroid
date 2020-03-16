@@ -14,11 +14,14 @@ import android.content.pm.PermissionInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.core.app.BundleCompat;
 
 import com.season.lib.util.LogUtil;
 import com.season.plugin.hookcore.BaseHook;
@@ -27,6 +30,8 @@ import com.season.plugin.hookcore.HookInstrumentation;
 import com.season.plugin.hookcore.ProxyHookActivityManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;
 import com.season.lib.reflect.MethodUtils;
+import com.season.plugin.hookcore.cp.ContentProviderCompat;
+import com.season.plugin.hookcore.cp.PluginServiceProvider;
 import com.season.pluginlib.IApplicationCallback;
 import com.season.pluginlib.IPackageDataObserver;
 import com.season.pluginlib.IPluginManager;
@@ -171,6 +176,7 @@ public class PluginManager implements ServiceConnection {
                 Intent intent = new Intent(mHostContext, PluginManagerService.class);
                 intent.setPackage(mHostContext.getPackageName());
                 mHostContext.startService(intent);
+
                 mHostContext.bindService(intent, this, Context.BIND_AUTO_CREATE);
             } catch (Exception e) {
                 Log.e(TAG, "connectToService", e);

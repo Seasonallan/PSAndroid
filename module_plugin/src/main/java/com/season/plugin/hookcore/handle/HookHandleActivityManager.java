@@ -22,6 +22,7 @@
 
 package com.season.plugin.hookcore.handle;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.IServiceConnection;
@@ -31,6 +32,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -48,6 +50,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.season.lib.reflect.Utils;
 import com.season.lib.util.LogUtil;
 import com.season.plugin.compat.ActivityManagerCompat;
 import com.season.plugin.compat.Env;
@@ -56,12 +59,15 @@ import com.season.lib.reflect.MethodUtils;
 import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginManagerService;
 import com.season.plugin.core.PluginProcessManager;
+import com.season.plugin.hookcore.cp.ContentProviderHolderCompat;
+import com.season.plugin.hookcore.cp.IContentProviderHook;
 import com.season.plugin.stub.MyFakeIBinder;
 import com.season.plugin.stub.RunningActivities;
 import com.season.plugin.stub.ServcesManager;
 import com.season.plugin.stub.ShortcutProxyActivity;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -99,7 +105,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
         sHookedMethodHandlers.put("getTasks", new getTasks(mHostContext));
         sHookedMethodHandlers.put("getServices", new getServices(mHostContext));
         sHookedMethodHandlers.put("getProcessesInErrorState", new getProcessesInErrorState(mHostContext));
-    //    sHookedMethodHandlers.put("getContentProvider", new getContentProvider(mHostContext));
+        sHookedMethodHandlers.put("getContentProvider", new getContentProvider(mHostContext));
     //    sHookedMethodHandlers.put("getContentProviderExternal", new getContentProviderExternal(mHostContext));
         sHookedMethodHandlers.put("removeContentProviderExternal", new removeContentProviderExternal(mHostContext));
         sHookedMethodHandlers.put("publishContentProviders", new publishContentProviders(mHostContext));
@@ -142,6 +148,107 @@ public class HookHandleActivityManager extends BaseHookHandle {
 
 
     }
+
+
+    private static class getContentProvider extends BaseHookMethodHandlerOfReplaceCallingPackage {
+
+        public getContentProvider(Context hostContext) {
+            super(hostContext);
+        }
+
+        private ProviderInfo mStubProvider = null;
+        private ProviderInfo mTargetProvider = null;
+
+        @Override
+        protected boolean beforeInvoke(Object receiver, Method method, Object[] args) throws Throwable {
+            if (args != null) {
+                final int index = 1;
+                if (args.length > index && args[index] instanceof String) {
+                    String name = (String) args[index];
+                    mStubProvider = null;
+                    mTargetProvider = null;
+
+                    ProviderInfo info = mHostContext.getPackageManager().resolveContentProvider(name, 0);
+                    mTargetProvider = PluginManager.getInstance().resolveContentProvider(name, 0);
+                    //这里有个很坑爹的事情，就是当插件的contentprovider和host的名称一样，冲突的时候处理方式。
+                    //在Android系统上，是不会出现这种事情的，因为系统在安装的时候做了处理。而我们目前没做处理。so，在出现冲突时候的时候优先用host的。
+                    if (mTargetProvider != null && info != null && TextUtils.equals(mTargetProvider.packageName, info.packageName)) {
+                        mStubProvider = PluginManager.getInstance().selectStubProviderInfo(name);
+//                        PluginManager.getInstance().reportMyProcessName(mStubProvider.processName, mTargetProvider.processName);
+//                        PluginProcessManager.preLoadApk(mHostContext, mTargetProvider);
+                        if (mStubProvider != null) {
+                            args[index] = mStubProvider.authority;
+                        } else {
+                            Log.w(TAG, "getContentProvider,fake fail 1");
+                        }
+                    } else {
+                        mTargetProvider = null;
+                        Log.w(TAG, "getContentProvider,fake fail 2= " + name);
+                    }
+                }
+            }
+            return super.beforeInvoke(receiver, method, args);
+        }
+
+        @Override
+        protected void afterInvoke(Object receiver, Method method, Object[] args, Object invokeResult) throws Throwable {
+            if (invokeResult != null) {
+                ProviderInfo stubProvider2 = (ProviderInfo) FieldUtils.readField(invokeResult, "info");
+                if (mStubProvider != null && mTargetProvider != null && TextUtils.equals(stubProvider2.authority, mStubProvider.authority)) {
+                    //FIXME 其实这里写的并不好，需要适配各种机型。这里就先这样吧。
+                    Object fromObj = invokeResult;
+                    Object toObj = ContentProviderHolderCompat.newInstance(mTargetProvider);
+                    //toObj.provider = fromObj.provider;
+                    copyField(fromObj, toObj, "provider");
+
+                    if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+                        copyConnection(fromObj, toObj);
+                    }
+
+                    //toObj.noReleaseNeeded = fromObj.noReleaseNeeded;
+                    copyField(fromObj, toObj, "noReleaseNeeded");
+
+                    Object provider = FieldUtils.readField(invokeResult, "provider");
+                    if (provider != null) {
+                        boolean localProvider = FieldUtils.readField(toObj, "provider") == null;
+                        IContentProviderHook invocationHandler = new IContentProviderHook(mHostContext, provider, mStubProvider, mTargetProvider, localProvider);
+                       // invocationHandler.setEnable(true);
+                        Class<?> clazz = provider.getClass();
+                        List<Class<?>> interfaces = Utils.getAllInterfaces(clazz);
+                        Class[] ifs = interfaces != null && interfaces.size() > 0 ? interfaces.toArray(new Class[interfaces.size()]) : new Class[0];
+                        Object proxyprovider = Proxy.newProxyInstance(clazz.getClassLoader(), ifs, invocationHandler);
+                        FieldUtils.writeField(invokeResult, "provider", proxyprovider);
+                        FieldUtils.writeField(toObj, "provider", proxyprovider);
+                    }
+                    setFakedResult(toObj);
+                } else if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2) {
+                    Object provider = FieldUtils.readField(invokeResult, "provider");
+                    if (provider != null) {
+                        boolean localProvider = FieldUtils.readField(invokeResult, "provider") == null;
+                        IContentProviderHook invocationHandler = new IContentProviderHook(mHostContext, provider, mStubProvider, mTargetProvider, localProvider);
+                     //   invocationHandler.setEnable(true);
+                        Class<?> clazz = provider.getClass();
+                        List<Class<?>> interfaces = Utils.getAllInterfaces(clazz);
+                        Class[] ifs = interfaces != null && interfaces.size() > 0 ? interfaces.toArray(new Class[interfaces.size()]) : new Class[0];
+                        Object proxyprovider = Proxy.newProxyInstance(clazz.getClassLoader(), ifs, invocationHandler);
+                        FieldUtils.writeField(invokeResult, "provider", proxyprovider);
+                    }
+                }
+                mStubProvider = null;
+                mTargetProvider = null;
+            }
+        }
+
+        private void copyField(Object fromObj, Object toObj, String fieldName) throws IllegalAccessException {
+            FieldUtils.writeField(toObj, fieldName, FieldUtils.readField(fromObj, fieldName));
+        }
+
+        @TargetApi(VERSION_CODES.JELLY_BEAN)
+        private void copyConnection(Object fromObj, Object toObj) throws IllegalAccessException {
+            copyField(fromObj, toObj, "connection");
+        }
+    }
+
 
     public static class getIntentSender extends BaseHookMethodHandlerOfReplaceCallingPackage {
 
