@@ -192,7 +192,7 @@ class PackageParserApi21 extends PackageParser {
                     int[].class, int.class, long.class, long.class, Set.class, sPackageUserStateClass, int.class);
             return (PackageInfo) method.invoke(null, mPackage, gids, flags, firstInstallTime, lastUpdateTime, grantedPermissions, mDefaultPackageUserState, mUserId);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         try {
@@ -201,7 +201,7 @@ class PackageParserApi21 extends PackageParser {
                     int[].class, int.class, long.class, long.class, HashSet.class, sPackageUserStateClass, int.class);
             return (PackageInfo) method.invoke(null, mPackage, gids, flags, firstInstallTime, lastUpdateTime, grantedPermissions, mDefaultPackageUserState, mUserId);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         try {

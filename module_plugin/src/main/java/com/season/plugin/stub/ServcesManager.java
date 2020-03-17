@@ -122,7 +122,8 @@ public class ServcesManager {
         Object data = init.newInstance();
 
         FieldUtils.writeField(data, "token", fakeToken);
-        FieldUtils.writeField(data, "infoView", info);
+        //FieldUtils.writeField(data, "infoView", info);
+        FieldUtils.writeField(data, "info", info);
         if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
             FieldUtils.writeField(data, "compatInfo", CompatibilityInfoCompat.DEFAULT_COMPATIBILITY_INFO());
         }
