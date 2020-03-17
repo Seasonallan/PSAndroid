@@ -1,4 +1,4 @@
-package com.season.example.view;
+package com.season.lib.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,14 +9,14 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.nineoldandroids.animation.ArgbEvaluator;
-import com.season.plugin.R;
+import com.season.library.R;
 
 
 /**
  * 形状转换视图
  *
  */
-public class ShapeLoadingView extends View {
+public class LoadingViewTopShape extends View {
     /**
      * 用赛贝尔曲线画圆
      */
@@ -33,17 +33,17 @@ public class ShapeLoadingView extends View {
     private int mRectColor ;
 
 
-    public ShapeLoadingView(Context context) {
+    public LoadingViewTopShape(Context context) {
         super(context);
         init(context);
     }
 
-    public ShapeLoadingView(Context context, AttributeSet attrs) {
+    public LoadingViewTopShape(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public ShapeLoadingView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LoadingViewTopShape(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }

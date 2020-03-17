@@ -14,14 +14,12 @@ import android.content.pm.PermissionInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.core.app.BundleCompat;
 
 import com.season.lib.util.LogUtil;
 import com.season.plugin.hookcore.BaseHook;
@@ -30,8 +28,6 @@ import com.season.plugin.hookcore.HookInstrumentation;
 import com.season.plugin.hookcore.ProxyHookActivityManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;
 import com.season.lib.reflect.MethodUtils;
-import com.season.plugin.hookcore.cp.ContentProviderCompat;
-import com.season.plugin.hookcore.cp.PluginServiceProvider;
 import com.season.pluginlib.IApplicationCallback;
 import com.season.pluginlib.IPackageDataObserver;
 import com.season.pluginlib.IPluginManager;
@@ -39,32 +35,22 @@ import com.season.pluginlib.IPluginManager;
 import java.util.List;
 
 /**
- * Disc:
+ * Disc: 插件服务连接
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-05-17 09:35
  */
 public class PluginManager implements ServiceConnection {
 
+    private static final String TAG = PluginManager.class.getSimpleName();
 
     public static final String ACTION_PACKAGE_ADDED = "com.morgoo.doirplugin.PACKAGE_ADDED";
     public static final String ACTION_PACKAGE_REMOVED = "com.morgoo.doirplugin.PACKAGE_REMOVED";
-    public static final String ACTION_DROIDPLUGIN_INIT = "com.morgoo.droidplugin.ACTION_DROIDPLUGIN_INIT";
-    public static final String ACTION_MAINACTIVITY_ONCREATE = "com.morgoo.droidplugin.ACTION_MAINACTIVITY_ONCREATE";
-    public static final String ACTION_MAINACTIVITY_ONDESTORY = "com.morgoo.droidplugin.ACTION_MAINACTIVITY_ONDESTORY";
-    public static final String ACTION_SETTING = "com.morgoo.droidplugin.ACTION_SETTING";
     public static final String ACTION_SHORTCUT_PROXY = "com.morgoo.droidplugin.ACTION_SHORTCUT_PROXY";
-
-
-    public static final String EXTRA_PID = "com.morgoo.droidplugin.EXTRA_PID";
-    public static final String EXTRA_PACKAGENAME = "com.morgoo.droidplugin.EXTRA_EXTRA_PACKAGENAME";
 
     public static final String STUB_AUTHORITY_NAME = "com.morgoo.droidplugin_stub";
     public static final String EXTRA_APP_PERSISTENT = "com.morgoo.droidplugin.EXTRA_APP_PERSISTENT";
 
     public static final int STUB_NO_ACTIVITY_MAX_NUM = 4;
-
-
-    private static final String TAG = PluginManager.class.getSimpleName();
 
 
     private Context mHostContext;
@@ -78,29 +64,34 @@ public class PluginManager implements ServiceConnection {
     }
 
     private IPluginManager mPluginManager;
+    private ProxyHookPackageManager mIPackageManagerHook;
 
 
+    /**
+     * 绑定服务，启动hook代理
+     * @param hostContext
+     */
     public void bindPluginManagerToService(Context hostContext) {
         this.mHostContext = hostContext;
-        installHook(mHostContext);
+        //hook PackageManager 拦截getPackageInfo类似请求，替换包名,使用动态代理
+        mIPackageManagerHook = new ProxyHookPackageManager(mHostContext);
+        installHookOnce(mIPackageManagerHook);
+
+        //hook ActivityManager 拦截startActivity类似请求，替换intent 使用动态代理
+        installHookOnce(new ProxyHookActivityManager(mHostContext));
+
+        //hook
+        installHookOnce(new HookHandlerCallback(mHostContext));
+
+        //hook Instrumentation 处理生命周期，在替身上启动相关的activity方法 使用静态代理
+        installHookOnce(new HookInstrumentation(mHostContext));
         connectToService();
     }
 
-
-    private ProxyHookPackageManager mIPackageManagerHook;
-    public void installHook(Context context) {
-        mIPackageManagerHook = new ProxyHookPackageManager(context);
-        installHookOnce(mIPackageManagerHook);
-        installHookOnce(new ProxyHookActivityManager(context));
-        installHookOnce(new HookHandlerCallback(context));
-        installHookOnce(new HookInstrumentation(context));
-    }
-
-    public void installHookOnce(BaseHook hook) {
+    private void installHookOnce(BaseHook hook) {
         try {
             hook.onInstall();
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
              LogUtil.e(TAG, hook.toString());
         }
     }
@@ -110,6 +101,7 @@ public class PluginManager implements ServiceConnection {
         mPluginManager = IPluginManager.Stub.asInterface(iBinder);
         try {
             mPluginManager.waitForReady();
+            //开始使用hook过的代理
             mIPackageManagerHook.enable = true;
             mPluginManager.registerApplicationCallback(new IApplicationCallback.Stub() {
 
@@ -140,7 +132,10 @@ public class PluginManager implements ServiceConnection {
         }
     }
 
-
+    /**
+     * 服务是否已经连接
+     * @return
+     */
     public boolean isConnected() {
         return mHostContext != null && mPluginManager != null;
     }
@@ -170,7 +165,7 @@ public class PluginManager implements ServiceConnection {
         connectToService();
     }
 
-    public void connectToService() {
+    private void connectToService() {
         if (mPluginManager == null) {
             try {
                 Intent intent = new Intent(mHostContext, PluginManagerService.class);

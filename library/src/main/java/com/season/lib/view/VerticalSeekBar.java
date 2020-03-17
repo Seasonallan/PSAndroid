@@ -7,7 +7,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-
+/**
+ * 无聊的竖向seekbar
+ */
 public class VerticalSeekBar extends View {
 
     public interface OnSeekBarChangeListener {

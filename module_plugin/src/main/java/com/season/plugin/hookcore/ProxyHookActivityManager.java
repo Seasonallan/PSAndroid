@@ -1,6 +1,5 @@
 package com.season.plugin.hookcore;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.AndroidRuntimeException;
@@ -14,15 +13,16 @@ import com.season.plugin.hookcore.handle.HookHandleActivityManager;
 import com.season.plugin.hookcore.handle.BaseHookHandle;
 import com.season.lib.reflect.FieldUtils;
 import com.season.lib.reflect.Utils;
-
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Disc:
+ * Disc: hook ActivityManager拦截startActivity类似请求，替换intent
+ * 绑定的代理
+ * @see HookHandleActivityManager
+ *  2020-03-17 10:07 更新：新增对23以上SDK的支持，26，27，28的ams获取方式是通过ActivityManager.getService()
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-05-17 10:07
  */

@@ -1,25 +1,3 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.hookcore;
 
 import android.content.Context;
@@ -37,9 +15,11 @@ import java.util.List;
 
 
 /**
- * BaseHook some function on IPackageManager
- * <p/>
- * Code by Andy Zhang (zhangyong232@gmail.com) on  2015/2/5.
+ * Disc: hook PackageManager拦截getPackageInfo类似请求，替换包名
+ *  绑定的代理
+ * @see HookHandlePackageManager
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-17 10:07
  */
 public class ProxyHookPackageManager extends BaseHookProxy {
 
@@ -54,7 +34,6 @@ public class ProxyHookPackageManager extends BaseHookProxy {
     }
 
     public boolean enable = false;
-
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (enable){
             return super.invoke(proxy, method, args);

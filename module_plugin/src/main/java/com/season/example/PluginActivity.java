@@ -11,10 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.season.example.view.LoadingView;
+import com.season.lib.view.LoadingView;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.file.FileUtils;

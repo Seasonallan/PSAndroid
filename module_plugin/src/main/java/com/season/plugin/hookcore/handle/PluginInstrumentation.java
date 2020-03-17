@@ -1,25 +1,3 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.hookcore.handle;
 
 import android.annotation.TargetApi;
@@ -49,8 +27,14 @@ import com.season.lib.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 
+
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2014/12/5.
+ * Disc: 处理activity生命周期
+ * Hook点：
+ * @see com.season.plugin.hookcore.HookInstrumentation
+ *
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-17 10:07
  */
 public class PluginInstrumentation extends Instrumentation {
 

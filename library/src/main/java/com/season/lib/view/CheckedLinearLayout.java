@@ -7,6 +7,9 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
 
+/**
+ * 传递check状态给childView的容器
+ */
 public class CheckedLinearLayout extends LinearLayout implements Checkable{
 
 	private boolean mChecked;

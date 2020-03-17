@@ -15,6 +15,10 @@ import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+/**
+ * 有状态的GridView
+ * 可单选多选
+ */
 public class CheckedGridView extends GridView {
 	public static final int CHOICE_MODE_NONE = 0;
 	public static final int CHOICE_MODE_SINGLE = 1;
@@ -340,13 +344,13 @@ public class CheckedGridView extends GridView {
 		 * @param isChecked
 		 * @return 返回true 则阻止选中事件发生
 		 */
-		public boolean onPreItemCheckedStateChange(AdapterView<?> parent,int position,boolean isChecked);
+		boolean onPreItemCheckedStateChange(AdapterView<?> parent,int position,boolean isChecked);
 		/**
 		 * 选中状态发生后的回调
 		 * @param parent
 		 * @param position
 		 * @param isChecked
 		 */
-		public void onItemCheckedStateChange(AdapterView<?> parent,int position,boolean isChecked);
+		void onItemCheckedStateChange(AdapterView<?> parent,int position,boolean isChecked);
 	}
 }

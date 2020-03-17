@@ -21,6 +21,18 @@
         <attr name="mask_color" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="LoadingView">
+        <attr name="loadingText" format="string|reference"/>
+        <attr name="loadingTextAppearance" format="reference"/>
+        <attr name="delay" format="integer|reference"/>
+    </declare-styleable>
+
+    <color name="triangle">#aa72d572</color>
+    <color name="circle">#aa738ffe</color>
+    <color name="rect">#aae84e40</color>
+    <color name="shadow">#25808080</color>
+
+
     <color name="normal">#dadada</color>
     <color name="pressed">#dd9025</color>
     <color name="disable">#818081</color>

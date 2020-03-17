@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Disc:
+ * Disc:  hook Callback处理启动activity后加载application和ClassLoader的替换
+ *  绑定的代理
+ * @see PluginCallback
  * User: SeasonAllan(451360508@qq.com)
  * Time: 2017-05-17 10:29
  */

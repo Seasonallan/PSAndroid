@@ -9,6 +9,11 @@ import com.season.plugin.core.PluginManager;
 
 import java.lang.reflect.Method;
 
+/**
+ * Disc: 对参数中包名的替换
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-17 10:07
+ */
 public class BaseHookMethodHandlerOfReplaceCallingPackage extends BaseHookMethodHandler {
 
     public BaseHookMethodHandlerOfReplaceCallingPackage(Context hostContext) {

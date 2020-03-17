@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tool="http://schemas.android.com/tools">
 
-    <com.season.example.view.ShapeLoadingView
+    <com.season.lib.view.LoadingViewTopShape
         android:id="@+id/shapeLoadingView"
         android:layout_width="24dp"
         android:layout_height="24dp"

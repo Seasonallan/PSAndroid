@@ -114,7 +114,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <com.season.example.view.LoadingView
+    <com.season.lib.view.LoadingView
         android:id="@+id/loadView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -12,6 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import com.season.lib.bitmap.BitmapUtil;
 
+/**
+ * 圆角ImageVew
+ * 原理： 使用paint的BitmapShader
+ */
 public class CircleImageView  extends AppCompatImageView {
 
 

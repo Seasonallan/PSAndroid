@@ -1,4 +1,4 @@
-package com.season.example.view;
+package com.season.lib.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -18,7 +18,7 @@ import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.season.lib.dimen.DimenUtil;
-import com.season.plugin.R;
+import com.season.library.R;
 
 
 /**
@@ -30,7 +30,7 @@ public class LoadingView extends LinearLayout {
     private static final float FACTOR = 1.2f;
     private static float mDistance = 200;
 
-    private ShapeLoadingView mShapeLoadingView;
+    private LoadingViewTopShape mShapeLoadingView;
     private ImageView mIndicationIm;
     private TextView mLoadTextView;
 

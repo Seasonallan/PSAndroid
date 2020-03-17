@@ -1,25 +1,3 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.hookcore.handle;
 
 import android.content.Context;
@@ -29,21 +7,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/2/28.
+ * Disc: 动态代理时需要invoke的方法基类
+ * 实现的实例
+ * @see HookHandleActivityManager 动态代理ActivityManager
+ * @see HookHandlePackageManager 动态代理PackageManager
+ *
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-17 10:07
  */
 public abstract class BaseHookHandle {
 
     protected Context mHostContext;
-
-    protected Map<String, BaseHookMethodHandler> sHookedMethodHandlers = new HashMap<String, BaseHookMethodHandler>(5);
-
     public BaseHookHandle(Context hostContext) {
         mHostContext = hostContext;
         init();
     }
 
+    /**
+     * 初始化，填充方法集合
+     */
     protected abstract void init();
 
+    /**
+     * 所有的方法集合
+     */
+    protected Map<String, BaseHookMethodHandler> sHookedMethodHandlers = new HashMap<String, BaseHookMethodHandler>(5);
+
+    /**
+     * 获取该方法的实现
+     * @param method
+     * @return
+     */
     public BaseHookMethodHandler getHookedMethodHandler(Method method) {
         if (method != null) {
             return sHookedMethodHandlers.get(method.getName());

@@ -1,25 +1,3 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.hookcore.handle;
 
 import android.annotation.TargetApi;
@@ -59,8 +37,7 @@ import com.season.lib.reflect.MethodUtils;
 import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginManagerService;
 import com.season.plugin.core.PluginProcessManager;
-import com.season.plugin.hookcore.cp.ContentProviderHolderCompat;
-import com.season.plugin.hookcore.cp.IContentProviderHook;
+import com.season.plugin.hookcore.ProxyHookContentProvider;
 import com.season.plugin.stub.MyFakeIBinder;
 import com.season.plugin.stub.RunningActivities;
 import com.season.plugin.stub.ServcesManager;
@@ -72,8 +49,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/2/28.
+ * Disc: 替换activityManager相关方法
+ * hook点：
+ * @see com.season.plugin.hookcore.ProxyHookActivityManager
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-17 10:07
  */
 public class HookHandleActivityManager extends BaseHookHandle {
 
@@ -197,7 +179,8 @@ public class HookHandleActivityManager extends BaseHookHandle {
                 if (mStubProvider != null && mTargetProvider != null && TextUtils.equals(stubProvider2.authority, mStubProvider.authority)) {
                     //FIXME 其实这里写的并不好，需要适配各种机型。这里就先这样吧。
                     Object fromObj = invokeResult;
-                    Object toObj = ContentProviderHolderCompat.newInstance(mTargetProvider);
+                    Object toObj = Class.forName("android.app.IActivityManager$ContentProviderHolder")
+                            .getConstructor(ProviderInfo.class).newInstance(mTargetProvider);
                     //toObj.provider = fromObj.provider;
                     copyField(fromObj, toObj, "provider");
 
@@ -211,7 +194,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
                     Object provider = FieldUtils.readField(invokeResult, "provider");
                     if (provider != null) {
                         boolean localProvider = FieldUtils.readField(toObj, "provider") == null;
-                        IContentProviderHook invocationHandler = new IContentProviderHook(mHostContext, provider, mStubProvider, mTargetProvider, localProvider);
+                        ProxyHookContentProvider invocationHandler = new ProxyHookContentProvider(mHostContext, provider, mStubProvider, mTargetProvider, localProvider);
                        // invocationHandler.setEnable(true);
                         Class<?> clazz = provider.getClass();
                         List<Class<?>> interfaces = Utils.getAllInterfaces(clazz);
@@ -225,7 +208,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
                     Object provider = FieldUtils.readField(invokeResult, "provider");
                     if (provider != null) {
                         boolean localProvider = FieldUtils.readField(invokeResult, "provider") == null;
-                        IContentProviderHook invocationHandler = new IContentProviderHook(mHostContext, provider, mStubProvider, mTargetProvider, localProvider);
+                        ProxyHookContentProvider invocationHandler = new ProxyHookContentProvider(mHostContext, provider, mStubProvider, mTargetProvider, localProvider);
                      //   invocationHandler.setEnable(true);
                         Class<?> clazz = provider.getClass();
                         List<Class<?>> interfaces = Utils.getAllInterfaces(clazz);

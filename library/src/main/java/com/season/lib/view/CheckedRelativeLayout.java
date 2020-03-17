@@ -6,7 +6,9 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
 import android.widget.RelativeLayout;
-
+/**
+ * 传递check状态给childView的容器
+ */
 public class CheckedRelativeLayout extends RelativeLayout implements Checkable{
 	private boolean mChecked;
 	private static final int[] CHECKED_STATE_SET = {
