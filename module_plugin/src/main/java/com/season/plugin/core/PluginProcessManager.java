@@ -52,7 +52,7 @@ import com.season.lib.reflect.MethodUtils;
 import com.season.plugin.stub.ActivityStub;
 import com.season.plugin.stub.ServiceStub;
 import com.season.plugin.hookcore.handle.PluginClassLoader;
-import com.season.plugin.tool.PluginDirHelper;
+import com.season.plugin.tool.PluginFileHelper;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -196,11 +196,11 @@ public class PluginProcessManager {
                     sPluginLoadedApkCache.put(pluginInfo.packageName, loadedApk);
 
                 /*添加ClassLoader LoadedApk.mClassLoader*/
-                    String optimizedDirectory = PluginDirHelper.getPluginDalvikCacheDir(hostContext, pluginInfo.packageName);
-                    String libraryPath = PluginDirHelper.getPluginNativeLibraryDir(hostContext, pluginInfo.packageName);
+                    String optimizedDirectory = PluginFileHelper.getPluginDalvikCacheDir(hostContext, pluginInfo.packageName);
+                    String libraryPath = PluginFileHelper.getPluginNativeLibraryDir(hostContext, pluginInfo.packageName);
                     String apk = pluginInfo.applicationInfo.publicSourceDir;
                     if (TextUtils.isEmpty(apk)) {
-                        pluginInfo.applicationInfo.publicSourceDir = PluginDirHelper.getPluginApkFile(hostContext, pluginInfo.packageName);
+                        pluginInfo.applicationInfo.publicSourceDir = PluginFileHelper.getPluginApkFile(hostContext, pluginInfo.packageName);
                         apk = pluginInfo.applicationInfo.publicSourceDir;
                     }
                     if (apk != null) {
@@ -210,7 +210,7 @@ public class PluginProcessManager {
                         } catch (Exception e) {
                         }
                         if(classloader==null){
-                            PluginDirHelper.cleanOptimizedDirectory(optimizedDirectory);
+                            PluginFileHelper.cleanOptimizedDirectory(optimizedDirectory);
                             classloader = new PluginClassLoader(apk, optimizedDirectory, libraryPath, ClassLoader.getSystemClassLoader());
                         }
                         synchronized (loadedApk) {

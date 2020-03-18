@@ -1,25 +1,3 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.parser;
 
 import android.content.Context;
@@ -45,7 +23,10 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/2/13.
+ * Disc: 包解析基类，适配SDK不同版本，构建generatePackageInfo
+ * 用于创建loadApk：ActivityThread的方法getPackageInfoNoCheck的参数
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
 abstract class PackageParser {
     protected Context mContext;
@@ -56,24 +37,12 @@ abstract class PackageParser {
         mContext = context;
     }
 
-    public final static int PARSE_IS_SYSTEM = 1 << 0;
-    public final static int PARSE_CHATTY = 1 << 1;
-    public final static int PARSE_MUST_BE_APK = 1 << 2;
-    public final static int PARSE_IGNORE_PROCESSES = 1 << 3;
-    public final static int PARSE_FORWARD_LOCK = 1 << 4;
-    public final static int PARSE_ON_SDCARD = 1 << 5;
-    public final static int PARSE_IS_SYSTEM_DIR = 1 << 6;
-    public final static int PARSE_IS_PRIVILEGED = 1 << 7;
-    public final static int PARSE_COLLECT_CERTIFICATES = 1 << 8;
-    public final static int PARSE_TRUSTED_OVERLAY = 1 << 9;
 
     public static PackageParser newPluginParser(Context context) throws Exception {
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP_MR1) {
             if ("1".equals(SystemPropertiesCompat.get("ro.build.version.preview_sdk", ""))) {
-                LogUtil.i("PackageParserApi22Preview1");
                 return new PackageParserApi22Preview1(context);
             } else {
-                LogUtil.i("PackageParserApi22");
                 return new PackageParserApi22(context);//API 20
             }
         } else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
@@ -133,10 +102,8 @@ abstract class PackageParser {
 
     public abstract List getInstrumentations() throws Exception;
 
-
     public abstract String getPackageName() throws Exception;
 
-    //////////////////////
     public abstract String readNameFromComponent(Object data) throws Exception;
 
     public abstract List<IntentFilter> readIntentFilterFromComponent(Object data) throws Exception;

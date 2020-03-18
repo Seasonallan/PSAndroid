@@ -1,25 +1,3 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.stub;
 
 import android.app.ActivityManager;
@@ -87,17 +65,28 @@ public class MyActivityManagerService extends BaseActivityManagerService {
         super.onProcessDied(pid, uid);
     }
 
+    private String getProcessName(Context context, int pid) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> raps = am.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo rap : raps) {
+            if (rap != null && rap.pid == pid) {
+                return rap.processName;
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean registerApplicationCallback(int callingPid, int callingUid, IApplicationCallback callback) {
         boolean b = super.registerApplicationCallback(callingPid, callingUid, callback);
         mRunningProcessList.addItem(callingPid, callingUid);
         if (callingPid == android.os.Process.myPid()) {
-            String stubProcessName = Utils.getProcessName(mHostContext, callingPid);
-            String targetProcessName = Utils.getProcessName(mHostContext, callingPid);
+            String stubProcessName = getProcessName(mHostContext, callingPid);
+            String targetProcessName = getProcessName(mHostContext, callingPid);
             String targetPkg = mHostContext.getPackageName();
             mRunningProcessList.setProcessName(callingPid, stubProcessName, targetProcessName, targetPkg);
         }
-        if (TextUtils.equals(mHostContext.getPackageName(), Utils.getProcessName(mHostContext, callingPid))) {
+        if (TextUtils.equals(mHostContext.getPackageName(), getProcessName(mHostContext, callingPid))) {
             String stubProcessName = mHostContext.getPackageName();
             String targetProcessName = mHostContext.getPackageName();
             String targetPkg = mHostContext.getPackageName();

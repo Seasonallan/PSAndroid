@@ -1,39 +1,24 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.tool;
 
 import android.content.Context;
 import android.os.Environment;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/2/5.
+ * Disc: 插件文件目录
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
-public class PluginDirHelper {
+public class PluginFileHelper {
 
 
     private static File sBaseDir = null;
@@ -140,4 +125,87 @@ public class PluginDirHelper {
         } catch (Throwable e) {
         }
     }
+
+
+    public static void copyFile(String src, String dst) throws IOException {
+        BufferedInputStream in = null;
+        BufferedOutputStream ou = null;
+        try {
+            in = new BufferedInputStream(new FileInputStream(src));
+            ou = new BufferedOutputStream(new FileOutputStream(dst));
+            byte[] buffer = new byte[8192];
+            int read = 0;
+            while ((read = in.read(buffer)) != -1) {
+                ou.write(buffer, 0, read);
+            }
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
+            }
+
+            if (ou != null) {
+                try {
+                    ou.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
+    public static void deleteDir(String file) {
+        deleteFile(new File(file));
+    }
+
+    private static void deleteFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                deleteFile(files[i]);
+            }
+        }
+        file.delete();
+    }
+
+    public static void writeToFile(File file, byte[] data) throws IOException {
+        FileOutputStream fou = null;
+        try {
+            fou = new FileOutputStream(file);
+            fou.write(data);
+        } finally {
+            if (fou != null) {
+                try {
+                    fou.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    public static byte[] readFromFile(File file) throws IOException {
+        FileInputStream fin = null;
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            fin = new FileInputStream(file);
+            byte[] buffer = new byte[8192];
+            int read = 0;
+            while ((read = fin.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            byte[] data = out.toByteArray();
+            out.close();
+            return data;
+        } finally {
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+
 }

@@ -28,37 +28,26 @@ import android.text.TextUtils;
 
 import com.season.lib.util.LogUtil;
 import com.season.plugin.PluginCodeDefine;
-import com.season.plugin.compat.VMRuntimeCompat;
 import com.season.pluginlib.IApplicationCallback;
 import com.season.pluginlib.IPackageDataObserver;
 import com.season.pluginlib.IPluginManager;
-import com.season.plugin.parser.IntentMatcher;
+import com.season.plugin.tool.IntentResolveHelper;
 import com.season.plugin.parser.PluginPackageParser;
-import com.season.plugin.tool.BuildCompat;
+import com.season.plugin.tool.SoFileHelper;
 import com.season.plugin.stub.BaseActivityManagerService;
 import com.season.plugin.stub.MyActivityManagerService;
-import com.season.plugin.stub.Utils;
-import com.season.plugin.hookcore.handle.PluginClassLoader;
-import com.season.plugin.tool.PluginDirHelper;
+import com.season.plugin.tool.PluginFileHelper;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import dalvik.system.DexFile;
 
 /**
  * 此服务模仿系统的PackageManagerService，提供对插件简单的管理服务。
@@ -148,7 +137,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         ArrayList<File> apkfiles = null;
         try {
             apkfiles = new ArrayList<File>();
-            File baseDir = new File(PluginDirHelper.getBaseDir(context));
+            File baseDir = new File(PluginFileHelper.getBaseDir(context));
             File[] dirs = baseDir.listFiles();
             for (File dir : dirs) {
                 if (dir.isDirectory()) {
@@ -398,20 +387,20 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         try {
             enforcePluginFileExists();
             if (shouldNotBlockOtherInfo()) {
-                List<ResolveInfo> infos = IntentMatcher.resolveIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                List<ResolveInfo> infos = IntentResolveHelper.resolveIntent(mContext, mPluginCache, intent, resolvedType, flags);
                 if (infos != null && infos.size() > 0) {
-                    return IntentMatcher.findBest(infos);
+                    return IntentResolveHelper.findBest(infos);
                 }
             } else {
                 List<String> pkgs = mActivityManagerService.getPackageNamesByPid(Binder.getCallingPid());
                 List<ResolveInfo> infos = new ArrayList<ResolveInfo>();
                 for (String pkg : pkgs) {
                     intent.setPackage(pkg);
-                    List<ResolveInfo> list = IntentMatcher.resolveIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                    List<ResolveInfo> list = IntentResolveHelper.resolveIntent(mContext, mPluginCache, intent, resolvedType, flags);
                     infos.addAll(list);
                 }
                 if (infos != null && infos.size() > 0) {
-                    return IntentMatcher.findBest(infos);
+                    return IntentResolveHelper.findBest(infos);
                 }
             }
         } catch (Exception e) {
@@ -427,13 +416,13 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         try {
             enforcePluginFileExists();
             if (shouldNotBlockOtherInfo()) {
-                return IntentMatcher.resolveActivityIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                return IntentResolveHelper.resolveActivityIntent(mContext, mPluginCache, intent, resolvedType, flags);
             } else {
                 List<String> pkgs = mActivityManagerService.getPackageNamesByPid(Binder.getCallingPid());
                 List<ResolveInfo> infos = new ArrayList<ResolveInfo>();
                 for (String pkg : pkgs) {
                     intent.setPackage(pkg);
-                    List<ResolveInfo> list = IntentMatcher.resolveActivityIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                    List<ResolveInfo> list = IntentResolveHelper.resolveActivityIntent(mContext, mPluginCache, intent, resolvedType, flags);
                     infos.addAll(list);
                 }
                 if (infos != null && infos.size() > 0) {
@@ -452,13 +441,13 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         try {
             enforcePluginFileExists();
             if (shouldNotBlockOtherInfo()) {
-                return IntentMatcher.resolveReceiverIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                return IntentResolveHelper.resolveReceiverIntent(mContext, mPluginCache, intent, resolvedType, flags);
             } else {
                 List<String> pkgs = mActivityManagerService.getPackageNamesByPid(Binder.getCallingPid());
                 List<ResolveInfo> infos = new ArrayList<ResolveInfo>();
                 for (String pkg : pkgs) {
                     intent.setPackage(pkg);
-                    List<ResolveInfo> list = IntentMatcher.resolveReceiverIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                    List<ResolveInfo> list = IntentResolveHelper.resolveReceiverIntent(mContext, mPluginCache, intent, resolvedType, flags);
                     infos.addAll(list);
                 }
                 if (infos != null && infos.size() > 0) {
@@ -477,20 +466,20 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         try {
             enforcePluginFileExists();
             if (shouldNotBlockOtherInfo()) {
-                List<ResolveInfo> infos = IntentMatcher.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                List<ResolveInfo> infos = IntentResolveHelper.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
                 if (infos != null && infos.size() > 0) {
-                    return IntentMatcher.findBest(infos);
+                    return IntentResolveHelper.findBest(infos);
                 }
             } else {
                 List<String> pkgs = mActivityManagerService.getPackageNamesByPid(Binder.getCallingPid());
                 List<ResolveInfo> infos = new ArrayList<ResolveInfo>();
                 for (String pkg : pkgs) {
                     intent.setPackage(pkg);
-                    List<ResolveInfo> list = IntentMatcher.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                    List<ResolveInfo> list = IntentResolveHelper.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
                     infos.addAll(list);
                 }
                 if (infos != null && infos.size() > 0) {
-                    return IntentMatcher.findBest(infos);
+                    return IntentResolveHelper.findBest(infos);
                 }
             }
         } catch (Exception e) {
@@ -505,13 +494,13 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         try {
             enforcePluginFileExists();
             if (shouldNotBlockOtherInfo()) {
-                return IntentMatcher.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                return IntentResolveHelper.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
             } else {
                 List<String> pkgs = mActivityManagerService.getPackageNamesByPid(Binder.getCallingPid());
                 List<ResolveInfo> infos = new ArrayList<ResolveInfo>();
                 for (String pkg : pkgs) {
                     intent.setPackage(pkg);
-                    List<ResolveInfo> list = IntentMatcher.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                    List<ResolveInfo> list = IntentResolveHelper.resolveServiceIntent(mContext, mPluginCache, intent, resolvedType, flags);
                     infos.addAll(list);
                 }
                 if (infos != null && infos.size() > 0) {
@@ -530,13 +519,13 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         try {
             enforcePluginFileExists();
             if (shouldNotBlockOtherInfo()) {
-                return IntentMatcher.resolveProviderIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                return IntentResolveHelper.resolveProviderIntent(mContext, mPluginCache, intent, resolvedType, flags);
             } else {
                 List<String> pkgs = mActivityManagerService.getPackageNamesByPid(Binder.getCallingPid());
                 List<ResolveInfo> infos = new ArrayList<ResolveInfo>();
                 for (String pkg : pkgs) {
                     intent.setPackage(pkg);
-                    List<ResolveInfo> list = IntentMatcher.resolveProviderIntent(mContext, mPluginCache, intent, resolvedType, flags);
+                    List<ResolveInfo> list = IntentResolveHelper.resolveProviderIntent(mContext, mPluginCache, intent, resolvedType, flags);
                     infos.addAll(list);
                 }
                 if (infos != null && infos.size() > 0) {
@@ -774,7 +763,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                 return;
             }
             ApplicationInfo applicationInfo = parser.getApplicationInfo(0);
-            Utils.deleteDir(new File(applicationInfo.dataDir, "caches").getName());
+            PluginFileHelper.deleteDir(new File(applicationInfo.dataDir, "caches").getName());
             success = true;
         } catch (Exception e) {
             handleException(e);
@@ -798,7 +787,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                 return;
             }
             ApplicationInfo applicationInfo = parser.getApplicationInfo(0);
-            Utils.deleteDir(applicationInfo.dataDir);
+            PluginFileHelper.deleteDir(applicationInfo.dataDir);
             success = true;
         } catch (Exception e) {
             handleException(e);
@@ -839,7 +828,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                 return PluginCodeDefine.INSTALL_FAILED_INVALID_APK;
             }
 
-            apkfile = PluginDirHelper.getPluginApkFile(mContext, info.packageName);
+            apkfile = PluginFileHelper.getPluginApkFile(mContext, info.packageName);
 
             if ((flags & PluginCodeDefine.INSTALL_UPDATE) != 0) {
                 forceStopPackage(info.packageName);
@@ -847,7 +836,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                     deleteApplicationCacheFiles(info.packageName, null);
                 }
                 new File(apkfile).delete();
-                Utils.copyFile(filepath, apkfile);
+                PluginFileHelper.copyFile(filepath, apkfile);
                 PluginPackageParser parser = new PluginPackageParser(mContext, new File(apkfile));
                 parser.collectCertificates(0);
                 PackageInfo pkgInfo = parser.getPackageInfo(PackageManager.GET_PERMISSIONS | PackageManager.GET_SIGNATURES);
@@ -866,13 +855,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                     }
                 }
                 saveSignatures(pkgInfo);
-//                if (pkgInfo.reqFeatures != null && pkgInfo.reqFeatures.length > 0) {
-//                    for (FeatureInfo reqFeature : pkgInfo.reqFeatures) {
-//                        LogUtil.e(TAG, "reqFeature name=%s,flags=%s,glesVersion=%s", reqFeature.name, reqFeature.flags, reqFeature.getGlEsVersion());
-//                    }
-//                }
-                copyNativeLibs(mContext, apkfile, parser.getApplicationInfo(0));
-                //dexOpt(mContext, apkfile, parser);
+                SoFileHelper.copyNativeLibs(mContext, apkfile, parser.getApplicationInfo(0));
                 mPluginCache.put(parser.getPackageName(), parser);
                 mActivityManagerService.onPkgInstalled(mPluginCache, parser, parser.getPackageName());
                 sendInstalledBroadcast(info.packageName);
@@ -883,7 +866,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                 } else {
                     forceStopPackage(info.packageName);
                     new File(apkfile).delete();
-                    Utils.copyFile(filepath, apkfile);
+                    PluginFileHelper.copyFile(filepath, apkfile);
                     PluginPackageParser parser = new PluginPackageParser(mContext, new File(apkfile));
                     parser.collectCertificates(0);
                     PackageInfo pkgInfo = parser.getPackageInfo(PackageManager.GET_PERMISSIONS | PackageManager.GET_SIGNATURES);
@@ -902,14 +885,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                         }
                     }
                     saveSignatures(pkgInfo);
-//                    if (pkgInfo.reqFeatures != null && pkgInfo.reqFeatures.length > 0) {
-//                        for (FeatureInfo reqFeature : pkgInfo.reqFeatures) {
-//                            LogUtil.e(TAG, "reqFeature name=%s,flags=%s,glesVersion=%s", reqFeature.name, reqFeature.flags, reqFeature.getGlEsVersion());
-//                        }
-//                    }
-
-                    copyNativeLibs(mContext, apkfile, parser.getApplicationInfo(0));
-                    //dexOpt(mContext, apkfile, parser);
+                    SoFileHelper.copyNativeLibs(mContext, apkfile, parser.getApplicationInfo(0));
                     mPluginCache.put(parser.getPackageName(), parser);
                     mActivityManagerService.onPkgInstalled(mPluginCache, parser, parser.getPackageName());
                     sendInstalledBroadcast(info.packageName);
@@ -925,59 +901,6 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         }
     }
 
-    private void dexOpt(Context hostContext, String apkfile, PluginPackageParser parser) throws Exception {
-        String packageName = parser.getPackageName();
-        String optimizedDirectory = PluginDirHelper.getPluginDalvikCacheDir(hostContext, packageName);
-        String libraryPath = PluginDirHelper.getPluginNativeLibraryDir(hostContext, packageName);
-        ClassLoader classloader = new PluginClassLoader(apkfile, optimizedDirectory, libraryPath, ClassLoader.getSystemClassLoader());
-        DexFile dexFile = DexFile.loadDex(apkfile, PluginDirHelper.getPluginDalvikCacheFile(mContext, parser.getPackageName()), 0);
-        LogUtil.i(TAG, "dexFile=%s", dexFile);
-    }
-
-    private void saveSignatures(PackageInfo pkgInfo) {
-        if (pkgInfo != null && pkgInfo.signatures != null) {
-            int i = 0;
-            for (Signature signature : pkgInfo.signatures) {
-                File file = new File(PluginDirHelper.getPluginSignatureFile(mContext, pkgInfo.packageName, i));
-                try {
-                    Utils.writeToFile(file, signature.toByteArray());
-                    LogUtil.i(TAG, "Save %s signature of %s,md5=%s", pkgInfo.packageName, i, Utils.md5(signature.toByteArray()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    LogUtil.w(TAG, "Save signatures fail", e);
-                    file.delete();
-                    Utils.deleteDir(PluginDirHelper.getPluginSignatureDir(mContext, pkgInfo.packageName));
-                    break;
-                }
-                i++;
-            }
-        }
-    }
-
-    private Signature[] readSignatures(String packageName) {
-        List<String> fils = PluginDirHelper.getPluginSignatureFiles(mContext, packageName);
-        List<Signature> signatures = new ArrayList<Signature>(fils.size());
-        int i = 0;
-        for (String file : fils) {
-            try {
-                byte[] data = Utils.readFromFile(new File(file));
-                if (data != null) {
-                    Signature sin = new Signature(data);
-                    signatures.add(sin);
-                    LogUtil.i(TAG, "Read %s signature of %s,md5=%s", packageName, i, Utils.md5(sin.toByteArray()));
-                } else {
-                    LogUtil.i(TAG, "Read %s signature of %s FAIL", packageName, i);
-                    return null;
-                }
-                i++;
-            } catch (Exception e) {
-                LogUtil.i(TAG, "Read %s signature of %s FAIL", e, packageName, i);
-                return null;
-            }
-        }
-        return signatures.toArray(new Signature[signatures.size()]);
-    }
-
 
     private void sendInstalledBroadcast(String packageName) {
         Intent intent = new Intent(PluginManager.ACTION_PACKAGE_ADDED);
@@ -991,116 +914,6 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         mContext.sendBroadcast(intent);
     }
 
-    private void copyNativeLibs(Context context, String apkfile, ApplicationInfo applicationInfo) throws Exception {
-        String nativeLibraryDir = PluginDirHelper.getPluginNativeLibraryDir(context, applicationInfo.packageName);
-        ZipFile zipFile = null;
-        try {
-            zipFile = new ZipFile(apkfile);
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            Map<String, ZipEntry> libZipEntries = new HashMap<String, ZipEntry>();
-            Map<String, Set<String>> soList = new HashMap<String, Set<String>>(1);
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                String name = entry.getName();
-                if (name.contains("../")) {
-                    LogUtil.i(TAG, "Path traversal attack prevented");
-                    continue;
-                }
-                if (name.startsWith("lib/") && !entry.isDirectory()) {
-                    libZipEntries.put(name, entry);
-                    String soName = new File(name).getName();
-                    Set<String> fs = soList.get(soName);
-                    if (fs == null) {
-                        fs = new TreeSet<String>();
-                        soList.put(soName, fs);
-                    }
-                    fs.add(name);
-                }
-            }
-
-            for (String soName : soList.keySet()) {
-                LogUtil.e(TAG, "try so =" + soName);
-                Set<String> soPaths = soList.get(soName);
-                String soPath = findSoPath(soPaths, soName);
-                if (soPath != null) {
-                    File file = new File(nativeLibraryDir, soName);
-                    if (file.exists()) {
-                        file.delete();
-                    }
-                    InputStream in = null;
-                    FileOutputStream ou = null;
-                    try {
-                        in = zipFile.getInputStream(libZipEntries.get(soPath));
-                        ou = new FileOutputStream(file);
-                        byte[] buf = new byte[8192];
-                        int read = 0;
-                        while ((read = in.read(buf)) != -1) {
-                            ou.write(buf, 0, read);
-                        }
-                        ou.flush();
-                        ou.getFD().sync();
-                        LogUtil.i(TAG, "copy so(%s) for %s to %s ok!", soName, soPath, file.getPath());
-                    } catch (Exception e) {
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        throw e;
-                    } finally {
-                        if (in != null) {
-                            try {
-                                in.close();
-                            } catch (Exception e) {
-                            }
-                        }
-                        if (ou != null) {
-                            try {
-                                ou.close();
-                            } catch (Exception e) {
-                            }
-                        }
-                    }
-                }
-            }
-        } finally {
-            if (zipFile != null) {
-                try {
-                    zipFile.close();
-                } catch (Exception e) {
-                }
-            }
-        }
-    }
-
-
-    private String findSoPath(Set<String> soPaths, String soName) {
-        if (soPaths != null && soPaths.size() > 0) {
-            if (VMRuntimeCompat.is64Bit()) {
-                //在宿主程序运行在64位进程中的时候，插件的so也只拷贝64位，否则会出现不支持的情况。
-                String[] supported64BitAbis = BuildCompat.SUPPORTED_64_BIT_ABIS;
-                Arrays.sort(supported64BitAbis);
-                for (String soPath : soPaths) {
-                    String abi = soPath.replaceFirst("lib/", "");
-                    abi = abi.replace("/" + soName, "");
-
-                    if (!TextUtils.isEmpty(abi) && Arrays.binarySearch(supported64BitAbis, abi) >= 0) {
-                        return soPath;
-                    }
-                }
-            } else {
-                //在宿主程序运行在32位进程中的时候，插件的so也只拷贝64位，否则会出现不支持的情况。
-                String[] supported32BitAbis = BuildCompat.SUPPORTED_32_BIT_ABIS;
-                Arrays.sort(supported32BitAbis);
-                for (String soPath : soPaths) {
-                    String abi = soPath.replaceFirst("lib/", "");
-                    abi = abi.replace("/" + soName, "");
-                    if (!TextUtils.isEmpty(abi) && Arrays.binarySearch(supported32BitAbis, abi) >= 0) {
-                        return soPath;
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     @Override
     public int deletePackage(String packageName, int flags) throws RemoteException {
@@ -1112,7 +925,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
                 synchronized (mPluginCache) {
                     parser = mPluginCache.remove(packageName);
                 }
-                Utils.deleteDir(PluginDirHelper.makePluginBaseDir(mContext, packageName));
+                PluginFileHelper.deleteDir(PluginFileHelper.makePluginBaseDir(mContext, packageName));
                 mActivityManagerService.onPkgDeleted(mPluginCache, parser, packageName);
                 mSignatureCache.remove(packageName);
                 sendUninstalledBroadcast(packageName);
@@ -1214,7 +1027,45 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
             throw new NameNotFoundException();
         }
         return info.signatures;
+    }
 
+    private void saveSignatures(PackageInfo pkgInfo) {
+        if (pkgInfo != null && pkgInfo.signatures != null) {
+            int i = 0;
+            for (Signature signature : pkgInfo.signatures) {
+                File file = new File(PluginFileHelper.getPluginSignatureFile(mContext, pkgInfo.packageName, i));
+                try {
+                    PluginFileHelper.writeToFile(file, signature.toByteArray());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    file.delete();
+                    PluginFileHelper.deleteDir(PluginFileHelper.getPluginSignatureDir(mContext, pkgInfo.packageName));
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+
+    private Signature[] readSignatures(String packageName) {
+        List<String> fils = PluginFileHelper.getPluginSignatureFiles(mContext, packageName);
+        List<Signature> signatures = new ArrayList<Signature>(fils.size());
+        int i = 0;
+        for (String file : fils) {
+            try {
+                byte[] data = PluginFileHelper.readFromFile(new File(file));
+                if (data != null) {
+                    Signature sin = new Signature(data);
+                    signatures.add(sin);
+                } else {
+                    return null;
+                }
+                i++;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return signatures.toArray(new Signature[signatures.size()]);
     }
 
     //////////////////////////////////////
