@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 
 
 /**
- * Disc: hook Instrumentation处理生命周期，在替身上启动相关的activity方法
+ * Disc: hook Instrumentation处理生命周期，在替身上启动相关的activity方法，并伪装系统服务
  * 绑定的代理
  * @see PluginInstrumentation
  *

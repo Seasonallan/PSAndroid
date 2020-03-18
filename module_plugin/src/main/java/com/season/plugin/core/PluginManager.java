@@ -77,14 +77,15 @@ public class PluginManager implements ServiceConnection {
         mIPackageManagerHook = new ProxyHookPackageManager(mHostContext);
         installHookOnce(mIPackageManagerHook);
 
-        //hook ActivityManager 拦截startActivity类似请求，替换intent 使用动态代理
+        //hook ActivityManager 拦截startActivity类似请求，替换intent，绕过AndroidManifest检测 使用动态代理
         installHookOnce(new ProxyHookActivityManager(mHostContext));
 
-        //hook
+        //hook Handler的Callback， 在假的activity启动后替换为原本需要的activity并启动它 使用静态代理
         installHookOnce(new HookHandlerCallback(mHostContext));
 
-        //hook Instrumentation 处理生命周期，在替身上启动相关的activity方法 使用静态代理
+        //hook Instrumentation 处理生命周期，替身的创建和销毁，并伪装系统服务 使用静态代理
         installHookOnce(new HookInstrumentation(mHostContext));
+
         connectToService();
     }
 

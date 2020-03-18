@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Disc:  hook Callback处理启动activity后加载application和ClassLoader的替换
+ * Disc:  hook Callback处理假的activity启动后替换为原本的activity并加载application和ClassLoader的替换
  *  绑定的代理
  * @see PluginCallback
  * User: SeasonAllan(451360508@qq.com)
