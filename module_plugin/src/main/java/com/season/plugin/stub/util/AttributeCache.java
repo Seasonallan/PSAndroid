@@ -1,21 +1,4 @@
-/*
-**
-** Copyright 2007, The Android Open Source Project
-**
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-**
-**     http://www.apache.org/licenses/LICENSE-2.0 
-**
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License.
-*/
-
-package com.season.plugin.stub;
+package com.season.plugin.stub.util;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -29,8 +12,10 @@ import java.util.HashMap;
 import java.util.WeakHashMap;
 
 /**
- * TODO: This should be better integrated into the system so it doesn't need
- * special calls from the activity manager to clear it.
+ * Disc: 缓存Window属性，判断window是否是一下三种类型，windowIsTranslucent，windowIsFloating，windowShowWallpaper。
+ * 如果是的话Activity的选择会使用与定义的Dialog类型。以后在选择Activity的时候会用到。
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
 public final class AttributeCache {
     private static AttributeCache sInstance = null;

@@ -1,26 +1,4 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
-package com.season.plugin.stub;
+package com.season.plugin.stub.util;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -37,8 +15,7 @@ import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginProcessManager;
 import com.season.plugin.compat.ActivityThreadCompat;
 import com.season.plugin.compat.CompatibilityInfoCompat;
-import com.season.plugin.compat.Env;
-import com.season.plugin.compat.QueuedWorkCompat;
+import com.season.plugin.hookcore.Env;
 import com.season.lib.reflect.FieldUtils;
 import com.season.lib.reflect.MethodUtils;
 
@@ -48,26 +25,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/2/9.
+ * Disc: 设置service的classLoader和token，确保自己完整而独立的生命周期
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
-public class ServcesManager {
+public class ServiceManager {
 
     private Map<Object, Service> mTokenServices = new HashMap<Object, Service>();
     private Map<String, Service> mNameService = new HashMap<String, Service>();
     private Map<Object, Integer> mServiceTaskIds = new HashMap<Object, Integer>();
 
-    private ServcesManager() {
+    private ServiceManager() {
     }
 
-    private static ServcesManager sServcesManager;
+    private static ServiceManager sServiceManager;
 
-    public static ServcesManager getDefault() {
-        synchronized (ServcesManager.class) {
-            if (sServcesManager == null) {
-                sServcesManager = new ServcesManager();
+    public static ServiceManager getDefault() {
+        synchronized (ServiceManager.class) {
+            if (sServiceManager == null) {
+                sServiceManager = new ServiceManager();
             }
         }
-        return sServcesManager;
+        return sServiceManager;
     }
 
     public boolean hasServiceRunning() {
@@ -81,6 +60,14 @@ public class ServcesManager {
             }
         }
         return null;
+    }
+
+    private void waitToFinish() {
+        try {
+            MethodUtils.invokeStaticMethod(Class.forName("android.app.QueuedWork"), "waitToFinish");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private ClassLoader getClassLoader(ApplicationInfo pluginApplicationInfo) throws Exception {
@@ -100,20 +87,12 @@ public class ServcesManager {
 
     //这个需要适配,目前只是适配android api 21
     private void handleCreateServiceOne(Context hostContext, Intent stubIntent, ServiceInfo info) throws Exception {
-        //            CreateServiceData data = new CreateServiceData();
-        //            data.token = fakeToken;// IBinder
-        //            data.infoView =; //ServiceInfo
-        //            data.compatInfo =; //CompatibilityInfo
-        //            data.intent =; //Intent
-        //            activityThread.handleCreateServiceOne(data);
-        //            service = activityThread.mTokenServices.get(fakeToken);
-        //            activityThread.mTokenServices.remove(fakeToken);
         ResolveInfo resolveInfo = hostContext.getPackageManager().resolveService(stubIntent, 0);
         ServiceInfo stubInfo = resolveInfo != null ? resolveInfo.serviceInfo : null;
         PluginManager.getInstance().reportMyProcessName(stubInfo.processName, info.processName, info.packageName);
         PluginProcessManager.preLoadApk(hostContext, info);
         Object activityThread = ActivityThreadCompat.currentActivityThread();
-        IBinder fakeToken = new MyFakeIBinder();
+        IBinder fakeToken = new ServiceTokenBinder();
         Class CreateServiceData = Class.forName(ActivityThreadCompat.activityThreadClass().getName() + "$CreateServiceData");
         Constructor init = CreateServiceData.getDeclaredConstructor();
         if (!init.isAccessible()) {
@@ -160,7 +139,7 @@ public class ServcesManager {
                 int startId = integer + 1;
                 mServiceTaskIds.put(token, startId);
                 int res = service.onStartCommand(intent, flags, startId);
-                QueuedWorkCompat.waitToFinish();
+                waitToFinish();
             }
         }
     }
@@ -174,9 +153,9 @@ public class ServcesManager {
                     ClassLoader classLoader = getClassLoader(info.applicationInfo);
                     intent.setExtrasClassLoader(classLoader);
                     service.onTaskRemoved(intent);
-                    QueuedWorkCompat.waitToFinish();
+                    waitToFinish();
                 }
-                QueuedWorkCompat.waitToFinish();
+                waitToFinish();
             }
         }
     }
@@ -191,10 +170,10 @@ public class ServcesManager {
             mTokenServices.remove(token);
             mServiceTaskIds.remove(token);
             service = null;
-            QueuedWorkCompat.waitToFinish();
+            waitToFinish();
             PluginManager.getInstance().onServiceDestory(null, targetInfo);
         }
-        QueuedWorkCompat.waitToFinish();
+        waitToFinish();
     }
 
 
@@ -342,6 +321,6 @@ public class ServcesManager {
         mTokenServices.clear();
         mServiceTaskIds.clear();
         mNameService.clear();
-        QueuedWorkCompat.waitToFinish();
+        waitToFinish();
     }
 }

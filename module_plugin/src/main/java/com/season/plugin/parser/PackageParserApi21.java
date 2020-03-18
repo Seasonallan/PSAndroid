@@ -14,10 +14,9 @@ import android.content.pm.ServiceInfo;
 import android.content.pm.Signature;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.util.Log;
+import android.os.UserHandle;
 
 
-import com.season.plugin.compat.UserHandleCompat;
 import com.season.lib.reflect.FieldUtils;
 import com.season.lib.reflect.MethodUtils;
 
@@ -75,7 +74,12 @@ class PackageParserApi21 extends PackageParser {
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
             sPackageUserStateClass = Class.forName("android.content.pm.PackageUserState");
             mDefaultPackageUserState = sPackageUserStateClass.newInstance();
-            mUserId = UserHandleCompat.getCallingUserId();
+            try {
+                mUserId = (int) MethodUtils.invokeStaticMethod(UserHandle.class, "getCallingUserId");
+            } catch (Exception e) {
+                e.printStackTrace();
+                mUserId = 0;
+            }
         }
     }
 

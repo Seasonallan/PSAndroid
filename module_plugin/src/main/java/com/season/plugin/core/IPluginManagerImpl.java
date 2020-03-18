@@ -34,8 +34,7 @@ import com.season.pluginlib.IPluginManager;
 import com.season.plugin.tool.IntentResolveHelper;
 import com.season.plugin.parser.PluginPackageParser;
 import com.season.plugin.tool.SoFileHelper;
-import com.season.plugin.stub.BaseActivityManagerService;
-import com.season.plugin.stub.MyActivityManagerService;
+import com.season.plugin.stub.util.ProcessManager;
 import com.season.plugin.tool.PluginFileHelper;
 
 import java.io.File;
@@ -63,7 +62,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
     private AtomicBoolean mHasLoadedOk = new AtomicBoolean(false);
     private final Object mLock = new Object();
 
-    private BaseActivityManagerService mActivityManagerService;
+    private ProcessManager mActivityManagerService;
 
     private Set<String> mHostRequestedPermission = new HashSet<String>(10);
 
@@ -71,7 +70,7 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
 
     public IPluginManagerImpl(Context context) {
         mContext = context;
-        mActivityManagerService = new MyActivityManagerService(mContext);
+        mActivityManagerService = new ProcessManager(mContext);
     }
 
 

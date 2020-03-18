@@ -1,26 +1,4 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
-package com.season.plugin.stub;
+package com.season.plugin.stub.util;
 
 import android.os.IBinder;
 import android.os.IInterface;
@@ -29,10 +7,13 @@ import android.os.RemoteException;
 
 import java.io.FileDescriptor;
 
+
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/3/4.
+ * Disc: ServiceTokenBinder
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
-public class MyFakeIBinder implements IBinder {
+public class ServiceTokenBinder implements IBinder {
 
     @Override
     public String getInterfaceDescriptor() throws RemoteException {

@@ -1,25 +1,3 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
 package com.season.plugin.stub;
 
 import android.app.Activity;
@@ -30,12 +8,14 @@ import android.os.Bundle;
 
 
 import com.season.plugin.core.PluginManager;
-import com.season.plugin.compat.Env;
+import com.season.plugin.hookcore.Env;
 
 import java.net.URISyntaxException;
 
 /**
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/5/27.
+ * Disc: 快捷方式Intent换成插件
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
 public class ShortcutProxyActivity extends Activity {
 

@@ -7,9 +7,7 @@ import android.net.Uri.Builder;
 import android.text.TextUtils;
 
 
-import com.season.plugin.compat.Env;
-import com.season.plugin.hookcore.handle.BaseHookHandle;
-import com.season.plugin.hookcore.handle.BaseHookMethodHandlerOfReplaceCallingPackage;
+import com.season.plugin.hookcore.Env;
 
 import java.lang.reflect.Method;
 

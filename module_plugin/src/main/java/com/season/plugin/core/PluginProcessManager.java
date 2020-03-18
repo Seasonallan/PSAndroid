@@ -46,7 +46,6 @@ import android.text.TextUtils;
 import com.season.lib.util.LogUtil;
 import com.season.plugin.compat.ActivityThreadCompat;
 import com.season.plugin.compat.CompatibilityInfoCompat;
-import com.season.plugin.compat.ProcessCompat;
 import com.season.lib.reflect.FieldUtils;
 import com.season.lib.reflect.MethodUtils;
 import com.season.plugin.stub.ActivityStub;
@@ -220,7 +219,7 @@ public class PluginProcessManager {
                         Thread.currentThread().setContextClassLoader(classloader);
                         found = true;
                     }
-                    ProcessCompat.setArgV0(pluginInfo.processName);
+                    MethodUtils.invokeStaticMethod(Class.forName("android.os.Process"), "setArgV0", pluginInfo.processName);
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.season.plugin.stub;
+package com.season.plugin.stub.util;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 正在运行的Activity列表
- * Created by zhangyong6 on 2015/10/20.
+ * Disc: 正在运行的Activity列表
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
 public class RunningActivities {
 

@@ -1,26 +1,4 @@
-/*
-**        DroidPlugin Project
-**
-** Copyright(c) 2015 Andy Zhang <zhangyong232@gmail.com>
-**
-** This file is part of DroidPlugin.
-**
-** DroidPlugin is free software: you can redistribute it and/or
-** modify it under the terms of the GNU Lesser General Public
-** License as published by the Free Software Foundation, either
-** version 3 of the License, or (at your option) any later version.
-**
-** DroidPlugin is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public
-** License along with DroidPlugin.  If not, see <http://www.gnu.org/licenses/lgpl.txt>
-**
-**/
-
-package com.season.plugin.stub;
+package com.season.plugin.stub.util;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -47,13 +25,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * 正在运行的进程列表
- * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/3/10.
+ * Disc: 正在运行的进程列表
+ * User: SeasonAllan(451360508@qq.com)
+ * Time: 2017-05-22 13:34
  */
-class RunningProcesList {
+class RunningProcessList {
 
     private static final Collator sCollator = Collator.getInstance();
-    private static final String TAG = RunningProcesList.class.getSimpleName();
+    private static final String TAG = RunningProcessList.class.getSimpleName();
     private static Comparator sComponentInfoComparator = new Comparator<ComponentInfo>() {
         @Override
         public int compare(ComponentInfo lhs, ComponentInfo rhs) {

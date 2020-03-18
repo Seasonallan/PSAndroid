@@ -1,4 +1,4 @@
-package com.season.plugin.stub;
+package com.season.plugin.stub.util;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
+import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
 
 import com.season.lib.util.LogUtil;
+import com.season.plugin.parser.PluginPackageParser;
+import com.season.plugin.stub.AbstractServiceStub;
 import com.season.pluginlib.IApplicationCallback;
 import com.season.plugin.core.IPluginManagerImpl;
 import com.season.lib.reflect.FieldUtils;
@@ -20,49 +23,73 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 这是一个比较复杂的进程管理服务。
  * 主要实现的功能为：
- * 1、系统预定义N个进程。每个进程下有4中launchmod的activity，1个服务，一个ContentProvider。
+ * 1、系统预定义N个进程。每个进程下有4中launch mode的activity，1个服务，一个ContentProvider。
  * 2、每个插件可以在多个进程中运行，这由插件自己的processName属性决定。
  * 3、插件系统最多可以同时运行N个进程，M个插件(M <= N or M >= N)。
  * 4、多个插件运行在同一个进程中，如果他们的签名相同。（我们可以通过一个开关来决定。）
  * 5、在运行第M+1个插件时，如果预定义的N个进程被占满，最低优先级的进程会被kill掉。腾出预定义的进程用来运行此个插件。
  * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/3/10.
  */
-public class MyActivityManagerService extends BaseActivityManagerService {
+public class ProcessManager {
 
-    private static final String TAG = MyActivityManagerService.class.getSimpleName();
+    private static final String TAG = ProcessManager.class.getSimpleName();
     private StaticProcessList mStaticProcessList = new StaticProcessList();
-    private RunningProcesList mRunningProcessList = new RunningProcesList();
+    private RunningProcessList mRunningProcessList = new RunningProcessList();
 
-    public MyActivityManagerService(Context hostContext) {
-        super(hostContext);
+    protected Context mHostContext;
+    public ProcessManager(Context hostContext) {
+        mHostContext = hostContext;
         mRunningProcessList.setContext(mHostContext);
     }
 
-    @Override
+    private RemoteCallbackList<IApplicationCallback> mRemoteCallbackList;
     public void onCreate(IPluginManagerImpl iPluginManager) throws Exception {
-        super.onCreate(iPluginManager);
+        if (mRemoteCallbackList == null) {
+            mRemoteCallbackList = new MyRemoteCallbackList();
+        }
         AttributeCache.init(mHostContext);
         mStaticProcessList.onCreate(mHostContext);
         mRunningProcessList.setContext(mHostContext);
     }
 
-    @Override
+
+    private static class ProcessCookie {
+        private ProcessCookie(int pid, int uid) {
+            this.pid = pid;
+            this.uid = uid;
+        }
+
+        private final int pid;
+        private final int uid;
+    }
+    private class MyRemoteCallbackList extends RemoteCallbackList<IApplicationCallback> {
+        @Override
+        public void onCallbackDied(IApplicationCallback callback, Object cookie) {
+            super.onCallbackDied(callback, cookie);
+            if (cookie != null && cookie instanceof ProcessCookie) {
+                ProcessCookie p = (ProcessCookie) cookie;
+                onProcessDied(p.pid, p.uid);
+            }
+        }
+    }
+
+
     public void onDestory() {
         mRunningProcessList.clear();
         mStaticProcessList.clear();
         runProcessGC();
-        super.onDestory();
+        mRemoteCallbackList.kill();
+        mRemoteCallbackList = null;
     }
 
-    @Override
     protected void onProcessDied(int pid, int uid) {
         mRunningProcessList.onProcessDied(pid, uid);
         runProcessGC();
-        super.onProcessDied(pid, uid);
     }
 
     private String getProcessName(Context context, int pid) {
@@ -76,9 +103,7 @@ public class MyActivityManagerService extends BaseActivityManagerService {
         return null;
     }
 
-    @Override
     public boolean registerApplicationCallback(int callingPid, int callingUid, IApplicationCallback callback) {
-        boolean b = super.registerApplicationCallback(callingPid, callingUid, callback);
         mRunningProcessList.addItem(callingPid, callingUid);
         if (callingPid == android.os.Process.myPid()) {
             String stubProcessName = getProcessName(mHostContext, callingPid);
@@ -92,10 +117,19 @@ public class MyActivityManagerService extends BaseActivityManagerService {
             String targetPkg = mHostContext.getPackageName();
             mRunningProcessList.setProcessName(callingPid, stubProcessName, targetProcessName, targetPkg);
         }
-        return b;
+        return mRemoteCallbackList.register(callback, new ProcessCookie(callingPid, callingUid));
     }
 
-    @Override
+    public boolean unregisterApplicationCallback(int callingPid, int callingUid, IApplicationCallback callback) {
+        return mRemoteCallbackList.unregister(callback);
+    }
+
+    public void onPkgDeleted(Map<String, PluginPackageParser> pluginCache, PluginPackageParser parser, String packageName) throws Exception {
+    }
+
+    public void onPkgInstalled(Map<String, PluginPackageParser> pluginCache, PluginPackageParser parser, String packageName) throws Exception {
+    }
+
     public ProviderInfo selectStubProviderInfo(int callingPid, int callingUid, ProviderInfo targetInfo) throws RemoteException {
         runProcessGC();
 
@@ -148,18 +182,16 @@ public class MyActivityManagerService extends BaseActivityManagerService {
     }
 
 
-    @Override
     public ServiceInfo getTargetServiceInfo(int callingPid, int callingUid, ServiceInfo stubInfo) throws RemoteException {
-        //TODO getTargetServiceInfo
         return null;
     }
 
-    @Override
+
     public String getProcessNameByPid(int pid) {
         return mRunningProcessList.getTargetProcessNameByPid(pid);
     }
 
-    @Override
+
     public ServiceInfo selectStubServiceInfo(int callingPid, int callingUid, ServiceInfo targetInfo) throws RemoteException {
         runProcessGC();
 
@@ -218,63 +250,42 @@ public class MyActivityManagerService extends BaseActivityManagerService {
     }
 
 
-    @Override
     public void onActivityCreated(int callingPid, int callingUid, ActivityInfo stubInfo, ActivityInfo targetInfo) {
         mRunningProcessList.addActivityInfo(callingPid, callingUid, stubInfo, targetInfo);
     }
 
-    @Override
     public void onActivityDestory(int callingPid, int callingUid, ActivityInfo stubInfo, ActivityInfo targetInfo) {
         mRunningProcessList.removeActivityInfo(callingPid, callingUid, stubInfo, targetInfo);
         runProcessGC();
     }
 
-    @Override
     public void onActivtyOnNewIntent(int callingPid, int callingUid, ActivityInfo stubInfo, ActivityInfo targetInfo, Intent intent) {
         mRunningProcessList.addActivityInfo(callingPid, callingUid, stubInfo, targetInfo);
     }
 
-    @Override
     public void onServiceCreated(int callingPid, int callingUid, ServiceInfo stubInfo, ServiceInfo targetInfo) {
         mRunningProcessList.addServiceInfo(callingPid, callingUid, stubInfo, targetInfo);
     }
 
-    @Override
     public void onServiceDestory(int callingPid, int callingUid, ServiceInfo stubInfo, ServiceInfo targetInfo) {
         mRunningProcessList.removeServiceInfo(callingPid, callingUid, stubInfo, targetInfo);
         runProcessGC();
     }
 
-    @Override
     public void onProviderCreated(int callingPid, int callingUid, ProviderInfo stubInfo, ProviderInfo targetInfo) {
         mRunningProcessList.addProviderInfo(callingPid, callingUid, stubInfo, targetInfo);
     }
 
-    @Override
     public void onReportMyProcessName(int callingPid, int callingUid, String stubProcessName, String targetProcessName, String targetPkg) {
         mRunningProcessList.setProcessName(callingPid, stubProcessName, targetProcessName, targetPkg);
     }
 
-    @Override
     public List<String> getPackageNamesByPid(int pid) {
         return new ArrayList<String>(mRunningProcessList.getPackageNameByPid(pid));
     }
 
-    @Override
     public ActivityInfo selectStubActivityInfo(int callingPid, int callingUid, ActivityInfo targetInfo) throws RemoteException {
         runProcessGC();
-//        if (targetInfo.launchMode == ActivityInfo.LAUNCH_SINGLE_TASK) {
-//            targetInfo.launchMode = ActivityInfo.LAUNCH_MULTIPLE;
-//        }
-//
-//        if (targetInfo.launchMode == ActivityInfo.LAUNCH_SINGLE_INSTANCE) {
-//            targetInfo.launchMode = ActivityInfo.LAUNCH_MULTIPLE;
-//        }
-//
-//        if (targetInfo.launchMode == ActivityInfo.LAUNCH_SINGLE_TOP) {
-//            targetInfo.launchMode = ActivityInfo.LAUNCH_MULTIPLE;
-//        }
-
         boolean Window_windowIsTranslucent = false;
         boolean Window_windowIsFloating = false;
         boolean Window_windowShowWallpaper = false;

@@ -20,7 +20,6 @@ import android.text.TextUtils;
 
 import com.season.lib.util.LogUtil;
 import com.season.plugin.core.PluginManager;
-import com.season.plugin.compat.ParceledListSliceCompat;
 import com.season.lib.reflect.MethodUtils;
 
 import java.lang.reflect.Method;
@@ -927,7 +926,7 @@ public class HookHandlePackageManager extends BaseHookHandle {
             //API 4.3_r1, 4.4_r1,5.0.2_r1
         /*public ParceledListSlice getInstalledPackages(int flags, int userId) throws RemoteException;*/
             try {
-                if (invokeResult != null && ParceledListSliceCompat.isParceledListSlice(invokeResult)) {
+                if (invokeResult != null && isParceledListSlice(invokeResult)) {
                     if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2) {
                         Method getListMethod = MethodUtils.getAccessibleMethod(invokeResult.getClass(), "getList");
                         List data = (List) getListMethod.invoke(invokeResult);
@@ -1022,7 +1021,7 @@ public class HookHandlePackageManager extends BaseHookHandle {
             //API 4.3_r1,4.4_r1, 5.0.2_r1
         /* public ParceledListSlice getInstalledApplications(int flags, int userId) throws RemoteException */
             try {
-                if (ParceledListSliceCompat.isParceledListSlice(invokeResult)) {
+                if (isParceledListSlice(invokeResult)) {
                     if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2) {
                         Method getListMethod = MethodUtils.getAccessibleMethod(invokeResult.getClass(), "getList");
                         List data = (List) getListMethod.invoke(invokeResult);
@@ -1086,6 +1085,18 @@ public class HookHandlePackageManager extends BaseHookHandle {
                 LogUtil.e(TAG, "fake getInstalledApplications", e);
             }
             super.afterInvoke(receiver, method, args, invokeResult);
+        }
+    }
+
+    private boolean isParceledListSlice(Object obj){
+        if (obj == null) {
+            return false;
+        } else {
+            try {
+                return Class.forName("android.content.pm.ParceledListSlice").isInstance(obj);
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
         }
     }
 

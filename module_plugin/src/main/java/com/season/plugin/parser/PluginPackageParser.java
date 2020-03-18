@@ -17,11 +17,11 @@ import android.text.TextUtils;
 
 
 import com.season.plugin.tool.PluginFileHelper;
-import com.season.plugin.compat.ComponentNameComparator;
 import com.season.lib.reflect.FieldUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +35,27 @@ import java.util.TreeMap;
  */
 public class PluginPackageParser {
 
+    /**
+     * ComponentName排序
+     */
+    public class ComponentNameComparator implements Comparator<ComponentName> {
+        @Override
+        public int compare(ComponentName lhs, ComponentName rhs) {
+            if (lhs == null && rhs == null) {
+                return 0;
+            } else if (lhs != null && rhs == null) {
+                return 1;
+            } else if (lhs == null && rhs != null) {
+                return -1;
+            } else {
+                if (TextUtils.equals(lhs.getPackageName(), rhs.getPackageName()) && TextUtils.equals(lhs.getShortClassName(), rhs.getShortClassName())) {
+                    return 0;
+                } else {
+                    return lhs.compareTo(rhs);
+                }
+            }
+        }
+    }
     private final File mPluginFile;
     private final PackageParser mParser;
     private final String mPackageName;

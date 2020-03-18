@@ -18,11 +18,11 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 
 import com.season.lib.util.LogUtil;
-import com.season.plugin.compat.Env;
+import com.season.plugin.hookcore.Env;
 import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginProcessManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;
-import com.season.plugin.stub.RunningActivities;
+import com.season.plugin.stub.util.RunningActivities;
 import com.season.lib.reflect.FieldUtils;
 
 import java.lang.reflect.Field;

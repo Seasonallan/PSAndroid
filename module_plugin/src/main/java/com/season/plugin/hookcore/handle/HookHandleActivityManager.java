@@ -31,16 +31,16 @@ import android.util.Log;
 import com.season.lib.reflect.Utils;
 import com.season.lib.util.LogUtil;
 import com.season.plugin.compat.ActivityManagerCompat;
-import com.season.plugin.compat.Env;
+import com.season.plugin.hookcore.Env;
 import com.season.lib.reflect.FieldUtils;
 import com.season.lib.reflect.MethodUtils;
 import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginManagerService;
 import com.season.plugin.core.PluginProcessManager;
 import com.season.plugin.hookcore.ProxyHookContentProvider;
-import com.season.plugin.stub.MyFakeIBinder;
-import com.season.plugin.stub.RunningActivities;
-import com.season.plugin.stub.ServcesManager;
+import com.season.plugin.stub.util.ServiceTokenBinder;
+import com.season.plugin.stub.util.RunningActivities;
+import com.season.plugin.stub.util.ServiceManager;
 import com.season.plugin.stub.ShortcutProxyActivity;
 
 import java.lang.reflect.Method;
@@ -524,7 +524,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
             Intent intent, IBinder service) throws RemoteException;*/
             replaceFirstServiceIntentOfArgs(args);
             int index = 0;
-            if (args != null && args.length > index && args[index] instanceof MyFakeIBinder) {
+            if (args != null && args.length > index && args[index] instanceof ServiceTokenBinder) {
                 return true;
             }
             return super.beforeInvoke(receiver, method, args);
@@ -551,7 +551,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
                 Intent intent = (Intent) args[index];
                 ServiceInfo info = resolveService(intent);
                 if (info != null && isPackagePlugin(info.packageName)) {
-                    int re = ServcesManager.getDefault().stopService(mHostContext, intent);
+                    int re = ServiceManager.getDefault().stopService(mHostContext, intent);
                     setFakedResult(re);
                     return true;
                 }
@@ -576,7 +576,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
                 if (isComponentNamePlugin(componentName)) {
                     IBinder token = (IBinder) args[1];
                     Integer startId = (Integer) args[2];
-                    boolean re = ServcesManager.getDefault().stopServiceToken(componentName, token, startId);
+                    boolean re = ServiceManager.getDefault().stopServiceToken(componentName, token, startId);
                     setFakedResult(re);
                     return true;
                 }
@@ -593,7 +593,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
         @Override
         protected boolean beforeInvoke(Object receiver, Method method, Object[] args) throws Throwable {
             int index = 0;
-            if (args != null && args.length > index && args[index] instanceof MyFakeIBinder) {
+            if (args != null && args.length > index && args[index] instanceof ServiceTokenBinder) {
                 return true;
             }
             return super.beforeInvoke(receiver, method, args);

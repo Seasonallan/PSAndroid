@@ -15,8 +15,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
 
-import com.season.lib.util.LogUtil;
-import com.season.plugin.compat.SystemPropertiesCompat;
+import com.season.lib.reflect.MethodUtils;
 
 import java.io.File;
 import java.util.HashSet;
@@ -38,9 +37,20 @@ abstract class PackageParser {
     }
 
 
+    private static String get(String key, String defaultValue) {
+        try {
+            return (String) MethodUtils.invokeStaticMethod(Class.forName("android.os.SystemProperties"),
+                    "get", key, defaultValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return defaultValue;
+        }
+    }
+
     public static PackageParser newPluginParser(Context context) throws Exception {
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP_MR1) {
-            if ("1".equals(SystemPropertiesCompat.get("ro.build.version.preview_sdk", ""))) {
+
+            if ("1".equals(get("ro.build.version.preview_sdk", ""))) {
                 return new PackageParserApi22Preview1(context);
             } else {
                 return new PackageParserApi22(context);//API 20

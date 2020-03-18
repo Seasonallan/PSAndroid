@@ -5,8 +5,8 @@ import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.season.lib.reflect.MethodUtils;
 import com.season.lib.util.LogUtil;
-import com.season.plugin.compat.VMRuntimeCompat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -118,6 +118,24 @@ public class SoFileHelper {
     }
 
 
+    private static boolean is64Bit() {
+        //  dalvik.system.VMRuntime.getRuntime().is64Bit();
+        try {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                return false;
+            }
+            Class VMRuntime = Class.forName("dalvik.system.VMRuntime");
+            Object VMRuntimeObj = MethodUtils.invokeStaticMethod(VMRuntime, "getRuntime");
+            Object is64Bit = MethodUtils.invokeMethod(VMRuntimeObj, "is64Bit");
+            if (is64Bit instanceof Boolean) {
+                return ((Boolean) is64Bit);
+            }
+        } catch (Throwable e) {
+            LogUtil.w(TAG, "is64Bit", e);
+        }
+        return false;
+    }
+
     /**
      * 选择so文件目录
      * @param soPaths
@@ -126,7 +144,7 @@ public class SoFileHelper {
      */
     public static String findSoPath(Set<String> soPaths, String soName) {
         if (soPaths != null && soPaths.size() > 0) {
-            if (VMRuntimeCompat.is64Bit()) {
+            if (is64Bit()) {
                 //在宿主程序运行在64位进程中的时候，插件的so也只拷贝64位，否则会出现不支持的情况。
                 String[] supported64BitAbis = SoFileHelper.SUPPORTED_64_BIT_ABIS;
                 Arrays.sort(supported64BitAbis);

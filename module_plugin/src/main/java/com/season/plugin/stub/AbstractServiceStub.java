@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.season.lib.util.LogUtil;
+import com.season.plugin.stub.util.ServiceManager;
 
 
 /**
@@ -16,7 +17,7 @@ import com.season.lib.util.LogUtil;
 public abstract class AbstractServiceStub extends Service {
     private static final String TAG = "AbstractServiceStub";
 
-    private static ServcesManager mCreator = ServcesManager.getDefault();
+    private static ServiceManager mCreator = ServiceManager.getDefault();
 
     private boolean isRunning = false;
 
@@ -54,7 +55,7 @@ public abstract class AbstractServiceStub extends Service {
             if (intent != null) {
                 if (intent.getBooleanExtra("ActionKillSelf", false)) {
                     startKillSelf();
-                    if (!ServcesManager.getDefault().hasServiceRunning()) {
+                    if (!ServiceManager.getDefault().hasServiceRunning()) {
                         stopSelf(startId);
                         boolean stopService = getApplication().stopService(intent);
                         LogUtil.i(TAG, "doGc Kill Process(pid=%s,uid=%s has exit) for %s onStart=%s intent=%s", android.os.Process.myPid(), android.os.Process.myUid(), getClass().getSimpleName(), stopService, intent);

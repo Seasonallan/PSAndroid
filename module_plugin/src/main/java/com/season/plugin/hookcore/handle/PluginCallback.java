@@ -12,7 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.season.lib.util.LogUtil;
-import com.season.plugin.compat.Env;
+import com.season.plugin.hookcore.Env;
 import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginProcessManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;

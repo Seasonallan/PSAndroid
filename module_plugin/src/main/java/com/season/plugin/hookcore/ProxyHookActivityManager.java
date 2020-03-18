@@ -4,15 +4,15 @@ import android.content.Context;
 import android.os.Build;
 import android.util.AndroidRuntimeException;
 
+import com.season.lib.reflect.MethodUtils;
 import com.season.lib.util.LogUtil;
 import com.season.plugin.compat.ActivityManagerCompat;
 import com.season.plugin.compat.ActivityManagerNativeCompat;
-import com.season.plugin.compat.IActivityManagerCompat;
-import com.season.plugin.compat.SingletonCompat;
 import com.season.plugin.hookcore.handle.HookHandleActivityManager;
 import com.season.plugin.hookcore.handle.BaseHookHandle;
 import com.season.lib.reflect.FieldUtils;
 import com.season.lib.reflect.Utils;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -67,7 +67,7 @@ public class ProxyHookActivityManager extends BaseHookProxy {
             obj = FieldUtils.readStaticField(cls, "IActivityManagerSingleton");
         }
 
-        if (IActivityManagerCompat.isIActivityManager(obj)) {
+        if (isIActivityManager(obj)) {
             setOldObj(obj);
             Class<?> objClass = mOldObj.getClass();
             List<Class<?>> interfaces = Utils.getAllInterfaces(objClass);
@@ -76,10 +76,10 @@ public class ProxyHookActivityManager extends BaseHookProxy {
                     this);
             FieldUtils.writeStaticField(cls, "IActivityManagerSingleton", proxyActivityManager);
             LogUtil.i(TAG, "28 Install ActivityManager BaseHook 1 old=%s,new=%s", mOldObj, proxyActivityManager);
-        } else if (SingletonCompat.isSingleton(obj)) {
+        } else if (isSingleton(obj)) {
             Object obj1 = FieldUtils.readField(obj, "mInstance");
             if (obj1 == null) {
-                SingletonCompat.get(obj);
+                MethodUtils.invokeMethod(obj, "get");
                 obj1 = FieldUtils.readField(obj, "mInstance");
             }
             setOldObj(obj1);
@@ -113,7 +113,7 @@ public class ProxyHookActivityManager extends BaseHookProxy {
             obj = FieldUtils.readStaticField(cls, "gDefault");
         }
 
-        if (IActivityManagerCompat.isIActivityManager(obj)) {
+        if (isIActivityManager(obj)) {
             setOldObj(obj);
             Class<?> objClass = mOldObj.getClass();
             List<Class<?>> interfaces = Utils.getAllInterfaces(objClass);
@@ -122,10 +122,10 @@ public class ProxyHookActivityManager extends BaseHookProxy {
                     this);
             FieldUtils.writeStaticField(cls, "gDefault", proxyActivityManager);
             LogUtil.i(TAG, "Install ActivityManager BaseHook 1 old=%s,new=%s", mOldObj, proxyActivityManager);
-        } else if (SingletonCompat.isSingleton(obj)) {
+        } else if (isSingleton(obj)) {
             Object obj1 = FieldUtils.readField(obj, "mInstance");
             if (obj1 == null) {
-                SingletonCompat.get(obj);
+                MethodUtils.invokeMethod(obj, "get");
                 obj1 = FieldUtils.readField(obj, "mInstance");
             }
             setOldObj(obj1);
@@ -158,4 +158,30 @@ public class ProxyHookActivityManager extends BaseHookProxy {
             throw new AndroidRuntimeException("Can not install IActivityManagerNative hook");
         }
     }
+
+
+    private boolean isSingleton(Object obj) {
+        if (obj == null) {
+            return false;
+        } else {
+            try {
+                return Class.forName("android.util.Singleton").isInstance(obj);
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
+        }
+    }
+
+    private boolean isIActivityManager(Object obj){
+        if (obj == null) {
+            return false;
+        } else {
+            try {
+                return Class.forName("android.app.IActivityManager").isInstance(obj);
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
+        }
+    }
+
 }
