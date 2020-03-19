@@ -33,6 +33,11 @@
     <color name="shadow">#25808080</color>
 
 
+    <color name="global_blue">#ff13b0a5</color>
+    <color name="global_pink">#fffc9d9a</color>
+    <color name="global_yellow">#dd9025</color>
+
+
     <color name="normal">#dadada</color>
     <color name="pressed">#dd9025</color>
     <color name="disable">#818081</color>

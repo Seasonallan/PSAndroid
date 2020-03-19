@@ -230,7 +230,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected void scrollerDecorator(Scroller scroller, int x, int y, int dx, int dy, int duration){
 		double length =  Math.sqrt(dx * dx + dy * dy);
 		int maxLength = mContentWidth;
-		if (length < maxLength && touchStickMode){
+		if (length < maxLength && !durationKeep){
 			duration = (int) (length * duration /maxLength);
 		}
 		scroller.startScroll(x, y, dx, dy, duration);

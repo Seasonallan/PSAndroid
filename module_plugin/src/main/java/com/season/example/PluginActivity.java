@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -18,7 +17,6 @@ import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.file.FileUtils;
 import com.season.lib.util.LogUtil;
-import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 import com.season.lib.view.CircleImageView;
 import com.season.plugin.PluginCodeDefine;
@@ -36,18 +34,16 @@ public class PluginActivity extends Activity {
 
     private View containerView;
     private CircleImageView iconView;
-    private TextView nameView;
-    private TextView infoView;
+    private TextView nameView, packageView, infoView;
     private TextView btnStart, btnInstall;
 
     private TextView statusView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NavigationBarUtil.hideNavigationBar(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(Color.parseColor("#000000"));
-        }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_main);
 
         containerView = findViewById(R.id.item_container);
@@ -56,6 +52,7 @@ public class PluginActivity extends Activity {
         iconView = findViewById(R.id.item_icon);
         nameView = findViewById(R.id.item_name);
         infoView = findViewById(R.id.item_version);
+        packageView = findViewById(R.id.item_package);
         btnStart = findViewById(R.id.item_btn_start);
         btnInstall = findViewById(R.id.item_btn_install);
 
@@ -175,6 +172,7 @@ public class PluginActivity extends Activity {
 
             iconView.setImageDrawable(item.icon);
             nameView.setText(item.title);
+            packageView.setText(item.packageInfo.packageName);
             //infoView.setText(String.format("%s(%s)", item.versionName, item.versionCode));
             infoView.setText(item.apkFile);
 

@@ -40,13 +40,22 @@ public abstract class PageAnimController{
 	}
 
 
-	protected boolean touchStickMode = true;
+	protected boolean touchStickMode = false;
 	/**
 	 * 触屏距离重绘严格模式, 严格模式下有最小距离判断
 	 * @param stickMode
 	 */
 	public void setTouchStickMode(boolean stickMode){
 		touchStickMode = stickMode;
+	}
+
+	protected boolean durationKeep = false;
+	/**
+	 * 松手后的动画时长是否是固定的
+	 * @param isKeep
+	 */
+	public void setDurationKeep(boolean isKeep){
+		durationKeep = isKeep;
 	}
 
 	/**

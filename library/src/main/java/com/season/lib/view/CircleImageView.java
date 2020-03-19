@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Shader;
@@ -27,7 +28,7 @@ public class CircleImageView  extends AppCompatImageView {
         this(context, attrs, 0);
     }
 
-    private Paint mBitmapPaint;
+    private Paint mBitmapPaint, mBorderPaint;
     private int mRadius;
     private BitmapShader mBitmapShader;
     private int mWidth;
@@ -38,6 +39,11 @@ public class CircleImageView  extends AppCompatImageView {
         mBitmapPaint = new Paint();
         mBitmapPaint.setAntiAlias(true);
 
+        mBorderPaint = new Paint();
+        mBorderPaint.setAntiAlias(true);
+        mBorderPaint.setColor(Color.WHITE);
+        mBorderPaint.setStyle(Paint.Style.STROKE);
+        mBorderPaint.setStrokeWidth(4);
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -74,5 +80,6 @@ public class CircleImageView  extends AppCompatImageView {
         }
         initBitmapShader();
         canvas.drawCircle(mRadius, mRadius, mRadius, mBitmapPaint);
+        canvas.drawCircle(mRadius, mRadius, mRadius - 2, mBorderPaint);
     }
 }

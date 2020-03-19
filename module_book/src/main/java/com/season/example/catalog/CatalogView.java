@@ -55,7 +55,7 @@ public class CatalogView extends FrameLayout{
 		mAuthorNameTV = (TextView) findViewById(R.id.catalog_author_name_tv);
 		((SlideTabWidget) findViewById(android.R.id.tabs)).initialize(LayoutParams.FILL_PARENT,getResources().getDrawable(R.drawable.ic_reader_catalog_select_bg));
 		mTabHost = (BaseViewPagerTabHost)findViewById(android.R.id.tabhost);
-		mTabHost.setBackgroundColor(getResources().getColor(R.color.window_bg));
+		mTabHost.setBackgroundColor(0xfff7f7f7);
 		mTabHost.setup(); 
 		mTabHost.setOffscreenPageLimit(2);
 		mCatalogList = new ArrayList<Catalog>();

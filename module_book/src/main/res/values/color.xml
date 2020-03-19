@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="window_bg">#f7f7f7</color>
+
 <color name="transparent">#00000000</color>
 <color name="black">#000</color>
 <color name="dialog_content">@color/black</color>
@@ -20,10 +20,5 @@
 <color name="dialog_bg">#dadada</color>
 <color name="common_5">#818081</color>
 
-
-
-    <color name="global_blue">#ff13b0a5</color>
-    <color name="global_pink">#fffc9d9a</color>
-    <color name="global_yellow">#dd9025</color>
 
 </resources>

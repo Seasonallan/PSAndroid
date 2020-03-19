@@ -55,7 +55,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
                 PageAnimController.ANIM_TYPE_PAGE_TURNING);
 
         mPageAnimController.setBgPureColor(false);
-        mPageAnimController.setTouchStickMode(false);
+        mPageAnimController.setDurationKeep(true);
         //mPageAnimController.setDuration(1680);
         viewList = new ArrayList<>();
         mPagePicture = new ViewBitmapPicture(-1);
@@ -137,6 +137,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         if (!mScroller.isFinished()){
             mScroller.abortAnimation();
         }
+        mPageAnimController.setDurationKeep(false);
         int key = ev.getAction();
         switch (key) {
             case MotionEvent.ACTION_DOWN:

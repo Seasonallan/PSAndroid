@@ -258,22 +258,23 @@ public class Page extends AbsPatch implements PatchParent {
 	}
 	
 	void clearUpCoverLayout(StyleText styleText){
-		if(!styleText.isCover() || mPatchs == null || mPatchs.isEmpty()){
+		if(styleText.isCover() || mPatchs == null || mPatchs.isEmpty()){
 			return;
 		}
-		int contentTop = mPatchs.get(0).getTop();
 		int contentBottom = mPatchs.get(mPatchs.size() - 1).mBottom;
-		int h = mPageRect.bottom - contentBottom + contentTop;
-		if(h > 0){
-			h /= 2;
-			int newTop = h;
-			newTop = contentTop - newTop;
-			for (Patch patch : mPatchs) {
-				patch.setLocation(patch.getLeft(), patch.getTop() - newTop);
-			}
-			for (Panle panle : mPanleLines.values()) {
-				panle.setTop(panle.getTop() - newTop);
-				panle.setBottom(panle.getBottom() - newTop);
+		int h = mPageRect.bottom - contentBottom;
+		if (h < mPatchs.get(mPatchs.size() - 1).getHeight() * 3/2){
+			h /= mPatchs.size();
+			if(h > 0){
+				int currentTop = 0;
+				for (Patch patch : mPatchs) {
+					patch.setLocation(patch.getLeft(), patch.getTop() + currentTop);
+					currentTop += h;
+				}
+//			for (Panle panle : mPanleLines.values()) {
+//				panle.setTop(panle.getTop()  + currentTop);
+//				panle.setBottom(panle.getBottom()  + currentTop);
+//			}
 			}
 		}
 	}

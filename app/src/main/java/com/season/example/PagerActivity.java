@@ -14,11 +14,10 @@ import com.season.example.view.PageItem;
 import com.season.example.view.PageItemView;
 import com.season.example.view.ViewPageView;
 import com.season.lib.RoutePath;
-import com.season.lib.util.NavigationBarUtil;
 import com.season.myapplication.R;
 
 
-public class MeeActivity extends Activity {
+public class PagerActivity extends Activity {
 
     private ViewPageView mainPageView;
 
@@ -54,7 +53,7 @@ public class MeeActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mainPageView.addPageView(new PageItemView(MeeActivity.this,
+                mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
                                 .decorateContent(" • 功能 •", "涂鸦", "图片裁剪", "文字动效", "静动图合成")
                                 .decorateContent(" • 核心 •", "时间轴控制", "页面重绘派发")
@@ -62,21 +61,22 @@ public class MeeActivity extends Activity {
                                 .color(getResources().getColor(R.color.global_blue))
                 ));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_1));
-                mainPageView.addPageView(new PageItemView(MeeActivity.this,
+                mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("插件动态载入", "插件 2016")
                                 .decorateContent(" • 功能 •", "插件", "动态载入",  "APK文件")
-                                .decorateContent(" • 核心 •", "反射调用", "动态代理", "类加载器", "生命周期")
+                                .decorateContent(" • 核心 •", "反射调用", "静态代理","动态代理", "类加载器", "版本兼容","生命周期")
                                 .page(2)
                                 .color(getResources().getColor(R.color.global_yellow))
                 ));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_2));
-                mainPageView.addPageView(new PageItemView(MeeActivity.this,
+                mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
                                 .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
                                 .decorateContent(" • 核心 •", "书籍解析", "页面排版", "动画控制", "事件派发")
                                 .page(3)
                                 .color(getResources().getColor(R.color.global_pink))
                 ));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_3));
             }
         }, 10);
 
@@ -84,9 +84,13 @@ public class MeeActivity extends Activity {
     }
 
     private ImageView get1ImageView(int id){
-        ImageView imageView = new ImageView(MeeActivity.this);
+        return get1ImageView(id, ImageView.ScaleType.CENTER_CROP);
+    }
+
+    private ImageView get1ImageView(int id, ImageView.ScaleType scaleType){
+        ImageView imageView = new ImageView(PagerActivity.this);
         imageView.setImageResource(id);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setScaleType(scaleType);
         return imageView;
     }
 
