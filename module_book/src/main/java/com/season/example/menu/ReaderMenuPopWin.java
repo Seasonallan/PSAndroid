@@ -171,7 +171,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 
             @Override
             public void onClick(View v) {
-                mActionCallback.onBackPressed();
+                mActionCallback.onTopBackButtonClicked();
             }
         });
 		mVoiceLayout = findViewById(R.id.menu_reader_voice_layout);
@@ -780,7 +780,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	public interface IActionCallback{
 		void onDismiss();
 		void onShowReaderCatalog();
-        void onBackPressed();
+        void onTopBackButtonClicked();
     }
 
 	@Override

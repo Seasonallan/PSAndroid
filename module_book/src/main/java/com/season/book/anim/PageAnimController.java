@@ -30,16 +30,6 @@ public abstract class PageAnimController{
 		return pageAnimController;
 	}
 
-	protected boolean bgPureColor = true;
-	/**
-	 * 背景是不是纯色
-	 * @param isPure
-	 */
-	public void setBgPureColor(boolean isPure){
-		bgPureColor = isPure;
-	}
-
-
 	protected boolean touchStickMode = false;
 	/**
 	 * 触屏距离重绘严格模式, 严格模式下有最小距离判断

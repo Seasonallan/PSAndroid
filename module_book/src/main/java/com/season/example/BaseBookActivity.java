@@ -2,11 +2,9 @@ package com.season.example;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Browser;
@@ -14,6 +12,7 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -50,12 +49,8 @@ import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
-import com.season.lib.file.FileUtils;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
-
-import java.io.File;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,25 +65,19 @@ public class BaseBookActivity extends Activity implements
 	private RelativeLayout mCatalogLay;
 	private BookInfo mBook;
 	private ReaderMenuPopWin mReaderMenuPopWin;
-	private boolean isInit;
 	private RectF centerRect;
 
+	private StartPageView startPageView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		BaseContext.init(getApplicationContext());
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         NavigationBarUtil.hideNavigationBar(this);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			getWindow().setNavigationBarColor(Color.parseColor("#000000"));
-		}
-
-		//StatusBarUtil.setTranslucent(this, 125);
-        //StatusBarUtil.setTranslucent(this);
-        // StatusBarUtil.setColor(this, 0xff30302E);
-        // StatusBarUtil.setTranslucentForCoordinatorLayout(this, 122);
-
-		mBook = new BookInfo();
+		mBook = BookShelfPreLoader.getInstance(getApplicationContext()).getBookPreloaded();
 		centerRect = new RectF();
 		centerRect.left = ScreenUtils.getScreenWidth()/4;
 		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
@@ -96,6 +85,24 @@ public class BaseBookActivity extends Activity implements
 		centerRect.bottom = ScreenUtils.getScreenHeight() * 5/6;
 
 		setContentView(R.layout.activity_reader);
+		if (RoutePath.sCacheBitmap != null && !RoutePath.sCacheBitmap.isRecycled()){
+			startPageView = findViewById(R.id.start_page);
+			startPageView.setBiamtp(RoutePath.sCacheBitmap);
+			startPageView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					finish();
+					overridePendingTransition(0, 0);
+				}
+			});
+			startPageView.post(new Runnable() {
+				@Override
+				public void run() {
+					startPageView.start();
+				}
+			});
+		}
+
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
 
@@ -151,8 +158,13 @@ public class BaseBookActivity extends Activity implements
 						showReaderCatalogView();
 					}
 					@Override
-					public void onBackPressed() {
+					public void onTopBackButtonClicked() {
+						if (startPageView != null){
+							startPageView.finish();
+							return;
+						}
 						finish();
+						overridePendingTransition(0, 0);
 					}
 					@Override
 					public void onDismiss() {
@@ -199,6 +211,10 @@ public class BaseBookActivity extends Activity implements
 			mReaderMenuPopWin.dismiss(true, true);
 			return;
 		}
+		if (startPageView != null){
+			startPageView.finish();
+			return;
+		}
 		super.onBackPressed();
 	}
 
@@ -238,9 +254,6 @@ public class BaseBookActivity extends Activity implements
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		if (!isInit) {
-			return false;
-		}
 		if (ev.getAction() == MotionEvent.ACTION_DOWN){
 			NavigationBarUtil.hideNavigationBar(this);
 		}
@@ -255,56 +268,21 @@ public class BaseBookActivity extends Activity implements
 		//return super.dispatchTouchEvent(ev);
 	}
 
-    private String getBookFielPath(String fend){
-        String pathDir = getCacheDir() + File.separator;
-        String path =pathDir + "cache"+fend;
-        File fileDir = new File(pathDir);
-        if(!fileDir.exists()){
-            fileDir.mkdirs();
-        }
-        return path;
-    }
-
 
     private void initReadView() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    //InputStream is = getResources().openRawResource(R.raw.epub_book);mBook.id = "00001";mBook.path = getBookFielPath(".epub");
-					InputStream is = getResources().openRawResource(R.raw.text_book);	mBook.id = "00002";mBook.path = getBookFielPath(".txt");
-					//InputStream is = getResources().openRawResource(R.raw.umd_book);	mBook.id = "00003";mBook.path = getBookFielPath(".umd");
-
-					if(!FileUtils.copyFileToFile(mBook.path, is)){
-                        finish();
-                        return;
-                    }
-					BookMarkDB.getInstance().loadBookMarks(mBook.id);
-                    // 读章节信息
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-							mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-                            mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-							initReaderCatalogView();
-							initMenu();
-                            isInit = true;
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                	int[] index = ReadSetting.getInstance(BaseBookActivity.this).getBookReadProgress(mBook.id);
-									mBook = mReadView.decodeBookFromPlugin(index[0], index[1], "");
-									mCatalogView.setBookInfo(mBook.title, mBook.author);
-									//mReadView.decodeBookFromPlugin(0, 0, "");
-                                }
-                            }.start();
-                        }
-                    });
-                } catch (Exception e) {
-					e.printStackTrace();
-                }
-            }
-        }.start();
+		mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+		mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		initReaderCatalogView();
+		initMenu();
+		new Thread() {
+			@Override
+			public void run() {
+				int[] index = ReadSetting.getInstance(BaseBookActivity.this).getBookReadProgress(mBook.id);
+				mBook = mReadView.decodeBookFromPlugin(index[0], index[1], "");
+				mCatalogView.setBookInfo(mBook.title, mBook.author);
+				//mReadView.decodeBookFromPlugin(0, 0, "");
+			}
+		}.start();
     }
 
     @Override
@@ -525,10 +503,6 @@ public class BaseBookActivity extends Activity implements
 				mReadView.getContentView().invalidate();
 			}
 		}, 300);
-    }
-
-    public boolean isPullEnabled() {
-        return !mReadView.isAnimating();
     }
 
 }

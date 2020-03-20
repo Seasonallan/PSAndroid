@@ -32,6 +32,10 @@ public class PagerActivity extends Activity {
         mainPageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mainPageView.isBottomRightClick()){
+                    mainPageView.gotoNextPage();
+                    return;
+                }
                 if (v instanceof ViewPageView){
                     View itemView = ((ViewPageView) v).getCurrentView();
                     if (itemView instanceof PageItemView){
@@ -41,6 +45,8 @@ public class PagerActivity extends Activity {
                         } else if (position == 2){
                             ARouter.getInstance().build(RoutePath.PLUGIN).navigation();
                         } else {
+                            RoutePath.sCacheBitmap = mainPageView.getCurrentPageBitmap();
+                            RoutePath.sCacheColor = mainPageView.getCurrentPageColor();
                             ARouter.getInstance().build(RoutePath.BOOK).navigation();
                         }
                     }else{
@@ -49,7 +55,7 @@ public class PagerActivity extends Activity {
                 }
             }
         });
-        mainPageView.addPageView(LayoutInflater.from(this).inflate(R.layout.page_splash, null));
+        mainPageView.addPageView(LayoutInflater.from(this).inflate(R.layout.page_splash, null), -1);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -58,29 +64,35 @@ public class PagerActivity extends Activity {
                                 .decorateContent(" • 功能 •", "涂鸦", "图片裁剪", "文字动效", "静动图合成")
                                 .decorateContent(" • 核心 •", "时间轴控制", "页面重绘派发")
                                 .page(1)
-                                .color(getResources().getColor(R.color.global_blue))
-                ));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_1));
+                                .color(COLOR(R.color.global_green))
+                ), COLOR(R.color.global_green));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_1), COLOR(R.color.global_green));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("插件动态载入", "插件 2016")
                                 .decorateContent(" • 功能 •", "插件", "动态载入",  "APK文件")
                                 .decorateContent(" • 核心 •", "反射调用", "静态代理","动态代理", "类加载器", "版本兼容","生命周期")
                                 .page(2)
-                                .color(getResources().getColor(R.color.global_yellow))
-                ));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_2));
+                                .color(COLOR(R.color.global_pink))
+                ), COLOR(R.color.global_pink));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_2), COLOR(R.color.global_pink));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
                                 .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
                                 .decorateContent(" • 核心 •", "书籍解析", "页面排版", "动画控制", "事件派发")
                                 .page(3)
-                                .color(getResources().getColor(R.color.global_pink))
-                ));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_3));
+                                .color(COLOR(R.color.global_yellow))
+                ), COLOR(R.color.global_yellow));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_3), COLOR(R.color.global_yellow));
+
             }
         }, 10);
 
         setContentView(mainPageView);
+        BookShelfPreLoader.getInstance(getApplicationContext()).preLoad();
+    }
+
+    private int COLOR(int id){
+        return getResources().getColor(id);
     }
 
     private ImageView get1ImageView(int id){

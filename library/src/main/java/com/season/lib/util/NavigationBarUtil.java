@@ -2,6 +2,8 @@ package com.season.lib.util;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.res.Resources;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -12,8 +14,26 @@ import android.view.WindowManager;
  */
 public class NavigationBarUtil {
 
+
+
+    /**
+     * 获取虚拟按键的高度
+     */
+    public static int getNavigationBarHeight(Context context) {
+        int result = 0;
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
     public static void hideNavigationBar(Activity activity) {
 
+        if (true){
+            return;
+        }
         WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
         attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         activity.getWindow().setAttributes(attrs);

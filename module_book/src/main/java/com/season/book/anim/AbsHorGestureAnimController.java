@@ -2,6 +2,7 @@ package com.season.book.anim;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -62,14 +63,13 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 
 	
 	private void checkInit(PageCarver pageCarver){
-		if(mContentWidth == -1 
-//				|| mScreenWidth != pageCarver.getScreenWidth() 
-//				|| mScreenHeight != pageCarver.getScreenHeight()
-				){
+		if(mContentWidth == -1){
 			onMeasure(pageCarver);
 		}
 	}
-	
+
+
+	Path contentPath;
 	protected void onMeasure(PageCarver pageCarver) {
 		mContentWidth = pageCarver.getContentWidth();
 		mContentHeight = pageCarver.getContentHeight();
@@ -80,6 +80,12 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		mHalfScreenWidth = mScreenWidth >> 1;
 		mHalfScreenHeight = mScreenHeight >> 1;
 		LogUtil.e(TAG, "onMeasure: CW="+ mContentWidth +" CH="+ mContentHeight+" SW="+ mScreenWidth+" SH="+mScreenHeight);
+		contentPath = new Path();
+		contentPath.moveTo(0, 0);
+		contentPath.lineTo(mContentWidth, 0);
+		contentPath.lineTo(mContentWidth, mContentHeight);
+		contentPath.lineTo(0, mContentHeight);
+		contentPath.close();
 	}
 	
 	@Override

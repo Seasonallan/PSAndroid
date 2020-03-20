@@ -1,4 +1,4 @@
-package com.season.example.view;
+package com.season.book.page;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -27,6 +27,10 @@ public class ViewBitmapPicture{
 			mBitmap = null;
 			mCanvas = null;
 		}
+	}
+
+	public Bitmap getBitmap(){
+		return mBitmap;
 	}
 
 	public boolean equals(int index) {

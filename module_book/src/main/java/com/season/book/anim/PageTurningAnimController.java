@@ -255,7 +255,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 
 	private final void drawCurrentPageArea(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
 		canvas.save();
-		if (!isAnimStart){
+		if (!isAnimStart && false){
 			mPath1.reset();
 			mPath1.moveTo(0, 0);
 			mPath1.lineTo(0, pageCarver.getScreenHeight());
@@ -271,6 +271,10 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			mPath1.close();
 			canvas.clipPath(mPath1);
 		}
+
+		canvas.clipPath(contentPath);
+		canvas.clipPath(mPath0, Region.Op.DIFFERENCE);
+
 		if(isLeftPage){
 			pageCarver.drawPage(canvas, pageIndex);
 		}else{
@@ -345,6 +349,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			}
 		}
 		int bgColor = pageCarver.getPageBackgroundColor();
+		boolean bgPureColor = bgColor != -1;
 		if(!isLandscape && bgPureColor){
 			canvas.drawColor(bgColor);
 		}

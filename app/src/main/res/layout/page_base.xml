@@ -29,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/name_ps"
-                    android:textColor="@color/global_blue"
+                    android:textColor="@color/global_green"
                     android:textSize="36dp"
                     android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="6dp"
                     android:text="表情说说 2018"
-                    android:textColor="@color/global_blue"
+                    android:textColor="@color/global_green"
                     android:textSize="21dp" />
             </LinearLayout>
 
@@ -49,7 +49,7 @@
             android:id="@+id/page_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/global_blue"
+            android:background="@color/global_green"
             android:paddingTop="16dp"
             android:layout_weight="3"
             android:orientation="vertical" >
