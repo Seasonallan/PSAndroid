@@ -12,7 +12,7 @@ import com.season.ps.bean.LayerEntity;
 import com.season.ps.bean.LayerItem;
 import com.season.lib.file.FileManager;
 import com.season.lib.file.FileUtils;
-import com.season.ps.http.DownloadAPI;
+import com.season.lib.http.DownloadAPI;
 import com.season.lib.util.ToastUtil;
 import com.season.ps.view.ps.CustomGifView;
 import com.season.ps.view.ps.CustomImageView;

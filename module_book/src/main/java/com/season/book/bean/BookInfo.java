@@ -20,6 +20,7 @@ public class BookInfo implements Serializable {
 
 	public boolean decodeResult = true;
 
+	public int netIndex;
 	public String bookType;
 	public String path;
 	public boolean isOrder;

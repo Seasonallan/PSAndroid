@@ -26,6 +26,7 @@ import com.season.book.bean.BookMark;
 import com.season.book.db.BookMarkDB;
 import com.season.book.event.AbsTextSelectHandler;
 import com.season.book.ReadSetting;
+import com.season.book.view.NetReadView;
 import com.season.example.catalog.CatalogView;
 import com.season.example.popwindow.ImgViewerPopWin;
 import com.season.example.popwindow.NotePopWin;
@@ -241,7 +242,11 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 
 
     private void initReadView() {
-		mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+		if (mBook.netIndex > 0){
+			mReadView = new NetReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+		}else{
+			mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+		}
 		mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		initReaderCatalogView();
 		initMenu();

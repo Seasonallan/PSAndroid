@@ -150,7 +150,7 @@ public class PluginActivity extends BaseStartPagerActivity {
             PackageInfo info = getPackageManager().getPackageArchiveInfo(apkFile.getPath(), 0);
             item = new ApkItem(PluginActivity.this, info, apkFile.getPath());
             try {
-                Thread.sleep(3000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import com.season.ps.R;
 import com.season.lib.BaseContext;
 import com.season.lib.file.FileManager;
-import com.season.ps.http.DownloadAPI;
+import com.season.lib.http.DownloadAPI;
 import com.season.lib.util.ToastUtil;
 import com.season.ps.view.gif.GifFrameView;
 

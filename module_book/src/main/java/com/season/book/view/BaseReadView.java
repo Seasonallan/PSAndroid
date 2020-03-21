@@ -12,6 +12,7 @@ import android.view.View;
 import com.season.book.R;
 import com.season.book.ReadSetting;
 import com.season.book.bean.BookInfo;
+import com.season.lib.view.LoadingView;
 
 public abstract class BaseReadView extends AbsReadView{
     protected IReadCallback mReadCallback;
@@ -20,11 +21,23 @@ public abstract class BaseReadView extends AbsReadView{
     private int mLoadingPointSize;
     private long mLastDrawWaitTime;
     private Drawable mBookMarkTip;
+    private LoadingView mLoadingView;
 
     public BaseReadView(Context context, BookInfo book, IReadCallback readCallback) {
         super(context);
         mBook = book;
         mReadCallback = readCallback;
+        mLoadingView = new LoadingView(context){
+            @Override
+            protected int getLoadingHeight() {
+                return getContentHeight();
+            }
+
+            @Override
+            protected int getLoadingWidth() {
+                return getContentWidth();
+            }
+        };
     }
 
     @Override
@@ -111,6 +124,11 @@ public abstract class BaseReadView extends AbsReadView{
     @Override
     protected void drawWaitPage(Canvas canvas,boolean isFirstDraw){
         drawBackground(canvas);
+        if (true){
+            mLoadingView.drawContent(canvas);
+            postInvalidate();
+            return;
+        }
         mTempTextPaint.setTextSize((float) (mReadSetting.getFontSize()));
         mTempTextPaint.setColor(mReadSetting.getThemeTextColor());
         if(!isFirstDraw){

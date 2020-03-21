@@ -23,7 +23,15 @@ public class BookShelfPreLoader {
     private BookShelfPreLoader(Context context) {
         this.mContext = context;
         mBook = new BookInfo();
-        mBook.id = "00002";
+        boolean netTest = true;
+        if (netTest){
+            mBook.id = "10002";
+            mBook.title = "斗破苍穹";
+            mBook.author = "天蚕土豆";
+            mBook.netIndex = 873530;
+        }else{
+            mBook.id = "00002";
+        }
     }
 
     public static final BookShelfPreLoader getInstance(Context context) {

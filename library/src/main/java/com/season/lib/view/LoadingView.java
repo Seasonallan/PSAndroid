@@ -2,43 +2,30 @@ package com.season.lib.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.RectF;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.view.ViewHelper;
-import com.season.lib.dimen.DimenUtil;
 import com.season.library.R;
 
 
 /**
  * 58同城 加载动画
- *
  */
-public class LoadingView extends LinearLayout {
-    private static final int ANIMATION_DURATION = 500;
+public class LoadingView extends View {
+
     private static final float FACTOR = 1.2f;
-    private static float mDistance = 200;
+    private static float mDistance = 186;
 
-    private LoadingViewTopShape mShapeLoadingView;
-    private ImageView mIndicationIm;
-    private TextView mLoadTextView;
-
-    private AnimatorSet mUpAnimatorSet;
-    private AnimatorSet mDownAnimatorSet;
-
-    private boolean mStopped = false;
     private int mDelay;
+    private LoadingViewTopShape mShapeLoadingView;
+
 
     public LoadingView(Context context) {
         super(context);
@@ -57,221 +44,105 @@ public class LoadingView extends LinearLayout {
     }
 
 
-    private void init(Context context, AttributeSet attrs) {
-        setOrientation(VERTICAL);
+    private AccelerateInterpolator upInterpolator;
+    private DecelerateInterpolator downInterpolator;
+    private String loadingText;
+    private TextPaint textPaint;
 
-        mDistance =  DimenUtil.dip2px(54f);
-        LayoutInflater.from(context).inflate(R.layout.load_view, this, true);
-        mShapeLoadingView = findViewById(R.id.shapeLoadingView);
-        mIndicationIm = findViewById(R.id.indication);
-        mLoadTextView = findViewById(R.id.promptTV);
-        ViewHelper.setScaleX(mIndicationIm, 0.2f);
+    private void init(Context context, AttributeSet attrs) {
+
+        mShapeLoadingView = new LoadingViewTopShape(context);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LoadingView);
         String loadText = typedArray.getString(R.styleable.LoadingView_loadingText);
-        int textAppearance = typedArray.getResourceId(R.styleable.LoadingView_loadingText, -1);
-        mDelay = typedArray.getInteger(R.styleable.LoadingView_delay, 80);
+        mDelay = typedArray.getInteger(R.styleable.LoadingView_delay, 500);
         typedArray.recycle();
 
-        if (textAppearance != -1) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mLoadTextView.setTextAppearance(textAppearance);
-            } else {
-                mLoadTextView.setTextAppearance(getContext(), textAppearance);
-            }
-        }
+        textPaint = new TextPaint();
+        textPaint.setColor(Color.GRAY);
+        textPaint.setTextSize(32);
+        textPaint.setAntiAlias(true);
+        upInterpolator = new AccelerateInterpolator(FACTOR);
+        downInterpolator = new DecelerateInterpolator(FACTOR);
+
+        currentTime = System.currentTimeMillis();
         setLoadingText(loadText);
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        if (getVisibility() == VISIBLE) {
-            startLoading(mDelay);
+    float textWidth;
+    public void setLoadingText(CharSequence textChar) {
+        if (TextUtils.isEmpty(textChar)){
+            this.loadingText = "正在加载中";
+        }else{
+            this.loadingText = textChar.toString();
         }
+        textWidth = textPaint.measureText(loadingText);
+        invalidate();
     }
 
-    private Runnable mFreeFallRunnable = new Runnable() {
-        @Override
-        public void run() {
-            ViewHelper.setRotation(mShapeLoadingView, 180f);
-            ViewHelper.setTranslationY(mShapeLoadingView, 0f);
-            ViewHelper.setScaleX(mIndicationIm, 0.2f);
-            mStopped = false;
-            freeFall();
-        }
-    };
+    long currentTime;
+    boolean isUp;
 
-    private void startLoading(long delay) {
-        if (mDownAnimatorSet != null && mDownAnimatorSet.isRunning()) {
+    @Override
+    protected void onDraw(Canvas canvas) {
+        drawContent(canvas);
+        invalidate();
+    }
+
+    protected int getLoadingWidth(){
+        return getWidth();
+    }
+
+    protected int getLoadingHeight(){
+        return getHeight();
+    }
+
+    RectF rect = new RectF();
+    int radius = 4;
+    public void drawContent(Canvas canvas) {
+        if (getLoadingWidth() <= 0) {
             return;
         }
-        this.removeCallbacks(mFreeFallRunnable);
-        if (delay > 0) {
-            this.postDelayed(mFreeFallRunnable, delay);
+        textPaint.setColor(mShapeLoadingView.getColor());
+
+        canvas.drawText(loadingText, getLoadingWidth() / 2 - textWidth / 2,
+                getLoadingHeight() / 2 + mDistance/2 +  mShapeLoadingView.getWidthHeight() * 2 + radius * 15, textPaint);
+
+        int time = (int) (System.currentTimeMillis() - currentTime);
+        if (time > mDelay) {
+            isUp = !isUp;
+            time = 0;
+            if (!isUp) {
+                mShapeLoadingView.changeShape();
+            }
+            currentTime = System.currentTimeMillis();
+        }
+
+        float dx = getLoadingWidth() / 2 - mShapeLoadingView.getWidthHeight() / 2;
+        float dy, percent;
+        if (isUp) {
+            percent = upInterpolator.getInterpolation(time * 1.0f / mDelay);
+            dy = getLoadingHeight() / 2 - mDistance/2 + percent * mDistance;
         } else {
-            this.post(mFreeFallRunnable);
+            percent = downInterpolator.getInterpolation(time * 1.0f / mDelay);
+            dy = getLoadingHeight() / 2 + mDistance/2 - percent * mDistance;
         }
-    }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        stopLoading();
-    }
+        float width = isUp? percent * textWidth/2 : (1 - percent) * textWidth/2;
+        rect.left = getLoadingWidth()/2 - width;
+        rect.right = getLoadingWidth()/2 + width;
+        rect.top = getLoadingHeight() / 2 + mDistance/2 +  mShapeLoadingView.getWidthHeight() * 2 - radius;
+        rect.bottom = getLoadingHeight() / 2 + mDistance/2 +  mShapeLoadingView.getWidthHeight() * 2 + radius;
+        canvas.drawRoundRect(rect, radius, radius, textPaint);
 
-    private void stopLoading() {
-        mStopped = true;
-        if (mUpAnimatorSet != null) {
-            if (mUpAnimatorSet.isRunning()) {
-                mUpAnimatorSet.cancel();
-            }
-            mUpAnimatorSet.removeAllListeners();
-            for (Animator animator : mUpAnimatorSet.getChildAnimations()) {
-                animator.removeAllListeners();
-            }
-            mUpAnimatorSet = null;
-        }
-        if (mDownAnimatorSet != null) {
-            if (mDownAnimatorSet.isRunning()) {
-                mDownAnimatorSet.cancel();
-            }
-            mDownAnimatorSet.removeAllListeners();
-            for (Animator animator : mDownAnimatorSet.getChildAnimations()) {
-                animator.removeAllListeners();
-            }
-            mDownAnimatorSet = null;
-        }
-        this.removeCallbacks(mFreeFallRunnable);
-    }
-
-    @Override
-    public void setVisibility(int visibility) {
-        this.setVisibility(visibility, mDelay);
-    }
-
-    public void setVisibility(int visibility, int delay) {
-        super.setVisibility(visibility);
-        if (visibility == View.VISIBLE) {
-            startLoading(delay);
+        if (isUp) {
+            canvas.translate(dx, dy);
         } else {
-            stopLoading();
+            canvas.translate(dx, dy);
+            canvas.rotate(360 * percent,
+                    mShapeLoadingView.getWidthHeight()/2, mShapeLoadingView.getWidthHeight()/2);
         }
-    }
-
-    public void setLoadingText(CharSequence loadingText) {
-        if (TextUtils.isEmpty(loadingText)) {
-            mLoadTextView.setVisibility(GONE);
-        } else {
-            mLoadTextView.setVisibility(VISIBLE);
-        }
-
-        mLoadTextView.setText(loadingText);
-    }
-
-    /**
-     * 上抛
-     */
-    public void upThrow() {
-
-        if (mUpAnimatorSet == null) {
-            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mShapeLoadingView, "translationY", mDistance, 0);
-            ObjectAnimator scaleIndication = ObjectAnimator.ofFloat(mIndicationIm, "scaleX", 1f, 0.2f);
-
-            ObjectAnimator objectAnimator1 = null;
-            switch (mShapeLoadingView.getShape()) {
-                case SHAPE_RECT:
-
-                    objectAnimator1 = ObjectAnimator.ofFloat(mShapeLoadingView, "rotation", 0, 180);
-
-                    break;
-                case SHAPE_CIRCLE:
-                    objectAnimator1 = ObjectAnimator.ofFloat(mShapeLoadingView, "rotation", 0, 180);
-
-                    break;
-                case SHAPE_TRIANGLE:
-
-                    objectAnimator1 = ObjectAnimator.ofFloat(mShapeLoadingView, "rotation", 0, 180);
-
-                    break;
-            }
-
-            mUpAnimatorSet = new AnimatorSet();
-            mUpAnimatorSet.playTogether(objectAnimator, objectAnimator1, scaleIndication);
-
-            mUpAnimatorSet.setDuration(ANIMATION_DURATION);
-            mUpAnimatorSet.setInterpolator(new DecelerateInterpolator(FACTOR));
-
-            mUpAnimatorSet.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (!mStopped) {
-                        freeFall();
-                    }
-
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-        }
-        mUpAnimatorSet.start();
-
-
-    }
-
-    /**
-     * 下落
-     */
-    public void freeFall() {
-
-        if (mDownAnimatorSet == null) {
-            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mShapeLoadingView, "translationY", 0, mDistance);
-            ObjectAnimator scaleIndication = ObjectAnimator.ofFloat(mIndicationIm, "scaleX", 0.2f, 1f);
-
-            mDownAnimatorSet = new AnimatorSet();
-            mDownAnimatorSet.playTogether(objectAnimator, scaleIndication);
-            mDownAnimatorSet.setDuration(ANIMATION_DURATION);
-            mDownAnimatorSet.setInterpolator(new AccelerateInterpolator(FACTOR));
-            mDownAnimatorSet.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (!mStopped) {
-                        mShapeLoadingView.changeShape();
-                        upThrow();
-                    }
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-        }
-        mDownAnimatorSet.start();
-
+        mShapeLoadingView.drawContent(canvas);
     }
 
 }

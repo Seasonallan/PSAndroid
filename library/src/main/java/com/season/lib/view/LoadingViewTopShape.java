@@ -1,14 +1,12 @@
 package com.season.lib.view;
 
+import android.animation.ArgbEvaluator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Build;
-import android.util.AttributeSet;
-import android.view.View;
 
-import com.nineoldandroids.animation.ArgbEvaluator;
 import com.season.library.R;
 
 
@@ -16,7 +14,7 @@ import com.season.library.R;
  * 形状转换视图
  *
  */
-public class LoadingViewTopShape extends View {
+public class LoadingViewTopShape {
     /**
      * 用赛贝尔曲线画圆
      */
@@ -34,17 +32,6 @@ public class LoadingViewTopShape extends View {
 
 
     public LoadingViewTopShape(Context context) {
-        super(context);
-        init(context);
-    }
-
-    public LoadingViewTopShape(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public LoadingViewTopShape(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
         init(context);
     }
 
@@ -65,14 +52,11 @@ public class LoadingViewTopShape extends View {
     private float mControlY = 0;
     private float mAnimPercent;
 
+    public int getColor(){
+        return mPaint.getColor();
+    }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        if(getVisibility()==GONE){
-            return;
-        }
+    public void drawContent(Canvas canvas) {
         switch (mShape) {
             case SHAPE_TRIANGLE:
                 if (mIsLoading) {
@@ -97,7 +81,7 @@ public class LoadingViewTopShape extends View {
                     path.close();
                     canvas.drawPath(path, mPaint);
 
-                    invalidate();
+                    //invalidate();
 
                 } else {
                     Path path = new Path();
@@ -143,7 +127,7 @@ public class LoadingViewTopShape extends View {
 
                     path.close();
                     canvas.drawPath(path, mPaint);
-                    invalidate();
+                   // invalidate();
                 } else {
                     mPaint.setColor(mCircleColor);
                     Path path = new Path();
@@ -191,7 +175,7 @@ public class LoadingViewTopShape extends View {
                     path.close();
 
                     canvas.drawPath(path, mPaint);
-                    invalidate();
+                   // invalidate();
 
                 } else {
                     mPaint.setColor(mRectColor);
@@ -211,40 +195,27 @@ public class LoadingViewTopShape extends View {
         }
     }
 
+    public int getWidthHeight(){
+        return 38;
+    }
+
     private float relativeXFromView(float percent) {
-        return getWidth() * percent;
+        return getWidthHeight() * percent;
     }
     private float relativeYFromView(float percent) {
-        return getHeight() * percent;
+        return getWidthHeight() * percent;
     }
 
     public void changeShape() {
         mIsLoading = true;
-        invalidate();
     }
 
-    public void setShape(Shape shape){
-        mIsLoading = true;
-        mShape = shape;
-        invalidate();
-    }
 
     public enum Shape {
         SHAPE_TRIANGLE, SHAPE_RECT, SHAPE_CIRCLE
     }
 
 
-    @Override
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
-        if(visibility==VISIBLE){
-            invalidate();
-        }
-    }
-
-    public Shape getShape() {
-        return mShape;
-    }
 
     private int getColor(Context context, int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -62,15 +62,7 @@ public class ReadView extends BaseHtmlReadView {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if(!mBook.isOrder && getBuyIndex() != -1){
-						if (fRequestCatalogIndex >= getBuyIndex()) {
-							initView(getBuyIndex() + 1, 0, fRequestPageCharIndex);
-						}else {
-							initView(getBuyIndex() + 1, fRequestCatalogIndex, fRequestPageCharIndex);
-						}
-					}else{
-						initView(mPlugin.getCatalog().size(), fRequestCatalogIndex, fRequestPageCharIndex);
-					}
+					initView(mPlugin.getCatalog().size(), fRequestCatalogIndex, fRequestPageCharIndex);
 				}
 			});
         } catch (Exception e) {
@@ -79,30 +71,10 @@ public class ReadView extends BaseHtmlReadView {
         }
         return mBook;
 	}
-	
-	/** 获取购买点*/
-	private int getBuyIndex(){
-		int feeIndex = -1;
-		if (!TextUtils.isEmpty(mBook.feeStart)) {
-			String feeStart = String.valueOf(mBook.feeStart);
-			if(!TextUtils.isEmpty(feeStart) && !"null".equals(feeStart)){
-				try {
-					int start = feeStart.lastIndexOf("chapter") + 7;
-					int end = feeStart.lastIndexOf(".");
-					feeIndex = Integer.valueOf(feeStart.substring(start, end));
-				} catch (Exception e) {
-					LogUtil.e(e.getMessage());
-				}
-			}
-		}else {
-			feeIndex = -1;
-		}
-		return feeIndex;
-	}
-	
+
 	@Override
 	public String getChapterInputStream_(int chapterIndex) {
-		String defaultString = "<html><body>无法阅读此章节.原因：<p>1.该章节未购买</p><p>2.书籍格式错误-请到书架删除后重新下载！</p></body></html>";
+		String defaultString = "<html><body>无法阅读此章节.原因：<p>1.文件异常</p><p>2.书籍格式错误-请到书架删除后重新下载！</p></body></html>";
 		String content = defaultString;
 		try {
 			content = mPlugin.getChapter(chapterIndex);

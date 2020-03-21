@@ -117,15 +117,15 @@ public abstract class Patch extends AbsPatch{
 		return mLayoutType;
 	}
 	/**
-	 * @param mLayoutType the mLayoutType to set
+	 * @param layoutType the mLayoutType to set
 	 */
 	public void setLayoutType(int layoutType) {
 		mLayoutType = layoutType;
 	}
 	/**
 	 * 定位绘制单元起点位置
-	 * @param offsetX
-	 * @param offsetY
+	 * @param left
+	 * @param top
 	 */
 	void setLocation(int left,int top){
 		mLeft = left;
@@ -135,8 +135,8 @@ public abstract class Patch extends AbsPatch{
 	}
 	/**
 	 * 设置宽高
-	 * @param maxWidth
-	 * @param maxHeight
+	 * @param width
+	 * @param height
 	 */
 	void setBoundary(int width, int height) {
 		mContentWidth = width;
