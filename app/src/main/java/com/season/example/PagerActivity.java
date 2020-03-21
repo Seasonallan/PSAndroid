@@ -40,13 +40,13 @@ public class PagerActivity extends Activity {
                     View itemView = ((ViewPageView) v).getCurrentView();
                     if (itemView instanceof PageItemView){
                         int position = ((PageItemView) itemView).getPage();
+                        RoutePath.sCacheBitmap = mainPageView.getCurrentPageBitmap();
+                        RoutePath.sCacheColor = mainPageView.getCurrentPageColor();
                         if (position == 1) {
                             ARouter.getInstance().build(RoutePath.PS).navigation();
                         } else if (position == 2){
                             ARouter.getInstance().build(RoutePath.PLUGIN).navigation();
                         } else {
-                            RoutePath.sCacheBitmap = mainPageView.getCurrentPageBitmap();
-                            RoutePath.sCacheColor = mainPageView.getCurrentPageColor();
                             ARouter.getInstance().build(RoutePath.BOOK).navigation();
                         }
                     }else{

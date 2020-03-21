@@ -11,7 +11,7 @@ import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.season.book.anim.PageAnimController;
+import com.season.lib.anim.PageAnimController;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.season.example;
+package com.season.lib.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,7 +9,7 @@ import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.Nullable;
 
-import com.season.book.anim.PageAnimController;
+import com.season.lib.anim.PageAnimController;
 import com.season.lib.RoutePath;
 import com.season.lib.bitmap.BitmapUtil;
 

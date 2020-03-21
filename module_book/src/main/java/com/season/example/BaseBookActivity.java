@@ -31,6 +31,7 @@ import com.season.example.popwindow.ImgViewerPopWin;
 import com.season.example.popwindow.NotePopWin;
 import com.season.example.menu.ReaderMenuPopWin;
 import com.season.example.support.SelectorControlView;
+import com.season.lib.BaseStartPagerActivity;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.book.page.span.media.IMediaSpan;
 import com.season.book.page.span.NoteSpan;
@@ -47,7 +48,6 @@ import com.season.book.view.IReaderView;
 import com.season.lib.view.PullRefreshLayout;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
-import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 @Route(path= RoutePath.BOOK)
-public class BaseBookActivity extends Activity implements
+public class BaseBookActivity extends BaseStartPagerActivity implements
 		IReadCallback, PullRefreshLayout.OnPullStateListener{
 
     private FrameLayout mReadContainerView;
@@ -67,15 +67,14 @@ public class BaseBookActivity extends Activity implements
 	private ReaderMenuPopWin mReaderMenuPopWin;
 	private RectF centerRect;
 
-	private StartPageView startPageView;
-	@Override
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_reader;
+    }
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		BaseContext.init(getApplicationContext());
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        NavigationBarUtil.hideNavigationBar(this);
 
 		mBook = BookShelfPreLoader.getInstance(getApplicationContext()).getBookPreloaded();
 		centerRect = new RectF();
@@ -83,25 +82,6 @@ public class BaseBookActivity extends Activity implements
 		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
 		centerRect.top = 0;
 		centerRect.bottom = ScreenUtils.getScreenHeight() * 5/6;
-
-		setContentView(R.layout.activity_reader);
-		if (RoutePath.sCacheBitmap != null && !RoutePath.sCacheBitmap.isRecycled()){
-			startPageView = findViewById(R.id.start_page);
-			startPageView.setBiamtp(RoutePath.sCacheBitmap);
-			startPageView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					finish();
-					overridePendingTransition(0, 0);
-				}
-			});
-			startPageView.post(new Runnable() {
-				@Override
-				public void run() {
-					startPageView.start();
-				}
-			});
-		}
 
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
@@ -159,12 +139,7 @@ public class BaseBookActivity extends Activity implements
 					}
 					@Override
 					public void onTopBackButtonClicked() {
-						if (startPageView != null){
-							startPageView.finish();
-							return;
-						}
-						finish();
-						overridePendingTransition(0, 0);
+						onPagerFinish();
 					}
 					@Override
 					public void onDismiss() {
@@ -209,10 +184,6 @@ public class BaseBookActivity extends Activity implements
 		}
 		if(mReaderMenuPopWin != null && mReaderMenuPopWin.isShown()){
 			mReaderMenuPopWin.dismiss(true, true);
-			return;
-		}
-		if (startPageView != null){
-			startPageView.finish();
 			return;
 		}
 		super.onBackPressed();

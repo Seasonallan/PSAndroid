@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
 import com.season.book.ReadSetting;
-import com.season.book.anim.PageAnimController;
+import com.season.lib.anim.PageAnimController;
 import com.season.lib.util.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener, IReaderView{

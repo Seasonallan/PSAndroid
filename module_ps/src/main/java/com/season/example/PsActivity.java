@@ -26,6 +26,7 @@ import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
 import com.season.example.video.VideoActivity;
 import com.season.lib.BaseContext;
+import com.season.lib.BaseStartPagerActivity;
 import com.season.lib.RoutePath;
 import com.season.ps.bean.LayerItem;
 import com.season.lib.bitmap.BitmapUtil;
@@ -52,7 +53,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Route(path= RoutePath.PS)
-public class PsActivity extends FragmentActivity implements View.OnClickListener {
+public class PsActivity extends BaseStartPagerActivity implements View.OnClickListener {
 
     PSCoverView mPsCoverView;//最外部覆盖
     PSCanvas mPsCanvas;//ps画布
@@ -60,6 +61,14 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
     TopDeleteLayout topDeleteLayout;
 
     PSBgColorGroup mPsbgColorGroup;
+
+
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_ps;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,12 +83,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             finish();
             return;
         }
-
-        BaseContext.init(getApplicationContext());
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        setContentView(R.layout.activity_ps);
 
         initView();
         initBottomLayout();
@@ -488,12 +491,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
         }
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-    }
-
-
     private BottomPaintLayout bottomPaintLayout;
     private BottomTextLayout bottomTextLayout;
     private BottomTucengLayout bottomTucengLayout;
@@ -646,8 +643,11 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             finishTuya();
             bottomPaintLayout.hide();
         } else if (i == R.id.iv_back) {
-            back();
-
+            if (mPsCoverView.getChildCount() > 0) {
+                mPsCoverView.removeAllViews();
+                return;
+            }
+            onPagerFinish();
         } else if (i == R.id.iv_next) {
             if (mPsCanvas.getChildCount() == 0) {
                 if (mPsCanvas.backgroundView.currentOperate != null) {
@@ -743,15 +743,6 @@ public class PsActivity extends FragmentActivity implements View.OnClickListener
             mPsCanvas.pre();
         }
         resetStatus();
-    }
-
-    //返回键
-    private void back() {
-        if (mPsCoverView.getChildCount() > 0) {
-            mPsCoverView.removeAllViews();
-            return;
-        }
-        finish();
     }
 
     //涂鸦完成，生成图片添加到画布

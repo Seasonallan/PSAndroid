@@ -1,6 +1,5 @@
 package com.season.example;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -8,10 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
-
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.season.lib.BaseStartPagerActivity;
 import com.season.lib.view.LoadingView;
 import com.season.lib.BaseContext;
 import com.season.lib.RoutePath;
@@ -27,7 +25,7 @@ import java.io.File;
 
 
 @Route(path= RoutePath.PLUGIN)
-public class PluginActivity extends Activity {
+public class PluginActivity extends BaseStartPagerActivity {
 
     
     private LoadingView mLoadingView;
@@ -38,13 +36,15 @@ public class PluginActivity extends Activity {
     private TextView btnStart, btnInstall;
 
     private TextView statusView;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        setContentView(R.layout.activity_main);
 
         containerView = findViewById(R.id.item_container);
         mLoadingView = findViewById(R.id.loadView);

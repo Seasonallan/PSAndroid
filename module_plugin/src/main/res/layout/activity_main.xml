@@ -128,4 +128,10 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         app:loadingText="加载中..." />
+
+    <com.season.lib.view.StartPageView
+        android:id="@+id/start_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </RelativeLayout>
