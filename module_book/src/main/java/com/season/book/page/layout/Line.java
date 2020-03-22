@@ -86,14 +86,14 @@ public class Line extends Patch{
 	private SparseArray<RectF> measureLine(){
 		SparseArray<RectF> textSizeMap = new SparseArray<RectF>();
 		Rect rect = null;
-		Rect newRect = null;
+		RectF newRect = null;
 		CharacterStyle [] characterStyles = null;
 		int startLeft = measureStartLeft();
 		boolean isSingleParagraph = getStart() == getEnd() && isParagraphStart();
 		if(isSingleParagraph){
 			startLeft -= getIndentWidth();
 		}
-		int endBottom = measureEndBottom();
+		float endBottom = measureEndBottom() + offsetY;
 		for(int i = getStart();i <= getEnd();i++){
 			StyleText styleText = mStyleText.findStyleText(i);
 			characterStyles = styleText.getTotalSpans();
@@ -113,9 +113,9 @@ public class Line extends Patch{
 		return optimizationsLayout(textSizeMap);
 	}
 	
-	private final Rect checkBounds(Rect rect){
-		int w = rect.width();
-		int h = rect.height();
+	private final RectF checkBounds(Rect rect){
+		float w = rect.width();
+		float h = rect.height();
 		int maxW = getMaxWidth() - measureStartLeft() + mLeft - mRightPadding;
 		int maxH = getMaxHeight() - mTopPadding - mBottomPadding;
 		if(isFullScreen()){
@@ -127,8 +127,8 @@ public class Line extends Patch{
 			}
 		}else{
 			if(w > maxW || h > maxH){
-				int gapW = w - maxW;
-				int gapH = h - maxH;
+				float gapW = w - maxW;
+				float gapH = h - maxH;
 				if(gapW > gapH){
 					h = h * maxW / w;
 					w = maxW;
@@ -138,8 +138,7 @@ public class Line extends Patch{
 				}
 			}
 		}
-		rect.set(rect.left, rect.top,rect.left + w, rect.top + h);
-		return rect;
+		return new RectF(rect.left, rect.top,rect.left + w, rect.top + h);
 	}
 	/**
 	 * <p>计算行内容结束的位置，用于控制底部对齐</p>

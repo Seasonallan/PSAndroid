@@ -133,6 +133,12 @@ public abstract class Patch extends AbsPatch{
 		mRight = mLeft + mWidth;
 		mBottom = mTop + mHeight;
 	}
+
+	float offsetY = 0;
+	void setDrawOffsetY(float offsetY){
+		this.offsetY = offsetY;
+	}
+
 	/**
 	 * 设置宽高
 	 * @param width

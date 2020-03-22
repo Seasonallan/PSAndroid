@@ -519,7 +519,7 @@ public class Layout{
 				}
 			}
 //		}
-		page.clearUpCoverLayout(mStyleText);
+		page.fixTopBottomAlign(mStyleText);
 		mLayoutPageSize++;
 		if(mCallback != null){
 			mCallback.onLayoutFinishPage(mTask,page,mStyleText.getTotalLength());

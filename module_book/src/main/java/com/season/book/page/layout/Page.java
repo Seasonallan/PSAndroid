@@ -256,19 +256,24 @@ public class Page extends AbsPatch implements PatchParent {
 		mNotFloatPatchBottom = mPageRect.top;
 		mLastPanleBottom = mPageRect.top;
 	}
-	
-	void clearUpCoverLayout(StyleText styleText){
+
+	/**
+	 * 保持所有页面底部对齐
+	 * @param styleText
+	 */
+	void fixTopBottomAlign(StyleText styleText){
 		if(styleText.isCover() || mPatchs == null || mPatchs.isEmpty()){
 			return;
 		}
 		int contentBottom = mPatchs.get(mPatchs.size() - 1).mBottom;
-		int h = mPageRect.bottom - contentBottom;
+		float h = mPageRect.bottom - contentBottom;
 		if (h < mPatchs.get(mPatchs.size() - 1).getHeight() * 3/2){
 			h /= mPatchs.size();
 			if(h > 0){
-				int currentTop = 0;
+				float currentTop = 0;
 				for (Patch patch : mPatchs) {
-					patch.setLocation(patch.getLeft(), patch.getTop() + currentTop);
+					//patch.setLocation(patch.getLeft(), patch.getTop() + currentTop);
+					patch.setDrawOffsetY(currentTop);
 					currentTop += h;
 				}
 //			for (Panle panle : mPanleLines.values()) {
