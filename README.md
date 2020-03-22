@@ -18,11 +18,38 @@ ARouter.getInstance().build(RoutePath.PS).navigation();
   可以添加的操作视图：
     + CustomTextView 文字图层
     + CustomImageView 静图图层，包含涂鸦
-    + CustomGifMovie gif动图图层
-    + CustomGifFrame gif动图图层，只有在GifMovieView解析失败的情况下会用    
+    + CustomGifView gif动图图层 
 
 + GifMaker.java       
   描述: 绘制成Bitmap后添加到GifMaker之中，同时多个线程解析bitmap信息。最终生成Gif文件
+
+## 插件动态加载
+
++ 入口
+```java
+ARouter.getInstance().build(RoutePath.PLUGIN).navigation();
+```
++ 核心     
+```java  
+           //hook PackageManager 拦截getPackageInfo类似请求，替换包名,使用动态代理
+           mIPackageManagerHook = new ProxyHookPackageManager(mHostContext);
+           installHookOnce(mIPackageManagerHook);
+   
+           //hook ActivityManager 拦截startActivity类似请求，替换intent，绕过AndroidManifest检测 使用动态代理
+           installHookOnce(new ProxyHookActivityManager(mHostContext));
+   
+           //hook Handler的Callback， 在假的activity启动后替换为原本需要的activity并启动它 使用静态代理
+           installHookOnce(new HookHandlerCallback(mHostContext));
+   
+           //hook Instrumentation 处理生命周期，替身的创建和销毁，并伪装系统服务 使用静态代理
+           installHookOnce(new HookInstrumentation(mHostContext));
+   
+           connectToService(); 
+
+```
+  
++ AIDL       
+  确保服务的唯一性，服务模仿系统的PackageManagerService，提供对插件简单的管理服务。
 
 ## 书籍阅读器
 
@@ -62,29 +89,10 @@ ARouter.getInstance().build(RoutePath.BOOK).navigation();
   
   
 + 页面点击事件处理流程
-```java
-@Override
-public boolean dispatchTouchEvent(MotionEvent ev) {
-  //首次绘制是否结束，等待书籍解析布局完毕
-  if(mReadView.onActivityDispatchTouchEvent(ev)){
-    return false;
-  }
-  //目录弹窗是否显示
-  if(mCatalogLay.isShown()){
-    return super.dispatchTouchEvent(ev);
-  }
-  //长按选中操作中
-  if(mReadView.handlerSelectTouchEvent(ev, this)){
-    return false;
-  }
-  //单击长按事件派发处理，特别注意未处理事件时派发ACTION_DOWN事件，防止丢失
-  if(mClickDetector.onTouchEvent(ev, false)){
-    return false;
-  }
-  return super.dispatchTouchEvent(ev);
-}
-```
-
+  + 弹窗
+  + 笔记
+  + 竖向下拉
+  + 横向翻页
 
 ## 算法
 
