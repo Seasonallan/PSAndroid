@@ -290,19 +290,19 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     }
 
     @Override
-    public void drawPage(Canvas canvas, int index) {
+    public Bitmap drawPage(Canvas canvas, int index) {
         if (index == currentPage) {
             if (!mBindPagePicture.equals(index)) {
                 mBindPagePicture.init(index);
                 viewList.get(index).draw(mBindPagePicture.getCanvas(getWidth(), getHeight()));
             }
-            mBindPagePicture.onDraw(canvas);
+            return  mBindPagePicture.onDraw(canvas);
         } else {
             if (!mPagePicture.equals(index)) {
                 mPagePicture.init(index);
                 viewList.get(index).draw(mPagePicture.getCanvas(getWidth(), getHeight()));
             }
-            mPagePicture.onDraw(canvas);
+            return  mPagePicture.onDraw(canvas);
         }
     }
 

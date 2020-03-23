@@ -30,12 +30,12 @@ public abstract class BaseReadView extends AbsReadView{
         mLoadingView = new LoadingView(context){
             @Override
             protected int getLoadingHeight() {
-                return getContentHeight();
+                return getScreenHeight();
             }
 
             @Override
             protected int getLoadingWidth() {
-                return getContentWidth();
+                return getScreenWidth();
             }
         };
     }

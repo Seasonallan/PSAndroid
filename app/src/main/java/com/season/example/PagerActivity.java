@@ -83,6 +83,10 @@ public class PagerActivity extends Activity {
                                 .color(COLOR(R.color.global_yellow))
                 ), COLOR(R.color.global_yellow));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_3), COLOR(R.color.global_yellow));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_4), COLOR(R.color.global_yellow));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_5), COLOR(R.color.global_yellow));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_6), COLOR(R.color.global_yellow));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_7), COLOR(R.color.global_yellow));
 
             }
         }, 10);

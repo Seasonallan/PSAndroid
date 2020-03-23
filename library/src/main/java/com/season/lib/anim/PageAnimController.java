@@ -2,6 +2,7 @@ package com.season.lib.anim;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
@@ -92,7 +93,7 @@ public abstract class PageAnimController{
 		 * 绘制页内容
 		 * @param index
 		 */
-		void drawPage(Canvas canvas,int index);
+		Bitmap drawPage(Canvas canvas, int index);
 		/**
 		 * 请求翻到上一页
 		 * @return

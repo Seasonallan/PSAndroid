@@ -5,6 +5,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -650,8 +651,8 @@ public class PageManager implements PatchParent{
 	 * 连接页会执行预加载上下两页，和前后两章
 	 * @return 返回请求结果
 	 */
-	public int requestDrawPage(Canvas canvas,int chapterIndex,int pageIndex,int bindChapterIndex,int bindPageIndex){
-		int result = RESULT_UN_INIT;
+	public Bitmap requestDrawPage(Canvas canvas,int chapterIndex,int pageIndex,int bindChapterIndex,int bindPageIndex){
+		Bitmap requestBitmap = null;
 		if(!isInit()){
 			mCallback.drawWaitingContent(canvas, chapterIndex,isFirstDraw);
 		}else{
@@ -670,18 +671,15 @@ public class PageManager implements PatchParent{
 				Page page = chapterTask.getPage(pageIndex);
 				if(page != null){
 					bindTempPage(chapterIndex,pageIndex,bindChapterIndex, bindPageIndex,page,chapterTask.getStyleText());
-					drawContent(canvas,page, chapterIndex, pageIndex, bindChapterIndex, bindPageIndex);
-					result = RESULT_SUCCESS;
+					requestBitmap = drawContent(canvas,page, chapterIndex, pageIndex, bindChapterIndex, bindPageIndex);
 				}else if(chapterTask.isNeedRunTask()){
 					if(mCurrentRunChapterTask == null){
 						chapterTask.startTask();
 					}else{
 						reprioritizeChapterTasks(chapterIndex);
 					}
-					result = RESULT_UN_LAYOUT;
 					mCallback.drawWaitingContent(canvas, chapterIndex,isFirstDraw);
 				}else{
-					result = RESULT_UN_LAYOUT;
 					mCallback.drawWaitingContent(canvas, chapterIndex,isFirstDraw);
 				}
 			}
@@ -693,7 +691,7 @@ public class PageManager implements PatchParent{
 				}
 			}
 		}
-		return result;
+		return requestBitmap;
 	}
 	/**
 	 * 绘制内容
@@ -704,7 +702,7 @@ public class PageManager implements PatchParent{
 	 * @param bindChapterIndex
 	 * @param bindPageIndex
 	 */
-	private void drawContent(Canvas canvas,Page page,int chapterIndex,int pageIndex,int bindChapterIndex,int bindPageIndex){
+	private Bitmap drawContent(Canvas canvas, Page page, int chapterIndex, int pageIndex, int bindChapterIndex, int bindPageIndex){
 		boolean isNeedDraw = isFirstDraw || page.isFinish();
 		if(chapterIndex == bindChapterIndex && pageIndex == bindPageIndex){
 			if(!mBindPagePicture.equals(chapterIndex, pageIndex)){
@@ -713,7 +711,7 @@ public class PageManager implements PatchParent{
 			}
 			if(isNeedDraw){
 				isFirstDraw = true;
-				mBindPagePicture.onDraw(canvas);
+				return mBindPagePicture.onDraw(canvas);
 			}else{
 				mCallback.drawWaitingContent(canvas, chapterIndex,isFirstDraw);
 			}
@@ -724,11 +722,12 @@ public class PageManager implements PatchParent{
 			}
 			if(isNeedDraw){
 				isFirstDraw = true;
-				mPagePicture.onDraw(canvas);
+				return mPagePicture.onDraw(canvas);
 			}else{
 				mCallback.drawWaitingContent(canvas, chapterIndex,isFirstDraw);
 			}
 		}
+		return null;
 	}
 	
 	/**

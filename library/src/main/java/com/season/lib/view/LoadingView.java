@@ -135,6 +135,7 @@ public class LoadingView extends View {
         rect.bottom = getLoadingHeight() / 2 + mDistance/2 +  mShapeLoadingView.getWidthHeight() * 2 + radius;
         canvas.drawRoundRect(rect, radius, radius, textPaint);
 
+        canvas.save();
         if (isUp) {
             canvas.translate(dx, dy);
         } else {
@@ -143,6 +144,7 @@ public class LoadingView extends View {
                     mShapeLoadingView.getWidthHeight()/2, mShapeLoadingView.getWidthHeight()/2);
         }
         mShapeLoadingView.drawContent(canvas);
+        canvas.restore();
     }
 
 }

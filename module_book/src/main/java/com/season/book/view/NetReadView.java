@@ -100,6 +100,8 @@ public class NetReadView extends BaseHtmlReadView {
 		String defaultString = "<html><body>无法阅读此章节.原因：<p>1.该章节未购买</p><p>2.书籍格式错误-请到书架删除后重新下载！</p></body></html>";
 		String content = defaultString;
 		try {
+			//Thread.sleep(3000);
+
 			Map<String, String> params = new HashMap<>();
 			params.put("siteid", "0");
 			params.put("bid", "1");

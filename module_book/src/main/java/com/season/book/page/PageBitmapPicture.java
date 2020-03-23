@@ -52,8 +52,10 @@ public class PageBitmapPicture implements IPagePicture{
 		return mCanvas;
 	}
 
-	public void onDraw(Canvas canvas) {
+	@Override
+	public Bitmap onDraw(Canvas canvas) {
 		canvas.drawBitmap(mBitmap, 0, 0, null);
+		return mBitmap;
 	}
 
 	@Override

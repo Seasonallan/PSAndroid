@@ -13,6 +13,8 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
+import com.season.lib.util.LogUtil;
+
 
 /**
  * 仿真翻页动画
@@ -320,15 +322,14 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		canvas.save();
 		canvas.clipPath(mPath0);
 		canvas.clipPath(mPath1, Region.Op.INTERSECT);
-//		canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
 		float dis = (float) Math.hypot(mCornerX - mBezierControl1.x,
 				mBezierControl2.y - mCornerY);
-		float f8 = (mCornerX - mBezierControl1.x) / dis;
-		float f9 = (mBezierControl2.y - mCornerY) / dis;
-		mMatrixArray[0] = 1 - 2 * f9 * f9;
-		mMatrixArray[1] = 2 * f8 * f9;
-		mMatrixArray[3] = mMatrixArray[1];
-		mMatrixArray[4] = 1 - 2 * f8 * f8;
+		float f8 = (mCornerX - mBezierControl1.x) / dis; //sinX
+		float f9 = (mBezierControl2.y - mCornerY) / dis; //cosX
+		mMatrixArray[0] = 1 - 2 * f9 * f9; //= 1 - 2(cosX)^2 = -cos2x
+		mMatrixArray[1] = 2 * f8 * f9; //= 2sinX cosX = sin2X
+		mMatrixArray[3] = mMatrixArray[1];//sin2X
+		mMatrixArray[4] = 1 - 2 * f8 * f8;//=1 - 2(sinX)^2 = cos2x
 		mMatrix.reset();
 		mMatrix.setValues(mMatrixArray);
 		mMatrix.preTranslate(-mBezierControl1.x, -mBezierControl1.y);
@@ -351,7 +352,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int bgColor = pageCarver.getPageBackgroundColor();
 		boolean bgPureColor = bgColor != -1;
 		if(!isLandscape && bgPureColor){
-			canvas.drawColor(bgColor);
+			//canvas.drawColor(bgColor);
 		}
 		canvas.save();
 		canvas.concat(mMatrix);
@@ -361,11 +362,14 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		pageCarver.drawPage(canvas, pageIndex);
 		canvas.restore();
 		if(!isLandscape){//半透明遮罩，构建阴影效果
-			if (bgPureColor)
-				canvas.drawColor(bgColor + 0xaa000000);
-			else
+			if (bgPureColor){
+				//canvas.drawColor(bgColor + 0xaa000000);
+			} else {
 				canvas.drawColor(0x11000000);
+			}
 		}
+
+
 		float degree = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
 				- mCornerX, mBezierControl2.y - mCornerY));
 		canvas.rotate(degree, filterBezierStartBound(mBezierStart1,isLeftPage), mBezierStart1.y);
