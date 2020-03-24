@@ -55,10 +55,14 @@ public class PagerActivity extends Activity {
                 }
             }
         });
-        mainPageView.addPageView(LayoutInflater.from(this).inflate(R.layout.page_splash, null), -1);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                mainPageView.addPageView(get1ImageView(R.drawable.image_3), -1);
+                mainPageView.addPageView(get1ImageView(R.drawable.image_4), -1);
+
+                mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null),  COLOR(R.color.global_blue_dark));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
                                 .decorateContent(" • 功能 •", "涂鸦", "图片裁剪", "文字动效", "静动图合成")
@@ -66,7 +70,7 @@ public class PagerActivity extends Activity {
                                 .page(1)
                                 .color(COLOR(R.color.global_green))
                 ), COLOR(R.color.global_green));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_1), COLOR(R.color.global_green));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_1), -1);
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("插件动态载入", "插件 2016")
                                 .decorateContent(" • 功能 •", "插件", "动态载入",  "APK文件")
@@ -74,7 +78,7 @@ public class PagerActivity extends Activity {
                                 .page(2)
                                 .color(COLOR(R.color.global_pink))
                 ), COLOR(R.color.global_pink));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_2), COLOR(R.color.global_pink));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_2), -1);
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
                                 .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
@@ -82,11 +86,9 @@ public class PagerActivity extends Activity {
                                 .page(3)
                                 .color(COLOR(R.color.global_yellow))
                 ), COLOR(R.color.global_yellow));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_3), COLOR(R.color.global_yellow));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_4), COLOR(R.color.global_yellow));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_5), COLOR(R.color.global_yellow));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_6), COLOR(R.color.global_yellow));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_7), COLOR(R.color.global_yellow));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_5), -1);
+                mainPageView.addPageView(get1ImageView(R.drawable.image_6), -1);
+                mainPageView.addPageView(get1ImageView(R.drawable.image_7), -1);
 
             }
         }, 10);

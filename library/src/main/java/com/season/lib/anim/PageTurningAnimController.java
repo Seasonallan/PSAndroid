@@ -1,6 +1,7 @@
 package com.season.lib.anim;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Path;
@@ -240,22 +241,25 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mPath0.lineTo(mCornerX, mCornerY);
 		mPath0.close();
 		// 1、绘制当前页面所有区域
-		drawCurrentPageArea(canvas, fromIndex,true,pageCarver);
+		drawCurrentPageArea(canvas, fromIndex,pageCarver);
 		// 2、绘制当前页面扭曲部分区域
 		if (!isAnimStart) {
-			drawCurrentPageWarpingArea(canvas, fromIndex, true, pageCarver);
+			drawCurrentPageWarpingArea(canvas, fromIndex, pageCarver);
 		}
 		// 3、绘制翻起页背面//第三个参数表示是否绘制在左边
 		drawCurrentBackArea(canvas, fromIndex,!isNext,pageCarver);
-		// 4、绘制下一页//第三个参数表示是否绘制在左边
-		drawNextPageAreaAndShadow(canvas, toIndex,!isNext,pageCarver);
+
+		if (!debug){
+			// 4、绘制下一页//第三个参数表示是否绘制在左边
+			drawNextPageAreaAndShadow(canvas, toIndex,!isNext,pageCarver);
+		}
 		// 5、绘制翻起页的阴影
 		drawCurrentPageShadow(canvas,!isNext);
 		//LogUtil.e("onDrawAnim>>cost :"+ (System.currentTimeMillis() - time));
 	}
 
 
-	private final void drawCurrentPageArea(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
+	private final void drawCurrentPageArea(Canvas canvas,int pageIndex, PageCarver pageCarver) {
 		canvas.save();
 		if (!isAnimStart && false){
 			mPath1.reset();
@@ -277,12 +281,10 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		canvas.clipPath(contentPath);
 		canvas.clipPath(mPath0, Region.Op.DIFFERENCE);
 
-		if(isLeftPage){
-			pageCarver.drawPage(canvas, pageIndex);
-		}else{
-			canvas.translate(-mRightPageStartX, 0);
-			pageCarver.drawPage(canvas, pageIndex);
-		}
+		//canvas.translate(-mRightPageStartX, 0);
+		cacheBitmap = pageCarver.drawPage(canvas, pageIndex);
+        bW = cacheBitmap.getWidth();
+        bH = cacheBitmap.getHeight();
 		canvas.restore();
 	}
 
@@ -320,8 +322,10 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			mFolderShadowDrawable = mFolderShadowDrawableRL;
 		}
 		canvas.save();
-		canvas.clipPath(mPath0);
-		canvas.clipPath(mPath1, Region.Op.INTERSECT);
+		if (!debug){
+			canvas.clipPath(mPath0);
+			canvas.clipPath(mPath1, Region.Op.INTERSECT);
+		}
 		float dis = (float) Math.hypot(mCornerX - mBezierControl1.x,
 				mBezierControl2.y - mCornerY);
 		float f8 = (mCornerX - mBezierControl1.x) / dis; //sinX
@@ -352,22 +356,49 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int bgColor = pageCarver.getPageBackgroundColor();
 		boolean bgPureColor = bgColor != -1;
 		if(!isLandscape && bgPureColor){
-			//canvas.drawColor(bgColor);
+			canvas.drawColor(bgColor);
 		}
 		canvas.save();
 		canvas.concat(mMatrix);
 		if(isLandscape){
 			canvas.scale(-1, 1,mHalfContentWidth,mHalfContentHeight);
 		}
-		pageCarver.drawPage(canvas, pageIndex);
-		canvas.restore();
-		if(!isLandscape){//半透明遮罩，构建阴影效果
-			if (bgPureColor){
-				//canvas.drawColor(bgColor + 0xaa000000);
-			} else {
-				canvas.drawColor(0x11000000);
+
+		if (bgPureColor || isLeftPage){
+			pageCarver.drawPage(canvas, pageIndex);
+			canvas.drawColor(bgColor + 0xaa000000);
+		} else {
+			int index = 0;
+			float maxY = pageCarver.getContentHeight() - mBezierEnd1.y;
+			float perY = maxY/HEIGHT;
+			float maxX = pageCarver.getContentWidth() - mBezierEnd2.x;
+			float perX = maxX/WIDTH;
+            if(mCornerY < mScreenHeight/2){
+                maxY = Math.abs(mBezierEnd1.y);
+                perY = maxY/HEIGHT;
+            }
+			//初始化orig和verts数组。
+			for (int y = 0; y <= HEIGHT; y++)
+			{
+				float fy = bH * y / HEIGHT;
+				for (int x = 0; x <= WIDTH; x++)
+				{
+					float fx = bW * x / WIDTH;
+                    if(mCornerY > mScreenHeight/2){
+                        verts[index * 2 + 0] = fx + (maxY - y * perY) * x/WIDTH;
+                        verts[index * 2 + 1] = fy + (maxX - x * perX) * y/HEIGHT;
+                    }else{
+                        verts[index * 2 + 0] = fx + perY * y;
+                        verts[index * 2 + 1] = fy - perX *( WIDTH - x) * (HEIGHT - y)/HEIGHT;
+                    }
+					index += 1;
+				}
 			}
+			//canvas.drawBitmap(cacheBitmap, 0,0,null);
+			canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, verts, 0, null, 0, null);
+			canvas.drawColor(0xaaffffff);
 		}
+		canvas.restore();
 
 
 		float degree = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
@@ -378,10 +409,19 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mFolderShadowDrawable.draw(canvas);
 		canvas.restore();
 	}
+	boolean debug = false;
+	//将水平和竖直方向上都划分为20格
+	private final int WIDTH = 2;
+	private final int HEIGHT = 2;
+	private final int COUNT = (WIDTH + 1) * (HEIGHT + 1);  //记录该图片包含21*21个点
+	private final float[] verts = new float[COUNT * 2];    //扭曲前21*21个点的坐标
+	private Bitmap cacheBitmap;
+	private float bH,bW;
+
 
 
 	float crossX, dx, dy;
-	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex,boolean isLeftPage, PageCarver pageCarver) {
+	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex, PageCarver pageCarver) {
 		Interpolator interpolatorScale = new AccelerateInterpolator();
 		Interpolator interpolatorDx = new LinearInterpolator();
 		int count = 30; float perScale = 0.5f;
