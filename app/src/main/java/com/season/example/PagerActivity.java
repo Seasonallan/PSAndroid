@@ -62,7 +62,7 @@ public class PagerActivity extends Activity {
                 mainPageView.addPageView(get1ImageView(R.drawable.image_3), -1);
                 mainPageView.addPageView(get1ImageView(R.drawable.image_4), -1);
 
-                mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null),  COLOR(R.color.global_blue_dark));
+                mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null),  -1);
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
                                 .decorateContent(" • 功能 •", "涂鸦", "图片裁剪", "文字动效", "静动图合成")

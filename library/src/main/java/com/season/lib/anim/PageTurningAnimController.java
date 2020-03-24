@@ -14,7 +14,11 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
+import com.season.lib.dimen.MathUtil;
 import com.season.lib.util.LogUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -244,7 +248,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		drawCurrentPageArea(canvas, fromIndex,pageCarver);
 		// 2、绘制当前页面扭曲部分区域
 		if (!isAnimStart) {
-			drawCurrentPageWarpingArea(canvas, fromIndex, pageCarver);
+			if (!debug){
+				drawCurrentPageWarpingArea(canvas, fromIndex, pageCarver);
+			}
 		}
 		// 3、绘制翻起页背面//第三个参数表示是否绘制在左边
 		drawCurrentBackArea(canvas, fromIndex,!isNext,pageCarver);
@@ -356,7 +362,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int bgColor = pageCarver.getPageBackgroundColor();
 		boolean bgPureColor = bgColor != -1;
 		if(!isLandscape && bgPureColor){
-			canvas.drawColor(bgColor);
+			//canvas.drawColor(bgColor);
 		}
 		canvas.save();
 		canvas.concat(mMatrix);
@@ -364,20 +370,32 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			canvas.scale(-1, 1,mHalfContentWidth,mHalfContentHeight);
 		}
 
-		if (bgPureColor || isLeftPage){
+		if (isLeftPage){
 			pageCarver.drawPage(canvas, pageIndex);
 			canvas.drawColor(bgColor + 0xaa000000);
 		} else {
 			int index = 0;
-			float maxY = pageCarver.getContentHeight() - mBezierEnd1.y;
+			int contentHeight = pageCarver.getContentHeight();
+			int contentWidth = pageCarver.getContentWidth();
+			float maxY = contentHeight - mBezierEnd1.y;
 			float perY = maxY/HEIGHT;
-			float maxX = pageCarver.getContentWidth() - mBezierEnd2.x;
+			float maxX = contentWidth - mBezierEnd2.x;
 			float perX = maxX/WIDTH;
             if(mCornerY < mScreenHeight/2){
                 maxY = Math.abs(mBezierEnd1.y);
                 perY = maxY/HEIGHT;
             }
-			//初始化orig和verts数组。
+			PointCache pointCacheY = new PointCache();
+			pointCacheY.calculateBezierPointForQuadraticList(mBezierStart1, mBezierControl1, mBezierEnd1, mTouch);
+			float rightKeep = (float) Math.hypot(mTouch.x - mBezierEnd1.x,
+					mTouch.y - mBezierEnd1.y);
+			float leftKeep = contentWidth - pointCacheY.getMaxLine(mBezierEnd1) - rightKeep;
+
+            float bottomKeep = (float) Math.hypot(mTouch.x - mBezierEnd2.x,
+					mTouch.y - mBezierEnd2.y);
+			PointCache pointCacheX = new PointCache();
+			pointCacheX.calculateBezierPointForQuadraticList(mBezierStart2, mBezierControl2, mBezierEnd2, mTouch);
+			float topKeep = contentHeight - pointCacheX.getMaxLine(mBezierEnd2) - bottomKeep;
 			for (int y = 0; y <= HEIGHT; y++)
 			{
 				float fy = bH * y / HEIGHT;
@@ -385,18 +403,52 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 				{
 					float fx = bW * x / WIDTH;
                     if(mCornerY > mScreenHeight/2){
-                        verts[index * 2 + 0] = fx + (maxY - y * perY) * x/WIDTH;
-                        verts[index * 2 + 1] = fy + (maxX - x * perX) * y/HEIGHT;
+						//verts[index * 2 + 0] = fx + (maxY - y * perY) * x/WIDTH;
+						//verts[index * 2 + 1] = fy + (maxX - x * perX) * y/HEIGHT;
+						float currentY = y * contentHeight/HEIGHT;
+						if (currentY <= topKeep || currentY >= contentHeight - bottomKeep){
+							verts[index * 2 + 0] = fx;
+						}else{
+							verts[index * 2 + 0] = fx +
+									pointCacheX.calculateBezierPointForQuadratic(
+											(contentHeight - bottomKeep - topKeep) - (currentY - topKeep));
+						}
+
+						float currentX = x * contentWidth/WIDTH;
+						if (currentX < leftKeep || currentX > contentWidth - rightKeep){
+							verts[index * 2 + 1] = fy ;
+						}else{
+							verts[index * 2 + 1] = fy +
+									pointCacheY.calculateBezierPointForQuadratic(
+											(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
+						}
                     }else{
-                        verts[index * 2 + 0] = fx + perY * y;
-                        verts[index * 2 + 1] = fy - perX *( WIDTH - x) * (HEIGHT - y)/HEIGHT;
+                        //verts[index * 2 + 0] = fx + perY * y;
+                        //verts[index * 2 + 1] = fy - perX *( WIDTH - x) * (HEIGHT - y)/HEIGHT;
+						float currentY = y * contentHeight/HEIGHT;
+						if (currentY <= bottomKeep || currentY >= contentHeight - topKeep){
+							verts[index * 2 + 0] = fx;
+						}else{
+							verts[index * 2 + 0] = fx +
+									pointCacheX.calculateBezierPointForQuadratic(currentY - bottomKeep);
+						}
+
+						float currentX = x * contentWidth/WIDTH;
+						if (currentX < leftKeep || currentX > contentWidth - rightKeep){
+							verts[index * 2 + 1] = fy ;
+						}else{
+							verts[index * 2 + 1] = fy -
+									pointCacheY.calculateBezierPointForQuadratic(
+											(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
+						}
                     }
 					index += 1;
 				}
 			}
-			//canvas.drawBitmap(cacheBitmap, 0,0,null);
 			canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, verts, 0, null, 0, null);
-			canvas.drawColor(0xaaffffff);
+			if(!debug){
+				canvas.drawColor(0xaaffffff);
+			}
 		}
 		canvas.restore();
 
@@ -411,8 +463,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	}
 	boolean debug = false;
 	//将水平和竖直方向上都划分为20格
-	private final int WIDTH = 2;
-	private final int HEIGHT = 2;
+	private final int WIDTH = 120;
+	private final int HEIGHT = 120;
 	private final int COUNT = (WIDTH + 1) * (HEIGHT + 1);  //记录该图片包含21*21个点
 	private final float[] verts = new float[COUNT * 2];    //扭曲前21*21个点的坐标
 	private Bitmap cacheBitmap;
