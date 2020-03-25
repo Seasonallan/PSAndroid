@@ -3,9 +3,12 @@ package com.season.lib.anim;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
@@ -16,9 +19,6 @@ import android.widget.Scroller;
 
 import com.season.lib.dimen.MathUtil;
 import com.season.lib.util.LogUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -247,15 +247,15 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		// 1、绘制当前页面所有区域
 		drawCurrentPageArea(canvas, fromIndex,pageCarver);
 		// 2、绘制当前页面扭曲部分区域
-		if (!isAnimStart) {
-			if (!debug){
-				drawCurrentPageWarpingArea(canvas, fromIndex, pageCarver);
+		if (true || !isAnimStart) {
+			if (!DEBUG_BACK_AREA){
+				drawCurrentPageWarpingArea(canvas, pageCarver);
 			}
 		}
 		// 3、绘制翻起页背面//第三个参数表示是否绘制在左边
 		drawCurrentBackArea(canvas, fromIndex,!isNext,pageCarver);
 
-		if (!debug){
+		if (!DEBUG_BACK_AREA){
 			// 4、绘制下一页//第三个参数表示是否绘制在左边
 			drawNextPageAreaAndShadow(canvas, toIndex,!isNext,pageCarver);
 		}
@@ -267,30 +267,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 
 	private final void drawCurrentPageArea(Canvas canvas,int pageIndex, PageCarver pageCarver) {
 		canvas.save();
-		if (!isAnimStart && false){
-			mPath1.reset();
-			mPath1.moveTo(0, 0);
-			mPath1.lineTo(0, pageCarver.getScreenHeight());
-			if (mBezierStart2.y < mBezierStart1.y){
-				mPath1.lineTo(mBezierStart1.x, mBezierStart1.y);
-				mPath1.lineTo(mBezierStart2.x, mBezierStart2.y);
-				mPath1.lineTo(pageCarver.getScreenWidth(), 0);
-			}else{
-				mPath1.lineTo(pageCarver.getScreenWidth(), pageCarver.getScreenHeight());
-				mPath1.lineTo(mBezierStart2.x, mBezierStart2.y);
-				mPath1.lineTo(mBezierStart1.x, mBezierStart1.y);
-			}
-			mPath1.close();
-			canvas.clipPath(mPath1);
-		}
-
-		canvas.clipPath(contentPath);
-		canvas.clipPath(mPath0, Region.Op.DIFFERENCE);
-
 		//canvas.translate(-mRightPageStartX, 0);
+		canvas.clipRect(0,0,1,1);
 		cacheBitmap = pageCarver.drawPage(canvas, pageIndex);
-        bW = cacheBitmap.getWidth();
-        bH = cacheBitmap.getHeight();
 		canvas.restore();
 	}
 
@@ -328,7 +307,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			mFolderShadowDrawable = mFolderShadowDrawableRL;
 		}
 		canvas.save();
-		if (!debug){
+		if (!DEBUG_BACK_AREA){
 			canvas.clipPath(mPath0);
 			canvas.clipPath(mPath1, Region.Op.INTERSECT);
 		}
@@ -362,7 +341,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int bgColor = pageCarver.getPageBackgroundColor();
 		boolean bgPureColor = bgColor != -1;
 		if(!isLandscape && bgPureColor){
-			//canvas.drawColor(bgColor);
+			canvas.drawColor(bgColor);
 		}
 		canvas.save();
 		canvas.concat(mMatrix);
@@ -370,85 +349,13 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			canvas.scale(-1, 1,mHalfContentWidth,mHalfContentHeight);
 		}
 
-		if (isLeftPage){
+		if (isLeftPage|| bgPureColor){
+			//背景是纯色，直接画，添加蒙版
 			pageCarver.drawPage(canvas, pageIndex);
 			canvas.drawColor(bgColor + 0xaa000000);
 		} else {
-			int index = 0;
-			int contentHeight = pageCarver.getContentHeight();
-			int contentWidth = pageCarver.getContentWidth();
-			float maxY = contentHeight - mBezierEnd1.y;
-			float perY = maxY/HEIGHT;
-			float maxX = contentWidth - mBezierEnd2.x;
-			float perX = maxX/WIDTH;
-            if(mCornerY < mScreenHeight/2){
-                maxY = Math.abs(mBezierEnd1.y);
-                perY = maxY/HEIGHT;
-            }
-			PointCache pointCacheY = new PointCache();
-			pointCacheY.calculateBezierPointForQuadraticList(mBezierStart1, mBezierControl1, mBezierEnd1, mTouch);
-			float rightKeep = (float) Math.hypot(mTouch.x - mBezierEnd1.x,
-					mTouch.y - mBezierEnd1.y);
-			float leftKeep = contentWidth - pointCacheY.getMaxLine(mBezierEnd1) - rightKeep;
-
-            float bottomKeep = (float) Math.hypot(mTouch.x - mBezierEnd2.x,
-					mTouch.y - mBezierEnd2.y);
-			PointCache pointCacheX = new PointCache();
-			pointCacheX.calculateBezierPointForQuadraticList(mBezierStart2, mBezierControl2, mBezierEnd2, mTouch);
-			float topKeep = contentHeight - pointCacheX.getMaxLine(mBezierEnd2) - bottomKeep;
-			for (int y = 0; y <= HEIGHT; y++)
-			{
-				float fy = bH * y / HEIGHT;
-				for (int x = 0; x <= WIDTH; x++)
-				{
-					float fx = bW * x / WIDTH;
-                    if(mCornerY > mScreenHeight/2){
-						//verts[index * 2 + 0] = fx + (maxY - y * perY) * x/WIDTH;
-						//verts[index * 2 + 1] = fy + (maxX - x * perX) * y/HEIGHT;
-						float currentY = y * contentHeight/HEIGHT;
-						if (currentY <= topKeep || currentY >= contentHeight - bottomKeep){
-							verts[index * 2 + 0] = fx;
-						}else{
-							verts[index * 2 + 0] = fx +
-									pointCacheX.calculateBezierPointForQuadratic(
-											(contentHeight - bottomKeep - topKeep) - (currentY - topKeep));
-						}
-
-						float currentX = x * contentWidth/WIDTH;
-						if (currentX < leftKeep || currentX > contentWidth - rightKeep){
-							verts[index * 2 + 1] = fy ;
-						}else{
-							verts[index * 2 + 1] = fy +
-									pointCacheY.calculateBezierPointForQuadratic(
-											(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
-						}
-                    }else{
-                        //verts[index * 2 + 0] = fx + perY * y;
-                        //verts[index * 2 + 1] = fy - perX *( WIDTH - x) * (HEIGHT - y)/HEIGHT;
-						float currentY = y * contentHeight/HEIGHT;
-						if (currentY <= bottomKeep || currentY >= contentHeight - topKeep){
-							verts[index * 2 + 0] = fx;
-						}else{
-							verts[index * 2 + 0] = fx +
-									pointCacheX.calculateBezierPointForQuadratic(currentY - bottomKeep);
-						}
-
-						float currentX = x * contentWidth/WIDTH;
-						if (currentX < leftKeep || currentX > contentWidth - rightKeep){
-							verts[index * 2 + 1] = fy ;
-						}else{
-							verts[index * 2 + 1] = fy -
-									pointCacheY.calculateBezierPointForQuadratic(
-											(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
-						}
-                    }
-					index += 1;
-				}
-			}
-			canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, verts, 0, null, 0, null);
-			if(!debug){
-				canvas.drawColor(0xaaffffff);
-			}
+			//背景不是纯色，进行扭曲
+			drawCurrentBackWarpingArea(canvas, pageCarver);
 		}
 		canvas.restore();
 
@@ -461,60 +368,146 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mFolderShadowDrawable.draw(canvas);
 		canvas.restore();
 	}
-	boolean debug = false;
-	//将水平和竖直方向上都划分为20格
-	private final int WIDTH = 120;
-	private final int HEIGHT = 120;
-	private final int COUNT = (WIDTH + 1) * (HEIGHT + 1);  //记录该图片包含21*21个点
-	private final float[] verts = new float[COUNT * 2];    //扭曲前21*21个点的坐标
+
+	boolean DEBUG_BACK_AREA = false;
 	private Bitmap cacheBitmap;
-	private float bH,bW;
+	/**
+	 * 绘制翻起页背面 扭曲部分
+	 */
+	private final void drawCurrentBackWarpingArea(Canvas canvas, PageCarver pageCarver) {
 
+		int WIDTH = 20;
+		int HEIGHT = 20;
+		int COUNT = (WIDTH + 1) * (HEIGHT + 1);  //记录该图片包含21*21个点
+		float[] verts = new float[COUNT * 2];    //扭曲前21*21个点的坐标
 
+		int index = 0;
+		int contentHeight = pageCarver.getContentHeight();
+		int contentWidth = pageCarver.getContentWidth();
+		//简易模式，不贴近贝塞尔曲线 --start
+		float maxY = contentHeight - mBezierEnd1.y;
+		float perY = maxY/HEIGHT;
+		float maxX = contentWidth - mBezierEnd2.x;
+		float perX = maxX/WIDTH;
+		if(mCornerY < mScreenHeight/2){
+			maxY = Math.abs(mBezierEnd1.y);
+			perY = maxY/HEIGHT;
+		}
+		//end
+		PointCache pointCacheY = new PointCache();
+		pointCacheY.calculateBezierPointForQuadraticList(mBezierStart1, mBezierControl1, mBezierEnd1, mTouch);
+		float rightKeep = (float) Math.hypot(mTouch.x - mBezierEnd1.x,
+				mTouch.y - mBezierEnd1.y);
+		float leftKeep = contentWidth - pointCacheY.getMaxLine(mBezierEnd1) - rightKeep;
 
-	float crossX, dx, dy;
-	private void drawCurrentPageWarpingArea(Canvas canvas,int fromIndex, PageCarver pageCarver) {
-		Interpolator interpolatorScale = new AccelerateInterpolator();
-		Interpolator interpolatorDx = new LinearInterpolator();
-		int count = 30; float perScale = 0.5f;
-		float degrees = (float) Math.toDegrees(Math.atan2(mBezierStart1.y - mBezierStart2.y
-				,mBezierStart1.x - mBezierStart2.x));
-		crossX = getCross(mBeziervertex1, mBeziervertex2, new PointF(0, mCornerY), new PointF(mCornerX, mCornerY)).x;
-		dx = mBezierStart1.x + (mBezierStart2.x - mBezierStart1.x)/2;
-		dy = mBezierStart1.y + (mBezierStart2.y - mBezierStart1.y)/2;
-		degrees = degrees - 90;
-		for (int i = 0; i < count; i++){
-			drawCurrentPageWarping(canvas,
-					Math.abs(crossX - mBezierStart1.x) * interpolatorDx.getInterpolation(i * 1.0f / count),
-					1 - perScale * interpolatorScale.getInterpolation(i * 1.0f / count)
-					, fromIndex,degrees,pageCarver);
+		float bottomKeep = (float) Math.hypot(mTouch.x - mBezierEnd2.x,
+				mTouch.y - mBezierEnd2.y);
+		PointCache pointCacheX = new PointCache();
+		pointCacheX.calculateBezierPointForQuadraticList(mBezierStart2, mBezierControl2, mBezierEnd2, mTouch);
+		float topKeep = contentHeight - pointCacheX.getMaxLine(mBezierEnd2) - bottomKeep;
+		for (int y = 0; y <= HEIGHT; y++)
+		{
+			float fy = contentHeight * y / HEIGHT;
+			for (int x = 0; x <= WIDTH; x++)
+			{
+				float fx = contentWidth * x / WIDTH;
+				if(mCornerY > mScreenHeight/2){
+					//简易模式，不贴近贝塞尔曲线 --start
+					//verts[index * 2 + 0] = fx + (maxY - y * perY) * x/WIDTH;
+					//verts[index * 2 + 1] = fy + (maxX - x * perX) * y/HEIGHT;
+					float currentY = y * contentHeight/HEIGHT;
+					if (currentY <= topKeep || currentY >= contentHeight - bottomKeep){
+						verts[index * 2 + 0] = fx;
+					}else{
+						verts[index * 2 + 0] = fx +
+								pointCacheX.calculateBezierPointForQuadratic(
+										(contentHeight - bottomKeep - topKeep) - (currentY - topKeep));
+					}
+
+					float currentX = x * contentWidth/WIDTH;
+					if (currentX < leftKeep || currentX > contentWidth - rightKeep){
+						verts[index * 2 + 1] = fy ;
+					}else{
+						verts[index * 2 + 1] = fy +
+								pointCacheY.calculateBezierPointForQuadratic(
+										(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
+					}
+				}else{
+					//简易模式，不贴近贝塞尔曲线 --start
+					//verts[index * 2 + 0] = fx + perY * y;
+					//verts[index * 2 + 1] = fy - perX *( WIDTH - x) * (HEIGHT - y)/HEIGHT;
+					float currentY = y * contentHeight/HEIGHT;
+					if (currentY <= bottomKeep || currentY >= contentHeight - topKeep){
+						verts[index * 2 + 0] = fx;
+					}else{
+						verts[index * 2 + 0] = fx +
+								pointCacheX.calculateBezierPointForQuadratic(currentY - bottomKeep);
+					}
+
+					float currentX = x * contentWidth/WIDTH;
+					if (currentX < leftKeep || currentX > contentWidth - rightKeep){
+						verts[index * 2 + 1] = fy ;
+					}else{
+						verts[index * 2 + 1] = fy -
+								pointCacheY.calculateBezierPointForQuadratic(
+										(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
+					}
+				}
+				index += 1;
+			}
+		}
+		canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, verts, 0, null, 0, null);
+		if(!DEBUG_BACK_AREA){
+			canvas.drawColor(0xaaffffff);
 		}
 	}
-	/**
-	 * 绘制当前页面扭曲部分
-	 */
-	private final void drawCurrentPageWarping(Canvas canvas, float x, float scale, int pageIndex, float degrees, PageCarver pageCarver) {
-		mPath1.reset();
-		mPath1.moveTo(mBezierStart2.x + x, mBezierStart2.y);
-		mPath1.lineTo(mBezierStart1.x  + x, mBezierStart1.y);
-		mPath1.lineTo(mBezierControl1.x  + x, mBezierControl1.y);
-		mPath1.lineTo(mBezierControl2.x  + x, mBezierControl2.y);
-		mPath1.close();
+
+	private void drawCurrentPageWarpingArea(Canvas canvas, PageCarver pageCarver) {
+		int contentHeight = pageCarver.getContentHeight();
+		int contentWidth = pageCarver.getContentWidth();
+
+		float rightKeep = (float) Math.hypot(mTouch.x - mBezierEnd1.x,
+				mTouch.y - mBezierEnd1.y);
+		float xWidth = contentWidth - rightKeep - mBezierStart1.x;
 		canvas.save();
-		canvas.clipPath(mPath1);
 
-		mMatrix.reset();
-		mMatrix.postTranslate(-dx, -dy);
-		mMatrix.postRotate(-degrees, 0 , 0);
-		mMatrix.postScale(scale, 1, 0,0);
-		mMatrix.postRotate(degrees, 0 , 0);
-		mMatrix.postTranslate(dx, dy);
-		canvas.concat(mMatrix);
+		int index = 0;
+		int WIDTH =  30;
+		int HEIGHT = 30;
+		int COUNT = (WIDTH + 1) * (HEIGHT + 1);  //记录该图片包含21*21个点
+		float[] verts = new float[COUNT * 2];    //扭曲前21*21个点的坐标
 
-		pageCarver.drawPage(canvas, pageIndex);
+		for (int y = 0; y <= HEIGHT; y++) {
+			float fy = contentHeight * y  * 1.0f/ HEIGHT;
+			for (int x = 0; x <= WIDTH; x++) {
+				float fx = contentWidth * x  * 1.0f/ WIDTH;
+
+				PointF pointItem = getCross(mBezierStart1, mBezierEnd1,  new PointF(0, fy), new PointF(fx, fy));
+				if (pointItem.x <= fx){
+					if(mCornerY > mScreenHeight/2){
+						float percent = (fx - pointItem.x)/xWidth;
+						percent = percent >= 1? 1: percent;
+						PointF pointF = MathUtil.calculateBezierPointForQuadratic(percent, mBezierStart1, mBezierControl1, mBezierEnd1);
+
+						verts[index * 2 + 0] = fx - Math.abs(fx - pointItem.x -(pointF.x - mBezierStart1.x));
+						verts[index * 2 + 1] = fy - Math.abs(pointF.y - mBezierStart1.y);
+					}else{
+						float percent = (fx - pointItem.x)/xWidth;
+						PointF pointF = MathUtil.calculateBezierPointForQuadratic(percent, mBezierStart1, mBezierControl1, mBezierEnd1);
+
+						verts[index * 2 + 0] = fx - Math.abs(fx - pointItem.x -(pointF.x - mBezierStart1.x));
+						verts[index * 2 + 1] = fy + Math.abs(pointF.y - mBezierStart1.y);
+					}
+				}else {
+					verts[index * 2 + 0] = fx;
+					verts[index * 2 + 1] = fy;
+				}
+				index++;
+			}
+		}
+		canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, verts, 0, null, 0, null);
 		canvas.restore();
 	}
-
 
     private final void drawNextPageAreaAndShadow(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
 		if(!isLandscape)isLeftPage = true;
