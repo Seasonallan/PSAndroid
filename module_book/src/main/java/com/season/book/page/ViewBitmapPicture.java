@@ -47,9 +47,8 @@ public class ViewBitmapPicture{
 		return mCanvas;
 	}
 
-	public Bitmap onDraw(Canvas canvas) {
+	public void onDraw(Canvas canvas) {
 		canvas.drawBitmap(mBitmap, 0, 0, null);
-		return mBitmap;
 	}
 
 }

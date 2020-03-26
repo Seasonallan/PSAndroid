@@ -41,7 +41,7 @@ public class PagerActivity extends Activity {
                     if (itemView instanceof PageItemView){
                         int position = ((PageItemView) itemView).getPage();
                         RoutePath.sCacheBitmap = mainPageView.getCurrentPageBitmap();
-                        RoutePath.sCacheColor = mainPageView.getCurrentPageColor();
+                        RoutePath.sCacheColor = -1;
                         if (position == 1) {
                             ARouter.getInstance().build(RoutePath.PS).navigation();
                         } else if (position == 2){
@@ -59,36 +59,36 @@ public class PagerActivity extends Activity {
             @Override
             public void run() {
 
-                mainPageView.addPageView(get1ImageView(R.drawable.image_3), -1);
-                mainPageView.addPageView(get1ImageView(R.drawable.image_4), -1);
+                mainPageView.addPageView(get1ImageView(R.drawable.image_3));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_4));
 
-                mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null),  -1);
+                mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
                                 .decorateContent(" • 功能 •", "涂鸦", "图片裁剪", "文字动效", "静动图合成")
                                 .decorateContent(" • 核心 •", "时间轴控制", "页面重绘派发")
                                 .page(1)
                                 .color(COLOR(R.color.global_green))
-                ), COLOR(R.color.global_green));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_1), -1);
+                ));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_1));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("插件动态载入", "插件 2016")
                                 .decorateContent(" • 功能 •", "插件", "动态载入",  "APK文件")
                                 .decorateContent(" • 核心 •", "反射调用", "静态代理","动态代理", "类加载器", "版本兼容","生命周期")
                                 .page(2)
                                 .color(COLOR(R.color.global_pink))
-                ), COLOR(R.color.global_pink));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_2), -1);
+                ));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_2));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
                                 .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
                                 .decorateContent(" • 核心 •", "书籍解析", "页面排版", "动画控制", "事件派发")
                                 .page(3)
                                 .color(COLOR(R.color.global_yellow))
-                ), COLOR(R.color.global_yellow));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_5), -1);
-                mainPageView.addPageView(get1ImageView(R.drawable.image_6), -1);
-                mainPageView.addPageView(get1ImageView(R.drawable.image_7), -1);
+                ));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_5));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_6));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_7));
 
             }
         }, 10);

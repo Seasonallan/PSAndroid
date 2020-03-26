@@ -83,14 +83,12 @@ public class StartPageView extends View implements PageAnimController.PageCarver
     }
 
     @Override
-    public Bitmap drawPage(Canvas canvas, int index) {
+    public void drawPage(Canvas canvas, int index) {
         if (index == currentPage){
             canvas.drawBitmap(bitmap, 0, 0, null);
-            return bitmap;
         }else{
             //canvas.drawColor(0, PorterDuff.Mode.CLEAR);
         }
-        return null;
     }
 
     @Override

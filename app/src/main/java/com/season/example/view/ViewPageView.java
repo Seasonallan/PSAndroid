@@ -71,7 +71,6 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         mBindPagePicture = new ViewBitmapPicture(-1);
 
         mNavigationBarHeight = NavigationBarUtil.getNavigationBarHeight(getContext());
-        colors = new ArrayList<>();
         scrollShowDelay(1000);
     }
 
@@ -219,16 +218,13 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         return viewList.get(currentPage);
     }
 
-    private List<Integer> colors;
-
     /**
      * 添加一个页面
      *
      * @param view
      */
-    public void addPageView(View view, int color) {
+    public void addPageView(View view) {
         viewList.add(view);
-        colors.add(color);
         if (getWidth() > 0) {
             view.measure(widthMeasureSpec, heightMeasureSpec);
             view.layout(getLeft(), getTop(), getRight(), getBottom());
@@ -290,19 +286,19 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     }
 
     @Override
-    public Bitmap drawPage(Canvas canvas, int index) {
+    public void drawPage(Canvas canvas, int index) {
         if (index == currentPage) {
             if (!mBindPagePicture.equals(index)) {
                 mBindPagePicture.init(index);
                 viewList.get(index).draw(mBindPagePicture.getCanvas(getWidth(), getHeight()));
             }
-            return  mBindPagePicture.onDraw(canvas);
+            mBindPagePicture.onDraw(canvas);
         } else {
             if (!mPagePicture.equals(index)) {
                 mPagePicture.init(index);
                 viewList.get(index).draw(mPagePicture.getCanvas(getWidth(), getHeight()));
             }
-            return  mPagePicture.onDraw(canvas);
+            mPagePicture.onDraw(canvas);
         }
     }
 
@@ -362,15 +358,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
 
     @Override
     public int getPageBackgroundColor() {
-        try {
-            if (requestPage > currentPage) {
-                return colors.get(currentPage);
-            } else {
-                return colors.get(requestPage);
-            }
-        } catch (Exception e) {
-            return 0;
-        }
+        return -1;
     }
 
     @Override
@@ -387,10 +375,6 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     }
 
     public int getCurrentPageColor() {
-        try {
-            return colors.get(currentPage);
-        } catch (Exception e) {
-            return 0;
-        }
+        return -1;
     }
 }

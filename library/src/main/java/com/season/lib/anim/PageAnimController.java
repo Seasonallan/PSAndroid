@@ -93,7 +93,8 @@ public abstract class PageAnimController{
 		 * 绘制页内容
 		 * @param index
 		 */
-		Bitmap drawPage(Canvas canvas, int index);
+		void drawPage(Canvas canvas, int index);
+
 		/**
 		 * 请求翻到上一页
 		 * @return

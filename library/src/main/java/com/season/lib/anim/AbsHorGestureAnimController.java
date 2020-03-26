@@ -1,6 +1,7 @@
 package com.season.lib.anim;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -10,6 +11,7 @@ import android.view.ViewConfiguration;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.util.LogUtil;
 
 /**
@@ -20,7 +22,7 @@ import com.season.lib.util.LogUtil;
  */
 public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected static final String TAG = "TouEvent";
-	public static final int DURATION_DEFAULT = 600;
+	public static final int DURATION_DEFAULT = 800;
 
 	protected int mDuration = DURATION_DEFAULT;
 	private Scroller mScroller;
@@ -218,7 +220,8 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		pageCarver.onStartAnim(isCancelAnim);
 		pageCarver.requestInvalidate();
 	}
-	
+
+	protected Bitmap cacheBitmap;
 	private void dispatchAnimEnd(PageCarver pageCarver){
 		LogUtil.e("dispatchAnimEnd");
         isFullAnimation = false;
@@ -227,6 +230,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		onAnimEnd(isCancelAnim);
 		pageCarver.onStopAnim(isCancelAnim);
 		isCancelAnim = false;
+		BitmapUtil.recycleBitmaps(cacheBitmap);
 		pageCarver.requestInvalidate();
 	}
 

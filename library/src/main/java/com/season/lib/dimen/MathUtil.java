@@ -9,6 +9,21 @@ import android.graphics.Region;
 public class MathUtil
 {
 
+    /**
+     * 求解直线P1P2和直线P3P4的交点坐标
+     */
+    public static PointF getCross(PointF P1, PointF P2, PointF P3, PointF P4) {
+        PointF CrossP = new PointF();
+        // 二元函数通式： y=ax+b
+        float a1 = (P2.y - P1.y) / (P2.x - P1.x);
+        float b1 = ((P1.x * P2.y) - (P2.x * P1.y)) / (P1.x - P2.x);
+
+        float a2 = (P4.y - P3.y) / (P4.x - P3.x);
+        float b2 = ((P3.x * P4.y) - (P4.x * P3.y)) / (P3.x - P4.x);
+        CrossP.x = (b2 - b1) / (a1 - a2);
+        CrossP.y = a1 * CrossP.x + b1;
+        return CrossP;
+    }
 
     /**
      * 求pOut在pLine以及pLine2所连直线上的投影点

@@ -24,6 +24,18 @@ import com.season.lib.BaseContext;
 
 public class BitmapUtil {
 
+
+	public static boolean isBitmapAvaliable(Bitmap bitmap) {
+		try {
+			if (bitmap != null && !bitmap.isRecycled()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	/**
 	 * 回收图片
 	 * @param bitmaps
@@ -37,7 +49,7 @@ public class BitmapUtil {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			bitmaps = null;
+			bitmap = null;
 		}
 	}
 

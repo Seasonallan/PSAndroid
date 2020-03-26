@@ -2,7 +2,6 @@ package com.season.book.page;
 
 import com.season.book.page.layout.Page;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Picture;
 
@@ -42,9 +41,8 @@ public class PagePicture extends Picture implements IPagePicture{
 	}
 
 	@Override
-	public Bitmap onDraw(Canvas canvas) {
+	public void onDraw(Canvas canvas) {
 		super.draw(canvas);
-		return null;
 	}
 }
 
