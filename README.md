@@ -1,8 +1,22 @@
 # PS图层&插件化&阅读器
 + [测试APK下载](https://github.com/Seasonallan/PSAndroid/blob/master/apk/season.apk)
 ## PS图层
++ 描述       
+  图层动图合成，用于制作表情包或图片裁剪              
+  表情说说 2018年项目       
 
-+ 入口
++ 实现功能       
+  涂鸦              
+  图片自由裁剪       
+  文字动效       
+  动图合成       
+  
++ 核心技术       
+  页面重绘派发       
+  Matrix矩阵控制       
+  时间轴控制       
+  
++ 代码       
 ```java
 ARouter.getInstance().build(RoutePath.PS).navigation();
 ```
@@ -24,8 +38,19 @@ ARouter.getInstance().build(RoutePath.PS).navigation();
   描述: 绘制成Bitmap后添加到GifMaker之中，同时多个线程解析bitmap信息。最终生成Gif文件
 
 ## 插件动态加载
++ 描述       
+  插件动态载入，加载未安装APK文件              
+  360DroidPlugin项目重构，添加对高版本SDK兼容 2016       
 
-+ 入口
++ 实现功能       
+  免安装运行APK                    
+  
++ 核心技术       
+  反射，代理       
+  版本兼容       
+  AIDL       
+  
++ 代码
 ```java
 ARouter.getInstance().build(RoutePath.PLUGIN).navigation();
 ```
@@ -53,7 +78,23 @@ ARouter.getInstance().build(RoutePath.PLUGIN).navigation();
 
 ## 书籍阅读器
 
-+ 入口
++ 描述       
+  支持txt、umd、epub电子书格式文件本地阅读，支持在线阅读              
+  乐阅 2014       
+
++ 实现功能       
+  文件解析目录内容                    
+  长按添加书签，书签绘制                    
+  下拉添加笔记                    
+  自定义排版                    
+  
++ 核心技术       
+  书籍解析       
+  页面排版       
+  动画控制       
+  事件派发       
+  
++ 代码
 ```java
 ARouter.getInstance().build(RoutePath.BOOK).navigation();
 ```
