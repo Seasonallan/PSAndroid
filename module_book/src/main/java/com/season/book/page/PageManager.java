@@ -186,6 +186,9 @@ public class PageManager implements PatchParent{
 	 * @param pageIndex
 	 */
 	private void clearUpBindPage(int chapterIndex,int pageIndex){
+		if (chapterIndex == -1){
+			return;
+		}
 		//有效绑定页，不需要解除绑定的页
 		ArrayList<Page> effectiveCachePage = new ArrayList<Page>();
 		ArrayList<Page> oldCachePage = new ArrayList<Page>(mBindPageList);

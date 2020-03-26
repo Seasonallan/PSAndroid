@@ -59,9 +59,6 @@ public class PagerActivity extends Activity {
             @Override
             public void run() {
 
-                mainPageView.addPageView(get1ImageView(R.drawable.image_3));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_4));
-
                 mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
@@ -71,6 +68,8 @@ public class PagerActivity extends Activity {
                                 .color(COLOR(R.color.global_green))
                 ));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_1));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_3));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_2));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("插件动态载入", "插件 2016")
                                 .decorateContent(" • 功能 •", "插件", "动态载入",  "APK文件")
@@ -78,7 +77,8 @@ public class PagerActivity extends Activity {
                                 .page(2)
                                 .color(COLOR(R.color.global_pink))
                 ));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_2));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_4));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_5));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
                                 .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
@@ -86,7 +86,6 @@ public class PagerActivity extends Activity {
                                 .page(3)
                                 .color(COLOR(R.color.global_yellow))
                 ));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_5));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_6));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_7));
 

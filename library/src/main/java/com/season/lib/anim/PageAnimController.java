@@ -31,7 +31,7 @@ public abstract class PageAnimController{
 		return pageAnimController;
 	}
 
-	protected boolean touchStickMode = false;
+	protected boolean touchStickMode = true;
 	/**
 	 * 触屏距离重绘严格模式, 严格模式下有最小距离判断
 	 * @param stickMode

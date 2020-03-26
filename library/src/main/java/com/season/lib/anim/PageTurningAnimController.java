@@ -26,6 +26,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private Integer mToIndex;
 	private int mCornerX = 0; // 拖拽点对应的页脚
 	private int mCornerY = 0;
+	/**
+	 * 拖拽点对应的页脚 
+	 */
 	private Path mPath0;
 	private Path mPath1;
 	private PointF mTouch = new PointF(); // 拖拽点
@@ -177,9 +180,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		}
 		mFromIndex = fromIndex;
 		mToIndex = toIndex;
-		calcCornerXY(y, false);
+		calcCornerXY(y);
 	}
-	
+
 	@Override
 	public void dispatchTouchEvent(MotionEvent event, PageCarver pageCarver) {
 		if(isCenterTouchAnim && event.getAction() != MotionEvent.ACTION_DOWN){
@@ -202,25 +205,15 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			mTouch.x -= mScreenWidth / 4;
 		}
 		calcPoints(!isNext);
-
-		mPath0.reset();
-		mPath0.moveTo(mBezierStart1.x, mBezierStart1.y);
-		mPath0.quadTo(mBezierControl1.x, mBezierControl1.y, mBezierEnd1.x,
-				mBezierEnd1.y);
-		mPath0.lineTo(mTouch.x, mTouch.y);
-		mPath0.lineTo(mBezierEnd2.x, mBezierEnd2.y);
-		mPath0.quadTo(mBezierControl2.x, mBezierControl2.y, mBezierStart2.x,
-				mBezierStart2.y);
-		mPath0.lineTo(mCornerX, mCornerY);
-		mPath0.close();
+		resetPath();
 
 		if (!BitmapUtil.isBitmapAvaliable(cacheBitmap)){
-			cacheBitmap = Bitmap.createBitmap(pageCarver.getContentWidth(), pageCarver.getContentHeight(), Bitmap.Config.RGB_565);
+			cacheBitmap = Bitmap.createBitmap(mContentWidth, mContentHeight, Bitmap.Config.RGB_565);
 			pageCarver.drawPage(new Canvas(cacheBitmap), fromIndex);
 		}
 
 		// 1、绘制当前页面所有区域，包括扭曲部分区域
-		drawCurrentPageWarpingArea(canvas, !isNext,pageCarver);
+		drawCurrentPageWarpingArea(canvas, !isNext);
 
 		// 2、绘制翻起页背面//第三个参数表示是否绘制在左边
 		drawCurrentBackArea(canvas, fromIndex, !isNext,pageCarver);
@@ -232,47 +225,65 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		drawCurrentPageShadow(canvas);
 	}
 
+	private void resetPath() {
+		//贝塞尔曲线path
+		mPath0.reset();
+		mPath0.moveTo(mBezierStart1.x, mBezierStart1.y);
+		mPath0.quadTo(mBezierControl1.x, mBezierControl1.y, mBezierEnd1.x,
+				mBezierEnd1.y);
+		mPath0.lineTo(mTouch.x, mTouch.y);
+		mPath0.lineTo(mBezierEnd2.x, mBezierEnd2.y);
+		mPath0.quadTo(mBezierControl2.x, mBezierControl2.y, mBezierStart2.x,
+				mBezierStart2.y);
+		mPath0.lineTo(mCornerX, mCornerY);
+		mPath0.close();
+
+		//页脚path
+		mPath1.reset();
+		mPath1.moveTo(mBeziervertex2.x, mBeziervertex2.y);
+		mPath1.lineTo(mBeziervertex1.x, mBeziervertex1.y);
+		mPath1.lineTo(mBezierEnd1.x, mBezierEnd1.y);
+		mPath1.lineTo(mTouch.x, mTouch.y);
+		mPath1.lineTo(mBezierEnd2.x, mBezierEnd2.y);
+
+		mPath1.close();
+	}
+
 	/**
 	 * 绘制当前页面所有区域，包括扭曲部分区域
 	 * @param canvas
-	 * @param pageCarver
 	 */
-	private void drawCurrentPageWarpingArea(Canvas canvas,boolean isLeftPage, PageCarver pageCarver) {
-		int contentHeight = pageCarver.getContentHeight();
-		int contentWidth = pageCarver.getContentWidth();
+	private void drawCurrentPageWarpingArea(Canvas canvas,boolean isLeftPage) {
+		int index = 0;
+		int WIDTH = 60;
+		int HEIGHT = 60;
+		int COUNT = (WIDTH + 1) * (HEIGHT + 1);
+		float[] verts = new float[COUNT * 2];
 
-		//PointF pointItem = MathUtil.getCross(mBezierStart1, mBezierEnd1,  new PointF(0, 0), new PointF(contentWidth, 0));
-		if (mBezierStart1.x >= mBezierEnd1.x){
-			isLeftPage = true;
-		}
-		if (isLeftPage){
+		if (isLeftPage || isCenterTouchAnim){
 			canvas.save();
-			canvas.clipRect(0, 0, mTouch.x, contentHeight);
+			canvas.clipRect(0, 0, mTouch.x, mContentHeight);
 			canvas.drawBitmap(cacheBitmap, 0, 0, null);
 			canvas.restore();
+			return;
+		}
+		if (mTouch.x > mContentWidth - mContentWidth/WIDTH){
+			canvas.drawBitmap(cacheBitmap, 0, 0, null);
 			return;
 		}
 
 		float rightKeep = (float) Math.hypot(mTouch.x - mBezierEnd1.x,
 				mTouch.y - mBezierEnd1.y);
-		float xWidth = contentWidth - rightKeep - mBezierStart1.x;
-
-		float touch2CornerLength = MathUtil.getDistance(mTouch, new PointF(mCornerX, mCornerY));
-		touch2CornerLength = touch2CornerLength > contentWidth ? contentWidth : touch2CornerLength;
-		int index = 0;
-		int WIDTH = 20 + (int) (40 * ( 1- touch2CornerLength/contentWidth));
-		int HEIGHT = 80;
-		int COUNT = (WIDTH + 1) * (HEIGHT + 1);
-		float[] verts = new float[COUNT * 2];
+		float xWidth = mContentWidth - rightKeep - mBezierStart1.x;
 
 		for (int y = 0; y <= HEIGHT; y++) {
-			float fy = contentHeight * y  * 1.0f/ HEIGHT;
+			float fy = mContentHeight * y  * 1.0f/ HEIGHT;
 			for (int x = 0; x <= WIDTH; x++) {
-				float fx = contentWidth * x  * 1.0f/ WIDTH;
+				float fx = mContentWidth * x  * 1.0f/ WIDTH;
 
 				PointF pointItem = MathUtil.getCross(mBezierStart1, mBezierEnd1,  new PointF(0, fy), new PointF(fx, fy));
 				if (pointItem.x <= fx){
-					if(mCornerY > mScreenHeight/2){
+					if(!mIsRTandLB){
 						float percent = (fx - pointItem.x)/xWidth;
 						percent = percent >= 1? 1: percent;
 						PointF pointF = MathUtil.calculateBezierPointForQuadratic(percent, mBezierStart1, mBezierControl1, mBezierEnd1);
@@ -301,32 +312,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	 * 绘制翻起页背面
 	 */
 	private final void drawCurrentBackArea(Canvas canvas,int pageIndex,boolean isLeftPage, PageCarver pageCarver) {
-		int i = (int) (mBezierStart1.x + mBezierControl1.x) / 2;
-		float f1 = Math.abs(i - mBezierControl1.x);
-		int i1 = (int) (mBezierStart2.y + mBezierControl2.y) / 2;
-		float f2 = Math.abs(i1 - mBezierControl2.y);
-		float f3 = Math.min(f1, f2);
-		mPath1.reset();
-		mPath1.moveTo(mBeziervertex2.x, mBeziervertex2.y);
-		mPath1.lineTo(mBeziervertex1.x, mBeziervertex1.y);
-		
-		mPath1.lineTo(mBezierEnd1.x, mBezierEnd1.y);
-		mPath1.lineTo(mTouch.x, mTouch.y);
-		mPath1.lineTo(mBezierEnd2.x, mBezierEnd2.y);
-		
-		mPath1.close();
-		GradientDrawable mFolderShadowDrawable;
-		int left;
-		int right;
-		if (mIsRTandLB) {
-			left = (int) (mBezierStart1.x - maxShadow);
-			right = (int) (mBezierStart1.x + f3 + 2);
-			mFolderShadowDrawable = mFolderShadowDrawableLR;
-		} else {
-			left = (int) (mBezierStart1.x - f3 - 2);
-			right =(int) (mBezierStart1.x + maxShadow + 2);
-			mFolderShadowDrawable = mFolderShadowDrawableRL;
-		}
+
 		canvas.save();
 		canvas.clipPath(mPath0);
 		canvas.clipPath(mPath1, Region.Op.INTERSECT);
@@ -362,7 +348,23 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		}
 		canvas.restore();
 
-
+		int i = (int) (mBezierStart1.x + mBezierControl1.x) / 2;
+		float f1 = Math.abs(i - mBezierControl1.x);
+		int i1 = (int) (mBezierStart2.y + mBezierControl2.y) / 2;
+		float f2 = Math.abs(i1 - mBezierControl2.y);
+		float f3 = Math.min(f1, f2);
+		GradientDrawable mFolderShadowDrawable;
+		int left;
+		int right;
+		if (mIsRTandLB) {
+			left = (int) (mBezierStart1.x - maxShadow);
+			right = (int) (mBezierStart1.x + f3 + 2);
+			mFolderShadowDrawable = mFolderShadowDrawableLR;
+		} else {
+			left = (int) (mBezierStart1.x - f3 - 2);
+			right =(int) (mBezierStart1.x + maxShadow + 2);
+			mFolderShadowDrawable = mFolderShadowDrawableRL;
+		}
 		float degree = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
 				- mCornerX, mBezierControl2.y - mCornerY));
 		canvas.rotate(degree, mBezierStart1.x, mBezierStart1.y);
@@ -383,59 +385,57 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		float[] verts = new float[COUNT * 2];    //扭曲前21*21个点的坐标
 
 		int index = 0;
-		int contentHeight = pageCarver.getContentHeight();
-		int contentWidth = pageCarver.getContentWidth();
 
 		PointCache pointCacheY = new PointCache();
 		pointCacheY.calculateBezierPointForQuadraticList(mBezierStart1, mBezierControl1, mBezierEnd1, mTouch);
 		float rightKeep = (float) Math.hypot(mTouch.x - mBezierEnd1.x,
 				mTouch.y - mBezierEnd1.y);
-		float leftKeep = contentWidth - pointCacheY.getMaxLine(mBezierEnd1) - rightKeep;
+		float leftKeep = mContentWidth - pointCacheY.getMaxLine(mBezierEnd1) - rightKeep;
 
 		float bottomKeep = (float) Math.hypot(mTouch.x - mBezierEnd2.x,
 				mTouch.y - mBezierEnd2.y);
 		PointCache pointCacheX = new PointCache();
 		pointCacheX.calculateBezierPointForQuadraticList(mBezierStart2, mBezierControl2, mBezierEnd2, mTouch);
-		float topKeep = contentHeight - pointCacheX.getMaxLine(mBezierEnd2) - bottomKeep;
+		float topKeep = mContentHeight - pointCacheX.getMaxLine(mBezierEnd2) - bottomKeep;
 		for (int y = 0; y <= HEIGHT; y++)
 		{
-			float fy = contentHeight * y / HEIGHT;
+			float fy = mContentHeight * y / HEIGHT;
 			for (int x = 0; x <= WIDTH; x++)
 			{
-				float fx = contentWidth * x / WIDTH;
-				if(mCornerY > mScreenHeight/2){
-					float currentY = y * contentHeight/HEIGHT;
-					if (currentY <= topKeep || currentY >= contentHeight - bottomKeep){
+				float fx = mContentWidth * x / WIDTH;
+				if(!mIsRTandLB){
+					float currentY = y * mContentHeight/HEIGHT;
+					if (currentY <= topKeep || currentY >= mContentHeight - bottomKeep){
 						verts[index * 2 + 0] = fx;
 					}else{
 						verts[index * 2 + 0] = fx +
 								pointCacheX.calculateBezierPointForQuadratic(
-										(contentHeight - bottomKeep - topKeep) - (currentY - topKeep));
+										(mContentHeight - bottomKeep - topKeep) - (currentY - topKeep));
 					}
 
-					float currentX = x * contentWidth/WIDTH;
-					if (currentX < leftKeep || currentX > contentWidth - rightKeep){
+					float currentX = x * mContentWidth/WIDTH;
+					if (currentX < leftKeep || currentX > mContentWidth - rightKeep){
 						verts[index * 2 + 1] = fy ;
 					}else{
 						verts[index * 2 + 1] = fy +
 								pointCacheY.calculateBezierPointForQuadratic(
-										(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
+										(mContentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
 					}
 				}else{
-					float currentY = y * contentHeight/HEIGHT;
-					if (currentY <= bottomKeep || currentY >= contentHeight - topKeep){
+					float currentY = y * mContentHeight/HEIGHT;
+					if (currentY <= bottomKeep || currentY >= mContentHeight - topKeep){
 						verts[index * 2 + 0] = fx;
 					}else{
 						verts[index * 2 + 0] = fx +
 								pointCacheX.calculateBezierPointForQuadratic(currentY - bottomKeep);
 					}
-					float currentX = x * contentWidth/WIDTH;
-					if (currentX < leftKeep || currentX > contentWidth - rightKeep){
+					float currentX = x * mContentWidth/WIDTH;
+					if (currentX < leftKeep || currentX > mContentWidth - rightKeep){
 						verts[index * 2 + 1] = fy ;
 					}else{
 						verts[index * 2 + 1] = fy -
 								pointCacheY.calculateBezierPointForQuadratic(
-										(contentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
+										(mContentWidth - leftKeep - rightKeep) - (currentX - leftKeep));//* y/HEIGHT;
 					}
 				}
 				index += 1;
@@ -462,7 +462,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		float touchToCornerDis = mTouchToCornerDis / 4;
 		mTempShadowDrawableLR = mBackShadowDrawableLR;
 		mTempShadowDrawableRL = mBackShadowDrawableRL;
-		
+
 		if (mIsRTandLB) {
 			leftx = (int) (mBezierStart1.x);
 			rightx = (int) (mBezierStart1.x + touchToCornerDis);
@@ -472,7 +472,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			rightx = (int) mBezierStart1.x;
 			mBackShadowDrawable = mTempShadowDrawableRL;
 		}
-		
+
 		canvas.save();
 		canvas.clipPath(mPath0);
 		canvas.clipPath(mPath1, Region.Op.DIFFERENCE);
@@ -527,9 +527,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int rightx;
 		GradientDrawable mCurrentPageShadow;
 		//全屏翻页，边缘阴影宽度渐变
-//		int shadowWidth = (int) (25 * (isLeftPage 
+//		int shadowWidth = (int) (25 * (isLeftPage
 //				? ( mTouch.x / mContentWidth) : ( (mContentWidth - mTouch.x) / mContentWidth) ) );
-		int shadowWidth = (int) (25 * (false 
+		int shadowWidth = (int) (25 * (false
 				? ( mTouch.x / mContentWidth) : ( (mContentWidth - mTouch.x) / mContentWidth) ) );
 		if (mIsRTandLB) {
 			leftx = (int) (mBezierControl1.x - 1);
@@ -606,19 +606,12 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		}else if(mScreenWidth - pointF.x == mScreenHeight - pointF.y){
 			pointF.y -= 0.1f;
 		}
+
 		if(pointF.y <= 0){
-			if(!isAnimStart){
-				pointF.y = 0.25f;
-			}else{
-				pointF.y = 0.25f;
-			}
+			pointF.y = 0.01f;
 		}
-		if(pointF.y >= mScreenHeight){			
-			if(!isAnimStart){
-				pointF.y = mScreenHeight - 0.25f;
-			}else{
-				pointF.y = mScreenHeight - 0.25f;
-			}
+		if(pointF.y >= mScreenHeight){
+			pointF.y = mScreenHeight - 0.01f;
 		}
 	}
 	/**
@@ -643,9 +636,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mBezierStart1.y = mCornerY;
 		// 在触屏移动时做此约束
 		if (!isAnimStart || (mTouch.x > 0 && mTouch.x < mScreenWidth)) {
-			if (isBezierStartOut(isLeftPage)) {
-				if (mBezierStart1.x < 0)
-					mBezierStart1.x = mRightPageStartX - mBezierStart1.x;
+			if (mBezierStart1.x < 0 || mBezierStart1.x > mScreenWidth) {if (mBezierStart1.x < 0)
+				mBezierStart1.x = mRightPageStartX - mBezierStart1.x;
 				float f1 = Math.abs(mCornerX - mTouch.x);
 				float f2 = mRightPageStartX * f1 / mBezierStart1.x;
 				mTouch.x = Math.abs(mCornerX - f2);
@@ -676,6 +668,10 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 				mBezierStart2);
 		mBezierEnd2 = MathUtil.getCross(mTouch, mBezierControl2, mBezierStart1,
 				mBezierStart2);
+		if (mBezierStart1.x > mBezierEnd1.x){
+			mBezierEnd1.x = mBezierStart1.x;
+		}
+
 		mBeziervertex1.x = (mBezierStart1.x + 2 * mBezierControl1.x + mBezierEnd1.x) / 4;
 		mBeziervertex1.y = (2 * mBezierControl1.y + mBezierStart1.y + mBezierEnd1.y) / 4;
 		mBeziervertex2.x = (mBezierStart2.x + 2 * mBezierControl2.x + mBezierEnd2.x) / 4;
@@ -689,23 +685,11 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	}
 
 
-	private final boolean isBezierStartOut(boolean isLeftPage) {
-		if (mBezierStart1.x < 0 || mBezierStart1.x > mScreenWidth) {
-			return true;
-		}
-		return false;
-	}
-	
 	/**
 	 *  计算拖拽点对应的拖拽脚
 	 */
-	private final void calcCornerXY(float y,boolean isLeftPage) {
-		//在左边翻页
-		if (isLeftPage){
-				mCornerX = 0;
-		}else{//在右边翻页
-			mCornerX = mScreenWidth;
-		}
+	private final void calcCornerXY(float y) {
+		mCornerX = mScreenWidth;
 		if (y <= mScreenHeight / 2)
 			mCornerY = 0;
 		else

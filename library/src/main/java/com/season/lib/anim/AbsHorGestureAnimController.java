@@ -22,7 +22,7 @@ import com.season.lib.util.LogUtil;
  */
 public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected static final String TAG = "TouEvent";
-	public static final int DURATION_DEFAULT = 800;
+	public static final int DURATION_DEFAULT = 600;
 
 	protected int mDuration = DURATION_DEFAULT;
 	private Scroller mScroller;
@@ -60,7 +60,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
         mDownTouchPoint = new PointF();
         mContentWidth = -1;
         int touchSlop = ViewConfiguration.getTouchSlop();
-        mTouchSlopSquare = touchSlop * touchSlop;
+        mTouchSlopSquare = touchSlop;
     }
 
 	
@@ -106,7 +106,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		case MotionEvent.ACTION_MOVE:
 			int moveX = (int) (mDownTouchPoint.x - event.getX());
 			if(isRequestNextPage == null){
-				if(!touchStickMode || Math.abs(moveX) > 5){
+				if(Math.abs(moveX) > 5){
 					Integer requestPageIndex = null;
 					if(moveX > 0){
 						requestPageIndex = pageCarver.requestNextPage();
