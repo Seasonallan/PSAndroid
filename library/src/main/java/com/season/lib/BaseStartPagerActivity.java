@@ -16,16 +16,33 @@ public abstract class BaseStartPagerActivity extends FragmentActivity {
 
     private StartPageView startPageView;
 
+    /**
+     * 是否默认全屏
+     * @return
+     */
+    protected boolean isFullScreen(){
+        return true;
+    }
+
+    /**
+     * 是否允许翻页
+     * @return
+     */
+    protected boolean enablePager(){
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BaseContext.init(getApplicationContext());
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        if (isFullScreen()){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
         NavigationBarUtil.hideNavigationBar(this);
 
-        if (RoutePath.sCacheBitmap != null && !RoutePath.sCacheBitmap.isRecycled()){
+        if (enablePager() && RoutePath.sCacheBitmap != null && !RoutePath.sCacheBitmap.isRecycled()){
             RelativeLayout relativeLayout = new RelativeLayout(this);
             setContentView(relativeLayout);
             startPageView = new StartPageView(this);

@@ -16,7 +16,6 @@ import android.text.TextUtils;
 
 import com.season.lib.file.IOUtil;
 import com.season.lib.file.XMLUtil;
-import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
 import com.season.lib.book.EncryptUtils;
 import com.season.book.plugin.PluginManager;
@@ -55,7 +54,7 @@ public class EpubPlugin extends PluginManager {
 			for (;enumeration.hasMoreElements();) {
 				zipEntry = enumeration.nextElement();
 				String name = zipEntry.getName();
-				LogUtil.i("zip entry name: ", zipEntry.getName());
+				LogUtil.i(">>zip entry name: ", zipEntry.getName());
 				if(zipEntry.isDirectory()){
 					continue;
 				}
@@ -68,7 +67,7 @@ public class EpubPlugin extends PluginManager {
 					if(XMLUtil.parserXml(handler, data)){
 						opfFilePath = handler.getOpfFilePath();
 						hadContainerfile = true;
-						LogUtil.i("opf file path: ", opfFilePath);
+						LogUtil.i("opf file filePath: ", opfFilePath);
 					}
 				}
 				if(opfFilePath != null && opfFilePath.equals(name)){//查找OFP文件，并解析
@@ -160,6 +159,7 @@ public class EpubPlugin extends PluginManager {
 	 * @throws IOException
 	 */
 	private void initBookInfo(InputStream zis) throws IOException {
+		LogUtil.i("initBookInfo: ");
 		byte[] data = IOUtil.toByteArray(zis);
 		EpubFileDecoder handler = new EpubFileDecoder(filePath);
 		if(XMLUtil.parserXml(handler, data)){
@@ -224,10 +224,6 @@ public class EpubPlugin extends PluginManager {
 		public int compare(Catalog object1, Catalog object2) {
 			return object1.getIndex() - object2.getIndex();
 		}
-	}
-
-	protected void setFormat(String format) {
-		
 	}
 
 	@Override
@@ -297,61 +293,11 @@ public class EpubPlugin extends PluginManager {
 		return resource;
 	}
 
-	public BookInfo getEpubBookInfo() throws Exception {
-		//解析获取书籍信息
-		opfFilePath = DEFAULT_OPF_FILE_LOCATION;
-		BookInfo bookInfo = null;
-		ZipEntry zipEntry = null;
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(filePath);
-			Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
-			if(enumeration != null){
-				for (;enumeration.hasMoreElements();) {
-					zipEntry = enumeration.nextElement();
-					String name = zipEntry.getName();
-					LogUtil.i("zip entry name: ", zipEntry.getName());
-					if(zipEntry.isDirectory()){
-						continue;
-					}
-					if(opfFilePath != null && opfFilePath.equals(name)){//查找OFP文件，并解析
-						byte[] data = IOUtil.toByteArray(zipFile.getInputStream(zipEntry));
-						EpubFileDecoder handler = new EpubFileDecoder(filePath);
-						if(XMLUtil.parserXml(handler, data)){
-							//解析书籍信息
-							bookInfo = handler.getBookInfo();
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}finally{
-			if (zipFile!=null) {
-				zipFile.close();
-			}
-		}
-		return bookInfo;
-	}
 	
 	public String contentCover;
-    // 声明图片后缀名数组
-    private final String IMAGE [] = {"jpg","bmp","png","jpeg","gif","jpe","ico"};
-    private final String COVER_NAME = "Cover";//乐阅epub标准:封面图片资源id固定为cover.*（蔡文斌提供）
 
     public InputStream getCoverStream(){
     	if (TextUtils.isEmpty(contentCover)) {
-            for (String image: IMAGE){
-                String coverName = COVER_NAME +"."+ image;
-                if(manifestIdResources.containsKey(coverName)){
-                    Resource resource = manifestIdResources.get(coverName);
-                    try {
-                        return resource.getDataStream();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
 		}else{  
             if(manifestIdResources.containsKey(contentCover)){
                 Resource resource = manifestIdResources.get(contentCover);

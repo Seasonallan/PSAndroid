@@ -57,43 +57,15 @@ public class NetReadView extends BaseHtmlReadView {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if(!mBook.isOrder && getBuyIndex() != -1){
-						if (fRequestCatalogIndex >= getBuyIndex()) {
-							initView(getBuyIndex() + 1, 0, fRequestPageCharIndex);
-						}else {
-							initView(getBuyIndex() + 1, fRequestCatalogIndex, fRequestPageCharIndex);
-						}
-					}else{
-						initView(result.size(), fRequestCatalogIndex, fRequestPageCharIndex);
-					}
+					initView(result.size(), fRequestCatalogIndex, fRequestPageCharIndex);
 				}
 			});
         } catch (Exception e) {
             LogUtil.e(TAG, e);
-			mBook.decodeResult = false;
         }
         return mBook;
 	}
-	
-	/** 获取购买点*/
-	private int getBuyIndex(){
-		int feeIndex = -1;
-		if (!TextUtils.isEmpty(mBook.feeStart)) {
-			String feeStart = String.valueOf(mBook.feeStart);
-			if(!TextUtils.isEmpty(feeStart) && !"null".equals(feeStart)){
-				try {
-					int start = feeStart.lastIndexOf("chapter") + 7;
-					int end = feeStart.lastIndexOf(".");
-					feeIndex = Integer.valueOf(feeStart.substring(start, end));
-				} catch (Exception e) {
-					LogUtil.e(e.getMessage());
-				}
-			}
-		}else {
-			feeIndex = -1;
-		}
-		return feeIndex;
-	}
+
 	
 	@Override
 	public String getChapterInputStream_(int chapterIndex) {

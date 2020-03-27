@@ -98,6 +98,22 @@ public class ReadSetting{
         mSimplified = loadFontFontSimplify();
     }
 
+    /**
+     * 书架阅读书籍index
+     * @return
+     */
+    public int getReadPosition(){
+        return mSharedPreferences.getInt("readPosition", 2);
+    }
+
+    /**
+     * 设置书架书籍阅读位置
+     * @param position
+     */
+    public void setReadPosition(int position){
+        mSharedPreferences.edit().putInt("readPosition", position).commit();
+    }
+
     public void clearSetting(){
         mSharedPreferences.edit().clear();
     }

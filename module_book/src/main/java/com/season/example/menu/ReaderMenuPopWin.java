@@ -169,11 +169,18 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		getLayoutInflater().inflate(R.layout.reader_menu, this, true);
 		findViewById(R.id.menu_back).setOnClickListener(new View.OnClickListener(){
 
-            @Override
-            public void onClick(View v) {
-                mActionCallback.onTopBackButtonClicked();
-            }
-        });
+			@Override
+			public void onClick(View v) {
+				mActionCallback.onTopBackButtonClicked(true);
+			}
+		});
+		findViewById(R.id.menu_shelf).setOnClickListener(new View.OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				mActionCallback.onTopBackButtonClicked(false);
+			}
+		});
 		mVoiceLayout = findViewById(R.id.menu_reader_voice_layout);
 		mVoiceStateBut = (ImageButton)findViewById(R.id.menu_reader_voice_state_but);
 		mVoiceCloseBut = (ImageButton)findViewById(R.id.menu_reader_voice_close_but);
@@ -780,7 +787,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	public interface IActionCallback{
 		void onDismiss();
 		void onShowReaderCatalog();
-        void onTopBackButtonClicked();
+        void onTopBackButtonClicked(boolean isLeft);
     }
 
 	@Override

@@ -49,7 +49,6 @@ public class CatalogView extends FrameLayout{
 	private CatalogViewPagerAdapter mViewPagerAdapter;
 	protected ArrayList<Catalog> mCatalogList;
 	private ArrayList<String> mTags = new ArrayList<String>();
-	private View mGotoReaderBut;
 
 	private CatalogAdapter catalogAdapter;
 	private BookDigestsItemAdapter mBookDigestsAdapter;
@@ -71,13 +70,6 @@ public class CatalogView extends FrameLayout{
 		catalogAdapter = new CatalogAdapter(context, mCatalogList);
 		mBookDigestsAdapter = new BookDigestsItemAdapter(context);
 		mBookMarkAdapter = new BookmarkItemAdapter(context);
-		mGotoReaderBut = findViewById(R.id.left_suspension_but);
-		mGotoReaderBut.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
 		mTags.add(TAG_CATALOG);
 		mTags.add(TAG_DIGEST);
 		mTags.add(TAG_BOOKMARK);

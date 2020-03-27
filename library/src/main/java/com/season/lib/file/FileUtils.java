@@ -247,7 +247,7 @@ public final class FileUtils {
      * @param key
      * @param value
      */
-    public static void saveSerialData(String key, Serializable value){
+    public static void saveSerialData(String key, Object value){
 
         FileOutputStream fileOutputStream=null;
         ObjectOutputStream objectOutputStream =null;

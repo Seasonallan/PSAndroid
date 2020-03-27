@@ -49,7 +49,7 @@ public class ReadView extends BaseHtmlReadView {
         mSecretKey = secretKey;
 		try {
             try {
-                mPlugin = PluginManager.getPlugin(mBook.path);
+                mPlugin = PluginManager.getPlugin(mBook.filePath);
                 mPlugin.init(secretKey);
             }catch (Exception e){
             }
@@ -67,7 +67,6 @@ public class ReadView extends BaseHtmlReadView {
 			});
         } catch (Exception e) {
             LogUtil.e(TAG, e);
-			mBook.decodeResult = false;
         }
         return mBook;
 	}

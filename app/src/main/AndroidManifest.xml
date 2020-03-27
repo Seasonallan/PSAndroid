@@ -29,7 +29,7 @@
             tools:node="replace"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.season.example.BaseBookActivity"
+        <activity android:name="com.season.example.BookShelfActivity"
             tools:node="replace"
             android:screenOrientation="portrait">
         </activity>

@@ -3,10 +3,11 @@
 	android:id="@+id/reader_menu_lay"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent" >
-	<LinearLayout
+	<FrameLayout
 		android:id="@+id/menu_header_layout"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="68dp"
+		android:gravity="center_vertical"
 		android:background="@drawable/menu_header_background"  >
 
 		<TextView
@@ -20,7 +21,18 @@
 			android:text="返回"
 			android:textSize="16dp" />
 
-	</LinearLayout>
+		<TextView
+			android:id="@+id/menu_shelf"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:gravity="center_vertical"
+			android:layout_gravity="right"
+			android:textColor="@drawable/menu_textcolor_selector"
+			android:paddingLeft="16dp"
+			android:paddingRight="16dp"
+			android:text="书架"
+			android:textSize="16dp" />
+	</FrameLayout>
 
 	<FrameLayout
 		android:id="@+id/menu_child_layout"

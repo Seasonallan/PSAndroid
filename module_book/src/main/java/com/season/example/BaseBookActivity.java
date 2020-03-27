@@ -1,5 +1,6 @@
 package com.season.example;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -18,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.android.arouter.facade.annotation.Route;
 import com.season.book.R;
 import com.season.book.bean.BookMark;
 import com.season.book.db.BookMarkDB;
@@ -47,16 +47,23 @@ import com.season.book.view.IReaderView;
 import com.season.lib.view.PullRefreshLayout;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
-import com.season.lib.RoutePath;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
-@Route(path= RoutePath.BOOK)
 public class BaseBookActivity extends BaseStartPagerActivity implements
 		IReadCallback, PullRefreshLayout.OnPullStateListener{
+
+	public static void open(Context context, BookInfo bookInfo){
+		Intent intent = new Intent();
+		intent.setClass(context, BaseBookActivity.class);
+		intent.putExtra("book", bookInfo);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent);
+	}
 
     private FrameLayout mReadContainerView;
     private IReaderView mReadView;
@@ -71,11 +78,20 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
         return R.layout.activity_reader;
     }
 
+	@Override
+	protected boolean enablePager(){
+		return false;
+	}
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mBook = BookShelfPreLoader.getInstance(getApplicationContext()).getBookPreloaded();
+		if (false){
+			startActivity(new Intent(BaseBookActivity.this, BookShelfActivity.class));
+			finish();
+			return;
+		}
+
 		centerRect = new RectF();
 		centerRect.left = ScreenUtils.getScreenWidth()/4;
 		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
@@ -88,11 +104,36 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 
         mReadContainerView.setBackgroundColor(ReadSetting.getInstance(this).getThemeBGColor());
 
-		initClickDetector();
-		initReadView();
-        initPullView();
+        if (getIntent().hasExtra("book")){
+        	mBook = (BookInfo) getIntent().getSerializableExtra("book");
+		}
+
+        if (mBook == null || TextUtils.isEmpty(mBook.id)){
+			BookShelfPreLoader.getInstance().getBookLists(new BookShelfPreLoader.ICallback() {
+				@Override
+				public void onBookLoaded(List<BookInfo> bookLists) {
+					int position = ReadSetting.getInstance(BaseBookActivity.this).getReadPosition();
+					if (position >= bookLists.size()){
+						position = bookLists.size() - 1;
+					}
+					if (position < 0){
+						position = 0;
+					}
+					mBook = bookLists.get(position);
+					openBook();
+				}
+			});
+		}else{
+			openBook();
+		}
 
         overridePendingTransition(0, 0);
+	}
+
+	private void openBook(){
+		initClickDetector();
+		initReadView();
+		initPullView();
 	}
 
     private Animation mRotateUpAnimation;
@@ -138,8 +179,12 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 						showReaderCatalogView();
 					}
 					@Override
-					public void onTopBackButtonClicked() {
-						onPagerFinish();
+					public void onTopBackButtonClicked(boolean isLeft) {
+						if (isLeft){
+							onPagerFinish();
+						}else{
+							startActivity(new Intent(BaseBookActivity.this, BookShelfActivity.class));
+						}
 					}
 					@Override
 					public void onDismiss() {
