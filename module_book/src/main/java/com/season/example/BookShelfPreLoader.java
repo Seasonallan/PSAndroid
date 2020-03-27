@@ -36,7 +36,13 @@ public class BookShelfPreLoader {
 
     public void getBookLists(ICallback callback){
         if (isPreLoaded){
-            callback.onBookLoaded(bookLists);
+            if (bookLists != null){
+                callback.onBookLoaded(bookLists);
+            }else{
+                this.iCallback = callback;
+                isPreLoaded = false;
+                preLoad();
+            }
         }else{
             this.iCallback = callback;
         }
@@ -50,32 +56,38 @@ public class BookShelfPreLoader {
     }
 
 
-    public void saveLocal(){
+    public void saveLocal(final Object list){
         new Thread() {
             @Override
             public void run() {
-                FileUtils.saveSerialData("bookLists", bookLists);
+                FileUtils.saveSerialData("cacheBookLists", list);
             }
         }.start();
+        bookLists = null;
     }
 
     public void preLoad(){
         new Thread() {
             @Override
             public void run() {
-                Object object = FileUtils.getSerialData("bookLists");
+                Object object = FileUtils.getSerialData("cacheBookLists");
                 if (object instanceof List){
                     bookLists = (List<BookInfo>)object ;
                 }
                 if (bookLists == null || bookLists.size() == 0){
                     bookLists = new ArrayList<>();
-                    bookLists.add(new BookInfo("00001", "example1.epub", R.raw.epub_book));
-                    bookLists.add(new BookInfo("00011", "example2.epub", R.raw.epub_book2));
+                    bookLists.add(new BookInfo("00001", "1.epub", R.raw.epub_book));
+                    bookLists.add(new BookInfo("00011", "2.epub", R.raw.epub_book2));
+                    bookLists.add(new BookInfo("00012", "3.epub", R.raw.santi));
+                    bookLists.add(new BookInfo("00013", "4.epub", R.raw.zuoer));
+                    bookLists.add(new BookInfo("00014", "5.epub", R.raw.ssssslth));
                     bookLists.add(new BookInfo("00002", "浪漫满屋.txt", R.raw.text_book));
+                    bookLists.add(new BookInfo("00022", "爱在何方，家在何处.txt", R.raw.azhf));
                     bookLists.add(new BookInfo("00003", "book.umd", R.raw.umd_book));
                     BookInfo netBook = new BookInfo("10002", "斗破苍穹");
                     netBook.author = "天蚕土豆";
                     netBook.netIndex = 873530;
+                    netBook.cover = "https://bkimg.cdn.bcebos.com/pic/0ff41bd5ad6eddc448be31f537dbb6fd52663366?x-bce-process=image/watermark,g_7,image_d2F0ZXIvYmFpa2UxMTY=,xp_5,yp_5";
                     bookLists.add(netBook);
                 }
                 for (BookInfo book:bookLists){

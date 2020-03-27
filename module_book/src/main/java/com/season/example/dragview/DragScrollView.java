@@ -100,7 +100,21 @@ public class DragScrollView extends ViewGroup implements IDragListener {
 			gridView.setAdapter(adapter1); 
 			addView(gridView);
 		}
-	} 
+	}
+
+	/**
+	 * 获取最终数据
+	 * @param <T>
+	 * @return
+	 */
+	public <T> List<T> getFinalDatas(){
+		List<T> result = new ArrayList<>();
+		for (int i = 0; i < getChildCount(); i++){
+			DragGridView itemView = (DragGridView) getChildAt(i);
+			result.addAll(itemView.getGridAdapter().lstDate);
+		}
+		return result;
+	}
 	
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -17,6 +18,7 @@ import com.season.example.dragview.DragGridView;
 import com.season.example.dragview.DragScrollView;
 import com.season.lib.BaseStartPagerActivity;
 import com.season.lib.RoutePath;
+import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.view.LoadingView;
 
 @Route(path= RoutePath.BOOK)
@@ -42,9 +44,19 @@ public class BookShelfActivity extends BaseStartPagerActivity {
 		mContainer.setPageListener(new DragScrollView.PageListener() {
 			@Override
 			public void page(int page) {
-				mPageView.setText(""+page);
+				mPageView.setText("书架页码： "+(page + 1));
 			}
 		});
+		findViewById(R.id.btn_wifi).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+
+		RelativeLayout.LayoutParams param = (RelativeLayout.LayoutParams) mContainer.getLayoutParams();
+		param.height = ScreenUtils.getScreenWidth()/3 * 3/2 * 3;
+		mContainer.requestLayout();
 
 		BookShelfPreLoader.getInstance().getBookLists(new BookShelfPreLoader.ICallback() {
 			@Override
@@ -96,7 +108,7 @@ public class BookShelfActivity extends BaseStartPagerActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		BookShelfPreLoader.getInstance().saveLocal();
+		BookShelfPreLoader.getInstance().saveLocal(mContainer.getFinalDatas());
 		DragController.getInstance().clear();
 	}
 	

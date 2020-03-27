@@ -1,26 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#fff">
+    android:background="@color/global_blue_dark" >
 
-    <com.season.example.dragview.DragScrollView
-        android:id="@+id/views"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerInParent="true" />
+    <View
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:background="@color/white"
+        android:orientation="vertical"/>
 
-    <TextView
-        android:id="@+id/page"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:background="#000"
-        android:padding="8dp"
-        android:text="0"
-        android:textColor="#fff" />
+    <LinearLayout
+        android:layout_below="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/global_blue_dark">
+
+            <com.season.example.dragview.DragScrollView
+                android:id="@+id/views"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="-20dp"
+                android:layout_marginRight="-20dp"
+                android:layout_marginBottom="-10dp"
+                android:background="@drawable/hzw_bt"
+                android:scaleType="centerInside" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/btn_wifi"
+                android:layout_width="168dp"
+                android:layout_height="38dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/book_bg_selecter"
+                android:textColor="@drawable/book_color_selecter"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:text="WIFI传书"
+                android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="38dp"
+                android:text="书架页码：0"
+                android:textSize="15dp"
+                android:textColor="@color/global_blue_dark" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <com.season.lib.view.LoadingView
         android:id="@+id/loadView"

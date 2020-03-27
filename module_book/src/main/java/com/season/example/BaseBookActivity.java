@@ -127,7 +127,6 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 			openBook();
 		}
 
-        overridePendingTransition(0, 0);
 	}
 
 	private void openBook(){

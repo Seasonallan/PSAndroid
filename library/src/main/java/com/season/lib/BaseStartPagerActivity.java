@@ -78,7 +78,7 @@ public abstract class BaseStartPagerActivity extends FragmentActivity {
             return;
         }
         finish();
-        overridePendingTransition(0, 0);
+        //overridePendingTransition(0, 0);
     }
 
     @Override
