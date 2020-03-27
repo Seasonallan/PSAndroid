@@ -1,6 +1,5 @@
 package com.season.example;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -12,7 +11,6 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -83,6 +81,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
 		centerRect.top = 0;
 		centerRect.bottom = ScreenUtils.getScreenHeight() * 5/6;
+		catalogWidth = ScreenUtils.getScreenWidth() * 4/5;
 
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
@@ -150,12 +149,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 	}
 
 	private void initReaderCatalogView() {
-		mCatalogView = new CatalogView(this, mReadView,  new CatalogView.IActionCallBack() {
-			@Override
-			public void onDismiss() {
-				mCatalogLay.setVisibility(View.GONE);
-			}
-		});
+		mCatalogView = new CatalogView(this, mCatalogLay, mReadView);
 	}
 
 	private void showMenu() {
@@ -169,12 +163,14 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 		mReaderMenuPopWin.show();
 	}
 
+	private int catalogWidth;
 	protected void showReaderCatalogView() {
 		if (mCatalogView.getParent() == null) {
-			mCatalogLay.addView(mCatalogView);
+			mCatalogLay.addView(mCatalogView, new RelativeLayout.LayoutParams(catalogWidth, ViewGroup.LayoutParams.MATCH_PARENT));
 		}
 		mCatalogLay.setVisibility(View.VISIBLE);
 		mCatalogView.show(mBook, mReadView.getCurrentCatalog());
+
 	}
 
 	@Override
@@ -224,15 +220,26 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 		};
 	}
 
+	boolean interrupt = false;
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		if (ev.getAction() == MotionEvent.ACTION_DOWN){
+			interrupt = false;
 			NavigationBarUtil.hideNavigationBar(this);
 		}
-		if(!mReadView.isCurrentPageDrawn()){
+		if(!mReadView.isCurrentPageDrawn() || interrupt){
 			return false;
 		}
 		if(mCatalogLay.isShown()){
+			if(mCatalogView != null && mCatalogView.isShown()){
+				if (ev.getAction() == MotionEvent.ACTION_DOWN){
+					if (ev.getX() > catalogWidth){
+						interrupt = true;
+						mCatalogView.dismiss(true);
+						return false;
+					}
+				}
+			}
 			return super.dispatchTouchEvent(ev);
 		}
 		mReadView.handlerSelectTouchEvent(ev, dispatcher);

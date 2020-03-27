@@ -2,7 +2,12 @@ package com.season.example.catalog;
 
 import java.util.ArrayList;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +18,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.core.graphics.ColorUtils;
+
 import com.season.book.R;
 import com.season.example.popwindow.SlideTabWidget;
 import com.season.book.bean.BookDigests;
@@ -21,6 +28,7 @@ import com.season.book.bean.BookMark;
 import com.season.book.bean.Catalog;
 import com.season.book.db.BookDigestsDB;
 import com.season.book.db.BookMarkDB;
+import com.season.lib.dimen.ColorUtil;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.book.view.IReaderView;
 
@@ -32,6 +40,7 @@ public class CatalogView extends FrameLayout{
 	public static final String TAG_DIGEST = "TAG_DIGEST";
 	public static final String TAG_BOOKMARK = "TAG_BOOKMARK";
 
+	private View parentView;
 	private IReaderView mReadView;
 	private BookInfo mBookInfo;
 	private TextView mBookNameTV;
@@ -40,16 +49,16 @@ public class CatalogView extends FrameLayout{
 	private CatalogViewPagerAdapter mViewPagerAdapter;
 	protected ArrayList<Catalog> mCatalogList;
 	private ArrayList<String> mTags = new ArrayList<String>();
-	private IActionCallBack mCallBack;
 	private View mGotoReaderBut;
 
 	private CatalogAdapter catalogAdapter;
 	private BookDigestsItemAdapter mBookDigestsAdapter;
 	private BookmarkItemAdapter mBookMarkAdapter;
-	public CatalogView(Context context, IReaderView readView, IActionCallBack actionCallBack) {
+	public CatalogView(Context context, View parentView, IReaderView readView) {
 		super(context);
+		this.parentView = parentView;
 		this.mReadView = readView;
-		mCallBack = actionCallBack;
+
 		LayoutInflater.from(context).inflate(R.layout.reader_catalog, this, true);
 		mBookNameTV = (TextView) findViewById(R.id.catalog_book_name_tv);
 		mAuthorNameTV = (TextView) findViewById(R.id.catalog_author_name_tv);
@@ -140,7 +149,7 @@ public class CatalogView extends FrameLayout{
 			public void onAnimationEnd(Animation animation) {
 				isDismissing = false;
 				setVisibility(View.GONE);
-				mCallBack.onDismiss();
+				parentView.setVisibility(View.GONE);
 			}
 		});
 	}
@@ -183,7 +192,9 @@ public class CatalogView extends FrameLayout{
 				mBookInfo.id));
 		mBookMarkAdapter.setData(BookMarkDB.getInstance().getUserBookMark(mBookInfo.id));
 		startAnimation(showAnimation);
+		createValueAnimate(0, 200).setDuration(600).start();
 	}
+
 	public void dismiss(boolean force){
 		if (!force && isDismissing){
 			return;
@@ -191,12 +202,24 @@ public class CatalogView extends FrameLayout{
 		isDismissing = true;
 		setVisibility(View.VISIBLE);
 		startAnimation(hideAnimation);
+		createValueAnimate(200 , 0).setDuration(600).start();
 	}
+
+
+	private ValueAnimator createValueAnimate(int start, int end){
+		ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
+		valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator animation) {
+				int alpha = (Integer) animation.getAnimatedValue();
+				parentView.setBackgroundColor(Color.argb(alpha,0, 0, 0));
+			}
+		});
+		return valueAnimator;
+	}
+
 	public void dismiss(){
 		dismiss(false);
 	}
-	
-	public interface IActionCallBack{
-		void onDismiss();
-	}
+
 }

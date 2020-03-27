@@ -55,11 +55,11 @@ public class PagerActivity extends Activity {
                 }
             }
         });
+        mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-                mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null));
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
                                 .decorateContent(" • 功能 •", "涂鸦", "图片裁剪", "文字动效", "静动图合成")
@@ -90,9 +90,11 @@ public class PagerActivity extends Activity {
                 mainPageView.addPageView(get1ImageView(R.drawable.image_7));
 
             }
-        }, 10);
+        }, 100);
 
         setContentView(mainPageView);
+        mainPageView.scrollShowDelay(1000);
+
         BookShelfPreLoader.getInstance(getApplicationContext()).preLoad();
     }
 

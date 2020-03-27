@@ -72,7 +72,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         mBindPagePicture = new ViewBitmapPicture(-1);
 
         mNavigationBarHeight = NavigationBarUtil.getNavigationBarHeight(getContext());
-        scrollShowDelay(1000);
+
     }
 
 
@@ -88,7 +88,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
      *
      * @param delay
      */
-    private void scrollShowDelay(int delay) {
+    public void scrollShowDelay(int delay) {
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
