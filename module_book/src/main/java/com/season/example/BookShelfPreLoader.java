@@ -2,6 +2,7 @@ package com.season.example;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+
 import com.season.book.R;
 import com.season.book.bean.BookInfo;
 import com.season.book.plugin.epub.EpubPlugin;
@@ -9,7 +10,6 @@ import com.season.book.plugin.umd.UmdPlugin;
 import com.season.lib.BaseContext;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.file.FileUtils;
-import com.season.lib.util.LogUtil;
 
 import java.io.File;
 import java.io.InputStream;
@@ -18,11 +18,10 @@ import java.util.List;
 
 /**
  * 书架书籍预加载
- *
  */
 public class BookShelfPreLoader {
 
-    public interface ICallback{
+    public interface ICallback {
         void onBookLoaded(List<BookInfo> bookLists);
     }
 
@@ -34,16 +33,16 @@ public class BookShelfPreLoader {
     private BookShelfPreLoader() {
     }
 
-    public void getBookLists(ICallback callback){
-        if (isPreLoaded){
-            if (bookLists != null){
+    public void getBookLists(ICallback callback) {
+        if (isPreLoaded) {
+            if (bookLists != null) {
                 callback.onBookLoaded(bookLists);
-            }else{
+            } else {
                 this.iCallback = callback;
                 isPreLoaded = false;
                 preLoad();
             }
-        }else{
+        } else {
             this.iCallback = callback;
         }
     }
@@ -56,7 +55,7 @@ public class BookShelfPreLoader {
     }
 
 
-    public void saveLocal(final Object list){
+    public void saveLocal(final Object list) {
         new Thread() {
             @Override
             public void run() {
@@ -66,15 +65,15 @@ public class BookShelfPreLoader {
         bookLists = null;
     }
 
-    public void preLoad(){
+    public void preLoad() {
         new Thread() {
             @Override
             public void run() {
                 Object object = FileUtils.getSerialData("cacheBookLists");
-                if (object instanceof List){
-                    bookLists = (List<BookInfo>)object ;
+                if (object instanceof List) {
+                    bookLists = (List<BookInfo>) object;
                 }
-                if (bookLists == null || bookLists.size() == 0){
+                if (bookLists == null || bookLists.size() == 0) {
                     bookLists = new ArrayList<>();
                     bookLists.add(new BookInfo("00001", "1.epub", R.raw.epub_book));
                     bookLists.add(new BookInfo("00011", "2.epub", R.raw.epub_book2));
@@ -90,17 +89,17 @@ public class BookShelfPreLoader {
                     netBook.cover = "https://bkimg.cdn.bcebos.com/pic/0ff41bd5ad6eddc448be31f537dbb6fd52663366?x-bce-process=image/watermark,g_7,image_d2F0ZXIvYmFpa2UxMTY=,xp_5,yp_5";
                     bookLists.add(netBook);
                 }
-                for (BookInfo book:bookLists){
-                    if (book.rawId != -1 && TextUtils.isEmpty(book.filePath)){
+                for (BookInfo book : bookLists) {
+                    if (book.rawId != -1 && TextUtils.isEmpty(book.filePath)) {
                         InputStream is = BaseContext.getInstance().getResources().openRawResource(book.rawId);
                         String filePath = getBookFielPath(book.title);
-                        if(FileUtils.copyFileToFile(filePath, is)){
+                        if (FileUtils.copyFileToFile(filePath, is)) {
                             book.filePath = filePath;
                         }
                     }
-                    if (TextUtils.isEmpty(book.cover)){
-                        if (!TextUtils.isEmpty(book.filePath)){
-                            if (book.filePath.endsWith(".epub")){
+                    if (TextUtils.isEmpty(book.cover)) {
+                        if (!TextUtils.isEmpty(book.filePath)) {
+                            if (book.filePath.endsWith(".epub")) {
                                 EpubPlugin epubPlugin = new EpubPlugin(book.filePath);
                                 try {
                                     epubPlugin.init("");
@@ -111,9 +110,9 @@ public class BookShelfPreLoader {
                                     book.publisher = decodeBook.publisher;
 
                                     InputStream inputStream = epubPlugin.getCoverStream();
-                                    if (inputStream != null){
+                                    if (inputStream != null) {
                                         String fileName = getBookFielPath("cover" + book.filePath.hashCode());
-                                        if(FileUtils.copyFileToFile(fileName, inputStream)){
+                                        if (FileUtils.copyFileToFile(fileName, inputStream)) {
                                             book.cover = fileName;
                                         }
                                     }
@@ -121,13 +120,13 @@ public class BookShelfPreLoader {
                                     e.printStackTrace();
                                 }
                             }
-                            if (book.filePath.endsWith(".umd")){
+                            if (book.filePath.endsWith(".umd")) {
                                 UmdPlugin umdPlugin = new UmdPlugin(book.filePath);
                                 try {
                                     umdPlugin.init("");
-                                    book.title = umdPlugin.mTitle +".umd";
+                                    book.title = umdPlugin.mTitle + ".umd";
                                     book.author = umdPlugin.mAuthor;
-                                    Bitmap bitmap  = umdPlugin.mBookCover;
+                                    Bitmap bitmap = umdPlugin.mBookCover;
                                     String fileName = getBookFielPath("cover" + book.filePath.hashCode());
                                     book.cover = BitmapUtil.saveBitmap(new File(fileName), bitmap);
                                 } catch (Exception e) {
@@ -136,10 +135,9 @@ public class BookShelfPreLoader {
                             }
                         }
                     }
-                    LogUtil.i(book.toString());
                 }
                 isPreLoaded = true;
-                if (iCallback != null){
+                if (iCallback != null) {
                     BaseContext.getHandler().post(new Runnable() {
                         @Override
                         public void run() {
@@ -152,12 +150,53 @@ public class BookShelfPreLoader {
         }.start();
     }
 
+    public BookInfo decodeFile(String filePath) {
+        BookInfo book = new BookInfo();
+        book.id = filePath.hashCode() +"";
+        book.filePath = filePath;
+        book.title = filePath;
+        if (filePath.endsWith(".epub")) {
+            EpubPlugin epubPlugin = new EpubPlugin(filePath);
+            try {
+                epubPlugin.init("");
+                BookInfo decodeBook = epubPlugin.getBookInfo(book);
+                book.id = decodeBook.id;
+                book.title = decodeBook.title;
+                book.author = decodeBook.author;
+                book.publisher = decodeBook.publisher;
 
-    private String getBookFielPath(String fend){
+                InputStream inputStream = epubPlugin.getCoverStream();
+                if (inputStream != null) {
+                    String fileName = getBookFielPath("cover" + filePath.hashCode());
+                    if (FileUtils.copyFileToFile(fileName, inputStream)) {
+                        book.cover = fileName;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (filePath.endsWith(".umd")) {
+            UmdPlugin umdPlugin = new UmdPlugin(filePath);
+            try {
+                umdPlugin.init("");
+                book.title = umdPlugin.mTitle + ".umd";
+                book.author = umdPlugin.mAuthor;
+                Bitmap bitmap = umdPlugin.mBookCover;
+                String fileName = getBookFielPath("cover" + filePath.hashCode());
+                book.cover = BitmapUtil.saveBitmap(new File(fileName), bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+        }
+        return book;
+    }
+
+    private String getBookFielPath(String fend) {
         String pathDir = BaseContext.getInstance().getCacheDir() + File.separator;
-        String path =pathDir + "cache"+fend;
+        String path = pathDir + "cache" + fend;
         File fileDir = new File(pathDir);
-        if(!fileDir.exists()){
+        if (!fileDir.exists()) {
             fileDir.mkdirs();
         }
         return path;

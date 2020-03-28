@@ -2,6 +2,12 @@
 
     <string name="app_name">阅读器</string>
 
+    <string name="transfer_ing">正在传输：%s</string>
+    <string name="transfer_end">传输完成： %s</string>
+    <string name="transfer_error">传输失败： %s</string>
+
+    <string name="transfer_res">已完成：%1$d 失败：%2$d</string>
+
     <string-array name="auto_delayed">
         <item>5000</item>
         <item>10000</item>

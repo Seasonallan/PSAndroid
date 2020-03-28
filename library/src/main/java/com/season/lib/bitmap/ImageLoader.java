@@ -5,7 +5,6 @@ import java.lang.ref.SoftReference;
 import java.net.URI;
 import java.util.HashMap;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Process;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.widget.ImageView;
 import com.season.lib.BaseContext;
 import com.season.lib.http.DownloadAPI;
-import com.season.lib.util.LogUtil;
 
 /**
  *
@@ -110,13 +108,10 @@ public class ImageLoader extends BaseImageLoader {
 
 	@Override
 	protected Bitmap loadImageFromSdcard(String imageUrl, String filePath) {
-		LogUtil.i("loadImageFromSdcard>> "+ imageUrl);
-		LogUtil.i(""+ filePath);
 		if (TextUtils.isEmpty(filePath)){
 			filePath = getCacheFile(imageUrl.hashCode()+"");
 		}
 		File file = new File(filePath);
-		LogUtil.i(""+ file.length());
 		if (file.isFile() && file.length() > 0){
 			Bitmap bitmap = BitmapFactory.decodeFile(filePath);
 			Bitmap scaleBitmap = BitmapUtil.scale(bitmap, mLoadParam.display.widthPixels, mLoadParam.display.heightPixels);

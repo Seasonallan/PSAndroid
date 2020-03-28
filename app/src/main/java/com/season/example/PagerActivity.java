@@ -55,6 +55,7 @@ public class PagerActivity extends Activity {
                 }
             }
         });
+
         mainPageView.addPageView(LayoutInflater.from(PagerActivity.this).inflate(R.layout.page_splash, null));
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -86,6 +87,7 @@ public class PagerActivity extends Activity {
                                 .page(3)
                                 .color(COLOR(R.color.global_yellow))
                 ));
+
                 mainPageView.addPageView(get1ImageView(R.drawable.image_6));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_7));
 

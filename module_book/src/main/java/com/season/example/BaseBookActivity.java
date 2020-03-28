@@ -49,6 +49,8 @@ import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
+
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -296,7 +298,14 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 		if (mBook.netIndex > 0){
 			mReadView = new NetReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
 		}else{
-			mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+			File file  = new File(mBook.filePath);
+			if (file.isFile() && file.length() > 0){
+				mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+			}else{
+				finish();
+				ToastUtil.showToast("文件丢失");
+				return;
+			}
 		}
 		mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		initReaderCatalogView();

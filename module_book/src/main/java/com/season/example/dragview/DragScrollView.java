@@ -17,7 +17,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Scroller;
-  
+
+import com.season.book.bean.BookInfo;
+
 /**
  * 
 /** 
@@ -71,7 +73,7 @@ public class DragScrollView extends ViewGroup implements IDragListener {
 		
 		DragController.getInstance().registerDragListener(this);
 	}
-	
+
 	public interface ICallback<T>{
 		DragAdapter<T> getAdapter(List<T> data);
 		int getColumnNumber();
@@ -100,6 +102,36 @@ public class DragScrollView extends ViewGroup implements IDragListener {
 			gridView.setAdapter(adapter1); 
 			addView(gridView);
 		}
+	}
+
+	public <T> void noItemAdd(T item, ICallback<T> callback) {
+		if (getChildCount() == 0){
+
+		}else{
+			DragGridView itemView = (DragGridView) getChildAt(getChildCount() - 1);
+			int itemCount = itemView.getGridAdapter().getCount();
+			if (itemCount < callback.getColumnNumber() * callback.getLineNumber()){
+				//往当前页面添加
+				itemView.getGridAdapter().addItem(itemCount, item);
+				snapToScreen(getChildCount() - 1);
+				return;
+			}
+		}
+		//添加新的页面
+		int numColumn = callback.getColumnNumber();
+		DragGridView<T> gridView = callback.getItemView();
+		if(gridView == null){
+			gridView = new DragGridView<T>(getContext());
+		}
+		List<T> d = new ArrayList<T>();
+		d.add(item);
+		DragAdapter<T> adapter1 = callback.getAdapter(d);
+		adapter1.setCurrentPage(getChildCount());
+		gridView.setNumColumns(numColumn);
+		gridView.setCurrentPageId(getChildCount());
+		gridView.setAdapter(adapter1);
+		addView(gridView);
+		snapToScreen(getChildCount() - 1);
 	}
 
 	/**
@@ -135,18 +167,6 @@ public class DragScrollView extends ViewGroup implements IDragListener {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
 		final int width = MeasureSpec.getSize(widthMeasureSpec);
-		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		if (widthMode != MeasureSpec.EXACTLY) {
-			throw new IllegalStateException("ScrollLayout only canmCurScreen run at EXACTLY mode!");
-		}
-
-		/**
-		 * wrap_content 传进去的是AT_MOST 固定数�?或fill_parent 传入的模式是EXACTLY
-		 */
-		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		if (heightMode != MeasureSpec.EXACTLY) {
-			throw new IllegalStateException("ScrollLayout only can run at EXACTLY mode!");
-		}
 
 		// The children are given the same width and height as the scrollLayout
 		final int count = getChildCount();

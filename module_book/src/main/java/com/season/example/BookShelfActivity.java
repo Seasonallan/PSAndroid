@@ -3,6 +3,7 @@ package com.season.example;
 import java.util.List;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,18 +17,21 @@ import com.season.example.dragview.DragAdapter;
 import com.season.example.dragview.DragController;
 import com.season.example.dragview.DragGridView;
 import com.season.example.dragview.DragScrollView;
+import com.season.example.transfer.TransferController;
 import com.season.lib.BaseStartPagerActivity;
 import com.season.lib.RoutePath;
 import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.view.LoadingView;
 
 @Route(path= RoutePath.BOOK)
-public class BookShelfActivity extends BaseStartPagerActivity {
+public class BookShelfActivity extends BaseStartPagerActivity implements DragScrollView.ICallback<BookInfo> {
 	private int NUM_COLUMNS = 3;
-	private int NUM_LINES = 4;
+	private int NUM_LINES = 3;
 	private DragScrollView mContainer;  
 	private TextView mPageView;
 	private LoadingView mLoadingView;
+	private TransferController transferController;
+
 	@Override
 	protected int getLayoutId() {
 		return R.layout.activity_shelf;
@@ -38,6 +42,13 @@ public class BookShelfActivity extends BaseStartPagerActivity {
 		super.onCreate(savedInstanceState);
 
 		//DragController.getInstance().disableDelFunction();
+        transferController = new TransferController(this){
+			@Override
+			protected void addFile(String filePath) {
+				DragController.getInstance().cancelDragMode();
+				mContainer.noItemAdd(BookShelfPreLoader.getInstance().decodeFile(filePath), BookShelfActivity.this);
+			}
+		};
 		mPageView = findViewById(R.id.page);
 		mContainer = findViewById(R.id.views);
 		mLoadingView = findViewById(R.id.loadView);
@@ -50,7 +61,7 @@ public class BookShelfActivity extends BaseStartPagerActivity {
 		findViewById(R.id.btn_wifi).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+                transferController.switchStatus();
 			}
 		});
 
@@ -60,46 +71,53 @@ public class BookShelfActivity extends BaseStartPagerActivity {
 
 		BookShelfPreLoader.getInstance().getBookLists(new BookShelfPreLoader.ICallback() {
 			@Override
-			public void onBookLoaded(List<BookInfo> bookLists) {
-				mLoadingView.setVisibility(View.GONE);
-				mContainer.setAdapter(bookLists, new DragScrollView.ICallback<BookInfo>() {
-
+			public void onBookLoaded(final List<BookInfo> bookLists) {
+				new Handler().postDelayed(new Runnable() {
 					@Override
-					public int getColumnNumber() {
-						return NUM_COLUMNS;
+					public void run() {
+						mLoadingView.setVisibility(View.GONE);
+						mContainer.setAdapter(bookLists, BookShelfActivity.this);
 					}
-
-					@Override
-					public DragAdapter<BookInfo> getAdapter(List<BookInfo> data) {
-						return new BookShelfAdapter(BookShelfActivity.this, data);
-					}
-
-					@Override
-					public DragGridView<BookInfo> getItemView() {
-						final DragGridView<BookInfo> view = (DragGridView<BookInfo>) LayoutInflater.from(getApplicationContext()).inflate(R.layout.grid, null);
-						view.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-							@Override
-							public void onItemClick(AdapterView<?> parent, View iview, int position, long id) {
-								BookInfo item = (BookInfo) view.getGridAdapter().getItem(position);
-								BaseBookActivity.open(BookShelfActivity.this, item);
-							}
-						});
-						return view;
-					}
-
-					@Override
-					public int getLineNumber() {
-						return NUM_LINES;
-					}
-				});
+				}, 600);
 			}
 		});
 	}
 
 
 	@Override
+	public int getColumnNumber() {
+		return NUM_COLUMNS;
+	}
+
+	@Override
+	public DragAdapter<BookInfo> getAdapter(List<BookInfo> data) {
+		return new BookShelfAdapter(BookShelfActivity.this, data);
+	}
+
+	@Override
+	public DragGridView<BookInfo> getItemView() {
+		final DragGridView<BookInfo> view = (DragGridView<BookInfo>) LayoutInflater.from(getApplicationContext()).inflate(R.layout.grid, null);
+		view.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View iview, int position, long id) {
+				BookInfo item = (BookInfo) view.getGridAdapter().getItem(position);
+				BaseBookActivity.open(BookShelfActivity.this, item);
+			}
+		});
+		return view;
+	}
+
+	@Override
+	public int getLineNumber() {
+		return NUM_LINES;
+	}
+
+	@Override
 	public void onBackPressed() {
+		if (transferController.onBackPressed()){
+			return;
+		}
 		if(DragController.getInstance().cancelDragMode()){
 			super.onBackPressed();
 		} 
@@ -111,7 +129,7 @@ public class BookShelfActivity extends BaseStartPagerActivity {
 		BookShelfPreLoader.getInstance().saveLocal(mContainer.getFinalDatas());
 		DragController.getInstance().clear();
 	}
-	
+
 
 }
 

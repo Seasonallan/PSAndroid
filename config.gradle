@@ -11,6 +11,7 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
+    useLibrary 'org.apache.http.legacy'
     aaptOptions.cruncherEnabled = false
     aaptOptions.useNewCruncher = false
     defaultConfig {

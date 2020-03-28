@@ -54,7 +54,7 @@ public class EpubPlugin extends PluginManager {
 			for (;enumeration.hasMoreElements();) {
 				zipEntry = enumeration.nextElement();
 				String name = zipEntry.getName();
-				LogUtil.i(">>zip entry name: ", zipEntry.getName());
+				//LogUtil.i(">>zip entry name: ", zipEntry.getName());
 				if(zipEntry.isDirectory()){
 					continue;
 				}
@@ -88,7 +88,7 @@ public class EpubPlugin extends PluginManager {
 				for (;enumeration.hasMoreElements();) {
 					zipEntry = enumeration.nextElement();
 					String name = zipEntry.getName();
-					LogUtil.i("zip entry name: ", zipEntry.getName());
+					//LogUtil.i("zip entry name: ", zipEntry.getName());
 					if(zipEntry.isDirectory()){
 						continue;
 					}
@@ -159,7 +159,7 @@ public class EpubPlugin extends PluginManager {
 	 * @throws IOException
 	 */
 	private void initBookInfo(InputStream zis) throws IOException {
-		LogUtil.i("initBookInfo: ");
+		//LogUtil.i("initBookInfo: ");
 		byte[] data = IOUtil.toByteArray(zis);
 		EpubFileDecoder handler = new EpubFileDecoder(filePath);
 		if(XMLUtil.parserXml(handler, data)){
