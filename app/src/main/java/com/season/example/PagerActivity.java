@@ -14,6 +14,7 @@ import com.season.example.view.PageItem;
 import com.season.example.view.PageItemView;
 import com.season.example.view.ViewPageView;
 import com.season.lib.RoutePath;
+import com.season.lib.bitmap.ImageMemoryCache;
 import com.season.myapplication.R;
 
 
@@ -40,15 +41,16 @@ public class PagerActivity extends Activity {
                     View itemView = ((ViewPageView) v).getCurrentView();
                     if (itemView instanceof PageItemView){
                         int position = ((PageItemView) itemView).getPage();
-                        RoutePath.sCacheBitmap = mainPageView.getCurrentPageBitmap();
-                        RoutePath.sCacheColor = -1;
+                        String path;
                         if (position == 1) {
-                            ARouter.getInstance().build(RoutePath.PS).navigation();
+                            path = RoutePath.PS;
                         } else if (position == 2){
-                            ARouter.getInstance().build(RoutePath.PLUGIN).navigation();
+                            path = RoutePath.PLUGIN;
                         } else {
-                            ARouter.getInstance().build(RoutePath.BOOK).navigation();
+                            path = RoutePath.BOOK;
                         }
+                        ImageMemoryCache.getInstance().put(mainPageView.getCurrentPageBitmap());
+                        ARouter.getInstance().build(path).navigation();
                     }else{
                         mainPageView.gotoNextPage();
                     }
@@ -113,6 +115,11 @@ public class PagerActivity extends Activity {
         imageView.setImageResource(id);
         imageView.setScaleType(scaleType);
         return imageView;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

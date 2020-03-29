@@ -18,12 +18,12 @@ public class HorTranslationAnimController extends AbsHorGestureAnimController {
 	private Rect mNextRect;
 	private Rect mCurrentRect;
 
-	HorTranslationAnimController(Context context){
-		this(context, null);
+	HorTranslationAnimController(){
+		this(null);
 	}
 
-	HorTranslationAnimController(Context context, Interpolator interpolator){
-		super(context, interpolator);
+	HorTranslationAnimController(Interpolator interpolator){
+		super(interpolator);
 		int[] frontShadowColors = new int[] { 0xa0111111, 0x111111 };
 		mShadowDrawableL = new GradientDrawable(
 				GradientDrawable.Orientation.LEFT_RIGHT, frontShadowColors);

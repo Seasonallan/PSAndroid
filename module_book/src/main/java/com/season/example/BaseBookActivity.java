@@ -82,7 +82,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 
 	@Override
 	protected boolean enablePager(){
-		return false;
+		return true;
 	}
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +104,10 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
         mReadContainerView = findViewById(R.id.read_view);
 		mCatalogLay =  findViewById(R.id.content_lay);
 
-        mReadContainerView.setBackgroundColor(ReadSetting.getInstance(this).getThemeBGColor());
+        mReadContainerView.setBackgroundColor(ReadSetting.getInstance().getThemeBGColor());
+
+		initClickDetector();
+		initPullView();
 
         if (getIntent().hasExtra("book")){
         	mBook = (BookInfo) getIntent().getSerializableExtra("book");
@@ -114,7 +117,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 			BookShelfPreLoader.getInstance().getBookLists(new BookShelfPreLoader.ICallback() {
 				@Override
 				public void onBookLoaded(List<BookInfo> bookLists) {
-					int position = ReadSetting.getInstance(BaseBookActivity.this).getReadPosition();
+					int position = ReadSetting.getInstance().getReadPosition();
 					if (position >= bookLists.size()){
 						position = bookLists.size() - 1;
 					}
@@ -122,19 +125,58 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 						position = 0;
 					}
 					mBook = bookLists.get(position);
-					openBook();
+					initReadView();
+					if (isAnimationEnded){
+						openBook();
+					}
 				}
 			});
 		}else{
-			openBook();
+			initReadView();
+        	if (isAnimationEnded){
+				openBook();
+			}
 		}
-
 	}
 
+	@Override
+	protected void onPagerEnded() {
+    	super.onPagerEnded();
+    	if (!isOpened){
+			openBook();
+		}
+	}
+
+	boolean isOpened = false;
 	private void openBook(){
-		initClickDetector();
-		initReadView();
-		initPullView();
+		isOpened = true;
+		new Thread() {
+			@Override
+			public void run() {
+				int[] index = ReadSetting.getInstance().getBookReadProgress(mBook.id);
+				mBook = mReadView.decodeBookFromPlugin(index[0], index[1], "");
+				mCatalogView.setBookInfo(mBook.title, mBook.author);
+			}
+		}.start();
+	}
+
+
+	private void initReadView() {
+		if (mBook.netIndex > 0){
+			mReadView = new NetReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+		}else{
+			File file  = new File(mBook.filePath);
+			if (file.isFile() && file.length() > 0){
+				mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
+			}else{
+				finish();
+				ToastUtil.showToast("文件丢失");
+				return;
+			}
+		}
+		mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		initReaderCatalogView();
+		initMenu();
 	}
 
     private Animation mRotateUpAnimation;
@@ -294,33 +336,6 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 	}
 
 
-    private void initReadView() {
-		if (mBook.netIndex > 0){
-			mReadView = new NetReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-		}else{
-			File file  = new File(mBook.filePath);
-			if (file.isFile() && file.length() > 0){
-				mReadView = new ReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
-			}else{
-				finish();
-				ToastUtil.showToast("文件丢失");
-				return;
-			}
-		}
-		mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-		initReaderCatalogView();
-		initMenu();
-		new Thread() {
-			@Override
-			public void run() {
-				int[] index = ReadSetting.getInstance(BaseBookActivity.this).getBookReadProgress(mBook.id);
-				mBook = mReadView.decodeBookFromPlugin(index[0], index[1], "");
-				mCatalogView.setBookInfo(mBook.title, mBook.author);
-				//mReadView.decodeBookFromPlugin(0, 0, "");
-			}
-		}.start();
-    }
-
     @Override
     public void onChapterChange(ArrayList<Catalog> chapters) {
         if(mCatalogView != null){
@@ -392,7 +407,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 				if(mNotePopWin == null){
 					mNotePopWin = new NotePopWin(mReadView.getContentView());
 				}
-				mNotePopWin.showNote(((NoteSpan) clickableSpan).getNote(),localRect, ReadSetting.getInstance(this).getMinFontSize());
+				mNotePopWin.showNote(((NoteSpan) clickableSpan).getNote(),localRect, ReadSetting.getInstance().getMinFontSize());
 				return true;
 			}else if(clickableSpan instanceof UrlSpna){
 				String urlStr = ((UrlSpna) clickableSpan).getUrl();

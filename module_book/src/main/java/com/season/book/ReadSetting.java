@@ -7,10 +7,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.season.lib.BaseContext;
 import com.season.lib.anim.PageAnimController;
 
 
@@ -65,7 +65,6 @@ public class ReadSetting{
 
     private static final String PREFS_MODULE_INFO = "read_setting_prefs";
     private static ReadSetting sInstance;
-    private Context mContext;
     private LinkedList<WeakReference<SettingListener>> mSettingListenerList;
     private Handler mHandler;
     private SharedPreferences mSharedPreferences;
@@ -74,16 +73,15 @@ public class ReadSetting{
     private int mBrightLevel;
     private int mAnimType;
 
-    public static ReadSetting getInstance(Context context){
+    public static ReadSetting getInstance(){
         if(sInstance == null){
-            sInstance = new ReadSetting(context);
+            sInstance = new ReadSetting();
         }
         return sInstance;
     }
 
-    private ReadSetting(Context context){
-        mContext = context.getApplicationContext();
-        mSharedPreferences = mContext.getSharedPreferences(PREFS_MODULE_INFO, Context.MODE_PRIVATE);
+    private ReadSetting(){
+        mSharedPreferences = BaseContext.getInstance().getSharedPreferences(PREFS_MODULE_INFO, Context.MODE_PRIVATE);
         mFontLevel =  mSharedPreferences.getInt(SETTING_TYPE_FONT_SIZE, FONT_SIZE_COUNT/2);
         mLineSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_FONT_LINE_SPACE_TYPE, LINE_SPACE_COUNT/2);
         mParagraphSpaceLevel = mSharedPreferences.getInt(SETTING_TYPE_FONT_PARAGRAPH_SPACE_TYPE, PARAGRAPH_SPACE_COUNT/2);
@@ -169,13 +167,11 @@ public class ReadSetting{
     }
 
     public int getFontSize(){
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        return (int) (dm.density * (FONT_SIZE_MIN + mFontLevel) + 0.5f);
+        return (int) (BaseContext.getDisplayMetrics().density * (FONT_SIZE_MIN + mFontLevel) + 0.5f);
     }
 
     public int getMinFontSize(){
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        return (int) (dm.density * FONT_SIZE_MIN + 0.5f);
+        return (int) (BaseContext.getDisplayMetrics().density * FONT_SIZE_MIN + 0.5f);
     }
 
     /**

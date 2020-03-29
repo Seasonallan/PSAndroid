@@ -23,7 +23,6 @@ import com.season.lib.http.DownloadAPI;
 public class ImageLoader extends BaseImageLoader { 
 	
 	public static class LoadParam{
-		public int count = 6;
 		public DisplayMetrics display;
 		public DisplayMetrics getDisplayMetrics(){
 			return display;
@@ -60,7 +59,7 @@ public class ImageLoader extends BaseImageLoader {
 	public ImageLoader(LoadParam param) {
 		this.mLoadParam = param;
 		this.mLoadingTag = new HashMap<>();
-		this.mImageMemoryCache = ImageMemoryCache.getInstance(mLoadParam.count);
+		this.mImageMemoryCache = ImageMemoryCache.getInstance();
 	}
 
 	public void setImageViewBitmap(String imageUrl, String filePath,

@@ -60,7 +60,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		super(activity);
 		mReadView = readView;
 		mActivity = activity;
-		mReadSetting = ReadSetting.getInstance(mActivity);
+		mReadSetting = ReadSetting.getInstance();
 		mActionCallback = callback;
 		//设置屏幕亮度
 		setScreenBrightess(mReadSetting.getBrightessLevel());

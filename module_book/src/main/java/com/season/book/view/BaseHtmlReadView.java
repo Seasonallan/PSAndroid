@@ -19,6 +19,7 @@ import com.season.book.event.AbsTextSelectHandler;
 import com.season.book.event.TextSelectHandler;
 import com.season.book.page.span.ColorSpan;
 import com.season.book.page.span.media.ReaderMediaPlayer;
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.dbase.DBConfig;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
@@ -100,12 +101,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		if(player != null){
 			player.release();
 		}
-        if (mCacheBitmap != null){
-            if (!mCacheBitmap.isRecycled()){
-                mCacheBitmap.recycle();
-                mCacheBitmap = null;
-            }
-        }
+		BitmapUtil.recycleBitmaps(mCacheBitmap);
         if(mPageManager != null){
         	mPageManager.release();
         	mPageManager = null;

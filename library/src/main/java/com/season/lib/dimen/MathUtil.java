@@ -24,6 +24,17 @@ public class MathUtil
         CrossP.y = a1 * CrossP.x + b1;
         return CrossP;
     }
+    /**
+     * 求解直线P1P2和直线P3P4的交点坐标
+     */
+    public static float getCrossX(PointF P1, PointF P2, float fx, float fy) {
+        float a1 = (P2.y - P1.y) / (P2.x - P1.x);
+        float b1 = ((P1.x * P2.y) - (P2.x * P1.y)) / (P1.x - P2.x);
+
+        float a2 = (fy - fy) / (fx - 0);
+        float b2 = ((0 * fy) - (fx * fy)) / (0 - fx);
+        return (b2 - b1) / (a1 - a2);
+    }
 
     /**
      * 求pOut在pLine以及pLine2所连直线上的投影点
@@ -57,6 +68,11 @@ public class MathUtil
         point.x = temp * temp * startPoint.x + 2 * t * temp * controlPoint.x + t * t * endPoint.x;
         point.y = temp * temp * startPoint.y + 2 * t * temp * controlPoint.y + t * t * endPoint.y;
         return point;
+    }
+    public static float[] calculateBezierPointForQuadraticFloat(float t, PointF startPoint, PointF controlPoint, PointF endPoint) {
+        float temp = 1 - t;
+        return new float[]{temp * temp * startPoint.x + 2 * t * temp * controlPoint.x + t * t * endPoint.x
+                ,temp * temp * startPoint.y + 2 * t * temp * controlPoint.y + t * t * endPoint.y};
     }
 
     /**

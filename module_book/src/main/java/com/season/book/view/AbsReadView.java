@@ -15,6 +15,7 @@ import android.view.ViewGroup.LayoutParams;
 
 import com.season.book.ReadSetting;
 import com.season.lib.anim.PageAnimController;
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.util.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener, IReaderView{
@@ -59,17 +60,14 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		mTextPaint = new TextPaint();
 		mTempTextPaint = new TextPaint();
 		mTempTextPaint.setAntiAlias(true);
-		mReadSetting = ReadSetting.getInstance(getContext());
+		mReadSetting = ReadSetting.getInstance();
 		mReadSetting.addDataListeners(this);
 		setAnimType(mReadSetting.getAnimType(),true);
 		loadStyleSetting();
 	}
 
 	public void release(){
-		if (mBGBitmap != null){
-			mBGBitmap.recycle();
-			mBGBitmap = null;
-		}
+		BitmapUtil.recycleBitmaps(mBGBitmap);
 	}
 
 	private void loadStyleSetting(){
@@ -77,10 +75,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	}
 	
 	private void loadStyleSetting(boolean isReLayout){
-		if (mBGBitmap != null){
-			mBGBitmap.recycle();
-			mBGBitmap = null;
-		}
+		BitmapUtil.recycleBitmaps(mBGBitmap);
 		mTextPaint.setColor(mReadSetting.getThemeTextColor());
 		mTextPaint.linkColor = Color.BLUE;
 		mTextPaint.setAntiAlias(true);
@@ -163,7 +158,6 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
      */
 	public boolean handlerTouchEvent(MotionEvent event) {
 		if(mCurrentPageIndex != INDEX_INITIAL_CONTENT){
-            //LogUtil.e("handlerTouchEvent ");
 			mPageAnimController.dispatchTouchEvent(event, this);
 		}
 		return true;
@@ -298,8 +292,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 			if (mPageAnimController != null) {
 				mPageAnimController.stopAnim(this);
 			}
-			mPageAnimController = PageAnimController.create(getContext(),
-					animType);
+			mPageAnimController = PageAnimController.create(animType);
 		}
 	}
 

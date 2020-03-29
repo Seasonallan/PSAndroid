@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Scroller;
 
 import com.season.book.bean.BookInfo;
+import com.season.lib.bitmap.BitmapUtil;
 
 /**
  * 
@@ -350,21 +351,21 @@ public class DragScrollView extends ViewGroup implements IDragListener {
 
 	private int dragStartPointY;
 	private int dragStartPointX;
- 
-	private int dragOffsetY;
+
 	private int dragOffsetX;
+	private int dragOffsetY;
  
 	/**
 	 * 生成图片过程
 	 * @param itemView
 	 */
-	private void showCreateDragImageAnimation(final ViewGroup itemView){ 
+	private void showCreateDragImageAnimation(final ViewGroup itemView){
 		itemView.destroyDrawingCache();
 		itemView.setDrawingCacheEnabled(true);
 		itemView.setDrawingCacheBackgroundColor(0x00000000);
 		Bitmap bm = Bitmap.createBitmap(itemView.getDrawingCache(true));
 		Bitmap orignalBitmp = Bitmap.createBitmap(bm, 0,0, bm.getWidth(), bm.getHeight());
-		final Bitmap bitmap = scaleBitmpa(orignalBitmp, 1.0f); 
+		final Bitmap bitmap = BitmapUtil.scaleBitmpa(orignalBitmp, 1.0f);
 		
 		if(mDragController.isDragWorking()){
 			createBitmapInWindow(bitmap, mLongClickX, mLongClickY);
@@ -534,21 +535,7 @@ public class DragScrollView extends ViewGroup implements IDragListener {
 			removeViewAt(getChildCount() -1);
 		}
 	}
-	 
-	/**
-	 * 图片放大缩小
-	 * @param bitmap
-	 * @param scale
-	 * @return
-	 */
-	public static Bitmap scaleBitmpa(Bitmap bitmap, float scale) {
-		Matrix matrix = new Matrix();
-		matrix.postScale(scale, scale); // 长和宽放大缩小的比例
-		Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-				bitmap.getHeight(), matrix, true);
-		return resizeBmp;
-	}
- 
+
 }
 
 

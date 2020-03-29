@@ -1,8 +1,5 @@
 package com.season.lib.anim;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
@@ -15,18 +12,17 @@ import android.view.animation.Interpolator;
 public abstract class PageAnimController{
 	public static final int ANIM_TYPE_PAGE_TURNING = 0;
 	public static final int ANIM_TYPE_TRANSLATION = 1;
-	protected Context mContext;
 
-	public static PageAnimController create(Context context,int type){
-		return create(context, new AccelerateInterpolator(), type);
+	public static PageAnimController create(int type){
+		return create(new AccelerateInterpolator(), type);
 	}
 
-	public static PageAnimController create(Context context, Interpolator interpolator,int type){
+	public static PageAnimController create(Interpolator interpolator,int type){
 		PageAnimController pageAnimController = null;
 		if(ANIM_TYPE_PAGE_TURNING == type){
-			pageAnimController = new PageTurningAnimController(context, interpolator);
+			pageAnimController = new PageTurningAnimController(interpolator);
 		}else if(ANIM_TYPE_TRANSLATION == type){
-			pageAnimController = new HorTranslationAnimController(context, interpolator);
+			pageAnimController = new HorTranslationAnimController(interpolator);
 		}
 		return pageAnimController;
 	}
@@ -54,14 +50,7 @@ public abstract class PageAnimController{
 	 * @param duration
 	 */
 	public abstract void setDuration(int duration);
-	
-	PageAnimController(Context context) {
-		mContext = context;
-	}
-	
-	public Resources getResources(){
-		return mContext.getResources();
-	}
+
 	/**
 	 * 派遣触屏事件
 	 * @param event

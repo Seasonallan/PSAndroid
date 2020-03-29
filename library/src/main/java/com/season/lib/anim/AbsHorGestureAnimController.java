@@ -1,16 +1,15 @@
 package com.season.lib.anim;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.PointF;
-import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
+import com.season.lib.BaseContext;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.util.LogUtil;
 
@@ -41,21 +40,19 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected PointF mDownTouchPoint;
 	protected boolean isAnimStart;
 	protected boolean isTouchStart;
-	protected Handler mHandler;
 
     private int mTouchSlopSquare;
 	public void setDuration(int duration){
 		this.mDuration = duration;
 	}
 
-    AbsHorGestureAnimController(Context context){
-        this(context, null);
+    AbsHorGestureAnimController(){
+        this(null);
     }
 
-    AbsHorGestureAnimController(Context context, Interpolator interpolator){
-        super(context);
-		mHandler = new Handler(context.getMainLooper());
-        mScroller = new Scroller(context, interpolator);
+    AbsHorGestureAnimController( Interpolator interpolator){
+        super();
+        mScroller = new Scroller(BaseContext.getInstance(), interpolator);
         mLastTouchPoint = new PointF();
         mDownTouchPoint = new PointF();
         mContentWidth = -1;
@@ -230,8 +227,8 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		onAnimEnd(isCancelAnim);
 		pageCarver.onStopAnim(isCancelAnim);
 		isCancelAnim = false;
-		BitmapUtil.recycleBitmaps(cacheBitmap);
 		pageCarver.requestInvalidate();
+		BitmapUtil.recycleBitmaps(cacheBitmap);
 	}
 
 	/**

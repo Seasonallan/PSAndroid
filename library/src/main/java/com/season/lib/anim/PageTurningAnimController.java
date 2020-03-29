@@ -1,6 +1,5 @@
 package com.season.lib.anim;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -14,7 +13,6 @@ import android.widget.Scroller;
 
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.dimen.MathUtil;
-import com.season.lib.util.LogUtil;
 
 
 /**
@@ -88,12 +86,12 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private float mRightPageStartX = 0;
 	private boolean isCenterTouchAnim;
 
-	PageTurningAnimController(Context context) {
-		this(context, null);
+	PageTurningAnimController() {
+		this(null);
 	}
 
-	PageTurningAnimController(Context context, Interpolator interpolator) {
-		super(context, interpolator);
+	PageTurningAnimController(Interpolator interpolator) {
+		super(interpolator);
 		createDrawable();
 		mPath0 = new Path();
 		mPath1 = new Path();
@@ -281,21 +279,21 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			for (int x = 0; x <= WIDTH; x++) {
 				float fx = mContentWidth * x  * 1.0f/ WIDTH;
 
-				PointF pointItem = MathUtil.getCross(mBezierStart1, mBezierEnd1,  new PointF(0, fy), new PointF(fx, fy));
-				if (pointItem.x <= fx){
+				float pointItem = MathUtil.getCrossX(mBezierStart1, mBezierEnd1,  fx, fy);
+				if (pointItem <= fx){
 					if(!mIsRTandLB){
-						float percent = (fx - pointItem.x)/xWidth;
+						float percent = (fx - pointItem)/xWidth;
 						percent = percent >= 1? 1: percent;
-						PointF pointF = MathUtil.calculateBezierPointForQuadratic(percent, mBezierStart1, mBezierControl1, mBezierEnd1);
+						float[] pointF = MathUtil.calculateBezierPointForQuadraticFloat(percent, mBezierStart1, mBezierControl1, mBezierEnd1);
 
-						verts[index * 2 + 0] = fx - Math.abs(fx - pointItem.x -(pointF.x - mBezierStart1.x));
-						verts[index * 2 + 1] = fy - Math.abs(pointF.y - mBezierStart1.y);
+						verts[index * 2 + 0] = fx - Math.abs(fx - pointItem -(pointF[0] - mBezierStart1.x));
+						verts[index * 2 + 1] = fy - Math.abs(pointF[1] - mBezierStart1.y);
 					}else{
-						float percent = (fx - pointItem.x)/xWidth;
-						PointF pointF = MathUtil.calculateBezierPointForQuadratic(percent, mBezierStart1, mBezierControl1, mBezierEnd1);
+						float percent = (fx - pointItem)/xWidth;
+						float[] pointF = MathUtil.calculateBezierPointForQuadraticFloat(percent, mBezierStart1, mBezierControl1, mBezierEnd1);
 
-						verts[index * 2 + 0] = fx - Math.abs(fx - pointItem.x -(pointF.x - mBezierStart1.x));
-						verts[index * 2 + 1] = fy + Math.abs(pointF.y - mBezierStart1.y);
+						verts[index * 2 + 0] = fx - Math.abs(fx - pointItem -(pointF[0] - mBezierStart1.x));
+						verts[index * 2 + 1] = fy + Math.abs(pointF[1] - mBezierStart1.y);
 					}
 				}else {
 					verts[index * 2 + 0] = fx;
@@ -443,6 +441,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		}
 		canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, verts, 0, null, 0, null);
 		canvas.drawColor(0xaaffffff);
+        pointCacheY.clear();
+        pointCacheX.clear();
 	}
 
 

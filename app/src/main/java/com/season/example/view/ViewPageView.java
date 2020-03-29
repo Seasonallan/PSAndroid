@@ -61,7 +61,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     private void init() {
         mScroller = new Scroller(getContext(), new LinearInterpolator());
         mTouchDownPoint = new PointF();
-        mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
+        mPageAnimController = PageAnimController.create(new LinearInterpolator(),
                 PageAnimController.ANIM_TYPE_PAGE_TURNING);
 
         mPageAnimController.setDurationKeep(true);
@@ -220,6 +220,23 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         return viewList.get(currentPage);
     }
 
+    /**
+     * 添加一个页面
+     */
+    public void addPageView(int position, View view) {
+        viewList.add(position, view);
+        if (getWidth() > 0) {
+            view.measure(widthMeasureSpec, heightMeasureSpec);
+            view.layout(getLeft(), getTop(), getRight(), getBottom());
+        } else {
+            requestLayout();
+        }
+        if (position == currentPage){
+            mBindPagePicture.init(-1);
+            mPagePicture.init(-1);
+            invalidate();
+        }
+    }
     /**
      * 添加一个页面
      *

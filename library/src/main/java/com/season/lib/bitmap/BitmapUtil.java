@@ -133,6 +133,20 @@ public class BitmapUtil {
 
 
 	/**
+	 * 图片放大缩小
+	 * @param bitmap
+	 * @param scale
+	 * @return
+	 */
+	public static Bitmap scaleBitmpa(Bitmap bitmap, float scale) {
+		Matrix matrix = new Matrix();
+		matrix.postScale(scale, scale); // 长和宽放大缩小的比例
+		Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+				bitmap.getHeight(), matrix, true);
+		return resizeBmp;
+	}
+
+	/**
 	 * 缩放bitmap
 	 * @param bitmap
 	 * @param width

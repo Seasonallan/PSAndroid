@@ -3,15 +3,12 @@ package com.season.lib.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-
 import androidx.annotation.Nullable;
-
 import com.season.lib.anim.PageAnimController;
-import com.season.lib.RoutePath;
-import com.season.lib.bitmap.BitmapUtil;
 
 /**
  * 可动态添加的翻页类ViewPager
@@ -37,7 +34,7 @@ public class StartPageView extends View implements PageAnimController.PageCarver
     private PageAnimController mPageAnimController;
 
     private void init(){
-        mPageAnimController = PageAnimController.create(getContext(), new LinearInterpolator(),
+        mPageAnimController = PageAnimController.create(new LinearInterpolator(),
                 PageAnimController.ANIM_TYPE_PAGE_TURNING);
 
         mPageAnimController.setDurationKeep(true);
@@ -61,17 +58,13 @@ public class StartPageView extends View implements PageAnimController.PageCarver
 
     private int currentPage = 0;
 
-    public void setBiamtp(Bitmap bitmap) {
+    public void setBitmap(Bitmap bitmap) {
         currentPage = 0;
         this.bitmap = bitmap;
         invalidate();
     }
 
     private Bitmap bitmap;
-
-    public void release(){
-        BitmapUtil.recycleBitmaps(bitmap);
-    }
 
 
     @Override
@@ -85,7 +78,8 @@ public class StartPageView extends View implements PageAnimController.PageCarver
     @Override
     public void drawPage(Canvas canvas, int index) {
         if (index == currentPage){
-            canvas.drawBitmap(bitmap, 0, 0, null);
+            canvas.drawBitmap(bitmap, new Rect(0, 0,bitmap.getWidth() ,bitmap.getHeight()),
+                    new Rect(0,0,getWidth(), getHeight()), null);
         }else{
             //canvas.drawColor(0, PorterDuff.Mode.CLEAR);
         }
@@ -133,7 +127,7 @@ public class StartPageView extends View implements PageAnimController.PageCarver
 
     @Override
     public int getPageBackgroundColor() {
-        return RoutePath.sCacheColor;
+        return -1;
     }
 
     @Override
@@ -144,10 +138,14 @@ public class StartPageView extends View implements PageAnimController.PageCarver
     @Override
     public void onStopAnim(boolean isCancel) {
         if (isFinish){
-             performClick();
+            performClick();
         }else {
-            setVisibility(View.GONE);
+            onLoaded();
         }
+    }
+
+    public void onLoaded(){
+        setVisibility(View.GONE);
     }
 
 }

@@ -60,7 +60,7 @@ public abstract class BaseReadView extends AbsReadView{
     @Override
     public void release() {
         super.release();
-        ReadSetting.getInstance(getContext()).saveBookReadProgress(mBook.id, mCurrentChapterIndex, getCurPageStartIndex());
+        ReadSetting.getInstance().saveBookReadProgress(mBook.id, mCurrentChapterIndex, getCurPageStartIndex());
         mBookMarkTip = null;
         if (batteryView != null){
             batteryView.stop();
@@ -181,7 +181,7 @@ public abstract class BaseReadView extends AbsReadView{
             batteryView = new BatteryView(getContext(), mReadSetting, new Runnable() {
                 @Override
                 public void run() {
-                    ReadSetting.getInstance(getContext()).saveBookReadProgress(mBook.id, mCurrentChapterIndex, getCurPageStartIndex());
+                    ReadSetting.getInstance().saveBookReadProgress(mBook.id, mCurrentChapterIndex, getCurPageStartIndex());
                     if (!isAnimating()){
                         postInvalidate();
                     }

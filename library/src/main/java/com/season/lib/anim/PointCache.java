@@ -19,6 +19,15 @@ public class PointCache {
     private List<PointF> bezierLinePoints;
     private List<Float> bezierLineLengths;
 
+    public void clear(){
+        bezierPoints.clear();
+        bezierLinePoints.clear();
+        bezierLineLengths.clear();
+        bezierLineLengths = null;
+        bezierLinePoints = null;
+        bezierPoints = null;
+    }
+
     public float getMaxLine(PointF startPoint){
         float maxLength = 0;
         bezierLineLengths = new ArrayList<>();

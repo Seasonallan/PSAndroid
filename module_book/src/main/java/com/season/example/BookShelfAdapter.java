@@ -26,9 +26,6 @@ public class BookShelfAdapter extends DragAdapter<BookInfo> implements OnClickLi
 		imageLoader = ImageLoader.getInstance(mItemWidth, mItemHeight);
 	} 
 
-
-
-	
 	@Override
 	public View getView(int position) {
 		
@@ -57,10 +54,8 @@ public class BookShelfAdapter extends DragAdapter<BookInfo> implements OnClickLi
 			}
 		}
 		titleView.setText(info.title);
-
 		return convertView;
 	}
-
 
 	@Override
 	public void onClick(View v) {
