@@ -30,6 +30,7 @@
 			android:textColor="@drawable/menu_textcolor_selector"
 			android:paddingLeft="16dp"
 			android:paddingRight="16dp"
+			android:visibility="gone"
 			android:text="书架"
 			android:textSize="16dp" />
 	</FrameLayout>

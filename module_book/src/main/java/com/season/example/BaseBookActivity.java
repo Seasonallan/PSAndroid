@@ -184,7 +184,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 						if (isLeft){
 							onPagerFinish();
 						}else{
-							startActivity(new Intent(BaseBookActivity.this, BookShelfActivity.class));
+							//startActivity(new Intent(BaseBookActivity.this, BookShelfActivity.class));
 						}
 					}
 					@Override
