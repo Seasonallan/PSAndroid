@@ -24,9 +24,9 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	public static final int DURATION_DEFAULT = 600;
 
 	protected int mDuration = DURATION_DEFAULT;
-	private Scroller mScroller;
+	protected Scroller mScroller, mScrollerStart;
 	private boolean isCancelAnim;
-	private Boolean isRequestNextPage;
+	protected Boolean isRequestNextPage;
 	private int mLastMoveX;
 	protected int mHalfScreenWidth;
 	protected int mHalfScreenHeight;
@@ -50,9 +50,10 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
         this(null);
     }
 
-    AbsHorGestureAnimController( Interpolator interpolator){
+    AbsHorGestureAnimController(Interpolator interpolator){
         super();
-        mScroller = new Scroller(BaseContext.getInstance(), interpolator);
+		mScroller = new Scroller(BaseContext.getInstance(), interpolator);
+		mScrollerStart = new Scroller(BaseContext.getInstance(), interpolator);
         mLastTouchPoint = new PointF();
         mDownTouchPoint = new PointF();
         mContentWidth = -1;
@@ -86,73 +87,74 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		contentPath.lineTo(0, mContentHeight);
 		contentPath.close();
 	}
-	
+
+	protected boolean onTouchDown = false;
+	private MotionEvent mCurrentMotionEvent;
 	@Override
 	public void dispatchTouchEvent(MotionEvent event, PageCarver pageCarver) {
 		if(!mScroller.isFinished()){
 			LogUtil.i(TAG,"dispatchTouchEvent isAnimStop");
 			stopAnim(pageCarver);
 		}
+		mCurrentMotionEvent = event;
 		checkInit(pageCarver);
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			mDownTouchPoint.set(event.getX(), event.getY());
 			mLastTouchPoint.set(event.getX(), event.getY());
 			mLastMoveX = 0;
+			onTouchDown = true;
 			break;
 		case MotionEvent.ACTION_MOVE:
 			int moveX = (int) (mDownTouchPoint.x - event.getX());
 			if(isRequestNextPage == null){
-				if(Math.abs(moveX) > 5){
-					Integer requestPageIndex = null;
-					if(moveX > 0){
-						requestPageIndex = pageCarver.requestNextPage();
-						if(requestPageIndex != null){
-							isRequestNextPage = true;
-							int currentPageIndex = pageCarver.getCurrentPageIndex();
-							onRequestPage(isRequestNextPage,currentPageIndex,requestPageIndex,mLastTouchPoint.x,mLastTouchPoint.y);
-							isTouchStart = true;
-						}else{
-							isTouchStart = false;
-						}
+				Integer requestPageIndex = null;
+				if(moveX > 0){
+					requestPageIndex = pageCarver.requestNextPage();
+					if(requestPageIndex != null){
+						isRequestNextPage = true;
+						int currentPageIndex = pageCarver.getCurrentPageIndex();
+						onRequestPage(isRequestNextPage,currentPageIndex,requestPageIndex,mLastTouchPoint.x,mLastTouchPoint.y);
+						isTouchStart = true;
 					}else{
-						requestPageIndex = pageCarver.requestPrePage();
-						if(requestPageIndex != null){
-							isRequestNextPage = false;
-							int currentPageIndex = pageCarver.getCurrentPageIndex();
-							onRequestPage(isRequestNextPage,currentPageIndex,requestPageIndex,mLastTouchPoint.x,mLastTouchPoint.y);
-							isTouchStart = true;
-						}else{
-							isTouchStart = false;
-						}
-					}
-				}
-			}else{
-				if(isRequestNextPage){
-					if(moveX < 0){
-						mDownTouchPoint.set(mDownTouchPoint.x - moveX, mDownTouchPoint.y);
+						isTouchStart = false;
 					}
 				}else{
-					if(moveX > 0){
-						mDownTouchPoint.set(mDownTouchPoint.x - moveX, mDownTouchPoint.y);
+					requestPageIndex = pageCarver.requestPrePage();
+					if(requestPageIndex != null){
+						isRequestNextPage = false;
+						int currentPageIndex = pageCarver.getCurrentPageIndex();
+						onRequestPage(isRequestNextPage,currentPageIndex,requestPageIndex,mLastTouchPoint.x,mLastTouchPoint.y);
+						isTouchStart = true;
+					}else{
+						isTouchStart = false;
 					}
 				}
 			}
-            mLastMoveX = (int) (mLastTouchPoint.x - event.getX());
+
             final int deltaX = (int) (event.getX() - mLastTouchPoint.x);
             final int deltaY = (int) (event.getY() - mLastTouchPoint.y);
             int distance = (deltaX * deltaX) + (deltaY * deltaY);
             if (!touchStickMode || distance > mTouchSlopSquare) {
-                mLastTouchPoint.set(event.getX(), event.getY());
-                pageCarver.requestInvalidate();
+				if (durationKeep){
+					mLastTouchPoint.set(event.getX(), event.getY());
+					pageCarver.requestInvalidate();
+				}else{
+					onPageStart(event.getX(), event.getY(), pageCarver);
+				}
+				mLastMoveX = -deltaX;
             }
 			break;
 		case MotionEvent.ACTION_UP:
+			if(!mScrollerStart.isFinished()){
+				mScrollerStart.abortAnimation();
+				mLastTouchPoint.set(event.getX(), event.getY());
+			}
 			if(isRequestNextPage != null){
 				if(isRequestNextPage && mLastMoveX < 0){
-					startCancelAnim(isRequestNextPage, pageCarver);
+					startCancelAnim(true, pageCarver);
 				}else if(!isRequestNextPage && mLastMoveX > 0){
-					startCancelAnim(isRequestNextPage, pageCarver);
+					startCancelAnim(false, pageCarver);
 				}else{
 					startAnim(isRequestNextPage, pageCarver);
 				}
@@ -162,12 +164,26 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		}
 	}
 
+	protected void onPageStart(final float x, final float y, final PageCarver pageCarver){
+		mLastTouchPoint.set(x, y);
+		pageCarver.requestInvalidate();
+	}
+
 	@Override
 	public boolean dispatchDrawPage(Canvas canvas, final PageCarver pageCarver) {
 		if(isRequestNextPage == null){
 			return false;
 		}
 		checkInit(pageCarver);
+		if (!mScrollerStart.isFinished() && mScrollerStart.computeScrollOffset()){
+			mLastTouchPoint.set(mScrollerStart.getCurrX() - (mScrollerStart.getFinalX() - mCurrentMotionEvent.getX()),
+					mScrollerStart.getCurrY() - (mScrollerStart.getFinalY() - mCurrentMotionEvent.getY()));
+			onDrawAnim(canvas,isCancelAnim,isRequestNextPage, pageCarver);
+			pageCarver.requestInvalidate();
+			return true;
+		}
+
+
 		boolean isUnFinished = !mScroller.isFinished() && mScroller.computeScrollOffset();
 		if(isUnFinished){
 		    if (isFullAnimation && !isCancelAnim){

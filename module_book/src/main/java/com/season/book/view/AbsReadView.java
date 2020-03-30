@@ -210,7 +210,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 		if(bgRes == -1){
 			canvas.drawColor(mReadSetting.getThemeBGColor());
 		}else{
-			if (mBGBitmap == null){
+			if (!BitmapUtil.isBitmapAvaliable(mBGBitmap)){
 				mBGBitmap = BitmapFactory.decodeResource(getResources(), bgRes);
 			}
 			canvas.drawBitmap(mBGBitmap, new Rect(0, 0, mBGBitmap.getWidth(), mBGBitmap.getHeight()),

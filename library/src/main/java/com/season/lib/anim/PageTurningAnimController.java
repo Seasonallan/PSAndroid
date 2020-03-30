@@ -11,8 +11,10 @@ import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
+import com.season.lib.BaseContext;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.dimen.MathUtil;
+import com.season.lib.util.LogUtil;
 
 
 /**
@@ -151,6 +153,26 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	}
 
 	@Override
+	protected void onPageStart(float x, float y, PageCarver pageCarver){
+		if (!mScrollerStart.isFinished()){
+			return;
+		}
+		if (onTouchDown){
+			onTouchDown = false;
+			if (isRequestNextPage != null){
+				if (isRequestNextPage){
+					mScrollerStart.startScroll(mCornerX, mCornerY, (int)x - mCornerX, (int)y - mCornerY , 200);
+				}else{
+					mScrollerStart.startScroll(0, 0, (int)x, (int)y , 200);
+				}
+				pageCarver.requestInvalidate();
+			}
+		}else{
+			super.onPageStart(x, y , pageCarver);
+		}
+	}
+
+	@Override
 	protected void setDefaultTouchPoint(boolean isNext) {
 		if(isNext){
 			mDownTouchPoint.x = mContentWidth / 4 * 3;
@@ -254,7 +276,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private void drawCurrentPageWarpingArea(Canvas canvas,boolean isLeftPage) {
 		int index = 0;
 		int WIDTH = 60;
-		int HEIGHT = 60;
+		int HEIGHT = 120;
 		int COUNT = (WIDTH + 1) * (HEIGHT + 1);
 		float[] verts = new float[COUNT * 2];
 
