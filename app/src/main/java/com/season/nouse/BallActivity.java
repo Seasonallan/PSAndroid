@@ -1,4 +1,4 @@
-package com.season.example;
+package com.season.nouse;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,9 +8,7 @@ import android.view.WindowManager;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.lib.RoutePath;
 import com.season.myapplication.R;
-import com.season.playball.Ball;
-import com.season.playball.BallView;
-import com.season.playball.interpolator.BallInterpolatorFactory;
+import com.season.nouse.interpolator.BallInterpolatorFactory;
 
 public class BallActivity extends Activity{
 

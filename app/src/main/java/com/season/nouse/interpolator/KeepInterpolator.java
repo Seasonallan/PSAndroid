@@ -1,4 +1,4 @@
-package com.season.playball.interpolator;
+package com.season.nouse.interpolator;
 
 /**
  * Disc: 速度不变

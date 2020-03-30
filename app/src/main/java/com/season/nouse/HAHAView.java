@@ -1,4 +1,4 @@
-package com.season.example.view;
+package com.season.nouse;
 
 import android.content.Context;
 import android.graphics.Canvas;

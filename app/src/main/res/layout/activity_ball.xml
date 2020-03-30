@@ -6,11 +6,11 @@
     android:background="@android:color/white"
     android:orientation="vertical" >
 
-    <com.season.playball.BallView
+    <com.season.nouse.BallView
         android:id="@+id/top_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-    </com.season.playball.BallView>
+    </com.season.nouse.BallView>
 
 </LinearLayout>

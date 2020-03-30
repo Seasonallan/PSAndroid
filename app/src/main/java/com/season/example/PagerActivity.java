@@ -99,7 +99,6 @@ public class PagerActivity extends Activity {
         setContentView(mainPageView);
         mainPageView.scrollShowDelay(1000);
 
-        BookShelfPreLoader.getInstance().preLoad();
     }
 
     private int COLOR(int id){

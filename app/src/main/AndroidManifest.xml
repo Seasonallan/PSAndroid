@@ -9,7 +9,7 @@
         android:allowBackup="true"
         android:icon="@drawable/img_me"
         android:label="season"
-        android:name="com.season.example.SeasonApplication"
+        android:name="com.season.SeasonApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.season.example.BallActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.season.nouse.BallActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.season.example.PagerActivity" android:screenOrientation="portrait"/>
 
 
