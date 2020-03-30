@@ -33,6 +33,12 @@ public class ViewBitmapPicture{
 		return mBitmap;
 	}
 
+	public void setBitmap(Bitmap bitmap, int width, int height){
+		this.mBitmap = Bitmap.createBitmap(width, height,Config.RGB_565);
+		this.mCanvas = new Canvas(mBitmap);
+		this.mCanvas.drawBitmap(bitmap, 0, 0, null);
+	}
+
 	public boolean equals(int index) {
 		return mViewIndex == index;
 	}

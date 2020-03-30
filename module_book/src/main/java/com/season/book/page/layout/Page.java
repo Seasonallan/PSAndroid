@@ -343,19 +343,6 @@ public class Page extends AbsPatch implements PatchParent {
 		super.bindPatchParent(parent, styleText);
 		mDrawCallback = callback;
 		mTextPaint = new TextPaint();
-//		if(mPatchs == null){
-//			LinkedList<Patch> patchs = mCachePatchs.get();
-//			mCachePatchs.clear();
-//			if(patchs != null){
-//				mPatchs = patchs;
-//			}else{
-//				mPatchs = new LinkedList<Patch>();
-//			}
-//		}
-//		if(mPatchs.isEmpty()){
-//			mPanleLines.clear();
-//			new Layout(mSettingParam).layoutPage(mStyleText, this);
-//		}
 		for (Patch patch : mPatchs) {
 			patch.bindPatchParent(this, styleText);
 		}
@@ -369,8 +356,6 @@ public class Page extends AbsPatch implements PatchParent {
 			for (Patch patch : mPatchs) {
 				patch.unBindPatchParent();
 			}
-//			mCachePatchs = new SoftReference<LinkedList<Patch>>(mPatchs);
-//			mPatchs = null;
 		}
 		super.unBindPatchParent();
 	}

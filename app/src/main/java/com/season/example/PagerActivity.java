@@ -82,7 +82,7 @@ public class PagerActivity extends Activity {
                 ));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_4));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_5));
-                mainPageView.addPageView(new PageItemView(PagerActivity.this,
+                mainPageView.addPageView(0, new PageItemView(PagerActivity.this,
                         PageItem.create("书籍阅读器", "乐阅 2014")
                                 .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
                                 .decorateContent(" • 核心 •", "书籍解析", "页面排版", "动画控制", "事件派发")

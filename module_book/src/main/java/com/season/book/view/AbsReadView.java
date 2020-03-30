@@ -174,19 +174,17 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	@Override
 	public void drawPage(Canvas canvas,int requestPage) {
 		int chapterIndex = 0;
-		boolean isCurrentPage = false;
 		if(requestPage < 0){
 			requestPage = mRequestPageIndex;
 			chapterIndex = mRequestChapterIndex;
 		}else{
 			requestPage = mCurrentPageIndex;
 			chapterIndex = mCurrentChapterIndex;
-			isCurrentPage = true;
 		}
 		if(requestPage < 0){
 			requestPage = -requestPage - 1;
 		}
-		if(chapterIndex == INDEX_INITIAL_CONTENT || !onDrawPage(canvas,isCurrentPage, chapterIndex, requestPage)){
+		if(chapterIndex == INDEX_INITIAL_CONTENT || !onDrawPage(canvas, chapterIndex, requestPage)){
 			drawWaitPage(canvas, false);
 		}else{
 			drawBookMarkTip(canvas, chapterIndex, requestPage);
@@ -497,7 +495,7 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	 * @param chapterIndex
 	 * @param pageIndex
 	 */
-	protected abstract boolean onDrawPage(Canvas canvas,boolean isCurrentPage,int chapterIndex,int pageIndex);
+	protected abstract boolean onDrawPage(Canvas canvas,int chapterIndex,int pageIndex);
 	/**
 	 * 绘制等待界面
 	 * @param canvas

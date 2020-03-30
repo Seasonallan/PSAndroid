@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import com.season.lib.anim.PageAnimController;
 import com.season.book.page.ViewBitmapPicture;
+import com.season.lib.util.LogUtil;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 
@@ -47,7 +48,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     /**
      * 请求页缓存
      */
-    private ViewBitmapPicture mPagePicture;
+    private ViewBitmapPicture mPageNextPicture, mPageLastPicture;
     /**
      * 当前绑定页缓存
      */
@@ -68,8 +69,9 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         mPageAnimController.setTouchStickMode(false);
         //mPageAnimController.setDuration(1680);
         viewList = new ArrayList<>();
-        mPagePicture = new ViewBitmapPicture(-1);
+        mPageNextPicture = new ViewBitmapPicture(-1);
         mBindPagePicture = new ViewBitmapPicture(-1);
+        mPageLastPicture = new ViewBitmapPicture(-1);
 
         mNavigationBarHeight = NavigationBarUtil.getNavigationBarHeight(getContext());
 
@@ -163,11 +165,13 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     private boolean isPressInvalid;
     private MotionEvent motionEvent;
 
+    private boolean isAbort = false;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         this.motionEvent = ev;
         isTouchStart = true;
         if (!mScroller.isFinished()) {
+            isAbort = true;
             mScroller.abortAnimation();
         }
         mPageAnimController.setTouchStickMode(true);
@@ -194,6 +198,11 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 if (!isPressInvalid) {
+                    if (isAbort){
+                        isAbort = false;
+                        mPageAnimController.dispatchTouchEvent(createEvent(MotionEvent.ACTION_MOVE,
+                                getWidth(), getHeight()), this);
+                    }
                     performClick();
                 } else {
                     mPageAnimController.dispatchTouchEvent(ev, this);
@@ -204,15 +213,6 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     }
 
     private int currentPage = 0;
-
-    /**
-     * 获取当前页面页码
-     *
-     * @return
-     */
-    public int getCurrentPage() {
-        return currentPage;
-    }
 
     public View getCurrentView() {
         currentPage = currentPage < 0 ? 0 : currentPage;
@@ -233,7 +233,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         }
         if (position == currentPage){
             mBindPagePicture.init(-1);
-            mPagePicture.init(-1);
+            mPageNextPicture.init(-1);
             invalidate();
         }
     }
@@ -254,7 +254,8 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
 
     public void release() {
         mBindPagePicture.release();
-        mPagePicture.release();
+        mPageLastPicture.release();
+        mPageNextPicture.release();
     }
 
     @Override
@@ -313,11 +314,19 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
             }
             mBindPagePicture.onDraw(canvas);
         } else {
-            if (!mPagePicture.equals(index)) {
-                mPagePicture.init(index);
-                viewList.get(index).draw(mPagePicture.getCanvas(getWidth(), getHeight()));
+            if (index > currentPage){
+                if (!mPageNextPicture.equals(index)) {
+                    mPageNextPicture.init(index);
+                    viewList.get(index).draw(mPageNextPicture.getCanvas(getWidth(), getHeight()));
+                }
+                mPageNextPicture.onDraw(canvas);
+            }else{
+                if (!mPageLastPicture.equals(index)) {
+                    mPageLastPicture.init(index);
+                    viewList.get(index).draw(mPageLastPicture.getCanvas(getWidth(), getHeight()));
+                }
+                mPageLastPicture.onDraw(canvas);
             }
-            mPagePicture.onDraw(canvas);
         }
     }
 
@@ -385,15 +394,39 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
 
     }
 
+    /**
+     * 是否需要预加载前后两张
+     */
+    private static final boolean PRE_LOAD = true;
     @Override
     public void onStopAnim(boolean isCancel) {
         if (!isCancel) {
+            boolean isNext = requestPage > currentPage;
             currentPage = requestPage;
+            if (PRE_LOAD){
+                if (currentPage < viewList.size() - 1){
+                    if (!mPageNextPicture.equals(currentPage + 1)) {
+                        mPageNextPicture.init(currentPage + 1);
+                        if (isNext){
+                            viewList.get(currentPage + 1).draw(mPageNextPicture.getCanvas(getWidth(), getHeight()));
+                        }else{
+                            mPageNextPicture.setBitmap(mBindPagePicture.getBitmap(), getWidth(), getHeight());
+                        }
+                    }
+                }
+                if(currentPage > 0){
+                    if (!mPageLastPicture.equals(currentPage - 1)) {
+                        mPageLastPicture.init(currentPage - 1);
+                        if (isNext){
+                            mPageLastPicture.setBitmap(mBindPagePicture.getBitmap(), getWidth(), getHeight());
+                        }else{
+                            viewList.get(currentPage - 1).draw(mPageLastPicture.getCanvas(getWidth(), getHeight()));
+                        }
+                    }
+                }
+            }
         }
         requestPage = -1;
     }
 
-    public int getCurrentPageColor() {
-        return -1;
-    }
 }

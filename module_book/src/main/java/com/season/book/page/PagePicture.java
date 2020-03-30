@@ -2,6 +2,7 @@ package com.season.book.page;
 
 import com.season.book.page.layout.Page;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Picture;
 
@@ -24,7 +25,17 @@ public class PagePicture extends Picture implements IPagePicture{
 	@Override
 	public void release() {
 	}
-	
+
+	@Override
+	public Bitmap getBitmap() {
+		return null;
+	}
+
+	@Override
+	public void setBitmap(Bitmap bitmap, int width, int height) {
+
+	}
+
 	@Override
 	public boolean equals(int chapterIndex, int index) {
 		return mPageIndex == index && mChapterIndex == chapterIndex;

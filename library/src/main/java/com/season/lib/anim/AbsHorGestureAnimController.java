@@ -142,8 +142,8 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 				}else{
 					onPageStart(event.getX(), event.getY(), pageCarver);
 				}
-				mLastMoveX = -deltaX;
             }
+			mLastMoveX = -deltaX;
 			break;
 		case MotionEvent.ACTION_UP:
 			if(!mScrollerStart.isFinished()){

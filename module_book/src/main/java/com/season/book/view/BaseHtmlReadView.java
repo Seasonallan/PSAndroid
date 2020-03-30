@@ -286,8 +286,6 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 		}
 	}
 
-
-
 	@Override
 	public BookMark newUserBookmark() {
 		if(mChapterSize != null && mBook != null && mCurrentChapterIndex >= 0 && mCurrentChapterIndex <= mChapterSize - 1){
@@ -419,8 +417,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	}
 
 	@Override
-	protected boolean onDrawPage(Canvas canvas, boolean isCurrentPage,int chapterIndex, int pageIndex) {
-		long time = System.currentTimeMillis();
+	protected boolean onDrawPage(Canvas canvas, int chapterIndex, int pageIndex) {
 		if(mTextSelectHandler != null && mTextSelectHandler.isSelect()){
 			if(mCacheBitmap == null){
 				mCacheBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Config.RGB_565);
@@ -428,20 +425,18 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 			}
 			mCacheBitmapCanvas.drawColor(0, Mode.CLEAR);
 			mTextSelectHandler.handlerDrawPre();
-			mPageManager.requestDrawPage(mCacheBitmapCanvas, chapterIndex,pageIndex,mRequestChapterIndex, -mRequestPageIndex - 1);
+			mPageManager.requestDrawPage(mCacheBitmapCanvas, chapterIndex, pageIndex, mCurrentChapterIndex, mCurrentPageIndex);
 			canvas.drawBitmap(mCacheBitmap, 0, 0, null);
 			mTextSelectHandler.handlerDrawPost(canvas,mCacheBitmap);
 		}else{
-			int result = PageManager.RESULT_UN_INIT;
 			mCacheBitmap = null;
 			mCacheBitmapCanvas = null;
-			result = mPageManager.requestDrawPage(canvas, chapterIndex,pageIndex,mRequestChapterIndex, -mRequestPageIndex - 1);
+			int result = mPageManager.requestDrawPage(canvas, chapterIndex,pageIndex, mCurrentChapterIndex, mCurrentPageIndex);
 			if(mRequestDrawResult != PageManager.RESULT_SUCCESS && result == PageManager.RESULT_SUCCESS && mTextSelectHandler != null){
 				mTextSelectHandler.reLoadView();
 			}
 			mRequestDrawResult = result;
 		}
-		//LogUtil.e("onDraw--post>>> page=" + pageIndex +" >>" + (System.currentTimeMillis() - time));
 		return true;
 	}
 	
@@ -482,9 +477,12 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 
 	@Override
 	public void onStopAnim(boolean isCancel) {
+		int recordChapterIndex = mCurrentChapterIndex;
+		int recordPageIndex = mCurrentPageIndex;
 		super.onStopAnim(isCancel);
 		if(!isCancel){
 			updateSelectTexts(mCurrentChapterIndex);
+			mPageManager.preLoadPage(mCurrentChapterIndex, mCurrentPageIndex, recordChapterIndex, recordPageIndex);
 		}
 	}
 	

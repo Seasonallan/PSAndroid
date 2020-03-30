@@ -42,6 +42,19 @@ public class PageBitmapPicture implements IPagePicture{
 	}
 
 	@Override
+	public Bitmap getBitmap(){
+		return mBitmap;
+	}
+
+	@Override
+	public void setBitmap(Bitmap bitmap, int width, int height){
+		this.mBitmap = Bitmap.createBitmap(width, height,Config.RGB_565);
+		this.mCanvas = new Canvas(mBitmap);
+		this.mCanvas.drawBitmap(bitmap, 0, 0, null);
+	}
+
+
+	@Override
 	public Canvas getCanvas(int width, int height) {
 		if(mBitmap == null){
 			mBitmap = Bitmap.createBitmap(width, height,Config.RGB_565);
