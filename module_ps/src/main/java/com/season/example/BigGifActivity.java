@@ -76,7 +76,7 @@ public class BigGifActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ToastUtil.show("下载失败，请稍候重试");
+                            ToastUtil.showToast("下载失败，请稍候重试");
                         }
                     });
                 }

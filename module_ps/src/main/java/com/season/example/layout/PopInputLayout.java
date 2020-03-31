@@ -76,7 +76,7 @@ public abstract class PopInputLayout extends FrameLayout implements View.OnClick
         } else if (i == R.id.btn_finish) {
             String content = mEtInput.getText().toString();
             if (TextUtils.isEmpty(content)) {
-                //ToastUtil.show("输入文本不能为空");
+                //ToastUtil.showToast("输入文本不能为空");
                 return;
             }
             mEtInput.setText("");

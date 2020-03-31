@@ -476,8 +476,8 @@ public class PullRefreshLayout extends FrameLayout {
 	}
 
 	/**
-	 * Set the action view can partial show when scroll stop. 
-	 * @param enable - True if the actionView can partial show, false otherwise.
+	 * Set the action view can partial showToast when scroll stop.
+	 * @param enable - True if the actionView can partial showToast, false otherwise.
 	 */
 	public void setEnableStopInActionView(boolean enable) {
 		mEnableStopInAction = enable;

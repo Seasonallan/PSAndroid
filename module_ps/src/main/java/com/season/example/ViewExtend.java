@@ -145,7 +145,7 @@ public abstract class ViewExtend {
                 @Override
                 public void onError() {
                     file.deleteOnExit();
-                    ToastUtil.show("下载失败，请稍候重试");
+                    ToastUtil.showToast("下载失败，请稍候重试");
                 }
             });
         }
@@ -164,7 +164,7 @@ public abstract class ViewExtend {
         if (file.length() > 0) {
             addImageOrGifFromFile(url, file.toString());
         } else {
-            ToastUtil.show("下载素材中，请稍候");
+            ToastUtil.showToast("下载素材中，请稍候");
             DownloadAPI.downloadFile(url, file, new DownloadAPI.IDownloadListener() {
                 @Override
                 public void onCompleted() {
@@ -181,7 +181,7 @@ public abstract class ViewExtend {
                 @Override
                 public void onError() {
                     file.deleteOnExit();
-                    ToastUtil.show("下载失败，请稍候重试");
+                    ToastUtil.showToast("下载失败，请稍候重试");
                 }
 
             });

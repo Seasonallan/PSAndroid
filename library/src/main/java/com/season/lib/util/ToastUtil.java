@@ -7,31 +7,26 @@ import com.season.lib.BaseContext;
 public class ToastUtil {
 	static Toast mToast;
 
-	public static void show(String contentId){
-		if(mToast == null){
-			mToast = Toast.makeText(BaseContext.getInstance(), contentId, Toast.LENGTH_SHORT);
-		}else{
-			mToast.setText(contentId);
-		}
-		mToast.show();
-	}
-
 	public static void showToast(int contentId){
 		showToast(BaseContext.getInstance().getString(contentId));
 	}
 
-	public static void showToast(String contentId){
+	static long recordTime;
+	static String recordContent;
+	public static void showToast(String content){
+		if (content.equals(recordContent)){
+			if (System.currentTimeMillis() - recordTime < 1000){
+				return;
+			}
+		}
 		if(mToast == null){
-			mToast = Toast.makeText(BaseContext.getInstance(), contentId, Toast.LENGTH_SHORT);
+			mToast = Toast.makeText(BaseContext.getInstance(), content, Toast.LENGTH_SHORT);
 		}else{
-			mToast.setText(contentId);
+			mToast.setText(content);
 		}
 		mToast.show();
+		recordContent = content;
+		recordTime = System.currentTimeMillis();
 	}
 
-	public static void dismissToast() {
-		if(mToast != null){
-			mToast.cancel();
-		}
-	}
 }

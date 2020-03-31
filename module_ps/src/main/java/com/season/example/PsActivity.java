@@ -8,14 +8,12 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.season.example.layout.BottomPaintLayout;
@@ -25,7 +23,6 @@ import com.season.example.layout.BottomVipLayout;
 import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
 import com.season.example.video.VideoActivity;
-import com.season.lib.BaseContext;
 import com.season.lib.BaseStartPagerActivity;
 import com.season.lib.RoutePath;
 import com.season.ps.bean.LayerItem;
@@ -512,7 +509,7 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
                     mPsCanvas.addView(copyView);
                     resetStatus();
                 } else {
-                    ToastUtil.show("未选中图层");
+                    ToastUtil.showToast("未选中图层");
                 }
             }
 
@@ -523,7 +520,7 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
                     mPsCanvas.upLayer(mPsCanvas.getView(), true);
                     resetBottomStatus();
                 }else{
-                    ToastUtil.show("未选中图层");
+                    ToastUtil.showToast("未选中图层");
                 }
             }
 
@@ -534,7 +531,7 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
                     mPsCanvas.downLayer(mPsCanvas.getView(), true);
                     resetBottomStatus();
                 }else{
-                    ToastUtil.show("未选中图层");
+                    ToastUtil.showToast("未选中图层");
                 }
             }
 
@@ -652,7 +649,7 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
             if (mPsCanvas.getChildCount() == 0) {
                 if (mPsCanvas.backgroundView.currentOperate != null) {
                     if (mPsCanvas.backgroundView.currentOperate.visible1 == View.VISIBLE) {
-                        ToastUtil.show("画板上没有东西");
+                        ToastUtil.showToast("画板上没有东西");
                         return;
                     }
                 }

@@ -736,7 +736,6 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				Animation.RELATIVE_TO_SELF, 1.0f,Animation.RELATIVE_TO_SELF, 0.0f);
 		dowAnimation.setDuration(timeHalf);upAnimation.setDuration(timeHalf);
 		if(item != null){
-			ToastUtil.dismissToast();
 			switch(item.id){
 			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS:
 				ToastUtil.showToast("若调节失败，请禁用系统自动亮度调节");
