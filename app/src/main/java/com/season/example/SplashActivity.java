@@ -19,7 +19,7 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        if(true){
+        if(false){
             ARouter.getInstance().build(RoutePath.BOOK).navigation();
             finish();
             return;
