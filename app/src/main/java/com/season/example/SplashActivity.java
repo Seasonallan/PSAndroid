@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
 
+import com.alibaba.android.arouter.launcher.ARouter;
+import com.season.lib.RoutePath;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.myapplication.R;
 
@@ -16,6 +18,12 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        if(true){
+            ARouter.getInstance().build(RoutePath.BOOK).navigation();
+            finish();
+            return;
+        }
 
         NavigationBarUtil.hideNavigationBar(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

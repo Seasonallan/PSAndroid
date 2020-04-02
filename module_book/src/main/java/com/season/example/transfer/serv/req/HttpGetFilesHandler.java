@@ -17,9 +17,9 @@ import org.json.JSONObject;
 import android.content.Context;
 
 import com.season.example.transfer.serv.WebServerThread.OnWebServListener;
-import com.season.example.transfer.util.CommonUtil;
 import com.season.example.transfer.util.Constants;
 import com.season.example.transfer.util.SaverUtil;
+import com.season.lib.file.FileUtils;
 
 public class HttpGetFilesHandler implements HttpRequestHandler { 
  
@@ -46,7 +46,6 @@ public class HttpGetFilesHandler implements HttpRequestHandler {
 			obj.put("userName", android.os.Build.MODEL);
 			obj.put("fileList", fileRows);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String fileRowsd = obj.toString(); 
@@ -63,13 +62,9 @@ public class HttpGetFilesHandler implements HttpRequestHandler {
 	String intelligenceGetFileSize(String fileName){
 		File file = new File(Constants.UPLOAD_DIR + fileName);
 		if(file.exists()){
-			return ""+CommonUtil.readableFileSize(file.length());
+			return ""+ FileUtils.readableFileSize(file.length());
 		}else{
-			if(CommonUtil.isExternalStorageMounted()){
-				return "文件不存在";
-			}else{
-				return "SD卡未挂载";
-			}
+			return "文件不存在";
 		}
 	}
 }

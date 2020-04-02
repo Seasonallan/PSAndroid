@@ -79,7 +79,7 @@ public class TextPlugin extends PluginManager {
             start += bts.length;
         }
         if(catalog.size() == 0){
-            catalog.add(new Catalog("正文", start));
+            catalog.add(new Catalog("正文", 0));
         }
         TextChapterCache.save(filePath, catalog);
     }

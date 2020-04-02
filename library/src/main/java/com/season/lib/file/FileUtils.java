@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -22,6 +23,20 @@ import java.util.Iterator;
  */
 public final class FileUtils {
 
+
+
+    /**
+     * @brief 存储大小格式化为可阅读的字串
+     */
+    public static String readableFileSize(long size) {
+        if (size <= 0)
+            return "0";
+        final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size
+                / Math.pow(1024, digitGroups))
+                + " " + units[digitGroups];
+    }
 
     interface FileSuffix {
         String JPG = "jpg";

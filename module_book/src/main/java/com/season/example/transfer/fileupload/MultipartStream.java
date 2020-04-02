@@ -31,7 +31,7 @@ import com.season.example.transfer.fileupload.util.Streams;
 /**
  * <p> Low level API for processing file uploads.
  *
- * <p> This class can be used to process data streams conforming to MIME
+ * <p> This class can be used to process data streams conforming to
  * 'multipart' format as defined in
  * <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>. Arbitrarily
  * large amounts of data in the stream can be processed under constant

@@ -82,17 +82,6 @@ public class SaverUtil {
 		return true;
 	}
 
-	public boolean deleteFromListBuFileName(String filePath) {
-		List<String> fileList = getHistoryFileLists();
-		if(!contains(filePath, fileList)){
-			return false;
-		}
-		fileList.remove(filePath);
-		saveHistoryFileLists(fileList);
-		notifyFileDelete(filePath); 
-		return true;
-	}
-	
 	public boolean deleteFileFromList(String filePath) {
 		List<String> fileList = getHistoryFileLists();
 		if(!contains(filePath, fileList)){
@@ -128,11 +117,9 @@ public class SaverUtil {
 	}
 
 	private List<FileChangeListener> mListeners;
-
-	public static interface FileChangeListener {
-		public void onFileAdded(String filePath);
-
-		public void onFileDelete(String filePath);
+	public interface FileChangeListener {
+		void onFileAdded(String filePath);
+		void onFileDelete(String filePath);
 	}
 
 }

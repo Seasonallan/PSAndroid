@@ -188,6 +188,7 @@ public class BookShelfPreLoader {
                 e.printStackTrace();
             }
         } else {
+            book.title = new File(filePath).getName();
         }
         return book;
     }

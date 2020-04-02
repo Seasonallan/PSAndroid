@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Utility class to decode MIME texts.
+ * Utility class to decode texts.
  *
  * @since 1.3
  */

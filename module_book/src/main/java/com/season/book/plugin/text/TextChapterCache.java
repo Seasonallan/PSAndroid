@@ -52,7 +52,7 @@ public class TextChapterCache {
 	}
 	
 	private static File getSaveFile(String filePath){
-		String chapterFileName = filePath.hashCode()+"";
+		String chapterFileName = filePath.hashCode()+"2020";
 		File saveDir = new File(BaseContext.getInstance().getCacheDir()+"/chapters/"+chapterFileName);
 		return saveDir;
 	}

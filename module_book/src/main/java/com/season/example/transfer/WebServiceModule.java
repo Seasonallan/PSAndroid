@@ -51,9 +51,6 @@ public abstract class WebServiceModule implements OnWebServListener,
     protected abstract void onComputerConnected();
     
 
-	public String getPackageName(){
-		return mActivity.getPackageName();
-	}
 	public Resources getResources(){
 		return mActivity.getResources();
 	}

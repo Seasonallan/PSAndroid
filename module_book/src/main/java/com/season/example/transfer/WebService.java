@@ -4,7 +4,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.IBinder;
 
@@ -13,7 +16,6 @@ import com.season.example.transfer.receiver.OnNetworkListener;
 import com.season.example.transfer.receiver.WSReceiver;
 import com.season.example.transfer.serv.WebServerThread;
 import com.season.example.transfer.serv.WebServerThread.OnWebServListener;
-import com.season.example.transfer.util.CommonUtil;
  
 /** 
  *  Web Service后台
@@ -52,11 +54,23 @@ public class WebService extends Service implements OnWebServListener, OnNetworkL
 
         NetworkReceiver.register(this, this);
 
-        CommonUtil mCommonUtil = CommonUtil.getSingleton(getApplicationContext());
-        isNetworkAvailable = mCommonUtil.isNetworkAvailable(); 
+        isNetworkAvailable = isNetworkAvailable();
 
         isWebServAvailable = isNetworkAvailable;
         notifyWebServAvailable(isWebServAvailable);
+    }
+
+    /**
+     * @brief 判断网络是否可用
+     * @warning need ACCESS_NETWORK_STATE permission
+     */
+    public boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (null == info) {
+            return false;
+        }
+        return info.isAvailable();
     }
 
     @Override

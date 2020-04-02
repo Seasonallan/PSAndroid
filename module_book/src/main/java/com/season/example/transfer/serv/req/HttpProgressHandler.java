@@ -17,8 +17,8 @@ import org.json.JSONObject;
 import com.season.example.transfer.serv.WebServerThread.OnWebServListener;
 import com.season.example.transfer.serv.support.HttpGetParser;
 import com.season.example.transfer.serv.support.Progress;
-import com.season.example.transfer.util.CommonUtil;
 import com.season.example.transfer.util.Constants;
+import com.season.lib.file.FileUtils;
 
 public class HttpProgressHandler implements HttpRequestHandler { 
 
@@ -47,7 +47,7 @@ public class HttpProgressHandler implements HttpRequestHandler {
         try {
 			object.put("fileName", id);
 			object.put("progress", progress/100f);
-			object.put("size", CommonUtil.readableFileSize(Progress.getSize(id)));
+			object.put("size", FileUtils.readableFileSize(Progress.getSize(id)));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} 

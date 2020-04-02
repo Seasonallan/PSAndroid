@@ -1,6 +1,7 @@
 package com.season.example.transfer.serv;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -60,9 +61,6 @@ public class WebServerThread extends Thread {
     @Override
     public void run() {
         try {
-            while (CommonUtil.isLocalPortInUse(Constants.PORT)) { 
-            	Constants.PORT --;
-            }
             // 创建服务器套接字
             serverSocket = new ServerSocket();
             InetSocketAddress inetSocketAddress = new InetSocketAddress(Constants.PORT);
@@ -138,7 +136,8 @@ public class WebServerThread extends Thread {
             } catch (IOException e) {
             }
         }
-    }DefaultHttpServerConnection conn;
+    }
+    DefaultHttpServerConnection conn;
 
     public void close() {
         isLoop = false; 
@@ -153,6 +152,7 @@ public class WebServerThread extends Thread {
         } catch (IOException e) {
         }
     }
+
 
     public interface OnWebServListener {
         void onStarted(String ip);
