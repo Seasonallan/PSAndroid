@@ -149,6 +149,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 
 	boolean isOpened = false;
 	private void openBook(){
+		NavigationBarUtil.hideNavigationBar(BaseBookActivity.this);
 		isOpened = true;
 		new Thread() {
 			@Override

@@ -30,10 +30,6 @@ public class NavigationBarUtil {
     }
 
     public static void hideNavigationBar(Activity activity) {
-
-        if (true){
-            return;
-        }
         WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
         attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         activity.getWindow().setAttributes(attrs);

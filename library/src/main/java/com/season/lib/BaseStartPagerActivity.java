@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.season.lib.bitmap.ImageMemoryCache;
 import com.season.lib.util.LogUtil;
-import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.view.StartPageView;
 
 public abstract class BaseStartPagerActivity extends FragmentActivity {
@@ -51,7 +50,6 @@ public abstract class BaseStartPagerActivity extends FragmentActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
-        NavigationBarUtil.hideNavigationBar(this);
 
         if (enablePager()){
             Bitmap bitmap = ImageMemoryCache.getInstance().get();
