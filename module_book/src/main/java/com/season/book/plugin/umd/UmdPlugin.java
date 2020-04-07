@@ -38,7 +38,7 @@ public class UmdPlugin extends PluginManager {
     private UmdDataBlock mUmdDataBlock;
 
     @Override
-    public void init(String secretKey) throws Exception {
+    public void init() throws Exception {
         contentArr = new ArrayList<UmdDataBlock.BlockEntity>();
         currentPoint = 0L;
         contentLength = 0;

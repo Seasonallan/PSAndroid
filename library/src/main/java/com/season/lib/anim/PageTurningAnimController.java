@@ -10,11 +10,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
-
-import com.season.lib.BaseContext;
 import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.dimen.MathUtil;
-import com.season.lib.util.LogUtil;
+import com.season.lib.math.MathUtil;
 
 
 /**
@@ -110,23 +107,23 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		calcPoints(!isRequestNext);
 		if(isCancelAnim){
 			if(isRequestNext){
-				dx = (int) (mScreenWidth - mTouch.x);
+				dx = (int) (mContentWidth - mTouch.x);
 			}else{
-				dx = (int) - mTouch.x - mScreenWidth;
+				dx = (int) - mTouch.x - mContentWidth;
 			}
 			if (mCornerY > 0) {
-				dy = (int) (mScreenHeight - mTouch.y);
+				dy = (int) (mContentHeight - mTouch.y);
 			} else {
 				dy = (int) (1 - mTouch.y); // 防止mTouch.y最终变为0
 			}
 		}else{
 			if (isRequestNext) {
-				dx = -(int) (mScreenWidth + mTouch.x);
+				dx = -(int) (mContentWidth + mTouch.x);
 			} else {
-				dx = (int) (mScreenWidth - mTouch.x + mScreenWidth);
+				dx = (int) (mContentWidth - mTouch.x + mContentWidth);
 			}
 			if (mCornerY > 0) {
-				dy = (int) (mScreenHeight - mTouch.y);
+				dy = (int) (mContentHeight - mTouch.y);
 			} else {
 				dy = (int) (1 - mTouch.y); // 防止mTouch.y最终变为0
 			}
@@ -138,7 +135,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	protected void onMeasure(PageCarver pageCarver) {
 		super.onMeasure(pageCarver);
 		mMaxLength = (float) Math.hypot(mContentWidth, mContentHeight);
-		mRightPageStartX = mScreenWidth;
+		mRightPageStartX = mContentWidth;
 	}
 
 	@Override
@@ -194,9 +191,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 
 	@Override
 	protected void onRequestPage(boolean isRequestNext,int fromIndex,int toIndex,float x,float y) {
-		if(y > mScreenHeight / 3f && y < mScreenHeight / 3f * 2 || !isRequestNext){
+		if(y > mContentHeight / 3f && y < mContentHeight / 3f * 2 || !isRequestNext){
 			isCenterTouchAnim = true;
-			y = mScreenHeight;
+			y = mContentHeight;
 		}
 		mFromIndex = fromIndex;
 		mToIndex = toIndex;
@@ -206,7 +203,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	@Override
 	public void dispatchTouchEvent(MotionEvent event, PageCarver pageCarver) {
 		if(isCenterTouchAnim && event.getAction() != MotionEvent.ACTION_DOWN){
-			event.setLocation(event.getX(), mScreenHeight);
+			event.setLocation(event.getX(), mContentHeight);
 		}
 		super.dispatchTouchEvent(event, pageCarver);
 	}
@@ -214,7 +211,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	@Override
 	protected void onDrawAnim(Canvas canvas,boolean isCancelAnim, boolean isNext, PageCarver pageCarver) {
 		if(isCenterTouchAnim){
-			mLastTouchPoint.y = mScreenHeight;
+			mLastTouchPoint.y = mContentHeight;
 		}
 		mTouch.set(mLastTouchPoint);
 		int fromIndex = mFromIndex;
@@ -222,7 +219,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		if(!isNext){
 			fromIndex = mToIndex;
 			toIndex = mFromIndex;
-			mTouch.x -= mScreenWidth / 4;
+			mTouch.x -= mContentWidth / 4;
 		}
 		calcPoints(!isNext);
 		resetPath();
@@ -350,18 +347,13 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mMatrix.preTranslate(-mBezierControl1.x, -mBezierControl1.y);
 		mMatrix.postTranslate(mBezierControl1.x, mBezierControl1.y);
 
-		int bgColor = pageCarver.getPageBackgroundColor();
-		boolean bgPureColor = bgColor != -1;
-		if(bgPureColor){
-			canvas.drawColor(bgColor);
-		}
 		canvas.save();
 		canvas.concat(mMatrix);
 
-		if (isLeftPage|| bgPureColor){
+		if (isLeftPage){
 			//背景是纯色，直接画，添加蒙版
 			pageCarver.drawPage(canvas, pageIndex);
-			canvas.drawColor(bgColor + 0xaa000000);
+			canvas.drawColor(pageCarver.getPageBackgroundColor() + 0xaa000000);
 		} else {
 			//背景不是纯色，进行扭曲
 			drawCurrentBackWarpingArea(canvas, pageCarver);
@@ -462,8 +454,15 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			}
 		}
 		canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, verts, 0, null, 0, null);
-		canvas.drawColor(0xaaffffff);
-        pointCacheY.clear();
+
+		int bgColor = pageCarver.getPageBackgroundColor();
+		boolean bgPureColor = bgColor != -1;
+		if(bgPureColor){
+			canvas.drawColor(bgColor + 0xaa000000);
+		}else{
+			canvas.drawColor(0xaaffffff);
+		}
+		pointCacheY.clear();
         pointCacheX.clear();
 	}
 
@@ -621,19 +620,19 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	private final void filterTouchBound(PointF pointF){
 		if(pointF.y == pointF.x){
 			pointF.y -= 0.1f;
-		}else if(mScreenWidth - pointF.y == pointF.x){
+		}else if(mContentWidth - pointF.y == pointF.x){
 			pointF.y -= 0.1f;
-		}else if(mScreenWidth - pointF.x == pointF.y){
+		}else if(mContentWidth - pointF.x == pointF.y){
 			pointF.y -= 0.1f;
-		}else if(mScreenWidth - pointF.x == mScreenHeight - pointF.y){
+		}else if(mContentWidth - pointF.x == mContentHeight - pointF.y){
 			pointF.y -= 0.1f;
 		}
 
 		if(pointF.y <= 0){
 			pointF.y = 0.01f;
 		}
-		if(pointF.y >= mScreenHeight){
-			pointF.y = mScreenHeight - 0.01f;
+		if(pointF.y >= mContentHeight){
+			pointF.y = mContentHeight - 0.01f;
 		}
 	}
 	/**
@@ -657,8 +656,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 				/ 2;
 		mBezierStart1.y = mCornerY;
 		// 在触屏移动时做此约束
-		if (!isAnimStart || (mTouch.x > 0 && mTouch.x < mScreenWidth)) {
-			if (mBezierStart1.x < 0 || mBezierStart1.x > mScreenWidth) {if (mBezierStart1.x < 0)
+		if (!isAnimStart || (mTouch.x > 0 && mTouch.x < mContentWidth)) {
+			if (mBezierStart1.x < 0 || mBezierStart1.x > mContentWidth) {if (mBezierStart1.x < 0)
 				mBezierStart1.x = mRightPageStartX - mBezierStart1.x;
 				float f1 = Math.abs(mCornerX - mTouch.x);
 				float f2 = mRightPageStartX * f1 / mBezierStart1.x;
@@ -711,13 +710,13 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	 *  计算拖拽点对应的拖拽脚
 	 */
 	private final void calcCornerXY(float y) {
-		mCornerX = mScreenWidth;
-		if (y <= mScreenHeight / 2)
+		mCornerX = mContentWidth;
+		if (y <= mContentHeight / 2)
 			mCornerY = 0;
 		else
-			mCornerY = mScreenHeight;
-		if ((mCornerX == 0 && mCornerY == mScreenHeight)
-				|| (mCornerX == mScreenWidth && mCornerY == 0))
+			mCornerY = mContentHeight;
+		if ((mCornerX == 0 && mCornerY == mContentHeight)
+				|| (mCornerX == mContentWidth && mCornerY == 0))
 			mIsRTandLB = true;
 		else
 			mIsRTandLB = false;

@@ -113,16 +113,6 @@ public abstract class PageAnimController{
 		 */
 		int getContentHeight();
 		/**
-		 * 获取屏幕宽度
-		 * @return
-		 */
-		int getScreenWidth();
-		/**
-		 * 获取屏幕高度
-		 * @return
-		 */
-		int getScreenHeight();
-		/**
 		 * 获取页背景颜色值
 		 * @return
 		 */

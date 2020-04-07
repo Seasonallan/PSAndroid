@@ -15,7 +15,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.dimen.MathUtil;
+import com.season.lib.math.MathUtil;
 import com.season.ps.view.ps.ScaleDetector;
 import com.season.lib.file.FileManager;
 

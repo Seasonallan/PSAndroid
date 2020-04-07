@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.text.TextPaint;
 
 import com.season.book.ReadSetting;
-import com.season.lib.util.BatteryUtil;
+import com.season.lib.dimen.ScreenUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +36,6 @@ public class BatteryView {
      * @param context
      */
     private float mPowerPadding = 2f;
-    private float mPower = 0f;
 
     /**
      * 矩形
@@ -139,7 +138,7 @@ public class BatteryView {
         canvas.drawRoundRect(mCapRectF, radius, radius, mBatteryPait);
 
         mPowerRectF.left = mPowerRectF.right
-                - mPowerWidth * BatteryUtil.getCurrentBattery(mContext) /100;
+                - mPowerWidth * ScreenUtils.getCurrentBattery(mContext) /100;
         canvas.drawRect(mPowerRectF, mPowerPaint);
 
         canvas.drawText(new SimpleDateFormat("HH:mm").format(new Date()), mBatteryWidth + mCapWidth * 4,

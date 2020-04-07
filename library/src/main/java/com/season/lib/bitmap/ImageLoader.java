@@ -139,8 +139,12 @@ public class ImageLoader extends BaseImageLoader {
 		}
 		if(bitmap == null && imageUrl != null){
 			String file = getCacheFile(imageUrl.hashCode()+"");
-			DownloadAPI.downloadFile(imageUrl, new File(file));
-            bitmap = loadImageFromSdcard(imageUrl, file);
+			try {
+				DownloadAPI.downloadFile(imageUrl, new File(file));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			bitmap = loadImageFromSdcard(imageUrl, file);
 		}
 		
 		return bitmap;

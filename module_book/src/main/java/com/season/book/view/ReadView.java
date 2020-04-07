@@ -17,7 +17,6 @@ import com.season.book.page.paser.html.CssProvider;
 import com.season.book.page.paser.html.DataProvider;
 import com.season.book.page.paser.html.ICssProvider;
 import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.book.EncryptUtils;
 import com.season.lib.util.LogUtil;
 
 import java.io.IOException;
@@ -25,7 +24,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class ReadView extends BaseHtmlReadView {
-	private String mSecretKey;
 	private PluginManager mPlugin;
 
 
@@ -45,12 +43,11 @@ public class ReadView extends BaseHtmlReadView {
 	}
 
 	@Override
-	public BookInfo decodeBookFromPlugin(final int fRequestCatalogIndex, final int fRequestPageCharIndex, String secretKey) {
-        mSecretKey = secretKey;
+	public BookInfo decodeBookFromPlugin(final int fRequestCatalogIndex, final int fRequestPageCharIndex) {
 		try {
             try {
                 mPlugin = PluginManager.getPlugin(mBook.filePath);
-                mPlugin.init(secretKey);
+                mPlugin.init();
             }catch (Exception e){
             }
             String id = mBook.id;
@@ -138,11 +135,8 @@ public class ReadView extends BaseHtmlReadView {
 				Resource resource = mPlugin.findResource(path);
 				byte[] data = null;
 				if(resource != null){
-					if (TextUtils.isEmpty(mSecretKey)) {
-						data = resource.getData();
-					}else {
-						data = EncryptUtils.decryptByAES(resource.getData(),mSecretKey);
-					}
+					data = resource.getData();
+					//data = EncryptUtils.decryptByAES(resource.getData());
 				}
 				if (data != null) {
 					return new String(data);
@@ -196,20 +190,14 @@ public class ReadView extends BaseHtmlReadView {
 				//目前media文件不加密。音视频
 				if (source.endsWith(".mp3")||source.endsWith(".mp4")) {//服务器对此后缀不加密
 					if (mBook.isMediaDecode) {
-						if (TextUtils.isEmpty(mSecretKey)) {
-							return resource.getDataStream();
-						}else {
-							return EncryptUtils.decryptByAES(resource.getDataStream(),mSecretKey);
-						}
+						return resource.getDataStream();
+						//return EncryptUtils.decryptByAES(resource.getDataStream());
 					}else {
 						return resource.getDataStream();
 					}
 				}else {
-					if (TextUtils.isEmpty(mSecretKey)) {
-						return resource.getDataStream();
-					}else {
-						return EncryptUtils.decryptByAES(resource.getDataStream(),mSecretKey);
-					}
+					return resource.getDataStream();
+					//return EncryptUtils.decryptByAES(resource.getDataStream());
 				}
 			}
 			return null;

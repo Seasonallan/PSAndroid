@@ -9,7 +9,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import com.season.lib.dimen.MathUtil;
+import com.season.lib.math.MathUtil;
 import com.season.ps.ToolBitmapCache;
 
 /**

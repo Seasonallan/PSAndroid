@@ -18,7 +18,7 @@ public interface IReaderView {
      * 解析书籍并启动排版线程池，运行在子线程
      * @return
      */
-     BookInfo decodeBookFromPlugin(int fRequestCatalogIndex, int fRequestPageCharIndex , String secretKey);
+     BookInfo decodeBookFromPlugin(int fRequestCatalogIndex, int fRequestPageCharIndex);
 
     /**
      * 回收释放资源

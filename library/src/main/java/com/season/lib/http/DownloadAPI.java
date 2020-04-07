@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,55 +36,19 @@ public class DownloadAPI {
         new Thread() {
             @Override
             public void run() {
-                URL url;
-                HttpURLConnection connection;
                 try {
-                    url = new URL(httpUrl);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.connect();
-
-                    FileOutputStream outputStream = new FileOutputStream(file);
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode == HttpURLConnection.HTTP_OK) {
-                        //得到服务器响应的输入流
-                        InputStream inputStream = connection.getInputStream();
-                        //获取请求的内容总长度
-                        int contentLength = connection.getContentLength();
-                        BufferedInputStream bfi = new BufferedInputStream(inputStream);
-                        //此处的len表示每次循环读取的内容长度
-                        int len;
-                        //已经读取的总长度
-                        int totle = 0;
-                        //bytes是用于存储每次读取出来的内容
-                        byte[] bytes = new byte[1024];
-                        while ((len = bfi.read(bytes)) != -1) {
-                            //每次读取完了都将len累加在totle里
-                            totle += len;
-                            //每次读取的都更新一次progressBar
-                            //     mPb.setProgress(totle);
-                            //通过文件输出流写入从服务器中读取的数据
-                            outputStream.write(bytes, 0, len);
-                        }
-                        //关闭打开的流对象
-                        outputStream.close();
-                        inputStream.close();
-                        bfi.close();
-                        if (iDownloadListener != null)
-                            iDownloadListener.onCompleted();
-                        return;
-                    }
+                    downloadFile(httpUrl, file);
+                    if (iDownloadListener != null)
+                        iDownloadListener.onCompleted();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    if (iDownloadListener != null)
+                        iDownloadListener.onError();
                 }
-                if (iDownloadListener != null)
-                    iDownloadListener.onError();
             }
 
         }.start();
     }
-
-
 
     /**
      * 下载文件， 非线程中
@@ -91,44 +56,40 @@ public class DownloadAPI {
      * @param httpUrl
      * @param file
      */
-    public static void downloadFile(@NonNull final String httpUrl, @NonNull final File file) {
+    public static void downloadFile(@NonNull final String httpUrl, @NonNull final File file) throws Exception {
         URL url;
         HttpURLConnection connection;
-        try {
-            url = new URL(httpUrl);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
+        url = new URL(httpUrl);
+        connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.connect();
 
-            FileOutputStream outputStream = new FileOutputStream(file);
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                //得到服务器响应的输入流
-                InputStream inputStream = connection.getInputStream();
-                //获取请求的内容总长度
-                int contentLength = connection.getContentLength();
-                BufferedInputStream bfi = new BufferedInputStream(inputStream);
-                //此处的len表示每次循环读取的内容长度
-                int len;
-                //已经读取的总长度
-                int totle = 0;
-                //bytes是用于存储每次读取出来的内容
-                byte[] bytes = new byte[1024];
-                while ((len = bfi.read(bytes)) != -1) {
-                    //每次读取完了都将len累加在totle里
-                    totle += len;
-                    //每次读取的都更新一次progressBar
-                    //     mPb.setProgress(totle);
-                    //通过文件输出流写入从服务器中读取的数据
-                    outputStream.write(bytes, 0, len);
-                }
-                //关闭打开的流对象
-                outputStream.close();
-                inputStream.close();
-                bfi.close();
+        FileOutputStream outputStream = new FileOutputStream(file);
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            //得到服务器响应的输入流
+            InputStream inputStream = connection.getInputStream();
+            //获取请求的内容总长度
+            int contentLength = connection.getContentLength();
+            BufferedInputStream bfi = new BufferedInputStream(inputStream);
+            //此处的len表示每次循环读取的内容长度
+            int len;
+            //已经读取的总长度
+            int totle = 0;
+            //bytes是用于存储每次读取出来的内容
+            byte[] bytes = new byte[1024];
+            while ((len = bfi.read(bytes)) != -1) {
+                //每次读取完了都将len累加在totle里
+                totle += len;
+                //每次读取的都更新一次progressBar
+                //     mPb.setProgress(totle);
+                //通过文件输出流写入从服务器中读取的数据
+                outputStream.write(bytes, 0, len);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            //关闭打开的流对象
+            outputStream.close();
+            inputStream.close();
+            bfi.close();
         }
     }
 

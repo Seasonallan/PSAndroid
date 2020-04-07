@@ -17,7 +17,6 @@ import android.text.TextUtils;
 import com.season.lib.file.IOUtil;
 import com.season.lib.file.XMLUtil;
 import com.season.book.bean.Catalog;
-import com.season.lib.book.EncryptUtils;
 import com.season.book.plugin.PluginManager;
 import com.season.lib.util.LogUtil;
 
@@ -30,7 +29,6 @@ public class EpubPlugin extends PluginManager {
 	
 	private static final String DEFAULT_OPF_FILE_LOCATION = "OEBPS/content.opf";
 	private static final String CONTAINER_FILE_LOCATION = "META-INF/container.xml";
-	private String secretKey;
 	private String opfFilePath;
 	private HashMap<String, Resource> manifestIdResources;
 	private HashMap<String, Resource> manifestHrefResources;
@@ -44,9 +42,8 @@ public class EpubPlugin extends PluginManager {
 		super(filePath);
 	}
 
-	public void init(String secretKey) throws Exception {
+	public void init() throws Exception {
 		boolean hadContainerfile = false;
-		this.secretKey = secretKey;
 		ZipFile zipFile = new ZipFile(filePath);
 		ZipEntry zipEntry = null;
 		Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
@@ -180,9 +177,7 @@ public class EpubPlugin extends PluginManager {
 					if(resource != null){
 						CatalogNAVDecoder catalogNavDecoder = new CatalogNAVDecoder(navFilePath);
 						byte[] navData = resource.getData();
-						if (!TextUtils.isEmpty(secretKey)) {
-							navData = EncryptUtils.decryptByAES(navData, secretKey);
-						}
+						//navData = EncryptUtils.decryptByAES(navData);
 						if(XMLUtil.parserXml(catalogNavDecoder, navData)){
 							ArrayList<Catalog> catalogs = catalogNavDecoder.getCatalogs();
 							catalogHrefMap = catalogNavDecoder.getCatalogHrefMap();
@@ -195,9 +190,7 @@ public class EpubPlugin extends PluginManager {
 					if(resource != null){
 						CatalogNCXDecoder catalogNcxDecoder = new CatalogNCXDecoder();
 						byte[] ncxData = resource.getData();
-						if (!TextUtils.isEmpty(secretKey)) {
-							ncxData = EncryptUtils.decryptByAES(ncxData, secretKey);
-						}
+						//ncxData = EncryptUtils.decryptByAES(ncxData);
 						if(XMLUtil.parserXml(catalogNcxDecoder, ncxData)){
 							ArrayList<Catalog> catalogs = catalogNcxDecoder.getCatalogs();
 							catalogHrefMap = catalogNcxDecoder.getCatalogHrefMap();

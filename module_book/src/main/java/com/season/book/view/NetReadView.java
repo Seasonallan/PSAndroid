@@ -34,7 +34,7 @@ public class NetReadView extends BaseHtmlReadView {
 
 	ArrayList<Catalog> result = new ArrayList<>();
 	@Override
-	public BookInfo decodeBookFromPlugin(final int fRequestCatalogIndex, final int fRequestPageCharIndex, String secretKey) {
+	public BookInfo decodeBookFromPlugin(final int fRequestCatalogIndex, final int fRequestPageCharIndex) {
 		try {
             mReadCallback.setFreeStart_Order_Price(Integer.MAX_VALUE , true, null, null);
             String httpString = DownloadAPI.getRequest("https://doupocangqiong1.com/1/");

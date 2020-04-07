@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.season.ps.ToolBitmapCache;
-import com.season.lib.dimen.MathUtil;
+import com.season.lib.math.MathUtil;
 
 
 /**

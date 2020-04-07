@@ -1,7 +1,5 @@
 package com.season.book;
 
-import com.season.book.R;
-
 /**
  * 背景主题设置，关联绘制的背景和文字的颜色
  */

@@ -2,7 +2,7 @@ package com.season.lib.anim;
 
 import android.graphics.PointF;
 
-import com.season.lib.dimen.MathUtil;
+import com.season.lib.math.MathUtil;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -45,10 +45,9 @@ public abstract class PluginManager {
 
     /**
      * 解析开始，获取书籍目录和信息
-     * @param secretKey
      * @throws Exception
      */
-    public abstract void init(String secretKey) throws Exception;
+    public abstract void init() throws Exception;
 
 
     /** 获取书籍目录；不为NULL，如果没有目录，SIZE为0

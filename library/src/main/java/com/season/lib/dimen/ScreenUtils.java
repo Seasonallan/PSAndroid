@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.os.BatteryManager;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.Surface;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.season.lib.BaseContext;
+
+import static android.content.Context.BATTERY_SERVICE;
 
 /**
  * 屏幕相关工具类
@@ -30,6 +33,19 @@ public final class ScreenUtils {
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
+
+    /**
+     * 获取当前电池百分比
+     * @param context
+     * @return
+     */
+    public static int getCurrentBattery(Context context){
+        BatteryManager batteryManager = (BatteryManager)context.getSystemService(BATTERY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            return batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        }
+        return 100;
+    }
 
     /**
      * 获取屏幕的宽度（单位：px）

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.season.lib.book;
+package com.season.lib.math;
 
 
 /**

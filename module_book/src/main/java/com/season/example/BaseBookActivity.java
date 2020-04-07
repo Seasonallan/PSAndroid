@@ -155,7 +155,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 			@Override
 			public void run() {
 				int[] index = ReadSetting.getInstance().getBookReadProgress(mBook.id);
-				mBook = mReadView.decodeBookFromPlugin(index[0], index[1], "");
+				mBook = mReadView.decodeBookFromPlugin(index[0], index[1]);
 				mCatalogView.setBookInfo(mBook.title, mBook.author);
 			}
 		}.start();

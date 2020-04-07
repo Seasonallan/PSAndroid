@@ -28,12 +28,8 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 	private boolean isCancelAnim;
 	protected Boolean isRequestNextPage;
 	private int mLastMoveX;
-	protected int mHalfScreenWidth;
-	protected int mHalfScreenHeight;
 	protected int mHalfContentWidth;
 	protected int mHalfContentHeight;
-	protected int mScreenWidth;
-	protected int mScreenHeight;
 	protected int mContentWidth;
 	protected int mContentHeight;
 	protected PointF mLastTouchPoint;
@@ -75,11 +71,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		mContentHeight = pageCarver.getContentHeight();
 		mHalfContentWidth = mContentWidth >> 1;
 		mHalfContentHeight = mContentHeight >> 1;
-		mScreenWidth = pageCarver.getScreenWidth();
-		mScreenHeight = pageCarver.getScreenHeight();
-		mHalfScreenWidth = mScreenWidth >> 1;
-		mHalfScreenHeight = mScreenHeight >> 1;
-		LogUtil.e(TAG, "onMeasure: CW="+ mContentWidth +" CH="+ mContentHeight+" SW="+ mScreenWidth+" SH="+mScreenHeight);
+
 		contentPath = new Path();
 		contentPath.moveTo(0, 0);
 		contentPath.lineTo(mContentWidth, 0);
@@ -223,7 +215,7 @@ public abstract class AbsHorGestureAnimController extends PageAnimController {
 		if (isCancelAnim){
 			return false;
 		}
-		return isAnimStart && Math.abs(mScroller.getCurrX() - mScroller.getFinalX()) < 100;
+		return isAnimStart && Math.abs(mScroller.getCurrX() - mScroller.getFinalX()) < 10;
 	}
 	
 	private void dispatchAnimStart(PageCarver pageCarver){

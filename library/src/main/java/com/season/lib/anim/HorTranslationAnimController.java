@@ -1,6 +1,5 @@
 package com.season.lib.anim;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;

@@ -1,6 +1,7 @@
-package com.season.lib.dimen;
+package com.season.ps.view.ps;
 
 
+import com.season.lib.dimen.ScreenUtils;
 
 public class ToolPaint {
     private static ToolPaint defaultInstance;

@@ -28,7 +28,7 @@ public class TextPlugin extends PluginManager {
         super(filePath);
     }
 
-    public void init(String secretKey) throws Exception {
+    public void init() throws Exception {
         File book_file = new File(filePath);
         mBufferLength = (int) book_file.length();
         mRandomAccessFile = new RandomAccessFile(book_file, "r");

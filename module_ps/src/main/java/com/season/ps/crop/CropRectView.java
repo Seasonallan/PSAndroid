@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.ps.view.ps.ScaleDetector;
-import com.season.lib.dimen.MathUtil;
+import com.season.lib.math.MathUtil;
 
 import java.io.File;
 import java.util.ArrayList;

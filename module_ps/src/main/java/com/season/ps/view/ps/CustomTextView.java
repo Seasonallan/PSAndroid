@@ -40,7 +40,6 @@ import com.season.lib.dimen.ColorUtil;
 import com.season.ps.animation.AnimationProvider;
 import com.season.lib.file.FileManager;
 import com.season.lib.dimen.ScreenUtils;
-import com.season.lib.dimen.ToolPaint;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.season.lib.book;
+package com.season.lib.math;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,15 +20,10 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * 加密工具类
  * 
- * @author limj
- * 
  */
 public class EncryptUtils {
 	private final static String AES_IV = "0102030405060708";
-	// 向量
-	private final static String iv = "01234567";
-	// 加解密统一使用的编码方式
-	private final static String encoding = "utf-8";
+	private final static String AES_KEY = "0102030405060708";
 	/**
 	 * 对字符串加密(32位)
 	 * 
@@ -94,9 +89,9 @@ public class EncryptUtils {
 		return data;
 	}
 
-	public static byte[] decryptByAES(byte[] content, String password) {
+	public static byte[] decryptByAES(byte[] content) {
 		try {
-			byte[] enCodeFormat = password.getBytes();
+			byte[] enCodeFormat = AES_KEY.getBytes();
 			SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");// 创建密码器
 			cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(AES_IV.getBytes()));
@@ -118,9 +113,9 @@ public class EncryptUtils {
 		return null;
 	}
 
-	public static InputStream decryptByAES(InputStream content, String password) {
+	public static InputStream decryptByAES(InputStream content) {
 		try {
-			byte[] enCodeFormat = password.getBytes();
+			byte[] enCodeFormat = AES_KEY.getBytes();
 			SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");// 创建密码器
 			cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(AES_IV.getBytes()));
@@ -167,6 +162,4 @@ public class EncryptUtils {
 		return null;
 	}
 
-	public static void main(String[] args) throws Exception {
-	}
 }

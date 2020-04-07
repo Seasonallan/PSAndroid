@@ -102,7 +102,7 @@ public class BookShelfPreLoader {
                             if (book.filePath.endsWith(".epub")) {
                                 EpubPlugin epubPlugin = new EpubPlugin(book.filePath);
                                 try {
-                                    epubPlugin.init("");
+                                    epubPlugin.init();
                                     BookInfo decodeBook = epubPlugin.getBookInfo(book);
                                     book.id = decodeBook.id;
                                     book.title = decodeBook.title;
@@ -123,7 +123,7 @@ public class BookShelfPreLoader {
                             if (book.filePath.endsWith(".umd")) {
                                 UmdPlugin umdPlugin = new UmdPlugin(book.filePath);
                                 try {
-                                    umdPlugin.init("");
+                                    umdPlugin.init();
                                     book.title = umdPlugin.mTitle + ".umd";
                                     book.author = umdPlugin.mAuthor;
                                     Bitmap bitmap = umdPlugin.mBookCover;
@@ -158,7 +158,7 @@ public class BookShelfPreLoader {
         if (filePath.endsWith(".epub")) {
             EpubPlugin epubPlugin = new EpubPlugin(filePath);
             try {
-                epubPlugin.init("");
+                epubPlugin.init();
                 BookInfo decodeBook = epubPlugin.getBookInfo(book);
                 book.id = decodeBook.id;
                 book.title = decodeBook.title;
@@ -178,7 +178,7 @@ public class BookShelfPreLoader {
         } else if (filePath.endsWith(".umd")) {
             UmdPlugin umdPlugin = new UmdPlugin(filePath);
             try {
-                umdPlugin.init("");
+                umdPlugin.init();
                 book.title = umdPlugin.mTitle + ".umd";
                 book.author = umdPlugin.mAuthor;
                 Bitmap bitmap = umdPlugin.mBookCover;

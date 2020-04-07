@@ -372,16 +372,6 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	}
 
 	@Override
-	public int getScreenWidth() {
-		return getWidth();
-	}
-
-	@Override
-	public int getScreenHeight() {
-		return getHeight();
-	}
-
-	@Override
 	public int getPageBackgroundColor() {
 		return mReadSetting.getThemeBGColor();
 	}

@@ -30,12 +30,12 @@ public abstract class BaseReadView extends AbsReadView{
         mLoadingView = new LoadingView(context){
             @Override
             protected int getLoadingHeight() {
-                return getScreenHeight();
+                return getContentHeight();
             }
 
             @Override
             protected int getLoadingWidth() {
-                return getScreenWidth();
+                return getContentWidth();
             }
         };
     }
@@ -175,6 +175,7 @@ public abstract class BaseReadView extends AbsReadView{
     }
 
 
+    int height = -1;
     @Override
     protected void drawBatteryTime(Canvas canvas){
         if (batteryView == null){
@@ -188,8 +189,9 @@ public abstract class BaseReadView extends AbsReadView{
                 }
             });
         }
+        height = Math.max(height, getHeight());
         batteryView.resetColor(mReadSetting);
-        batteryView.draw(canvas, mReadSetting.getLeftRightSpaceSize(), getHeight() - mReadSetting.getTopBottomSpaceSize()  - topChapterNameHeight*2/3);
+        batteryView.draw(canvas, mReadSetting.getLeftRightSpaceSize(), height - mReadSetting.getTopBottomSpaceSize()  - topChapterNameHeight*2/3);
     }
 
     protected void drawChapterName(Canvas canvas,String title){

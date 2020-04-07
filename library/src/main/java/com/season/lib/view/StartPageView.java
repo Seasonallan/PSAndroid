@@ -116,16 +116,6 @@ public class StartPageView extends View implements PageAnimController.PageCarver
     }
 
     @Override
-    public int getScreenWidth() {
-        return getWidth();
-    }
-
-    @Override
-    public int getScreenHeight() {
-        return getHeight();
-    }
-
-    @Override
     public int getPageBackgroundColor() {
         return -1;
     }
