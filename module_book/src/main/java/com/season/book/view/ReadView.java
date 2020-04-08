@@ -34,7 +34,8 @@ public class ReadView extends BaseHtmlReadView {
 	@Override
 	public void release() {
 		super.release();
-		mPlugin.recyle();
+		if (mPlugin != null)
+			mPlugin.recyle();
 	}
 
 	@Override

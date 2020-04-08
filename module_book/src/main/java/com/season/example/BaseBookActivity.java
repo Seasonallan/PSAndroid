@@ -44,6 +44,7 @@ import com.season.book.page.span.UrlSpna;
 import com.season.book.view.IReadCallback;
 import com.season.book.view.ReadView;
 import com.season.book.view.IReaderView;
+import com.season.lib.util.LogUtil;
 import com.season.lib.view.PullRefreshLayout;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
@@ -230,9 +231,12 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 							//startActivity(new Intent(BaseBookActivity.this, BookShelfActivity.class));
 						}
 					}
+
 					@Override
-					public void onDismiss() {
-						mCatalogLay.setVisibility(View.GONE);
+					public void onDismiss(boolean hide) {
+						if (hide)
+							mCatalogLay.setVisibility(View.GONE);
+						NavigationBarUtil.hideNavigationBar(BaseBookActivity.this);
 					}
 				});
 	}
@@ -249,6 +253,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 			mCatalogLay.addView(mReaderMenuPopWin);
 		}
 		mCatalogLay.setVisibility(View.VISIBLE);
+		NavigationBarUtil.showNavigationBar(BaseBookActivity.this);
 		mReaderMenuPopWin.show();
 	}
 
@@ -314,7 +319,9 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		if (ev.getAction() == MotionEvent.ACTION_DOWN){
 			interrupt = false;
-			NavigationBarUtil.hideNavigationBar(this);
+			if(!mCatalogLay.isShown()){
+				NavigationBarUtil.hideNavigationBar(this);
+			}
 		}
 		if(!mReadView.isCurrentPageDrawn() || interrupt){
 			return false;

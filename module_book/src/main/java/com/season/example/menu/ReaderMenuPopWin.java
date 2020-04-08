@@ -1,6 +1,7 @@
 package com.season.example.menu;
 
 import java.util.ArrayList;
+import java.util.logging.Handler;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -92,7 +93,12 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		setVisibility(View.VISIBLE);
 
 		isShowing = true;
-
+		new android.os.Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				isShowing = false;
+			}
+		}, time * 2);
 		dowAnimation = new TranslateAnimation(
 				Animation.RELATIVE_TO_SELF,0, Animation.RELATIVE_TO_SELF, 0,
 				Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0f);
@@ -100,12 +106,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0,
 				Animation.RELATIVE_TO_SELF, 1.0f,Animation.RELATIVE_TO_SELF, 0.0f);
 		dowAnimation.setDuration(time);
-		dowAnimation.setAnimationListener(new SimpleAnimationListener(){
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				isShowing = false;
-			}
-		});
+
 		topView.startAnimation(dowAnimation);
 		mChildMenuLayout.setVisibility(View.GONE);
 		upAnimation.setDuration(timeHalf);
@@ -127,6 +128,12 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 			return;
 		}
 		isDismissing = true;
+		new android.os.Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				isDismissing = false;
+			}
+		}, time * 2);
 		setVisibility(View.VISIBLE);
 		topView.clearAnimation();
 		mGridView.clearAnimation();
@@ -142,10 +149,8 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		upAnimation.setAnimationListener(new SimpleAnimationListener(){
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				isDismissing = false;
 				setVisibility(View.GONE);
-				if (notify)
-					mActionCallback.onDismiss();
+				mActionCallback.onDismiss(notify);
 			}
 		});
 		topView.startAnimation(upAnimation);
@@ -242,7 +247,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		findViewById(R.id.transparent_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (isShowing || isDismissing){
+				if (isShowing){
 					return;
 				}
 				dismiss(true);
@@ -784,7 +789,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 
 	
 	public interface IActionCallback{
-		void onDismiss();
+		void onDismiss(boolean hide);
 		void onShowReaderCatalog();
         void onTopBackButtonClicked(boolean isLeft);
     }
