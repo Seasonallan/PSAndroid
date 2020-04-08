@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import androidx.annotation.Nullable;
 import com.season.lib.anim.PageAnimController;
+import com.season.lib.bitmap.BitmapUtil;
 
 /**
  * 可动态添加的翻页类ViewPager
@@ -78,8 +79,10 @@ public class StartPageView extends View implements PageAnimController.PageCarver
     @Override
     public void drawPage(Canvas canvas, int index) {
         if (index == currentPage){
-            canvas.drawBitmap(bitmap, new Rect(0, 0,bitmap.getWidth() ,bitmap.getHeight()),
-                    new Rect(0,0,getWidth(), getHeight()), null);
+            if (BitmapUtil.isBitmapAvaliable(bitmap)){
+                canvas.drawBitmap(bitmap, new Rect(0, 0,bitmap.getWidth() ,bitmap.getHeight()),
+                        new Rect(0,0,getWidth(), getHeight()), null);
+            }
         }else{
             //canvas.drawColor(0, PorterDuff.Mode.CLEAR);
         }

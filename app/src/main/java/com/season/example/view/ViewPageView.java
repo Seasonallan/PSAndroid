@@ -199,14 +199,20 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
             case MotionEvent.ACTION_UP:
                 if (!isPressInvalid) {
                     if (isAbort){
-                        isAbort = false;
                         mPageAnimController.dispatchTouchEvent(createEvent(MotionEvent.ACTION_MOVE,
                                 getWidth(), getHeight()), this);
                     }
-                    performClick();
+                    post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //invalidate之后不会立即执行onDraw操作，需要post到队列之后，待绘制完毕后进行下一步操作
+                            performClick();
+                        }
+                    });
                 } else {
                     mPageAnimController.dispatchTouchEvent(ev, this);
                 }
+                isAbort = false;
                 break;
         }
         return true;
