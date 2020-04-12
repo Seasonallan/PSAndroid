@@ -392,6 +392,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 
 	private SizeChangeTool mAnimationSettingTool, mSimplifiedTool;
 	private void showBrightessSettingView(){
+		ToastUtil.showToast("若调节失败，请禁用系统自动亮度调节");
 		SeekBar seekBar;
 		if(mBrightessSettingView == null){
 			mBrightessSettingView = getLayoutInflater().inflate(R.layout.reader_menu_brightness_setting, null);
@@ -474,7 +475,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		if(oldValue < 0){
 			seekBar.setProgress(50);
 		}else{
-			if(oldValue <= 0.17f){
+			if(oldValue <= 0.10f){
 				seekBar.setProgress(0);
 			}else{
 				seekBar.setProgress((int) (oldValue * 100));
@@ -726,8 +727,8 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	private void setScreenBrightess(int value){
 		final WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
 		lp.screenBrightness = value * 1.0f / 100.0f;
-		if(lp.screenBrightness < 0.17){
-			lp.screenBrightness = 0.17f;
+		if(lp.screenBrightness < 0.10){
+			lp.screenBrightness = 0.10f;
 		}
 		mActivity.getWindow().setAttributes(lp);
 	}
@@ -743,7 +744,6 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 		if(item != null){
 			switch(item.id){
 			case MenuItemAdapter.MenuItem.MENU_ITEM_ID_BRIGHTNESS:
-				ToastUtil.showToast("若调节失败，请禁用系统自动亮度调节");
 				dowAnimation.setAnimationListener(new SimpleAnimationListener(){
 					@Override
 					public void onAnimationEnd(Animation animation) {

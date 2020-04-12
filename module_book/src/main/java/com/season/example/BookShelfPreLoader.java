@@ -55,14 +55,18 @@ public class BookShelfPreLoader {
     }
 
 
-    public void saveLocal(final Object list) {
+    public void saveLocal(Object list) {
+        saveShelfBooks(list);
+        bookLists = null;
+    }
+
+    public void saveShelfBooks(final Object list) {
         new Thread() {
             @Override
             public void run() {
                 FileUtils.saveSerialData("cacheBookLists", list);
             }
         }.start();
-        bookLists = null;
     }
 
     public void preLoad() {

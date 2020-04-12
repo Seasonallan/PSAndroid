@@ -56,6 +56,7 @@ public class BookShelfActivity extends BaseStartPagerActivity implements DragScr
             protected void addFile(String filePath) {
                 DragController.getInstance().cancelDragMode();
                 mContainer.noItemAdd(BookShelfPreLoader.getInstance().decodeFile(filePath), BookShelfActivity.this);
+                BookShelfPreLoader.getInstance().saveShelfBooks(mContainer.getFinalDatas());
             }
         };
         animationView = findViewById(R.id.ani);
