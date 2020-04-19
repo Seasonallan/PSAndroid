@@ -392,7 +392,7 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 
 	private SizeChangeTool mAnimationSettingTool, mSimplifiedTool;
 	private void showBrightessSettingView(){
-		ToastUtil.showToast("若调节失败，请禁用系统自动亮度调节");
+		//ToastUtil.showToast("若调节失败，请禁用系统自动亮度调节");
 		SeekBar seekBar;
 		if(mBrightessSettingView == null){
 			mBrightessSettingView = getLayoutInflater().inflate(R.layout.reader_menu_brightness_setting, null);

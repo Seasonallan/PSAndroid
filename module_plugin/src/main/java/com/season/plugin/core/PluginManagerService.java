@@ -24,7 +24,6 @@ package com.season.plugin.core;
 
 import android.app.Notification;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
@@ -36,19 +35,7 @@ import android.os.IBinder;
  */
 public class PluginManagerService extends Service {
 
-    private static IPluginManagerImpl mPluginPackageManager;
-
-    public static IPluginManagerImpl getPluginPackageManager(Context context) {
-        if (mPluginPackageManager == null) {
-            synchronized (PluginManager.class) {
-                if (mPluginPackageManager == null) {
-                    mPluginPackageManager = new IPluginManagerImpl(context);
-                    mPluginPackageManager.onCreate();
-                }
-            }
-        }
-        return mPluginPackageManager;
-    }
+    private IPluginManagerImpl mPluginPackageManager;
 
     @Override
     public void onCreate() {

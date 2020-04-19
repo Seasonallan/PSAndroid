@@ -1,6 +1,7 @@
 package com.season.book.view;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
@@ -12,6 +13,7 @@ import android.view.View;
 import com.season.book.R;
 import com.season.book.ReadSetting;
 import com.season.book.bean.BookInfo;
+import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.view.LoadingView;
 
 public abstract class BaseReadView extends AbsReadView{
@@ -119,6 +121,20 @@ public abstract class BaseReadView extends AbsReadView{
         }
     }
 
+    protected void drawBackground(Canvas canvas){
+        int bgRes = mReadSetting.getThemeBGImgRes();
+        if(bgRes == -1){
+            canvas.drawColor(mReadSetting.getThemeBGColor());
+        }else{
+            if (!BitmapUtil.isBitmapAvaliable(mBGBitmap)){
+                mBGBitmap = BitmapFactory.decodeResource(getResources(), bgRes);
+            }
+            height = Math.max(height, getHeight());
+            canvas.drawBitmap(mBGBitmap, new Rect(0, 0, mBGBitmap.getWidth(), mBGBitmap.getHeight()),
+                    new Rect(0, 0, getWidth(), height), null);
+        }
+    }
+
     /**
      * 绘制等待画面
      * @param canvas
@@ -171,13 +187,12 @@ public abstract class BaseReadView extends AbsReadView{
 
         FontMetricsInt fm = mTempTextPaint.getFontMetricsInt();
         int x = getWidth() - mReadSetting.getLeftRightSpaceSize() - bookMarkW;
-        int y = getHeight() - mReadSetting.getTopBottomSpaceSize()  - topChapterNameHeight*2/3 + fm.bottom;
+        height = Math.max(height, getHeight());
+        int y = height - mReadSetting.getTopBottomSpaceSize()  - topChapterNameHeight*2/3 + fm.bottom;
         canvas.drawText(pageSizeStr, x, y, mTempTextPaint);
 
     }
 
-
-    int height = -1;
     @Override
     protected void drawBatteryTime(Canvas canvas){
         if (batteryView == null){
@@ -252,8 +267,4 @@ public abstract class BaseReadView extends AbsReadView{
         return text+"...";
     }
 
-    @Override
-    protected void drawBackground(Canvas canvas){
-        super.drawBackground(canvas);
-    }
 }

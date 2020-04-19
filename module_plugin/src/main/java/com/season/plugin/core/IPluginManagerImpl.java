@@ -73,28 +73,6 @@ public class IPluginManagerImpl extends IPluginManager.Stub {
         mActivityManagerService = new ProcessManager(mContext);
     }
 
-
-    public void onCreate() {
-        new Thread() {
-            @Override
-            public void run() {
-                onCreateInner();
-            }
-        }.start();
-    }
-
-    private void onCreateInner() {
-        loadAllPlugin(mContext);
-        loadHostRequestedPermission();
-        try {
-            mHasLoadedOk.set(true);
-            synchronized (mLock) {
-                mLock.notifyAll();
-            }
-        } catch (Exception e) {
-        }
-    }
-
     public void loadPluginsInThread(final Runnable runnable) {
         final Handler handler = new Handler();
         new Thread() {

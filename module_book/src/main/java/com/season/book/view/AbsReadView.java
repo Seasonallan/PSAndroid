@@ -202,19 +202,8 @@ public abstract class AbsReadView extends View implements PageAnimController.Pag
 	protected abstract void drawBatteryTime(Canvas canvas);
 
 	/** 背景图片*/
-	private Bitmap mBGBitmap;
-	protected void drawBackground(Canvas canvas){
-		int bgRes = mReadSetting.getThemeBGImgRes();
-		if(bgRes == -1){
-			canvas.drawColor(mReadSetting.getThemeBGColor());
-		}else{
-			if (!BitmapUtil.isBitmapAvaliable(mBGBitmap)){
-				mBGBitmap = BitmapFactory.decodeResource(getResources(), bgRes);
-			}
-			canvas.drawBitmap(mBGBitmap, new Rect(0, 0, mBGBitmap.getWidth(), mBGBitmap.getHeight()),
-					new Rect(getLeft(), getTop(), getRight(), getBottom()), null);
-		}
-	}
+	protected Bitmap mBGBitmap;
+	protected int height = -1;
 	
 	@Override
 	public Integer requestPrePage() {

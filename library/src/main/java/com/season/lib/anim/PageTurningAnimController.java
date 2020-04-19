@@ -12,6 +12,7 @@ import android.view.animation.Interpolator;
 import android.widget.Scroller;
 import com.season.lib.bitmap.BitmapUtil;
 import com.season.lib.math.MathUtil;
+import com.season.lib.util.LogUtil;
 
 
 /**
@@ -158,9 +159,9 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			onTouchDown = false;
 			if (isRequestNextPage != null){
 				if (isRequestNextPage){
-					mScrollerStart.startScroll(mCornerX, mCornerY, (int)x - mCornerX, (int)y - mCornerY , 200);
+					mScrollerStart.startScroll(mCornerX, mCornerY, (int)x - mCornerX, (int)y - mCornerY , mDuration/3);
 				}else{
-					mScrollerStart.startScroll(0, 0, (int)x, (int)y , 200);
+					mScrollerStart.startScroll(0, 0, (int)x, (int)y , mDuration/3);
 				}
 				pageCarver.requestInvalidate();
 			}
@@ -507,6 +508,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mBackShadowDrawable.draw(canvas);
 		canvas.restore();
 	}
+
+	private int shadowMaxWidth = 36;
 	/**
 	 * 绘制翻起页的阴影
 	 */
@@ -524,8 +527,8 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 							- mBezierControl1.x);
 		}
 		// 翻起页阴影顶点与touch点的距离
-		double d1 = 25 * 1.414 * Math.cos(degree);
-		double d2 = 25 * 1.414 * Math.sin(degree);
+		double d1 = shadowMaxWidth * 1.5 * Math.cos(degree);
+		double d2 = shadowMaxWidth * 1.5 * Math.sin(degree);
 		float x = (float) (mTouch.x + d1);
 		float y;
 		if (mIsRTandLB) {
@@ -548,9 +551,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int rightx;
 		GradientDrawable mCurrentPageShadow;
 		//全屏翻页，边缘阴影宽度渐变
-//		int shadowWidth = (int) (25 * (isLeftPage
-//				? ( mTouch.x / mContentWidth) : ( (mContentWidth - mTouch.x) / mContentWidth) ) );
-		int shadowWidth = (int) (25 * (false
+		int shadowWidth = (int) (shadowMaxWidth * (false
 				? ( mTouch.x / mContentWidth) : ( (mContentWidth - mTouch.x) / mContentWidth) ) );
 		if (mIsRTandLB) {
 			leftx = (int) (mBezierControl1.x - 1);
@@ -601,7 +602,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		int hmg = (int) Math.hypot(mBezierControl2.x, temp);
 		if (hmg > mMaxLength)
 			mCurrentPageShadow
-					.setBounds((int) (mBezierControl2.x - 25) - hmg, leftx,
+					.setBounds((int) (mBezierControl2.x - shadowMaxWidth) - hmg, leftx,
 							(int) (mBezierControl2.x + mMaxLength) - hmg,
 							rightx);
 		else

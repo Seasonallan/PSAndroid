@@ -21,7 +21,7 @@ import com.season.lib.util.LogUtil;
  */
 public abstract class AbsHorGestureAnimController extends PageAnimController {
 	protected static final String TAG = "TouEvent";
-	public static final int DURATION_DEFAULT = 600;
+	public static final int DURATION_DEFAULT = 360;
 
 	protected int mDuration = DURATION_DEFAULT;
 	protected Scroller mScroller, mScrollerStart;
