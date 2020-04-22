@@ -144,7 +144,8 @@ public abstract class BaseReadView extends AbsReadView{
         drawBackground(canvas);
         if (true){
             mLoadingView.drawContent(canvas);
-            postInvalidate();
+            postInvalidateDelayed(50);
+            //postInvalidate();
             return;
         }
         mTempTextPaint.setTextSize((float) (mReadSetting.getFontSize()));

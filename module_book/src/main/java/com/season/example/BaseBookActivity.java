@@ -44,7 +44,6 @@ import com.season.book.page.span.UrlSpna;
 import com.season.book.view.IReadCallback;
 import com.season.book.view.ReadView;
 import com.season.book.view.IReaderView;
-import com.season.lib.util.LogUtil;
 import com.season.lib.view.PullRefreshLayout;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
@@ -89,12 +88,6 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (false){
-			startActivity(new Intent(BaseBookActivity.this, BookShelfActivity.class));
-			finish();
-			return;
-		}
-
 		centerRect = new RectF();
 		centerRect.left = ScreenUtils.getScreenWidth()/4;
 		centerRect.right = ScreenUtils.getScreenWidth()*3/4;
@@ -126,14 +119,12 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 						position = 0;
 					}
 					mBook = bookLists.get(position);
-					initReadView();
 					if (isAnimationEnded){
 						openBook();
 					}
 				}
 			});
 		}else{
-			initReadView();
         	if (isAnimationEnded){
 				openBook();
 			}
@@ -150,6 +141,7 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 
 	boolean isOpened = false;
 	private void openBook(){
+		initReadView();
 		NavigationBarUtil.hideNavigationBar(BaseBookActivity.this);
 		isOpened = true;
 		new Thread() {
@@ -269,13 +261,15 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 
 	@Override
 	public void onBackPressed() {
-		if(mCatalogView != null && mCatalogView.isShown()){
-			mCatalogView.dismiss(true);
-			return;
-		}
-		if(mReaderMenuPopWin != null && mReaderMenuPopWin.isShown()){
-			mReaderMenuPopWin.dismiss(true, true);
-			return;
+		if (false){
+			if(mCatalogView != null && mCatalogView.isShown()){
+				mCatalogView.dismiss(true);
+				return;
+			}
+			if(mReaderMenuPopWin != null && mReaderMenuPopWin.isShown()){
+				mReaderMenuPopWin.dismiss(true, true);
+				return;
+			}
 		}
 		super.onBackPressed();
 	}

@@ -1208,6 +1208,12 @@ public class PSCanvas extends RelativeLayout{
     }
 
 
+
+    //停止刷新
+    public void stopRefreshing() {
+        running = -1;
+    }
+
     //停止刷新，释放内存
     public void release() {
         running = -1;

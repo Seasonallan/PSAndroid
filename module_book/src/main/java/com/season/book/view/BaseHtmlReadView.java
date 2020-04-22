@@ -53,7 +53,7 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
         mTextSelectHandler = new TextSelectHandler(0, 0);
 
 		ReaderMediaPlayer.init(getDataProvider());
-		mPageManager = new PageManager(getContext(),this, isLayoutAll());
+		mPageManager = new PageManager(this, isLayoutAll());
 		setDrawingCacheEnabled(false);
 		mCurrentPageIndex = INDEX_INITIAL_CONTENT;
 		mRequestPageIndex = REQUEST_INDEX_INITIAL_CONTENT;
@@ -681,34 +681,12 @@ public abstract class BaseHtmlReadView extends BaseReadView implements ReaderMed
 	}
 
 	@Override
-	public void saveDataDB(String contentId, String key, String data) {
-//		ReaderLayoutDB.getInstance(getInstance()).saveData(contentId, key, data);
-	}
-
-	@Override
-	public String getDataDB(String contentId, String key) {
-		return null;
-//		return ReaderLayoutDB.getInstance(getInstance()).getData(contentId, key);
-	}
-
-	@Override
-	public boolean hasDataDB(String contentId, String key) {
-//		return ReaderLayoutDB.getInstance(getInstance()).hasData(contentId, key);
-		return false;
-	}
-	
-	@Override
 	public boolean handRequestIndex(Canvas canvas, int chapterIndex,int pageIndex, int bindChapterIndex, int bindPageIndex) {
 		if(pageIndex == INDEX_INITIAL_CONTENT){
 			drawWaitPage(canvas,mPageManager.isFirstDraw());
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public BookInfo getPaserExceptionInfo() {
-		return new BookInfo(mBook.id, mBook.title, mCurrentChapterIndex);
 	}
 
     protected boolean isLayoutAll(){

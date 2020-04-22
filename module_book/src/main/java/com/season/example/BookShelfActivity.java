@@ -198,7 +198,7 @@ public class BookShelfActivity extends BaseStartPagerActivity implements DragScr
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        ImageMemoryCache.getInstance().put(bitmap);
+                        RoutePath.putCacheBitmap(bitmap);
                         BookInfo item = (BookInfo) view.getGridAdapter().getItem(position);
                         BaseBookActivity.open(BookShelfActivity.this, item);
                     }

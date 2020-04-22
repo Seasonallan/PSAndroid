@@ -49,7 +49,7 @@ public class PagerActivity extends Activity {
                         } else {
                             path = RoutePath.BOOK;
                         }
-                        ImageMemoryCache.getInstance().put(mainPageView.getCurrentPageBitmap());
+                        RoutePath.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                         ARouter.getInstance().build(path).navigation();
                     }else{
                         mainPageView.gotoNextPage();

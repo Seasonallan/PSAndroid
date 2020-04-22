@@ -1,17 +1,11 @@
 package com.season.lib.bitmap;
 
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 
 
 /**
@@ -28,7 +22,6 @@ public class ImageMemoryCache {
 	private ConcurrentHashMap<String, SoftReference<Bitmap>> mSoftBitmapCache;
 
 	private ImageMemoryCache(final int count) {
-		mWeakBitmapCache = new ArrayList<>();
 		mHardBitmapCache = new LinkedHashMap<String, SoftReference<Bitmap>>(
 				count / 2, 0.75f, true) {
 			private static final long serialVersionUID = 8873184667639123345L;
@@ -110,30 +103,6 @@ public class ImageMemoryCache {
 		}
 	}
 
-	private List<Bitmap> mWeakBitmapCache;
-	public void put(Bitmap bitmap){
-		Bitmap resultBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
-		Canvas canvas = new Canvas(resultBitmap);
-		canvas.drawBitmap(bitmap, 0,0, null);
-		mWeakBitmapCache.add(resultBitmap);
-	}
-
-	public Bitmap get(){
-		if (mWeakBitmapCache.size() > 0){
-			Bitmap bitmap = mWeakBitmapCache.get(mWeakBitmapCache.size() - 1);
-			if (BitmapUtil.isBitmapAvaliable(bitmap)){
-				return bitmap;
-			}
-		}
-		return null;
-	}
-	public void remove() {
-		if (mWeakBitmapCache.size() > 0){
-			Bitmap bitmap = mWeakBitmapCache.get(mWeakBitmapCache.size() - 1);
-			BitmapUtil.recycleBitmaps(bitmap);
-			mWeakBitmapCache.remove(mWeakBitmapCache.size() - 1);
-		}
-	}
 	
 	public void put(String id, Bitmap bitmap) {
 		synchronized (mHardBitmapCache) {

@@ -39,7 +39,7 @@ public class StartPageView extends View implements PageAnimController.PageCarver
                 PageAnimController.ANIM_TYPE_PAGE_TURNING);
 
         mPageAnimController.setDurationKeep(true);
-        //mPageAnimController.setDuration(1200);
+        mPageAnimController.setDuration(600);
     }
 
 

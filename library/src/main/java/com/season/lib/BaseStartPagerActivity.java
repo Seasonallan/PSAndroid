@@ -10,8 +10,6 @@ import android.widget.RelativeLayout;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.season.lib.bitmap.ImageMemoryCache;
-import com.season.lib.util.LogUtil;
 import com.season.lib.view.StartPageView;
 
 public abstract class BaseStartPagerActivity extends FragmentActivity {
@@ -52,7 +50,7 @@ public abstract class BaseStartPagerActivity extends FragmentActivity {
         }
 
         if (enablePager()){
-            Bitmap bitmap = ImageMemoryCache.getInstance().get();
+            Bitmap bitmap = RoutePath.getCacheBitmap();
             if (bitmap != null){
                 RelativeLayout relativeLayout = new RelativeLayout(this);
                 setContentView(relativeLayout);
@@ -71,17 +69,17 @@ public abstract class BaseStartPagerActivity extends FragmentActivity {
                         overridePendingTransition(0, 0);
                     }
                 });
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                View contentView = LayoutInflater.from(this).inflate(getLayoutId(), null);
+                relativeLayout.addView(contentView, params);
+                relativeLayout.addView(startPageView, params);
+                overridePendingTransition(0, 0);
                 startPageView.post(new Runnable() {
                     @Override
                     public void run() {
                         startPageView.start();
                     }
                 });
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                View contentView = LayoutInflater.from(this).inflate(getLayoutId(), null);
-                relativeLayout.addView(contentView, params);
-                relativeLayout.addView(startPageView, params);
-                overridePendingTransition(0, 0);
                 return;
             }
         }
@@ -101,11 +99,6 @@ public abstract class BaseStartPagerActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtil.i("onDestroy:" + getClass().getName());
-        if (startPageView != null){
-            ImageMemoryCache.getInstance().remove();
-            return;
-        }
     }
 
     @Override

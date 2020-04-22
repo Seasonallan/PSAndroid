@@ -144,13 +144,13 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
             }
         });
 
-        mPsCoverView.post(new Runnable() {
+        mPsCoverView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 fixCanvasHeight();
                 bindData2Canvas();
             }
-        });
+        }, 800);
     }
 
     ImageView iv_back;
@@ -359,6 +359,9 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
             return;
         }
 
+        if (mPsCanvas != null) {
+            mPsCanvas.stopRefreshing();
+        }
         super.onBackPressed();
     }
 

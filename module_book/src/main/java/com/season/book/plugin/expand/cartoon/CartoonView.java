@@ -76,7 +76,7 @@ public abstract class CartoonView extends FrameLayout implements PageManager.Pag
 	
 	private void init() {
 		setDrawingCacheEnabled(false);
-		mPageManager = new PageManager(getContext(), this);
+		mPageManager = new PageManager(this);
 		mCurrentPage = INDEX_INITIAL_CONTENT;
 		mCurrentChapterIndex = INDEX_INITIAL_CONTENT;
 		//ReaderMediaPlayer.getInstance().addPlayerListener(this);
@@ -386,26 +386,6 @@ public abstract class CartoonView extends FrameLayout implements PageManager.Pag
 	public void invalidateView(Rect dirty) {
 		invalidate();
 	} 
-	
-	@Override
-	public void saveDataDB(String contentId, String key, String data) {
-		// ReaderLayoutDB.getInstance(getInstance()).saveData(contentId, key,
-		// data);
-	}
-
-	@Override
-	public String getDataDB(String contentId, String key) {
-		return null;
-		// return ReaderLayoutDB.getInstance(getInstance()).getData(contentId,
-		// key);
-	}
-
-	@Override
-	public boolean hasDataDB(String contentId, String key) {
-		// return ReaderLayoutDB.getInstance(getInstance()).hasData(contentId,
-		// key);
-		return false;
-	}
 
 	public int getLayoutChapterProgress() {
 		return mPageManager.getLayoutChapterProgress();
@@ -603,11 +583,7 @@ public abstract class CartoonView extends FrameLayout implements PageManager.Pag
 			container.removeView(view);
 		}
 	} 
- 
-	@Override
-	public BookInfo getPaserExceptionInfo() {
-		return null;
-	}
+
     boolean isLast = true;
     @Override
     public void onPageScrollStateChanged(int i) {

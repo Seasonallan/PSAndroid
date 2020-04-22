@@ -119,16 +119,15 @@ public class PageManager implements PatchParent {
 
     private Handler mHandler;
 
-    public PageManager(Context context, PageManagerCallback callback) {
-        this(context, callback, true);
+    public PageManager( PageManagerCallback callback) {
+        this(callback, true);
     }
 
     /**
-     * @param context
      * @param callback  不能为空
      * @param layoutAll 是否整本排版(如果为非只排版当前章节的前后两章)
      */
-    public PageManager(Context context, PageManagerCallback callback, boolean layoutAll) {
+    public PageManager(PageManagerCallback callback, boolean layoutAll) {
         mCallback = callback;
         mChapterList = new ArrayList<ChapterTask>();
         mBindPageList = new LinkedList<Page>();
@@ -1056,14 +1055,11 @@ public class PageManager implements PatchParent {
         private boolean isBind;
         private boolean isLayout;
         private long mRunTime;
-        private Boolean hasDBLayoutData;
-//		private TaskListener mTaskListener;
 
         private ChapterTask(int index) {
             mIndex = index;
             mPages = new LinkedList<Page>();
             mCacheStyleText = new SoftReference<StyleText>(null);
-            hasDBLayoutData = mCallback.hasDataDB(mSettingParam.getContentId(), getKey());
         }
 
         /**
@@ -1089,12 +1085,6 @@ public class PageManager implements PatchParent {
             return -1;
         }
 
-//		private void stop(){
-//			if(mTaskListener != null){
-//				mTaskListener.stop();
-//			}
-//		}
-
         /**
          * 开始执行任务
          */
@@ -1108,137 +1098,45 @@ public class PageManager implements PatchParent {
                     , mCallback.getDataProvider(), taskListener, mSizeInfo);
             final Layout layout;
             if (!isLayout) {
-                long lastTiem = System.currentTimeMillis();
-                LogUtil.i(TAG, "hasDataDB " + hasDBLayoutData + " time=" + (System.currentTimeMillis() - lastTiem));
-                if (!hasDBLayoutData) {
-                    layout = new Layout(htmlParser.getStyleText(), mSettingParam, this, taskListener);
-                } else {
-                    layout = null;
-                }
+                layout = new Layout(htmlParser.getStyleText(), mSettingParam, this, taskListener);
             } else {
                 layout = null;
             }
             mThreadPool.addTask(new Runnable() {
                 @Override
                 public void run() {
-                    boolean isNeedSaveLayoutInDB = false;
                     try {
                         long lastTiem = System.currentTimeMillis();
                         htmlParser.start(mCallback.getChapterInputStream(mIndex));
-                        //LogUtil.e("htmlParser>>"+ htmlParser.getStyleText().get);
                         if (taskListener.isStop()) {
                             return;
                         }
                         if (layout != null) {
                             layout.startLayout(0, htmlParser.getStyleText().getTotalLength() - 1);
-                            isNeedSaveLayoutInDB = true;
                             layout.setCallback(null);
-                        } else if (hasDBLayoutData && !isLayout) {
-                            loadLayoutInDB(taskListener);
                         }
                         if (taskListener.isStop()) {
                             return;
                         }
                         mRunTime += System.currentTimeMillis() - lastTiem;
-                        onTaskFinish(taskListener, htmlParser.getStyleText(), isNeedSaveLayoutInDB);
+                        onTaskFinish(taskListener, htmlParser.getStyleText());
                     } catch (Exception e) {
-                        onTaskFinish(taskListener, htmlParser.getStyleText(), isNeedSaveLayoutInDB);
+                        LogUtil.e(TAG, "htmlParser exception>>" + e.getMessage());
+                        onTaskFinish(taskListener, htmlParser.getStyleText());
                     }
                 }
             });
         }
 
         /**
-         * 保存排版结果的key，它是由任何影响排版的结果的值组合而成
-         *
-         * @return
-         */
-        private String getKey() {
-            return mSettingParam.getKey() + "-" + mIndex;
-        }
-
-        /**
-         * 从数据库读取排版结果（有bug 暂时没有作用）
-         *
-         * @param taskListener
-         */
-        private void loadLayoutInDB(TaskListener taskListener) {
-            if (taskListener.isStop()) {
-                return;
-            }
-            String data = mCallback.getDataDB(mSettingParam.getContentId(), getKey());
-            if (taskListener.isStop()) {
-                return;
-            }
-            if (!TextUtils.isEmpty(data)) {
-                long lastTiem = System.currentTimeMillis();
-                int pageSize = 0;
-                int start = 0;
-                int end = -1;
-                for (int i = 0; i < data.length(); i++) {
-                    char c = data.charAt(i);
-                    if (c == '-') {
-                        end = 0;
-                    } else if (c == ';') {
-                        Page page = new Page(mSettingParam, pageSize++);
-                        page.setContent(start, end);
-                        onLayoutFinishPage(taskListener, page, end);//TODO 计算字符总长度
-                        end = -1;
-                        start = 0;
-                    } else {
-                        if (end < 0) {
-                            start = start * 10 + (c - 48);
-                        } else {
-                            end = end * 10 + (c - 48);
-                        }
-                    }
-                }
-                LogUtil.i(TAG, "loadLayoutInDB pageSize=" + pageSize + " time=" + (System.currentTimeMillis() - lastTiem));
-            }
-        }
-
-        /**
-         * 把排版结果保存到数据库（有bug 暂时没有作用）
-         *
-         * @param taskListener
-         */
-        private void saveLayoutInDB(TaskListener taskListener) {
-            if (taskListener.isStop()) {
-                return;
-            }
-            synchronized (mPages) {
-                if (mPages.size() > 0) {
-                    long lastTiem = System.currentTimeMillis();
-                    StringBuffer sb = new StringBuffer();
-                    for (Page page : mPages) {
-                        sb.append(page.getStart());
-                        sb.append("-");
-                        sb.append(page.getEnd());
-                        sb.append(";");
-                    }
-                    mCallback.saveDataDB(mSettingParam.getContentId(), getKey(), sb.toString());
-                    LogUtil.i(TAG, "saveLayoutInDB pageSize=" + mPages.size() + " time=" + (System.currentTimeMillis() - lastTiem));
-                }
-            }
-        }
-
-        /**
          * 任务执行结束点，并执行下一个任务,绑定章节
          */
-        private void onTaskFinish(final TaskListener taskListener, final StyleText styleText, final boolean isNeedSaveLayoutInDB) {
+        private void onTaskFinish(final TaskListener taskListener, final StyleText styleText) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (taskListener.isStop()) {
                         return;
-                    }
-                    if (isNeedSaveLayoutInDB) {
-                        mThreadPool.addTask(new Runnable() {
-                            @Override
-                            public void run() {
-                                saveLayoutInDB(taskListener);
-                            }
-                        });
                     }
                     LogUtil.i(TAG, "OnTaskFinish index=" + mIndex + " styleText=" + styleText + " isBind=" + isBind + " mRunTime=" + mRunTime);
                     isLayout = true;
@@ -1268,9 +1166,6 @@ public class PageManager implements PatchParent {
 
         @Override
         public void onLayoutFinishPage(final TaskListener taskListener, final Page page, final int totalLength) {
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {}
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1379,7 +1274,7 @@ public class PageManager implements PatchParent {
         /**
          * 刷新界面
          */
-        public void invalidateView(Rect dirty);
+        void invalidateView(Rect dirty);
 
         /**
          * 页布局进度
@@ -1387,7 +1282,7 @@ public class PageManager implements PatchParent {
          * @param chapterIndex
          * @param pageIndex
          */
-        public void onLayoutPageFinish(int chapterIndex, int pageIndex, int curChar, int maxChar);
+        void onLayoutPageFinish(int chapterIndex, int pageIndex, int curChar, int maxChar);
 
         /**
          * 章节布局进度
@@ -1395,7 +1290,7 @@ public class PageManager implements PatchParent {
          * @param progress
          * @param max
          */
-        public void onLayoutChapterFinish(int chapterIndex, int progress, int max);
+        void onLayoutChapterFinish(int chapterIndex, int progress, int max);
 
         /**
          * 获取章节数据
@@ -1403,26 +1298,26 @@ public class PageManager implements PatchParent {
          * @param chapterIndex
          * @return
          */
-        public String getChapterInputStream(int chapterIndex);
+        String getChapterInputStream(int chapterIndex);
 
         /**
          * 获取Css加载器
          *
          * @return
          */
-        public ICssProvider getCssProvider();
+        ICssProvider getCssProvider();
 
         /**
          * 获取数据加载器
          *
          * @return
          */
-        public DataProvider getDataProvider();
+        DataProvider getDataProvider();
 
         /**
          * 绘制等待页面
          */
-        public void drawWaitingContent(Canvas canvas, int chapterIndex, boolean isFirstDraw);
+        void drawWaitingContent(Canvas canvas, int chapterIndex, boolean isFirstDraw);
 
         /**
          * 绘制内容页之后
@@ -1431,7 +1326,7 @@ public class PageManager implements PatchParent {
          * @param chapterIndex 章节下标
          * @param pageIndex    页下标
          */
-        public void onPostDrawContent(Canvas canvas, int chapterIndex, int pageIndex, boolean isFullScreen);
+        void onPostDrawContent(Canvas canvas, int chapterIndex, int pageIndex, boolean isFullScreen);
 
         /**
          * 绘制内容页之前
@@ -1440,32 +1335,7 @@ public class PageManager implements PatchParent {
          * @param chapterIndex 章节下标
          * @param pageIndex    页下标
          */
-        public void onPreDrawContent(Canvas canvas, int chapterIndex, int pageIndex, boolean isFullScreen);
-
-        /**
-         * 保存排版结果
-         *
-         * @param contentId
-         * @param key
-         */
-        public void saveDataDB(String contentId, String key, String data);
-
-        /**
-         * 获取排版数据
-         *
-         * @param contentId
-         * @param key
-         * @return
-         */
-        public String getDataDB(String contentId, String key);
-
-        /**
-         * 查询是否数据
-         *
-         * @param contentId
-         * @param key
-         */
-        public boolean hasDataDB(String contentId, String key);
+        void onPreDrawContent(Canvas canvas, int chapterIndex, int pageIndex, boolean isFullScreen);
 
         /**
          * 给外部优先处理下标机会
@@ -1474,13 +1344,7 @@ public class PageManager implements PatchParent {
          * @param pageIndex
          * @return true 代表已经处理
          */
-        public boolean handRequestIndex(Canvas canvas, int chapterIndex, int pageIndex, int currentChapterIndex, int currentPageIndex);
+        boolean handRequestIndex(Canvas canvas, int chapterIndex, int pageIndex, int currentChapterIndex, int currentPageIndex);
 
-        /**
-         * 获取书籍信息
-         *
-         * @return
-         */
-        public BookInfo getPaserExceptionInfo();
     }
 }
