@@ -1,3 +1,2 @@
 include ':app', ':library', ':module_book', ':module_ps', ':module_plugin'
 rootProject.name='My application'
-include ':myapplication'

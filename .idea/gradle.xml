@@ -16,7 +16,6 @@
             <option value="$PROJECT_DIR$/module_book" />
             <option value="$PROJECT_DIR$/module_plugin" />
             <option value="$PROJECT_DIR$/module_ps" />
-            <option value="$PROJECT_DIR$/myapplication" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
