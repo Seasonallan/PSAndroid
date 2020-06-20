@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.util.Log;
 
+import com.season.lib.util.LogUtil;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -155,6 +157,7 @@ public class GifDecoder extends Thread {
 		if (position >= frameCache.size()){
 			return null;
 		}
+		//LogUtil.e("frame:"+ position +" ?:"+ frameCount);
 		gif = frameCache.get(position);
 		return gif;
 	}

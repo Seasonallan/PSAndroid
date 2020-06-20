@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.season.lib.util.LogUtil;
 import com.season.ps.bean.LayerBackground;
 import com.season.ps.bean.LayerItem;
 import com.season.ps.bean.LayerEntity;
@@ -410,7 +411,7 @@ public class PSCanvas extends RelativeLayout{
         init();
     }
 
-    int running = -1;
+    private volatile int running = -1;
 
     @Override
     public void dispatchWindowVisibilityChanged(int visibility) {
@@ -499,19 +500,22 @@ public class PSCanvas extends RelativeLayout{
     long startTime;
     public int maxDuration;
     public void restartTime(){
-        maxDuration = 0;
-        startTime = System.currentTimeMillis();
+        int newDuration = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View scaleView = getChildAt(i);
             if (scaleView instanceof PSLayer && ((PSLayer) scaleView).getChildCount() > 0) {
                 View view = ((PSLayer) scaleView).getChildAt(0);
                 if (view instanceof ILayer) {//找到时长最长的那个图层
                     int duration = ((ILayer) view).getDuration();
-                    if (maxDuration < duration) {
-                        maxDuration = duration;
+                    if (newDuration < duration) {
+                        newDuration = duration;
                     }
                 }
             }
+        }
+        if (maxDuration != newDuration){
+            maxDuration = newDuration;
+            startTime = System.currentTimeMillis();
         }
     }
 
@@ -592,6 +596,7 @@ public class PSCanvas extends RelativeLayout{
                     }
                 } else {
                     if (running == 1) {
+                        restartTime();
                         long currentTime = System.currentTimeMillis();
                         if (currentTime - startTime > maxDuration){
                             startTime = currentTime;
@@ -655,14 +660,6 @@ public class PSCanvas extends RelativeLayout{
                     deleteView((PSLayer) view);
                 }
             });
-            if (((PSLayer) child).getChildCount() > 0){
-                View childItemView = ((PSLayer) child).getChildAt(0);
-                if (childItemView instanceof ILayer){
-                    if (((ILayer) childItemView).getDuration() > 0){
-                        restartTime();
-                    }
-                }
-            }
         }
     }
 
@@ -676,7 +673,6 @@ public class PSCanvas extends RelativeLayout{
                 mOnFocusChangeListener.onFocusClear();
             }
         }
-        restartTime();
     }
 
 
@@ -1059,7 +1055,6 @@ public class PSCanvas extends RelativeLayout{
                 CustomTextView textObjectView = (CustomTextView) view;
                 if (textObjectView.setTextAnimationType(type)) {
                     addEvent(new Operate(textObjectView));
-                    restartTime();
                     int duration = textObjectView.getDuration();
                     if (duration > 0){
                         textObjectView.setStartTime(0);
@@ -1117,7 +1112,6 @@ public class PSCanvas extends RelativeLayout{
             customTextView.editText(params);
             customTextView.requestLayout();
             addEvent(new Operate(customTextView));
-            restartTime();
         }
     }
 
