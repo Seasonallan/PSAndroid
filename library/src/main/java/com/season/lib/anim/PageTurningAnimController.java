@@ -240,7 +240,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		drawNextPageAreaAndShadow(canvas, toIndex,pageCarver);
 
 		// 4、绘制翻起页的阴影
-		drawCurrentPageShadow(canvas);
+		drawCurrentPageShadow(canvas, !isNext);
 	}
 
 	private void resetPath() {
@@ -513,7 +513,7 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 	/**
 	 * 绘制翻起页的阴影
 	 */
-	private final void drawCurrentPageShadow(Canvas canvas) {
+	private final void drawCurrentPageShadow(Canvas canvas, boolean isLeftPage) {
 		double degree;
 		if (mIsRTandLB) {
 			degree = Math.PI
@@ -572,6 +572,17 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 		mCurrentPageShadow.draw(canvas);
 		canvas.restore();
 
+
+		if (isLeftPage || isCenterTouchAnim){
+			mCurrentPageShadow = mFrontShadowDrawableVRL;
+			float width = shadowMaxWidth * (mTouch.x - mContentWidth)/mContentWidth;
+			mCurrentPageShadow.setBounds((int) (mTouch.x + width),
+					0,
+					(int) mTouch.x,
+					mContentHeight);
+			mCurrentPageShadow.draw(canvas);
+			return;
+		}
 		mPath1.reset();
 		mPath1.moveTo(x, y);
 		mPath1.lineTo(mTouch.x, mTouch.y);
@@ -598,7 +609,6 @@ public class PageTurningAnimController extends AbsHorGestureAnimController {
 			temp = mBezierControl2.y - mContentHeight;
 		else
 			temp = mBezierControl2.y;
-
 		int hmg = (int) Math.hypot(mBezierControl2.x, temp);
 		if (hmg > mMaxLength)
 			mCurrentPageShadow
