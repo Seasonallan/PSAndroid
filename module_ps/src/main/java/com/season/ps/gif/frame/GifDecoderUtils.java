@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Movie;
 import android.text.TextUtils;
 
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.ps.gif.movie.DelayDecoder;
 import com.season.ps.gif.movie.FrameDecoder;
 

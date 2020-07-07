@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.season.ps.R;
-import com.season.lib.view.VerticalSeekBar;
+import com.season.lib.ui.view.VerticalSeekBar;
 
 
 public abstract class BottomPaintLayout extends BaseBottomView{

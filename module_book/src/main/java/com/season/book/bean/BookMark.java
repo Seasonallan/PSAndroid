@@ -4,11 +4,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.season.book.db.MarkDBHelper;
-import com.season.lib.dbase.base.BaseDao;
-import com.season.lib.dbase.base.IDbHelper;
-import com.season.lib.dbase.base.JsonArrayList;
-import com.season.lib.dbase.base.iterface.Column;
-import com.season.lib.dbase.base.iterface.Table;
+import com.season.lib.support.dbase.base.BaseDao;
+import com.season.lib.support.dbase.base.IDbHelper;
+import com.season.lib.support.dbase.base.JsonArrayList;
+import com.season.lib.support.dbase.base.iterface.Column;
+import com.season.lib.support.dbase.base.iterface.Table;
 
 
 @Table(name = "bookmark")

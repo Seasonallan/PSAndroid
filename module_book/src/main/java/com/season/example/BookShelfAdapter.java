@@ -12,8 +12,8 @@ import android.widget.TextView;
 import com.season.book.R;
 import com.season.book.bean.BookInfo;
 import com.season.example.dragview.DragAdapter;
-import com.season.lib.bitmap.ImageLoader;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.bitmap.ImageLoader;
+import com.season.lib.support.dimen.ScreenUtils;
 
 public class BookShelfAdapter extends DragAdapter<BookInfo> implements OnClickListener {
 

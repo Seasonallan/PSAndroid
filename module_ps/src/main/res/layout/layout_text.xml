@@ -16,7 +16,7 @@
         android:padding="12dp"
         android:src="@mipmap/img_text"/>
 
-    <com.season.lib.view.VerticalSeekBar
+    <com.season.lib.ui.view.VerticalSeekBar
         android:id="@+id/text_sb"
         android:layout_width="8dp"
         android:layout_height="match_parent"

@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import com.season.ps.R;
 import com.season.lib.BaseContext;
-import com.season.lib.file.FileManager;
-import com.season.lib.http.DownloadAPI;
+import com.season.lib.support.file.FileManager;
+import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.ToastUtil;
 import com.season.ps.view.gif.GifFrameView;
 

@@ -287,7 +287,7 @@
 
     </LinearLayout>
 
-    <com.season.lib.view.LoadingView
+    <com.season.lib.ui.view.LoadingView
         android:id="@+id/loadView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

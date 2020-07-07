@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.season.book.R;
-import com.season.lib.dimen.DimenUtil;
+import com.season.lib.support.dimen.DimenUtil;
 import com.season.book.bean.Catalog;
 
 import java.util.ArrayList;

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
 
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.MethodUtils;
 
 import java.io.File;
 

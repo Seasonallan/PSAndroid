@@ -6,7 +6,7 @@ import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
 import com.season.book.page.paser.html.DataProvider;
 import com.season.book.page.paser.html.ICssProvider;
-import com.season.lib.http.DownloadAPI;
+import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
 import org.json.JSONObject;
 import java.util.ArrayList;

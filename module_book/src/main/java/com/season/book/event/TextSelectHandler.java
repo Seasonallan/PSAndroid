@@ -9,7 +9,7 @@ import com.season.book.R;
 import com.season.book.bean.BookDigests;
 import com.season.example.popwindow.BookDigestsRemarksDialog;
 import com.season.lib.BaseContext;
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.book.db.BookDigestsDB;
 
 import java.util.ArrayList;

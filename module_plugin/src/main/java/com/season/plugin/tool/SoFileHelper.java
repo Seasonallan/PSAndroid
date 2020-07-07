@@ -5,7 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.text.TextUtils;
 
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.MethodUtils;
 import com.season.lib.util.LogUtil;
 
 import java.io.File;

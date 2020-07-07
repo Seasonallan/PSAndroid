@@ -20,7 +20,7 @@ import android.text.TextUtils;
 
 import com.season.lib.util.LogUtil;
 import com.season.plugin.core.PluginManager;
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.MethodUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

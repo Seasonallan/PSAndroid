@@ -27,7 +27,7 @@ import com.season.plugin.hookcore.HookHandlerCallback;
 import com.season.plugin.hookcore.HookInstrumentation;
 import com.season.plugin.hookcore.ProxyHookActivityManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.MethodUtils;
 import com.season.pluginlib.IApplicationCallback;
 import com.season.pluginlib.IPackageDataObserver;
 import com.season.pluginlib.IPluginManager;

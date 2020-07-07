@@ -4,10 +4,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Build;
-import android.util.Log;
 
 
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.MethodUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

@@ -17,7 +17,7 @@ import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginProcessManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;
 import com.season.plugin.stub.ShortcutProxyActivity;
-import com.season.lib.reflect.FieldUtils;
+import com.season.lib.support.reflect.FieldUtils;
 
 /**
  * Disc: 处理假的activity启动后替换为原本的activity并加载application和ClassLoader的替换

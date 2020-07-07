@@ -23,7 +23,7 @@ import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginProcessManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;
 import com.season.plugin.stub.util.RunningActivities;
-import com.season.lib.reflect.FieldUtils;
+import com.season.lib.support.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 

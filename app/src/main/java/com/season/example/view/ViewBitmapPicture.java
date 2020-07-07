@@ -1,4 +1,4 @@
-package com.season.book.page;
+package com.season.example.view;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -8,7 +8,7 @@ import android.graphics.PorterDuff.Mode;
 /**
  * 页面缓存
  */
-public class ViewBitmapPicture{
+public class ViewBitmapPicture {
 	private int mViewIndex;
 	private Bitmap mBitmap;
 	private Canvas mCanvas;

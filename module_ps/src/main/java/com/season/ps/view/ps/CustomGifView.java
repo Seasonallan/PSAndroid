@@ -7,7 +7,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.ps.gif.movie.FrameDecoder;
 import com.season.lib.util.LogUtil;
 import com.season.ps.view.gif.GifPlugin;

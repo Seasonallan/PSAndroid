@@ -8,12 +8,14 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
+    api arouterapi
     annotationProcessor aroutercompiler
     if (!isModule) {
         implementation project(":module_book")
         implementation project(":module_ps")
         implementation project(":module_plugin")
     }
-    implementation project(":library")
+    implementation 'com.github.Seasonallan:RapidDevelopment:1.0.4'
+    //implementation project(":library") 
 
 }

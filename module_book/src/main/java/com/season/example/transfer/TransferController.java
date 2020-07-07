@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.season.example.transfer.util.Constants;
 import com.season.book.R;
-import com.season.lib.dimen.ScreenUtils;
 import com.season.lib.util.ToastUtil;
 
 import java.io.File;

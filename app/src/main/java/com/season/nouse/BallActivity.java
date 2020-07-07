@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.season.lib.RoutePath;
 import com.season.myapplication.R;
 import com.season.nouse.interpolator.BallInterpolatorFactory;
 
@@ -49,9 +48,9 @@ public class BallActivity extends Activity{
             public void onClick(View v) {
                 int tag = (int) v.getTag();
                 if (tag == 1){
-                    ARouter.getInstance().build(RoutePath.PS).navigation();
+                    ARouter.getInstance().build("RoutePath/PS").navigation();
                 }else if (tag ==2 ){
-                    ARouter.getInstance().build(RoutePath.BOOK).navigation();
+                    ARouter.getInstance().build("RoutePath/BOOK").navigation();
                 }
             }
         });

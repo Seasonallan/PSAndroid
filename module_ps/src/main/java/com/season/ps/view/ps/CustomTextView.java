@@ -35,11 +35,11 @@ import android.view.ViewParent;
 import androidx.annotation.Nullable;
 
 import com.season.ps.bean.LayerItem;
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.dimen.ColorUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.support.dimen.ColorUtil;
 import com.season.ps.animation.AnimationProvider;
-import com.season.lib.file.FileManager;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.file.FileManager;
+import com.season.lib.support.dimen.ScreenUtils;
 
 import java.io.File;
 import java.util.ArrayList;

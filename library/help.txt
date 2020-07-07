@@ -1,3 +1,0 @@
-提取已安装应用的APK
->adb shell pm path com.season.myapplication
->adb pull /data/app/com.season.myapplication-2/base.apk

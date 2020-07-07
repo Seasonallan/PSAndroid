@@ -14,8 +14,8 @@ import java.util.zip.ZipFile;
 
 import android.text.TextUtils;
 
-import com.season.lib.file.IOUtil;
-import com.season.lib.file.XMLUtil;
+import com.season.lib.support.file.IOUtil;
+import com.season.lib.support.file.XMLUtil;
 import com.season.book.bean.Catalog;
 import com.season.book.plugin.PluginManager;
 import com.season.lib.util.LogUtil;

@@ -11,7 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.season.lib.BaseContext;
-import com.season.lib.anim.PageAnimController;
+import com.season.lib.support.anim.PageAnimController;
 
 
 /**

@@ -1,6 +1,5 @@
 package com.season.example;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -13,12 +12,17 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.example.view.PageItem;
 import com.season.example.view.PageItemView;
 import com.season.example.view.ViewPageView;
-import com.season.lib.RoutePath;
-import com.season.lib.bitmap.ImageMemoryCache;
+import com.season.lib.ui.BaseTLEActivity;
+import com.season.lib.ui.PageTurningActivity;
 import com.season.myapplication.R;
 
 
-public class PagerActivity extends Activity {
+public class PagerActivity extends BaseTLEActivity {
+
+    @Override
+    protected boolean isTopTileEnable() {
+        return false;
+    }
 
     private ViewPageView mainPageView;
 
@@ -43,13 +47,13 @@ public class PagerActivity extends Activity {
                         int position = ((PageItemView) itemView).getPage();
                         String path;
                         if (position == 1) {
-                            path = RoutePath.PS;
+                            path = "/ps/main";
                         } else if (position == 2){
-                            path = RoutePath.PLUGIN;
+                            path = "/plugin/main";
                         } else {
-                            path = RoutePath.BOOK;
+                            path = "/book/shelf/home";
                         }
-                        RoutePath.putCacheBitmap(mainPageView.getCurrentPageBitmap());
+                        PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                         ARouter.getInstance().build(path).navigation();
                     }else{
                         mainPageView.gotoNextPage();

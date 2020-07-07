@@ -1,4 +1,4 @@
-package com.season.lib.view;
+package com.season.book.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 
-import com.season.library.R;
+import com.season.book.R;
 
 
 /**

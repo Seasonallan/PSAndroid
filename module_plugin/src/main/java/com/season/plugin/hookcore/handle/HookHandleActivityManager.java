@@ -28,12 +28,12 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.season.lib.reflect.Utils;
+import com.season.lib.support.reflect.Utils;
 import com.season.lib.util.LogUtil;
 import com.season.plugin.compat.ActivityManagerCompat;
 import com.season.plugin.hookcore.Env;
-import com.season.lib.reflect.FieldUtils;
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.FieldUtils;
+import com.season.lib.support.reflect.MethodUtils;
 import com.season.plugin.core.PluginManager;
 import com.season.plugin.core.PluginManagerService;
 import com.season.plugin.core.PluginProcessManager;

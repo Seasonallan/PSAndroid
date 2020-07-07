@@ -2,7 +2,6 @@ package com.season.book.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -14,8 +13,8 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
 import com.season.book.ReadSetting;
-import com.season.lib.anim.PageAnimController;
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.anim.PageAnimController;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.lib.util.LogUtil;
 
 public abstract class AbsReadView extends View implements PageAnimController.PageCarver, ReadSetting.SettingListener, IReaderView{

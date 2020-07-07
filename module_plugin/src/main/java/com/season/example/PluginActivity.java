@@ -9,14 +9,13 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.season.lib.BaseStartPagerActivity;
-import com.season.lib.view.LoadingView;
+import com.season.lib.ui.PageTurningActivity;
+import com.season.lib.ui.view.LoadingView;
 import com.season.lib.BaseContext;
-import com.season.lib.RoutePath;
-import com.season.lib.file.FileUtils;
+import com.season.lib.support.file.FileUtils;
 import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
-import com.season.lib.view.CircleImageView;
+import com.season.lib.ui.view.CircleImageView;
 import com.season.plugin.PluginCodeDefine;
 import com.season.plugin.PluginHelper;
 import com.season.plugin.R;
@@ -24,8 +23,8 @@ import com.season.plugin.R;
 import java.io.File;
 
 
-@Route(path= RoutePath.PLUGIN)
-public class PluginActivity extends BaseStartPagerActivity {
+@Route(path= "/plugin/main")
+public class PluginActivity extends PageTurningActivity {
 
     
     private LoadingView mLoadingView;
@@ -36,6 +35,11 @@ public class PluginActivity extends BaseStartPagerActivity {
     private TextView btnStart, btnInstall;
 
     private TextView statusView;
+
+    @Override
+    protected boolean isTopTileEnable() {
+        return false;
+    }
 
     @Override
     protected int getLayoutId() {

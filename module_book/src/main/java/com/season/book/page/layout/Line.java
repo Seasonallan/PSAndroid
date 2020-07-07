@@ -27,7 +27,7 @@ import com.season.book.page.span.ClickActionSpan;
 import com.season.book.page.span.FloatSpan;
 import com.season.book.page.span.ReplacementSpan;
 import com.season.book.page.span.ResourceSpan;
-import com.season.lib.dimen.DimenUtil;
+import com.season.lib.support.dimen.DimenUtil;
 import com.season.lib.util.LogUtil;
 
 public class Line extends Patch{

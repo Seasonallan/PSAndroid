@@ -16,14 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.season.lib.util.LogUtil;
 import com.season.ps.bean.LayerBackground;
 import com.season.ps.bean.LayerItem;
 import com.season.ps.bean.LayerEntity;
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.dimen.ColorUtil;
-import com.season.lib.file.FileManager;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.support.dimen.ColorUtil;
+import com.season.lib.support.file.FileManager;
+import com.season.lib.support.dimen.ScreenUtils;
 import com.season.ps.gif.GifMaker;
 
 import java.io.File;

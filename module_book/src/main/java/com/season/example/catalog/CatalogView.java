@@ -2,9 +2,6 @@ package com.season.example.catalog;
 
 import java.util.ArrayList;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
@@ -18,8 +15,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.core.graphics.ColorUtils;
-
 import com.season.book.R;
 import com.season.example.popwindow.SlideTabWidget;
 import com.season.book.bean.BookDigests;
@@ -28,8 +23,7 @@ import com.season.book.bean.BookMark;
 import com.season.book.bean.Catalog;
 import com.season.book.db.BookDigestsDB;
 import com.season.book.db.BookMarkDB;
-import com.season.lib.dimen.ColorUtil;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.dimen.ScreenUtils;
 import com.season.book.view.IReaderView;
 
 /**

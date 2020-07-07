@@ -11,9 +11,9 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.ps.view.ps.ScaleDetector;
-import com.season.lib.math.MathUtil;
+import com.season.lib.support.math.MathUtil;
 
 import java.io.File;
 import java.util.ArrayList;

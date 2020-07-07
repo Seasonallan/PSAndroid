@@ -2,7 +2,7 @@ package com.season.book.db;
 
 import com.season.book.bean.BookDigests;
 import com.season.lib.BaseContext;
-import com.season.lib.dbase.BaseDBHelper;
+import com.season.lib.support.dbase.base.BaseDBHelper;
 
 public class DigestDBHelper  extends BaseDBHelper {
 

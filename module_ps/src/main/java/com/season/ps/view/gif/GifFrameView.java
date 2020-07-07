@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.ps.gif.frame.GifDecoderOneByOne;
 import com.season.ps.gif.movie.FrameDecoder;
 import com.season.ps.view.ps.PSLayer;

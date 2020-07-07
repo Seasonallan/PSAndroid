@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.Build;
 import android.util.AndroidRuntimeException;
 
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.MethodUtils;
 import com.season.lib.util.LogUtil;
 import com.season.plugin.compat.ActivityManagerCompat;
 import com.season.plugin.compat.ActivityManagerNativeCompat;
 import com.season.plugin.hookcore.handle.HookHandleActivityManager;
 import com.season.plugin.hookcore.handle.BaseHookHandle;
-import com.season.lib.reflect.FieldUtils;
-import com.season.lib.reflect.Utils;
+import com.season.lib.support.reflect.FieldUtils;
+import com.season.lib.support.reflect.Utils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;

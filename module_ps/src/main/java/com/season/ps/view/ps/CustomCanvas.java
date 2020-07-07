@@ -18,8 +18,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.file.FileManager;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.support.file.FileManager;
 
 import java.io.File;
 import java.io.IOException;

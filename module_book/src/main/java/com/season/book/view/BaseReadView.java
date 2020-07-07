@@ -13,8 +13,8 @@ import android.view.View;
 import com.season.book.R;
 import com.season.book.ReadSetting;
 import com.season.book.bean.BookInfo;
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.view.LoadingView;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.ui.view.LoadingView;
 
 public abstract class BaseReadView extends AbsReadView{
     protected IReadCallback mReadCallback;

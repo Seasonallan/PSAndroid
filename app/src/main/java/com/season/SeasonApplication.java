@@ -1,11 +1,14 @@
 package com.season;
 
 
+import android.app.Application;
+
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.example.BookShelfPreLoader;
-import com.season.plugin.PluginSupportApplication;
+import com.season.lib.BaseContext;
+import com.season.plugin.PluginHelper;
 
-public class SeasonApplication extends PluginSupportApplication {
+public class SeasonApplication extends Application {
 
 	
 	@Override
@@ -13,6 +16,8 @@ public class SeasonApplication extends PluginSupportApplication {
 		super.onCreate();
 		ARouter.init(this);
 
+		BaseContext.init(this);
+		PluginHelper.getInstance().startPlugin(this);
 		BookShelfPreLoader.getInstance().preLoad();
 	}
 

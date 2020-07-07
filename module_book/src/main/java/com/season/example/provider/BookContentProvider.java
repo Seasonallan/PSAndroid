@@ -8,9 +8,9 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.season.book.bean.BookMark;
-import com.season.lib.dbase.DBConfig;
 import com.season.book.bean.BookDigests;
-import com.season.lib.dbase.base.BaseDatabase;
+import com.season.book.db.DBConfig;
+import com.season.lib.support.dbase.base.BaseDatabase;
 
 import java.util.Iterator;
 import java.util.Map;

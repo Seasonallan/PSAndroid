@@ -14,7 +14,7 @@ import com.season.book.R;
 import com.season.lib.BaseContext;
 import com.season.book.page.span.ReplacementSpan;
 import com.season.book.page.span.ResourceSpan;
-import com.season.lib.dimen.DimenUtil;
+import com.season.lib.support.dimen.DimenUtil;
 
 public class VideoSpan extends ReplacementSpan implements ResourceSpan, IMediaSpan {
 	private String mSrc;

@@ -24,15 +24,14 @@ import com.season.example.dragview.DragController;
 import com.season.example.dragview.DragGridView;
 import com.season.example.dragview.DragScrollView;
 import com.season.example.transfer.TransferController;
-import com.season.lib.BaseStartPagerActivity;
-import com.season.lib.RoutePath;
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.bitmap.ImageMemoryCache;
-import com.season.lib.dimen.ScreenUtils;
-import com.season.lib.view.LoadingView;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.ImageMemoryCache;
+import com.season.lib.support.dimen.ScreenUtils;
+import com.season.lib.ui.PageTurningActivity;
+import com.season.lib.ui.view.LoadingView;
 
-@Route(path = RoutePath.BOOK)
-public class BookShelfActivity extends BaseStartPagerActivity implements DragScrollView.ICallback<BookInfo> {
+@Route(path = "/book/shelf/home")
+public class BookShelfActivity extends PageTurningActivity implements DragScrollView.ICallback<BookInfo> {
     private int NUM_COLUMNS = 3;
     private int NUM_LINES = 3;
     private DragScrollView mContainer;
@@ -40,6 +39,11 @@ public class BookShelfActivity extends BaseStartPagerActivity implements DragScr
     private LoadingView mLoadingView;
     private TransferController transferController;
     private ImageView animationView;
+
+    @Override
+    protected boolean isTopTileEnable() {
+        return false;
+    }
 
     @Override
     protected int getLayoutId() {
@@ -198,7 +202,7 @@ public class BookShelfActivity extends BaseStartPagerActivity implements DragScr
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        RoutePath.putCacheBitmap(bitmap);
+                        PageTurningActivity.putCacheBitmap(bitmap);
                         BookInfo item = (BookInfo) view.getGridAdapter().getItem(position);
                         BaseBookActivity.open(BookShelfActivity.this, item);
                     }

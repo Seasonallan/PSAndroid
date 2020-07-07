@@ -25,13 +25,13 @@ import com.season.book.db.BookMarkDB;
 import com.season.book.event.AbsTextSelectHandler;
 import com.season.book.ReadSetting;
 import com.season.book.view.NetReadView;
+import com.season.book.view.PullRefreshLayout;
 import com.season.example.catalog.CatalogView;
 import com.season.example.popwindow.ImgViewerPopWin;
 import com.season.example.popwindow.NotePopWin;
 import com.season.example.menu.ReaderMenuPopWin;
 import com.season.example.support.SelectorControlView;
-import com.season.lib.BaseStartPagerActivity;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.dimen.ScreenUtils;
 import com.season.book.page.span.media.IMediaSpan;
 import com.season.book.page.span.NoteSpan;
 import com.season.book.page.span.media.ReaderMediaPlayer;
@@ -44,9 +44,9 @@ import com.season.book.page.span.UrlSpna;
 import com.season.book.view.IReadCallback;
 import com.season.book.view.ReadView;
 import com.season.book.view.IReaderView;
-import com.season.lib.view.PullRefreshLayout;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
+import com.season.lib.ui.PageTurningActivity;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 
@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class BaseBookActivity extends BaseStartPagerActivity implements
+public class BaseBookActivity extends PageTurningActivity implements
 		IReadCallback, PullRefreshLayout.OnPullStateListener{
 
 	public static void open(Context context, BookInfo bookInfo){
@@ -65,6 +65,11 @@ public class BaseBookActivity extends BaseStartPagerActivity implements
 		intent.putExtra("book", bookInfo);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
+	}
+
+	@Override
+	protected boolean isTopTileEnable() {
+		return false;
 	}
 
     private FrameLayout mReadContainerView;

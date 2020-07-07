@@ -15,7 +15,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
 
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.MethodUtils;
 
 import java.io.File;
 import java.util.HashSet;

@@ -17,8 +17,7 @@ import android.database.Cursor;
 
 import com.season.lib.BaseContext;
 import com.season.book.bean.BookMark;
-import com.season.lib.dbase.DBConfig;
-import com.season.lib.dbase.base.BaseDatabase;
+import com.season.lib.support.dbase.base.BaseDatabase;
 import com.season.lib.util.LogUtil;
 
 /**

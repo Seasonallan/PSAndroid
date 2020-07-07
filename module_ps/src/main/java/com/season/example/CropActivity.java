@@ -19,14 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.season.ps.R;
 import com.season.example.support.TextModeUtil;
-import com.season.lib.RoutePath;
 import com.season.ps.crop.CropView;
 import com.season.ps.view.ps.CustomGifView;
 
 import java.util.List;
 
 
-@Route(path= RoutePath.PS_CROP)
+@Route(path= "RoutePath/PS_CROP")
 public class CropActivity extends Activity {
 
     public static void start(Context context, String filePath){

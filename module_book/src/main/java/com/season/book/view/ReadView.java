@@ -12,11 +12,11 @@ import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
 import com.season.book.plugin.PluginManager;
 import com.season.book.plugin.epub.Resource;
-import com.season.lib.os.SinThreadPool;
+import com.season.lib.support.os.SinThreadPool;
 import com.season.book.page.paser.html.CssProvider;
 import com.season.book.page.paser.html.DataProvider;
 import com.season.book.page.paser.html.ICssProvider;
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.lib.util.LogUtil;
 
 import java.io.IOException;

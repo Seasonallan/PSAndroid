@@ -14,10 +14,10 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.math.MathUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.support.math.MathUtil;
 import com.season.ps.view.ps.ScaleDetector;
-import com.season.lib.file.FileManager;
+import com.season.lib.support.file.FileManager;
 
 import java.io.File;
 

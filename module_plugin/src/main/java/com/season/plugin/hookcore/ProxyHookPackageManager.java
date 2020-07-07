@@ -6,8 +6,8 @@ import android.content.pm.PackageManager;
 import com.season.plugin.compat.ActivityThreadCompat;
 import com.season.plugin.hookcore.handle.BaseHookHandle;
 import com.season.plugin.hookcore.handle.HookHandlePackageManager;
-import com.season.lib.reflect.FieldUtils;
-import com.season.lib.reflect.Utils;
+import com.season.lib.support.reflect.FieldUtils;
+import com.season.lib.support.reflect.Utils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;

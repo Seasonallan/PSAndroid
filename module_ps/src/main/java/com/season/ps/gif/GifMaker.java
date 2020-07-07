@@ -8,7 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.ps.gif.extend.LZWEncoderOrderHolder;
 import com.season.ps.gif.extend.ThreadGifEncoder;
 

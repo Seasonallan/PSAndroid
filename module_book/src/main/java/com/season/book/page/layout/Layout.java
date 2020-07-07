@@ -13,7 +13,7 @@ import com.season.book.page.StyleText;
 import com.season.book.page.Util;
 import com.season.book.page.span.BlockquoteSpan;
 import com.season.book.page.span.FloatSpan;
-import com.season.lib.math.ArrayMap;
+import com.season.lib.support.math.ArrayMap;
 import com.season.lib.util.LogUtil;
 
 /**

@@ -23,11 +23,10 @@ import com.season.example.layout.BottomVipLayout;
 import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
 import com.season.example.video.VideoActivity;
-import com.season.lib.BaseStartPagerActivity;
-import com.season.lib.RoutePath;
+import com.season.lib.ui.PageTurningActivity;
 import com.season.ps.bean.LayerItem;
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.dimen.ColorUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.support.dimen.ColorUtil;
 import com.season.ps.gif.GifMaker;
 import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
@@ -36,8 +35,8 @@ import com.season.ps.bean.LayerBackground;
 import com.season.ps.bean.LayerEntity;
 import com.season.ps.view.ps.ILayer;
 import com.season.ps.view.ps.PSLayer;
-import com.season.lib.file.FileUtils;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.file.FileUtils;
+import com.season.lib.support.dimen.ScreenUtils;
 import com.season.ps.view.ps.PSCanvas;
 import com.season.example.layout.TopDeleteLayout;
 import com.season.ps.view.ps.PSCoverView;
@@ -49,8 +48,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-@Route(path= RoutePath.PS)
-public class PsActivity extends BaseStartPagerActivity implements View.OnClickListener {
+@Route(path= "/ps/main")
+public class PsActivity extends PageTurningActivity implements View.OnClickListener {
 
     PSCoverView mPsCoverView;//最外部覆盖
     PSCanvas mPsCanvas;//ps画布
@@ -59,7 +58,10 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
 
     PSBgColorGroup mPsbgColorGroup;
 
-
+    @Override
+    protected boolean isTopTileEnable() {
+        return false;
+    }
 
     @Override
     protected int getLayoutId() {
@@ -289,7 +291,7 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
     private void bindData2Canvas() {
         try {
             LayerEntity  layerEntity = null;
-            Object localData = FileUtils.getSerialData("layerInfo");
+            Object localData = FileUtils.getSerialData("layerInfo", getCacheDir());
             if (localData instanceof  LayerEntity){
                 layerEntity = (LayerEntity) localData;
             }
@@ -483,7 +485,7 @@ public class PsActivity extends BaseStartPagerActivity implements View.OnClickLi
         super.onDestroy();
         try {
             if (mPsCanvas != null) {
-                FileUtils.saveSerialData("layerInfo", mPsCanvas.getLayerMessage());
+                FileUtils.saveSerialData("layerInfo", mPsCanvas.getLayerMessage(), getCacheDir());
                 mPsCanvas.release();
             }
         } catch (Exception e) {

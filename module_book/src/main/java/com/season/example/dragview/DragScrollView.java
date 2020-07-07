@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -18,8 +17,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Scroller;
 
-import com.season.book.bean.BookInfo;
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 
 /**
  * 

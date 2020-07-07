@@ -5,7 +5,7 @@ import android.text.style.CharacterStyle;
 
 import com.season.book.page.paser.html.Border;
 import com.season.book.page.span.EmptySpan;
-import com.season.lib.dimen.DimenUtil;
+import com.season.lib.support.dimen.DimenUtil;
 import com.season.book.page.StyleText;
 import com.season.book.page.paser.html.css.PropertyValue;
 

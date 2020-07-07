@@ -17,7 +17,7 @@ import com.season.plugin.parser.PluginPackageParser;
 import com.season.plugin.stub.AbstractServiceStub;
 import com.season.pluginlib.IApplicationCallback;
 import com.season.plugin.core.IPluginManagerImpl;
-import com.season.lib.reflect.FieldUtils;
+import com.season.lib.support.reflect.FieldUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

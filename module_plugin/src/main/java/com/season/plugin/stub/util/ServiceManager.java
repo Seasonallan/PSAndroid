@@ -16,8 +16,8 @@ import com.season.plugin.core.PluginProcessManager;
 import com.season.plugin.compat.ActivityThreadCompat;
 import com.season.plugin.compat.CompatibilityInfoCompat;
 import com.season.plugin.hookcore.Env;
-import com.season.lib.reflect.FieldUtils;
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.FieldUtils;
+import com.season.lib.support.reflect.MethodUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

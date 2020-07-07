@@ -14,4 +14,10 @@
     <item name="android:windowIsFloating">true</item>
     <item name="android:windowContentOverlay">@null</item>
     </style>
+
+
+    <declare-styleable name="PullActivateLayout">
+        <attr name="actionViewId" format="reference" />
+        <attr name="toolViewId" format="reference" />
+    </declare-styleable>
 </resources>

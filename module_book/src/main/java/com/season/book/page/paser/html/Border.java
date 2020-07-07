@@ -6,7 +6,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.text.TextUtils;
 
-import com.season.lib.dimen.DimenUtil;
+import com.season.lib.support.dimen.DimenUtil;
 import com.season.book.page.StyleText;
 
 public class Border {

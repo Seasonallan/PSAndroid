@@ -15,8 +15,8 @@ import android.widget.RelativeLayout;
 
 import com.season.ps.bean.LayerItem;
 import com.season.ps.animation.MatrixAnimation;
-import com.season.lib.math.MathUtil;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.math.MathUtil;
+import com.season.lib.support.dimen.ScreenUtils;
 
 
 /**

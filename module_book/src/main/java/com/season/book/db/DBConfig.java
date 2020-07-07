@@ -1,4 +1,4 @@
-package com.season.lib.dbase;
+package com.season.book.db;
 
 import android.net.Uri;
 

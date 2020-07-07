@@ -19,14 +19,11 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <com.season.lib.view.CircleImageView
+            <com.season.lib.ui.view.CircleImageView
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:layout_margin="10dp"
-                android:src="@drawable/img_me"
-                app:border_color="#FF7F24"
-                app:border_width="4dp"
-                app:is_circle="true" />
+                android:src="@drawable/img_me"/>
 
             <TextView
                 android:layout_width="wrap_content"

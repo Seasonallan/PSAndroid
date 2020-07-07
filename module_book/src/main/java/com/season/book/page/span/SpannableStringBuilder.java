@@ -29,7 +29,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 
-import com.season.lib.math.ArrayUtils;
+import com.season.lib.support.math.ArrayUtils;
 
 /**
  * This is the class for text whose content and markup can both be changed.

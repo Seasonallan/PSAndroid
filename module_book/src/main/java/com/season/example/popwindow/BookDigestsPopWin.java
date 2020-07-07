@@ -16,7 +16,7 @@ import android.widget.PopupWindow;
 import com.season.book.R;
 import com.season.book.event.AbsTextSelectHandler;
 import com.season.book.bean.BookDigests;
-import com.season.lib.dimen.DimenUtil;
+import com.season.lib.support.dimen.DimenUtil;
 import com.season.lib.util.ToastUtil;
 
 import java.util.Date;

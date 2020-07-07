@@ -1,6 +1,6 @@
 package com.season.example.popwindow;
 
-import com.season.lib.dimen.DimenUtil;
+import com.season.lib.support.dimen.DimenUtil;
 
 import android.content.Context;
 import android.graphics.Canvas;

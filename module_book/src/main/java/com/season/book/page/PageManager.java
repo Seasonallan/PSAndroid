@@ -4,12 +4,10 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.season.book.page.layout.AbsPatch;
@@ -19,8 +17,7 @@ import com.season.book.page.paser.HtmlParser;
 import com.season.book.page.paser.html.DataProvider;
 import com.season.book.page.paser.html.ICssProvider;
 import com.season.book.page.paser.html.tag.SizeInfo;
-import com.season.book.bean.BookInfo;
-import com.season.lib.os.MulThreadPool;
+import com.season.lib.support.os.MulThreadPool;
 import com.season.lib.util.LogUtil;
 
 /**

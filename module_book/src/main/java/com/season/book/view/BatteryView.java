@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.text.TextPaint;
 
 import com.season.book.ReadSetting;
-import com.season.lib.dimen.ScreenUtils;
+import com.season.lib.support.dimen.ScreenUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -1,7 +1,7 @@
 package com.season.ps.gif.extend;
 
 import android.graphics.Bitmap;
-import com.season.lib.bitmap.BitmapUtil;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.ps.gif.base.GifEncoder;
 import com.season.ps.gif.base.LZWEncoder;
 

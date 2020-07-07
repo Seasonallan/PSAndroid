@@ -7,8 +7,7 @@ import android.text.TextUtils;
 
 import com.season.book.bean.BookDigests;
 import com.season.lib.BaseContext;
-import com.season.lib.dbase.DBConfig;
-import com.season.lib.dbase.base.JsonArrayList;
+import com.season.lib.support.dbase.base.JsonArrayList;
 
 import java.util.ArrayList;
 

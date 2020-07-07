@@ -1,7 +1,6 @@
 package com.season.example.menu;
 
 import java.util.ArrayList;
-import java.util.logging.Handler;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -26,9 +25,8 @@ import com.season.book.ReadSetting;
 import com.season.book.ReadSettingThemeColor;
 import com.season.book.page.span.media.ReaderMediaPlayer;
 import com.season.lib.util.SimpleAnimationListener;
-import com.season.lib.util.ToastUtil;
-import com.season.lib.view.CheckedGridView;
-import com.season.lib.view.CheckedGridView.OnItemCheckedStateChangeListener;
+import com.season.lib.ui.view.CheckedGridView;
+import com.season.lib.ui.view.CheckedGridView.OnItemCheckedStateChangeListener;
 import com.season.book.page.span.media.ReaderMediaPlayer.PlayerListener;
 import com.season.book.view.IReaderView;
 

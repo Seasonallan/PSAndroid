@@ -15,12 +15,12 @@ import android.view.MotionEvent;
 
 import com.season.book.bean.BookDigests;
 import com.season.book.bean.BookMark;
+import com.season.book.db.DBConfig;
 import com.season.book.event.AbsTextSelectHandler;
 import com.season.book.event.TextSelectHandler;
 import com.season.book.page.span.ColorSpan;
 import com.season.book.page.span.media.ReaderMediaPlayer;
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.dbase.DBConfig;
+import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
 import com.season.book.page.ClickSpanHandler;

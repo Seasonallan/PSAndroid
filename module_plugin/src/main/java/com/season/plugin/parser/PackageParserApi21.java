@@ -17,8 +17,8 @@ import android.os.Build.VERSION_CODES;
 import android.os.UserHandle;
 
 
-import com.season.lib.reflect.FieldUtils;
-import com.season.lib.reflect.MethodUtils;
+import com.season.lib.support.reflect.FieldUtils;
+import com.season.lib.support.reflect.MethodUtils;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

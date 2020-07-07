@@ -2,8 +2,7 @@ package com.season.book.db;
 
 import com.season.book.bean.BookMark;
 import com.season.lib.BaseContext;
-import com.season.lib.dbase.BaseDBHelper;
-import com.season.lib.dbase.DBConfig;
+import com.season.lib.support.dbase.base.BaseDBHelper;
 
 public class MarkDBHelper extends BaseDBHelper {
 

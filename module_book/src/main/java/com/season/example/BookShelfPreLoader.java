@@ -8,8 +8,8 @@ import com.season.book.bean.BookInfo;
 import com.season.book.plugin.epub.EpubPlugin;
 import com.season.book.plugin.umd.UmdPlugin;
 import com.season.lib.BaseContext;
-import com.season.lib.bitmap.BitmapUtil;
-import com.season.lib.file.FileUtils;
+import com.season.lib.support.bitmap.BitmapUtil;
+import com.season.lib.support.file.FileUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -64,7 +64,7 @@ public class BookShelfPreLoader {
         new Thread() {
             @Override
             public void run() {
-                FileUtils.saveSerialData("cacheBookLists", list);
+                FileUtils.saveSerialData("cacheBookLists", list, BaseContext.getInstance().getCacheDir());
             }
         }.start();
     }
@@ -73,7 +73,7 @@ public class BookShelfPreLoader {
         new Thread() {
             @Override
             public void run() {
-                Object object = FileUtils.getSerialData("cacheBookLists");
+                Object object = FileUtils.getSerialData("cacheBookLists", BaseContext.getInstance().getCacheDir());
                 if (object instanceof List) {
                     bookLists = (List<BookInfo>) object;
                 }

@@ -15,9 +15,7 @@ import android.widget.Scroller;
 
 import androidx.annotation.Nullable;
 
-import com.season.lib.anim.PageAnimController;
-import com.season.book.page.ViewBitmapPicture;
-import com.season.lib.util.LogUtil;
+import com.season.lib.support.anim.PageAnimController;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 

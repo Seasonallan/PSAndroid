@@ -4,12 +4,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.season.book.db.BookDigestsDB;
 import com.season.book.db.DigestDBHelper;
-import com.season.lib.dbase.BaseDBHelper;
-import com.season.lib.dbase.base.BaseDao;
-import com.season.lib.dbase.base.IDbHelper;
-import com.season.lib.dbase.base.iterface.Column;
-import com.season.lib.dbase.base.iterface.Table;
 import com.season.book.page.span.ColorSpan;
+import com.season.lib.support.dbase.base.BaseDBHelper;
+import com.season.lib.support.dbase.base.BaseDao;
+import com.season.lib.support.dbase.base.IDbHelper;
+import com.season.lib.support.dbase.base.iterface.Column;
+import com.season.lib.support.dbase.base.iterface.Table;
 
 
 /**
