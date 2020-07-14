@@ -1051,7 +1051,6 @@ public class PageManager implements PatchParent {
         private int mIndex;
         private boolean isBind;
         private boolean isLayout;
-        private long mRunTime;
 
         private ChapterTask(int index) {
             mIndex = index;
@@ -1086,7 +1085,6 @@ public class PageManager implements PatchParent {
          * 开始执行任务
          */
         private void startTask() {
-            mRunTime = 0;
             LogUtil.i(TAG, "startTask index=" + mIndex + " isLayout=" + isLayout + " isBind=" + isBind + " isNeedRunTask=" + isNeedRunTask());
             mCurrentRunChapterTask = this;
             final TaskListener taskListener = new TaskListener(PageManager.this, mTaskID);
@@ -1103,7 +1101,7 @@ public class PageManager implements PatchParent {
                 @Override
                 public void run() {
                     try {
-                        long lastTiem = System.currentTimeMillis();
+
                         htmlParser.start(mCallback.getChapterInputStream(mIndex));
                         if (taskListener.isStop()) {
                             return;
@@ -1115,15 +1113,36 @@ public class PageManager implements PatchParent {
                         if (taskListener.isStop()) {
                             return;
                         }
-                        mRunTime += System.currentTimeMillis() - lastTiem;
                         onTaskFinish(taskListener, htmlParser.getStyleText());
                     } catch (Exception e) {
                         LogUtil.e(TAG, "htmlParser exception>>" + e.getMessage());
+
+                        StringBuffer temp = new StringBuffer();
+                        temp.append("<html><body><p>");
+                        temp.append("章节解析异常，错误信息：");
+                        temp.append("</p><p></p><p>");
+                        temp.append(e.toString());
+                        temp.append("</p></body></html>");
+
+                        htmlParser.start(temp.toString());
+                        if (taskListener.isStop()) {
+                            return;
+                        }
+                        if (layout != null) {
+                            layout.startLayout(0, htmlParser.getStyleText().getTotalLength() - 1);
+                            layout.setCallback(null);
+                        }
+                        if (taskListener.isStop()) {
+                            return;
+                        }
                         onTaskFinish(taskListener, htmlParser.getStyleText());
+
                     }
                 }
             });
         }
+
+
 
         /**
          * 任务执行结束点，并执行下一个任务,绑定章节
@@ -1135,7 +1154,7 @@ public class PageManager implements PatchParent {
                     if (taskListener.isStop()) {
                         return;
                     }
-                    LogUtil.i(TAG, "OnTaskFinish index=" + mIndex + " styleText=" + styleText + " isBind=" + isBind + " mRunTime=" + mRunTime);
+                    LogUtil.i(TAG, "OnTaskFinish index=" + mIndex + " styleText=" + styleText.toString() + " isBind=" + isBind);
                     isLayout = true;
                     if (isBind) {
                         mStyleText = styleText;

@@ -5,6 +5,8 @@ import java.util.TreeMap;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.CharacterStyle;
 
+import androidx.annotation.NonNull;
+
 import com.season.book.page.paser.html.Border;
 import com.season.book.page.span.FloatSpan;
 import com.season.book.page.span.ImgPanelBGDrawableSpan;
@@ -51,6 +53,16 @@ public final class StyleText{
 	private boolean isCover;
 	private boolean hasTitle;
 
+	@NonNull
+	@Override
+	public String toString() {
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("start:" + mStart +",");
+		stringBuffer.append("end:" + mEnd +",");
+		stringBuffer.append("length:" + mLength +",");
+		stringBuffer.append("data:" + getDataSource() +",");
+		return stringBuffer.toString();
+	}
 
 	private StyleText(StyleText rootParent){
 		mChildSize = 0;

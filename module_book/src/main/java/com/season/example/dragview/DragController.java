@@ -104,6 +104,17 @@ public class DragController {
 	}
 
 	/**
+	 * 是否正在拖拽状态
+	 * @return
+	 */
+	public boolean isDragOn(){
+		if(isDragReady() && !mDisableDeleteFunction){
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * 退出拖拽状态
 	 * @return
 	 */

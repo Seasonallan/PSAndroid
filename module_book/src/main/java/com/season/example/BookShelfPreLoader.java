@@ -56,7 +56,7 @@ public class BookShelfPreLoader {
 
 
     public void saveLocal(Object list) {
-        saveShelfBooks(list);
+        //saveShelfBooks(list);
         bookLists = null;
     }
 

@@ -10,7 +10,9 @@ import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -23,6 +25,7 @@ import com.season.example.dragview.DragAdapter;
 import com.season.example.dragview.DragController;
 import com.season.example.dragview.DragGridView;
 import com.season.example.dragview.DragScrollView;
+import com.season.example.dragview.IDragListener;
 import com.season.example.transfer.TransferController;
 import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.lib.support.bitmap.ImageMemoryCache;
@@ -50,6 +53,10 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
         return R.layout.activity_shelf;
     }
 
+    private void saveLocal(){
+        BookShelfPreLoader.getInstance().saveShelfBooks(mContainer.getFinalDatas());
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +67,7 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
             protected void addFile(String filePath) {
                 DragController.getInstance().cancelDragMode();
                 mContainer.noItemAdd(BookShelfPreLoader.getInstance().decodeFile(filePath), BookShelfActivity.this);
-                BookShelfPreLoader.getInstance().saveShelfBooks(mContainer.getFinalDatas());
+                saveLocal();
             }
         };
         animationView = findViewById(R.id.ani);
@@ -94,6 +101,62 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
                         mContainer.setAdapter(bookLists, BookShelfActivity.this);
                     }
                 }, 600);
+            }
+        });
+        DragController.getInstance().registerDragListener(new IDragListener() {
+            @Override
+            public void onDragEnable() {
+
+            }
+
+            @Override
+            public void onDragDisable() {
+                saveLocal();
+            }
+
+            @Override
+            public void onItemDelete(int page, int position) {
+
+            }
+
+            @Override
+            public <T> void onItemDelete(int totalPage, int page, int removePage, int position, T object) {
+
+            }
+
+            @Override
+            public void onDragViewCreate(int page, ViewGroup itemView, MotionEvent event) {
+
+            }
+
+            @Override
+            public void onDragViewDestroy(int page, MotionEvent event) {
+
+            }
+
+            @Override
+            public void onItemMove(int page, MotionEvent event) {
+
+            }
+
+            @Override
+            public void onPageChange(int lastPage, int currentPage) {
+
+            }
+
+            @Override
+            public <T> void onPageChangeRemoveDragItem(int lastPage, int currentPage, T object) {
+
+            }
+
+            @Override
+            public <T> void onPageChangeReplaceFirstItem(int lastPage, int currentPage, T object) {
+
+            }
+
+            @Override
+            public void onPageChangeFinish() {
+
             }
         });
     }
@@ -167,7 +230,9 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
 
             @Override
             public void onItemClick(AdapterView<?> parent, View itemView, final int position, long id) {
-
+                if (DragController.getInstance().isDragOn()){
+                    return;
+                }
                 int[] location = new int[2];
                 itemView.getLocationOnScreen(location);
                 dragOffsetY = location[1];
