@@ -3,11 +3,11 @@ package com.season.example.transfer;
 import android.app.Activity;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
+import android.view.ViewStub;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.season.example.BaseLayout;
 import com.season.example.transfer.util.Constants;
 import com.season.book.R;
 import com.season.lib.util.ToastUtil;
@@ -19,7 +19,7 @@ import java.io.File;
  * @date 2014-1-7
  * @email 451360508@qq.com
  */
-public class TransferController {
+public class TransferController extends BaseLayout {
 
 	private final int INVALID = 1;
 	private final int CONNECTED = 2;
@@ -33,27 +33,10 @@ public class TransferController {
 	private WebServiceModule mWebServiceModule;
 	private int mSuccessCount = 0,mFailCount=0;
 
-	private View parentView;
-	public TransferController(Activity activity) {
-		Constants.UPLOAD_DIR =  activity.getCacheDir() + File.separator;
-
-		parentView = activity.findViewById(R.id.transfer_main);
-		mConnectContainerView = parentView.findViewById(R.id.tranfer_bottom_connect);
-		mTransferContainerView =  parentView.findViewById(R.id.tranfer_bottom_ready);
-		mReadyContainerView =  parentView.findViewById(R.id.tranfer_bottom_ready_pre);
-		mUploadingContainerView =  parentView.findViewById(R.id.tranfer_bottom_ready_run);
-
-		mPercentView =  parentView.findViewById(R.id.transfer_progress);
-		mIpView =  parentView.findViewById(R.id.urlText);
-		mTransferDesView =  parentView.findViewById(R.id.transfer_desc);
-		mTransferResultView = parentView.findViewById(R.id.transfer_res);
-		mIpView = parentView.findViewById(R.id.urlText);
-
-		onHttpStatusChange(INVALID);
-
-		initAnimation();
-		initWebSocket(activity);
+	public TransferController(ViewStub viewStub) {
+		super(viewStub);
 	}
+
 
 	private void initWebSocket(Activity activity){
 		mWebServiceModule = new WebServiceModule(activity) {
@@ -130,66 +113,41 @@ public class TransferController {
 
 
 
-	private boolean isShowing = false;
-	Animation showAnimation, hideAnimation;
-	private void initAnimation() {
-		showAnimation = new TranslateAnimation(
-				Animation.RELATIVE_TO_SELF,0, Animation.RELATIVE_TO_SELF,
-				0.0f, Animation.RELATIVE_TO_SELF, 1.0f,
-				Animation.RELATIVE_TO_SELF, 0.0f);
-		showAnimation.setDuration(600);
-		showAnimation.setAnimationListener(new Animation.AnimationListener() {
 
-			@Override
-			public void onAnimationStart(Animation animation) {}
+	@Override
+	protected View getView(Activity activity) {
 
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
+		Constants.UPLOAD_DIR =  activity.getCacheDir() + File.separator;
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				isShowing = false;
-			}
-		});
+		View parentView = activity.findViewById(R.id.transfer_main);
+		mConnectContainerView = parentView.findViewById(R.id.tranfer_bottom_connect);
+		mTransferContainerView =  parentView.findViewById(R.id.tranfer_bottom_ready);
+		mReadyContainerView =  parentView.findViewById(R.id.tranfer_bottom_ready_pre);
+		mUploadingContainerView =  parentView.findViewById(R.id.tranfer_bottom_ready_run);
 
-		hideAnimation = new TranslateAnimation(Animation.ABSOLUTE,
-				0.0f, Animation.ABSOLUTE, 0,
-				Animation.RELATIVE_TO_SELF, 0.0f,
-				Animation.RELATIVE_TO_SELF, 1.0f);
-		hideAnimation.setDuration(600);
-		hideAnimation.setAnimationListener(new Animation.AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {}
+		mPercentView =  parentView.findViewById(R.id.transfer_progress);
+		mIpView =  parentView.findViewById(R.id.urlText);
+		mTransferDesView =  parentView.findViewById(R.id.transfer_desc);
+		mTransferResultView = parentView.findViewById(R.id.transfer_res);
+		mIpView = parentView.findViewById(R.id.urlText);
 
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
+		onHttpStatusChange(INVALID);
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				isShowing = false;
-				parentView.setVisibility(View.GONE);
-			}
-		});
+		initWebSocket(activity);
+		return parentView;
 	}
 
-	public void switchStatus(){
-		if (isShowing){
-			return;
-		}
-		isShowing = true;
-		if (parentView.getVisibility() == View.VISIBLE){
-			parentView.startAnimation(hideAnimation);
+	@Override
+	protected void onStatusChange(int visible) {
+		if (visible == View.VISIBLE){
 			mWebServiceModule.onDestroy();
 		}else{
-			parentView.setVisibility(View.VISIBLE);
-			parentView.startAnimation(showAnimation);
 			mWebServiceModule.onCreate();
 		}
 	}
 
 
-
-	private void onHttpStatusChange(int status){ 
+	private void onHttpStatusChange(int status){
 		switch (status) {
 		case INVALID: 
 			mConnectContainerView.setVisibility(View.VISIBLE);
@@ -213,11 +171,4 @@ public class TransferController {
 	private boolean isTransfering = false;
 	private int recordProgress = -1;
 
-	public boolean onBackPressed() {
-		if (parentView.getVisibility() == View.VISIBLE){
-			switchStatus();
-			return true;
-		}
-		return false;
-	}
 }

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,6 +28,7 @@ import com.season.example.dragview.DragGridView;
 import com.season.example.dragview.DragScrollView;
 import com.season.example.dragview.IDragListener;
 import com.season.example.transfer.TransferController;
+import com.season.lib.BaseContext;
 import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.lib.support.bitmap.ImageMemoryCache;
 import com.season.lib.support.dimen.ScreenUtils;
@@ -41,6 +43,7 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
     private TextView mPageView;
     private LoadingView mLoadingView;
     private TransferController transferController;
+    private FileLayout fileLayout;
     private ImageView animationView;
 
     @Override
@@ -62,11 +65,22 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
         super.onCreate(savedInstanceState);
 
         //DragController.getInstance().disableDelFunction();
-        transferController = new TransferController(this) {
+        transferController = new TransferController((ViewStub) findViewById(R.id.shelf_transfer)) {
             @Override
             protected void addFile(String filePath) {
+                BaseContext.showToast("success");
                 DragController.getInstance().cancelDragMode();
                 mContainer.noItemAdd(BookShelfPreLoader.getInstance().decodeFile(filePath), BookShelfActivity.this);
+                saveLocal();
+            }
+        };
+        fileLayout = new FileLayout((ViewStub) findViewById(R.id.shelf_file)){
+            @Override
+            protected void addFile(String filePath) {
+                BaseContext.showToast("success");
+                DragController.getInstance().cancelDragMode();
+                mContainer.noItemAdd(BookShelfPreLoader.getInstance().decodeFile(getCacheDir() + "/"+filePath),
+                        BookShelfActivity.this);
                 saveLocal();
             }
         };
@@ -80,9 +94,17 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
                 mPageView.setText("书架页码： " + (page + 1));
             }
         });
+        mPageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fileLayout.inflate(BookShelfActivity.this);
+                fileLayout.switchStatus();
+            }
+        });
         findViewById(R.id.btn_wifi).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                transferController.inflate(BookShelfActivity.this);
                 transferController.switchStatus();
             }
         });
@@ -296,6 +318,9 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
     @Override
     public void onBackPressed() {
         if (transferController.onBackPressed()) {
+            return;
+        }
+        if (fileLayout.onBackPressed()) {
             return;
         }
         if (DragController.getInstance().cancelDragMode()) {

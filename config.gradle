@@ -8,6 +8,10 @@ android {
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
 
+    lintOptions{
+        abortOnError false
+    }
+
     dexOptions {
         javaMaxHeapSize "4g"
     }

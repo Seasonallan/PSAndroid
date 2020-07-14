@@ -146,21 +146,6 @@ public class BaseBookActivity extends PageTurningActivity implements
 
 	boolean isOpened = false;
 	private void openBook(){
-		initReadView();
-		NavigationBarUtil.hideNavigationBar(BaseBookActivity.this);
-		isOpened = true;
-		new Thread() {
-			@Override
-			public void run() {
-				int[] index = ReadSetting.getInstance().getBookReadProgress(mBook.id);
-				mBook = mReadView.decodeBookFromPlugin(index[0], index[1]);
-				mCatalogView.setBookInfo(mBook.title, mBook.author);
-			}
-		}.start();
-	}
-
-
-	private void initReadView() {
 		if (mBook.netIndex > 0){
 			mReadView = new NetReadView(BaseBookActivity.this, mBook, BaseBookActivity.this);
 		}else{
@@ -176,7 +161,19 @@ public class BaseBookActivity extends PageTurningActivity implements
 		mReadContainerView.addView(mReadView.getContentView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		initReaderCatalogView();
 		initMenu();
+
+		NavigationBarUtil.hideNavigationBar(BaseBookActivity.this);
+		isOpened = true;
+		new Thread() {
+			@Override
+			public void run() {
+				int[] index = ReadSetting.getInstance().getBookReadProgress(mBook.id);
+				mBook = mReadView.decodeBookFromPlugin(index[0], index[1]);
+				mCatalogView.setBookInfo(mBook.title, mBook.author);
+			}
+		}.start();
 	}
+
 
     private Animation mRotateUpAnimation;
     private Animation mRotateDownAnimation;
