@@ -4,6 +4,11 @@
     package="com.season.myapplication">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 
     <application
         android:allowBackup="true"
@@ -24,6 +29,16 @@
         <activity android:name="com.season.nouse.BallActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.season.example.PagerActivity" android:screenOrientation="portrait"/>
 
+
+        <service android:name="com.season.example.JobSchedulerService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name="com.season.example.EndCallService"/>
+        <receiver android:name="com.season.example.PhoneBroadcastReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+            </intent-filter>
+        </receiver>
 
         <activity android:name="com.season.example.PsActivity"
             tools:node="replace"

@@ -1,5 +1,6 @@
 package com.season.example;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -102,6 +103,18 @@ public class PagerActivity extends BaseTLEActivity {
 
         setContentView(mainPageView);
         mainPageView.scrollShowDelay(1000);
+
+
+        performCodeWithPermission("App请求访问权限",  new PermissionCallback() {
+                    @Override
+                    public void hasPermission() {
+                    }
+                    @Override
+                    public void noPermission() {
+                    }
+
+                }, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE,
+                Manifest.permission.PROCESS_OUTGOING_CALLS);
 
     }
 
