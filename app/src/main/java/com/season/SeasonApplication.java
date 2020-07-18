@@ -2,35 +2,34 @@ package com.season;
 
 
 import android.app.Application;
-import android.content.Intent;
 import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.example.BookShelfPreLoader;
-import com.season.example.EndCallService;
-import com.season.example.JobSchedulerService;
+import com.season.example.alive.JobSchedulerService;
 import com.season.lib.BaseContext;
+import com.season.lib.util.LogUtil;
 import com.season.plugin.PluginHelper;
 
 public class SeasonApplication extends Application {
 
-	
-	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		LogUtil.e("alive", "SeasonApplication onCreate");
+
 		ARouter.init(this);
 
 		BaseContext.init(this);
 		PluginHelper.getInstance().startPlugin(this);
 		BookShelfPreLoader.getInstance().preLoad();
 
-		startService(new Intent(this, EndCallService.class));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			JobSchedulerService.schedule(this);
+		}
 
-		JobSchedulerService.schedule(this);
+
 	}
-
 
 }

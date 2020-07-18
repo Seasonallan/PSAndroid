@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.season.myapplication">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -30,9 +31,15 @@
         <activity android:name="com.season.example.PagerActivity" android:screenOrientation="portrait"/>
 
 
-        <service android:name="com.season.example.JobSchedulerService"
+        <service android:name="com.season.example.alive.JobSchedulerService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <service android:name="com.season.example.EndCallService"/>
+        <service android:name="com.season.example.alive.EndCallService"
+            android:enabled="true"
+            android:exported="true" />
+        <service android:name="com.season.example.alive.LocalService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":service"/>
         <receiver android:name="com.season.example.PhoneBroadcastReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.PHONE_STATE"/>

@@ -1,21 +1,26 @@
-package com.season.example;
+package com.season.example.alive;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 
 import com.android.internal.telephony.ITelephony;
 import com.season.lib.util.LogUtil;
+import com.season.myapplication.KeepAliveConnection;
 
 import java.lang.reflect.Method;
+import java.util.Random;
 
 public class EndCallService extends Service {
     private TelephonyManager telephonyManager;
@@ -23,14 +28,52 @@ public class EndCallService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new KeepAliveConnection.Stub() {
+            @Override
+            public String getDesc() throws RemoteException {
+                return "EndCallService "+count;
+            }
+        };
     }
+
+
+    ServiceConnection serviceConnection;
+    boolean mBound = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        LogUtil.e("监听电话状态");
+
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mBound = true;
+                LogUtil.e("alive","EndCallService onServiceConnected");
+                final KeepAliveConnection keepAliveConnection = KeepAliveConnection.Stub.asInterface(service);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LogUtil.e("alive", ">>>"+ keepAliveConnection.getDesc());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Random().nextInt(150000));
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mBound = false;
+                LogUtil.e("alive","EndCallService onServiceDisconnected ");
+            }
+        };
+
+        bindService(new Intent(this, LocalService.class), serviceConnection, BIND_AUTO_CREATE);
+
+        LogUtil.e("alive","监听电话状态");
         // 监听电话状态
         telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         myPhoneStateListener = new MyPhoneStateListener();
@@ -38,16 +81,24 @@ public class EndCallService extends Service {
         // 参数2:监听的事件
         telephonyManager.listen(myPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         mRadThread.start();
+
+
     }
 
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    private int count = 1;
     public Thread mRadThread = new Thread(){
         @Override
         public void run() {
             super.run();
             while (!isInterrupted()){
-             //   LogUtil.e("log");
+                count++;
+                LogUtil.e("alive","count:"+count);
                 try {
-                    sleep(10000);
+                    sleep(15000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -59,10 +110,10 @@ public class EndCallService extends Service {
         @Override
         public void onCallStateChanged(int state, final String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
-            LogUtil.e(incomingNumber + "onCallStateChanged" +state);
+            LogUtil.e("alive", incomingNumber + "onCallStateChanged" +state);
             // 如果是响铃状态,检测拦截模式是否是电话拦截,是挂断
             if (state == TelephonyManager.CALL_STATE_RINGING) {
-                LogUtil.e("endCall");
+                LogUtil.e("alive","endCall");
                 // 获取拦截模式
                 // 挂断电话 1.5
                 if (incomingNumber.startsWith("95"))
@@ -102,8 +153,11 @@ public class EndCallService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        LogUtil.e("alive", "onDestroy");
         telephonyManager.listen(myPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         mRadThread.interrupt();
+        if (mBound)
+            unbindService(serviceConnection);
     }
 
     /**

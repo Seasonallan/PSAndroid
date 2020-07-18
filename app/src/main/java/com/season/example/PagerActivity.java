@@ -114,7 +114,7 @@ public class PagerActivity extends BaseTLEActivity {
                     }
 
                 }, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE,
-                Manifest.permission.PROCESS_OUTGOING_CALLS);
+                Manifest.permission.PROCESS_OUTGOING_CALLS );
 
     }
 
