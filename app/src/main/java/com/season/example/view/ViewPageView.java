@@ -342,7 +342,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     @Override
     public Integer requestPrePage() {
         if (currentPage == 0) {
-            ToastUtil.showToast("第一页");
+            //ToastUtil.showToast("第一页");
             return null;
         } else {
             requestPage = currentPage - 1;

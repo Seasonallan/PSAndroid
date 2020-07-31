@@ -184,6 +184,12 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 				mActionCallback.onTopBackButtonClicked(false);
 			}
 		});
+		findViewById(R.id.menu_header_layout).setOnClickListener(new View.OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+			}
+		});
 		mVoiceLayout = findViewById(R.id.menu_reader_voice_layout);
 		mVoiceStateBut = (ImageButton)findViewById(R.id.menu_reader_voice_state_but);
 		mVoiceCloseBut = (ImageButton)findViewById(R.id.menu_reader_voice_close_but);

@@ -1,21 +1,28 @@
 package com.season.example;
 
 import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.DisplayCutout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.season.example.view.PageItem;
 import com.season.example.view.PageItemView;
 import com.season.example.view.ViewPageView;
-import com.season.lib.ui.BaseTLEActivity;
-import com.season.lib.ui.PageTurningActivity;
+import com.season.mvp.ui.BaseTLEActivity;
+import com.season.mvp.ui.PageTurningActivity;
 import com.season.myapplication.R;
+
 
 
 public class PagerActivity extends BaseTLEActivity {
@@ -25,14 +32,27 @@ public class PagerActivity extends BaseTLEActivity {
         return false;
     }
 
+
+
     private ViewPageView mainPageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //NavigationBarUtil.hideNavigationBar(this);
+
+        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        //沉浸式状态栏
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+            getWindow().setAttributes(lp);
+        }
+
 
         mainPageView = new ViewPageView(this);
         mainPageView.setOnClickListener(new View.OnClickListener() {

@@ -7,6 +7,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -32,7 +34,7 @@ import com.season.lib.BaseContext;
 import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.lib.support.bitmap.ImageMemoryCache;
 import com.season.lib.support.dimen.ScreenUtils;
-import com.season.lib.ui.PageTurningActivity;
+import com.season.mvp.ui.PageTurningActivity;
 import com.season.lib.ui.view.LoadingView;
 
 @Route(path = "/book/shelf/home")
@@ -63,6 +65,18 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        //沉浸式状态栏
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            //lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            //lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+            getWindow().setAttributes(lp);
+        }
+
 
         //DragController.getInstance().disableDelFunction();
         transferController = new TransferController((ViewStub) findViewById(R.id.shelf_transfer)) {

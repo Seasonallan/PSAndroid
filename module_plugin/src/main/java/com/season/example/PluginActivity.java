@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.season.lib.ui.PageTurningActivity;
+import com.season.mvp.ui.PageTurningActivity;
 import com.season.lib.ui.view.LoadingView;
 import com.season.lib.BaseContext;
 import com.season.lib.support.file.FileUtils;
@@ -49,6 +51,17 @@ public class PluginActivity extends PageTurningActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        //沉浸式状态栏
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            //lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            //lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+            getWindow().setAttributes(lp);
+        }
+
 
         containerView = findViewById(R.id.item_container);
         mLoadingView = findViewById(R.id.loadView);
@@ -154,7 +167,7 @@ public class PluginActivity extends PageTurningActivity {
             PackageInfo info = getPackageManager().getPackageArchiveInfo(apkFile.getPath(), 0);
             item = new ApkItem(PluginActivity.this, info, apkFile.getPath());
             try {
-                Thread.sleep(5000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

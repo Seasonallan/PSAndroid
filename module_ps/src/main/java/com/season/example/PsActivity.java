@@ -3,11 +3,13 @@ package com.season.example;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +25,7 @@ import com.season.example.layout.BottomVipLayout;
 import com.season.example.layout.PSBgColorGroup;
 import com.season.example.support.MosaicUtil;
 import com.season.example.video.VideoActivity;
-import com.season.lib.ui.PageTurningActivity;
+import com.season.mvp.ui.PageTurningActivity;
 import com.season.ps.bean.LayerItem;
 import com.season.lib.support.bitmap.BitmapUtil;
 import com.season.lib.support.dimen.ColorUtil;
@@ -64,8 +66,19 @@ public class PsActivity extends PageTurningActivity implements View.OnClickListe
     }
 
     @Override
+    protected boolean isFullScreen() {
+        return false;
+    }
+
+    @Override
     protected int getLayoutId() {
         return R.layout.activity_ps;
+    }
+
+
+    @Override
+    protected int getDelay(){
+        return 0;
     }
 
     @Override
@@ -82,6 +95,17 @@ public class PsActivity extends PageTurningActivity implements View.OnClickListe
             finish();
             return;
         }
+         //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        //沉浸式状态栏
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+            getWindow().setAttributes(lp);
+        }
+
 
         initView();
         initBottomLayout();
@@ -152,7 +176,7 @@ public class PsActivity extends PageTurningActivity implements View.OnClickListe
                 fixCanvasHeight();
                 bindData2Canvas();
             }
-        }, 800);
+        }, 600);
     }
 
     ImageView iv_back;

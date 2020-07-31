@@ -2,20 +2,12 @@ apply from: config
 apply plugin: 'com.alibaba.arouter'
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    api arouterapi
-    annotationProcessor aroutercompiler
     if (!isModule) {
         implementation project(":module_book")
         implementation project(":module_ps")
         implementation project(":module_plugin")
     }
-    implementation 'com.github.Seasonallan:RapidDevelopment:1.0.4'
-    //implementation project(":library") 
+
 
 }

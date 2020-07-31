@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Browser;
@@ -12,6 +13,7 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -46,7 +48,7 @@ import com.season.book.view.ReadView;
 import com.season.book.view.IReaderView;
 import com.season.book.bean.BookInfo;
 import com.season.book.bean.Catalog;
-import com.season.lib.ui.PageTurningActivity;
+import com.season.mvp.ui.PageTurningActivity;
 import com.season.lib.util.NavigationBarUtil;
 import com.season.lib.util.ToastUtil;
 
@@ -92,6 +94,16 @@ public class BaseBookActivity extends PageTurningActivity implements
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+		//沉浸式状态栏
+		//getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+			WindowManager.LayoutParams lp = getWindow().getAttributes();
+			//lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+			lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+			//lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+			getWindow().setAttributes(lp);
+		}
 
 		centerRect = new RectF();
 		centerRect.left = ScreenUtils.getScreenWidth()/4;

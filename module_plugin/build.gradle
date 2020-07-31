@@ -1,18 +1,8 @@
 apply from: config
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-
-    api arouterapi
-    annotationProcessor aroutercompiler
-
-    implementation 'com.github.Seasonallan:RapidDevelopment:1.0.4'
-    //implementation project(":library")
 
     implementation files('libs/layoutlib.jar')
 }

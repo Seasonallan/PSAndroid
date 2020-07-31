@@ -12,9 +12,11 @@ import android.content.pm.PermissionInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
 import android.content.pm.Signature;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.UserHandle;
+import android.view.WindowManager;
 
 
 import com.season.lib.support.reflect.FieldUtils;
@@ -94,6 +96,12 @@ class PackageParserApi21 extends PackageParser {
     @Override
     public void collectCertificates(int flags) throws Exception {
         // public void collectCertificates(Package pkg, int flags) throws PackageParserException
+        if (Build.VERSION.SDK_INT >= 28) {
+            Method method = MethodUtils.getAccessibleMethod(sPackageParserClass, "collectCertificates",
+                    mPackage.getClass(), boolean.class);
+            method.invoke(mPackageParser, mPackage, false);
+            return;
+        }
         Method method = MethodUtils.getAccessibleMethod(sPackageParserClass, "collectCertificates",
                 mPackage.getClass(), int.class);
         method.invoke(mPackageParser, mPackage, flags);

@@ -205,16 +205,16 @@ public class PluginCallback implements Handler.Callback {
                 if (!PluginManager.getInstance().isConnected()) {
                     //这里必须要这么做。如果当前进程是插件进程，并且，还没有绑定上插件管理服务，我们则把消息延迟一段时间再处理。
                     //这样虽然会降低启动速度，但是可以解决在没绑定服务就启动，会导致的一系列时序问题。
-                    //Log.i(TAG, "handleMessage not isConnected post and wait,msg=%s", msg);
+                    LogUtil.i(TAG, "handleMessage not isConnected post and wait,msg=%s", msg);
                     mOldHandle.sendMessageDelayed(Message.obtain(msg), 5);
                     //返回true，告诉下面的handle不要处理了。
                     return true;
                 }
             }
 
-           // LogTool.logV3("callback 回调handleMessage " + msg);
+            LogUtil.e(TAG, "callback 回调handleMessage " + msg);
 
-            if (msg.what == LAUNCH_ACTIVITY) {
+            if (msg.what == LAUNCH_ACTIVITY ) {
                 return handleLaunchActivity(msg);
             } /*else if (msg.what == INSTALL_PROVIDER) {
                 return handleInstallProvider(msg);
