@@ -39,6 +39,7 @@ public class HookHandlerCallback extends BaseHook {
         Field mCallbackField = FieldUtils.getField(Handler.class, "mCallback");
         //*这里读取出旧的callback并处理*/
         Object mCallback = FieldUtils.readField(mCallbackField, handler);
+        LogUtil.i(TAG, "1212PluginCallbackHook " + mCallback);
         if (!PluginCallback.class.isInstance(mCallback)) {
             PluginCallback value = mCallback != null ? new PluginCallback(mHostContext, handler, (Handler.Callback) mCallback) : new PluginCallback(mHostContext, handler, null);
             mCallbacks.add(value);

@@ -3,6 +3,7 @@ package com.season.plugin.hookcore;
 import android.content.Context;
 
 
+import com.season.lib.util.LogUtil;
 import com.season.plugin.hookcore.handle.BaseHookHandle;
 import com.season.plugin.hookcore.handle.BaseHookMethodHandler;
 

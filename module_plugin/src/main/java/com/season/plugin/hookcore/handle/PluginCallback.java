@@ -19,6 +19,9 @@ import com.season.plugin.hookcore.ProxyHookPackageManager;
 import com.season.plugin.stub.ShortcutProxyActivity;
 import com.season.lib.support.reflect.FieldUtils;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 /**
  * Disc: 处理假的activity启动后替换为原本的activity并加载application和ClassLoader的替换
  * Hook点：
@@ -81,6 +84,8 @@ public class PluginCallback implements Handler.Callback {
     public static final int CANCEL_VISIBLE_BEHIND = 147;
     public static final int BACKGROUND_VISIBLE_BEHIND_CHANGED = 148;
     public static final int ENTER_ANIMATION_COMPLETE = 149;
+
+    public static final int EXECUTE_TRANSACTION = 159;
 
     String codeToString(int code) {
         switch (code) {
@@ -188,12 +193,11 @@ public class PluginCallback implements Handler.Callback {
 
 
     private Handler mOldHandle = null;
-    private Handler.Callback mCallback = null;
     private Context mHostContext;
-
+    private Handler.Callback mCallback;
     public PluginCallback(Context hostContext, Handler oldHandle, Handler.Callback callback) {
         mOldHandle = oldHandle;
-        mCallback = callback;
+        this.mCallback = callback;
         mHostContext = hostContext;
     }
 
@@ -211,122 +215,125 @@ public class PluginCallback implements Handler.Callback {
                     return true;
                 }
             }
-
-            LogUtil.e(TAG, "callback 回调handleMessage " + msg);
-
-            if (msg.what == LAUNCH_ACTIVITY ) {
+            if (msg.what == LAUNCH_ACTIVITY) {
                 return handleLaunchActivity(msg);
-            } /*else if (msg.what == INSTALL_PROVIDER) {
-                return handleInstallProvider(msg);
-            } else if (msg.what == CREATE_BACKUP_AGENT) {
-                //TODO 处理CREATE_BACKUP_AGENT
-            } else if (msg.what == DESTROY_BACKUP_AGENT) {
-                //TODO 处理DESTROY_BACKUP_AGENT
-            } else if (msg.what == CREATE_SERVICE) {
-    //            return handleCreateService(msg);
-            } else if (msg.what == BIND_SERVICE) {
-    //            return handleBindService(msg);
-            } else if (msg.what == UNBIND_SERVICE) {
-    //            return handleUnbindService(msg);
-            } else if (msg.what == SERVICE_ARGS) {
-    //            return handleServiceArgs(msg);
-            }*/
-            if (mCallback != null) {
-                return mCallback.handleMessage(msg);
-            } else {
-                return false;
+            }else if (msg.what == EXECUTE_TRANSACTION){
+                return handleLaunchActivity9(msg);
             }
+            if (mCallback != null)
+                return mCallback.handleMessage(msg);
+            return false;
         } finally {
             LogUtil.i(TAG, "handleMessage(%s,%s) cost %s ms", msg.what, codeToString(msg.what), (System.currentTimeMillis() - b));
 
         }
     }
 
-//    private boolean handleServiceArgs(Message msg) {
-//        // handleServiceArgs((ServiceArgsData)msg.obj);
-//        try {
-//            Object obj = msg.obj;
-//            Intent intent = (Intent) FieldUtils.readField(obj, "args", true);
-//            if (intent != null) {
-//                intent.setExtrasClassLoader(getClass().getClassLoader());
-//                Intent originPluginIntent = intent.getParcelableExtra(Env.EXTRA_TARGET_INTENT);
-//                if (originPluginIntent != null) {
-//                    FieldUtils.writeDeclaredField(msg.obj, "args", originPluginIntent, true);
-//                    LogUtil.i(TAG, "handleServiceArgs OK");
-//                } else {
-//                    LogUtil.w(TAG, "handleServiceArgs pluginInfo==null");
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            LogUtil.e(TAG, "handleServiceArgs", e);
-//        }
-//        return false;
-//    }
-//
-//    private boolean handleUnbindService(Message msg) {
-//        //  handleUnbindService((BindServiceData)msg.obj);
-//        try {
-//            Object obj = msg.obj;
-//            Intent intent = (Intent) FieldUtils.readField(obj, "intent", true);
-//            intent.setExtrasClassLoader(getClass().getClassLoader());
-//            Intent originPluginIntent = intent.getParcelableExtra(Env.EXTRA_TARGET_INTENT);
-//            if (originPluginIntent != null) {
-//                FieldUtils.writeDeclaredField(msg.obj, "intent", originPluginIntent, true);
-//                LogUtil.i(TAG, "handleUnbindService OK");
-//            } else {
-//                LogUtil.w(TAG, "handleUnbindService pluginInfo==null");
-//            }
-//        } catch (Exception e) {
-//            LogUtil.e(TAG, "handleUnbindService", e);
-//        }
-//        return false;
-//    }
-//
-//    private boolean handleBindService(Message msg) {
-//        // handleBindService((BindServiceData)msg.obj);
-//        //其实这里什么都不用做的。
-//        try {
-//            Object obj = msg.obj;
-//            Intent intent = (Intent) FieldUtils.readField(obj, "intent", true);
-//            intent.setExtrasClassLoader(getClass().getClassLoader());
-//            Intent originPluginIntent = intent.getParcelableExtra(Env.EXTRA_TARGET_INTENT);
-//            if (originPluginIntent != null) {
-//
-//
-//                FieldUtils.writeDeclaredField(msg.obj, "intent", originPluginIntent, true);
-//                LogUtil.i(TAG, "handleBindService OK");
-//            } else {
-//                LogUtil.w(TAG, "handleBindService pluginInfo==null");
-//            }
-//        } catch (Exception e) {
-//            LogUtil.e(TAG, "handleBindService", e);
-//        }
-//        return false;
-//    }
-//
-//    private boolean handleCreateService(Message msg) {
-//        // handleCreateService((CreateServiceData)msg.obj);
-//        try {
-//            Object obj = msg.obj;
-//            ServiceInfo infoView = (ServiceInfo) FieldUtils.readField(obj, "infoView", true);
-//            if (infoView != null) {
-//                ServiceInfo newServiceInfo = PluginManager.getInstance().getTargetServiceInfo(infoView);
-//                if (newServiceInfo != null) {
-//                    FieldUtils.writeDeclaredField(msg.obj, "infoView", newServiceInfo, true);
-//                }
-//            }
-//        } catch (Exception e) {
-//            LogUtil.e(TAG, "handleCreateService", e);
-//        }
-//        return false;
-//    }
+    private boolean handleLaunchActivity9(Message msg) {
+        try {
+            Object clientTransObj = msg.obj;
+
+            Field mActivityCallbacksField = clientTransObj.getClass().getDeclaredField("mActivityCallbacks");
+            mActivityCallbacksField.setAccessible(true);
+            List<Object> mActivityCallbacksObj = (List<Object>) mActivityCallbacksField.get(clientTransObj);
+            Object launchActivityItem = null;
+            for(Object obj:mActivityCallbacksObj){
+                LogUtil.e("121", "name: "+obj.getClass().getName());
+                if(obj.getClass().getName().contains("android.app.servertransaction.LaunchActivityItem")){
+                    launchActivityItem = obj;
+                    break;
+                }
+            }
+            if(launchActivityItem == null) {
+                return false;
+            }
+            Field mIntentField = launchActivityItem.getClass().getDeclaredField("mIntent");
+            mIntentField.setAccessible(true);
+            Intent proxyIntent = (Intent)mIntentField.get(launchActivityItem);
+
+            //设置目标Intent
+            Intent targetIntent = proxyIntent.getParcelableExtra(Env.EXTRA_TARGET_INTENT);
+            LogUtil.e("1211","targetIntent = "+targetIntent+","+clientTransObj);
+            //判断是否是之前我们hook时候，启动的代理Activity
+
+            if(targetIntent != null) {
+                ProxyHookPackageManager.fixContextPackageManager(mHostContext);
+                ComponentName targetComponentName = targetIntent.resolveActivity(mHostContext.getPackageManager());
+                ActivityInfo targetActivityInfo = PluginManager.getInstance().getActivityInfo(targetComponentName, 0);
+
+                LogUtil.e("1211","targetComponentName = "+targetComponentName.toString());
+                if (targetActivityInfo != null) {
+
+                    if (targetComponentName != null && targetComponentName.getClassName().startsWith(".")) {
+                        targetIntent.setClassName(targetComponentName.getPackageName(), targetComponentName.getPackageName() + targetComponentName.getClassName());
+                    }
+
+                    ResolveInfo resolveInfo = mHostContext.getPackageManager().resolveActivity(proxyIntent, 0);
+                    ActivityInfo stubActivityInfo = resolveInfo != null ? resolveInfo.activityInfo : null;
+                    if (stubActivityInfo != null) {
+                        PluginManager.getInstance().reportMyProcessName(stubActivityInfo.processName, targetActivityInfo.processName, targetActivityInfo.packageName);
+                    }
+                    PluginProcessManager.preLoadApk(mHostContext, targetActivityInfo);
+                    ClassLoader pluginClassLoader = PluginProcessManager.getPluginClassLoader(targetComponentName.getPackageName());
+                    setIntentClassLoader(targetIntent, pluginClassLoader);
+                    setIntentClassLoader(proxyIntent, pluginClassLoader);
+
+                    Thread.currentThread().setContextClassLoader(pluginClassLoader);
+                    try {
+                        targetIntent.putExtra(Env.EXTRA_TARGET_INFO, targetActivityInfo);
+                        if (stubActivityInfo != null) {
+                            targetIntent.putExtra(Env.EXTRA_STUB_INFO, stubActivityInfo);
+                        }
+                        mIntentField.set(launchActivityItem, targetIntent);
+                    } catch (Exception e) {
+                        LogUtil.e(TAG, "putExtra 1 fail", e);
+                    }
+                    Field mActivityInfoField = launchActivityItem.getClass().getDeclaredField("mInfo");
+                    mActivityInfoField.setAccessible(true);
+                    mActivityInfoField.set(launchActivityItem, targetActivityInfo);
+                   // FieldUtils.writeDeclaredField(msg.obj, "activityInfo", targetActivityInfo);
+
+                    LogUtil.i(TAG, "handleLaunchActivity OK");
+                } else {
+                    LogUtil.e(TAG, "handleLaunchActivity oldInfo==null");
+                }
+            }
+
+
+
+                //mIntentField.set(launchActivityItem, targetIntent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (mCallback != null)
+            return mCallback.handleMessage(msg);
+        return false;
+    }
+
+    private void setIntentClassLoader(Intent intent, ClassLoader classLoader) {
+        try {
+            Bundle mExtras = (Bundle) FieldUtils.readField(intent, "mExtras");
+            if (mExtras != null) {
+                mExtras.setClassLoader(classLoader);
+            } else {
+                Bundle value = new Bundle();
+                value.setClassLoader(classLoader);
+                FieldUtils.writeField(intent, "mExtras", value);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            intent.setExtrasClassLoader(classLoader);
+        }
+    }
 
     private boolean handleLaunchActivity(Message msg) {
         try {
             Object obj = msg.obj;
             Intent stubIntent = (Intent) FieldUtils.readField(obj, "intent");
             LogUtil.i(TAG, "handleLaunchActivity stubIntent=" + stubIntent.toString());
+            LogUtil.i(TAG, "handleLaunchActivity msg=" + msg.obj);
             //ActivityInfo activityInfo = (ActivityInfo) FieldUtils.readField(obj, "activityInfo", true);
             stubIntent.setExtrasClassLoader(mHostContext.getClassLoader());
             Intent targetIntent = stubIntent.getParcelableExtra(Env.EXTRA_TARGET_INTENT);
@@ -352,44 +359,16 @@ public class PluginCallback implements Handler.Callback {
                     ClassLoader pluginClassLoader = PluginProcessManager.getPluginClassLoader(targetComponentName.getPackageName());
                     setIntentClassLoader(targetIntent, pluginClassLoader);
                     setIntentClassLoader(stubIntent, pluginClassLoader);
-                    boolean success = false;
                     try {
                         targetIntent.putExtra(Env.EXTRA_TARGET_INFO, targetActivityInfo);
                         if (stubActivityInfo != null) {
                             targetIntent.putExtra(Env.EXTRA_STUB_INFO, stubActivityInfo);
                         }
-                        success = true;
                     } catch (Exception e) {
                         LogUtil.e(TAG, "putExtra 1 fail", e);
                     }
 
-                    if (!success && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                        try {
-                            ClassLoader oldParent = fixedClassLoader(pluginClassLoader);
-                            targetIntent.putExtras(targetIntent.getExtras());
-
-                            targetIntent.putExtra(Env.EXTRA_TARGET_INFO, targetActivityInfo);
-                            if (stubActivityInfo != null) {
-                                targetIntent.putExtra(Env.EXTRA_STUB_INFO, stubActivityInfo);
-                            }
-                            fixedClassLoader(oldParent);
-                            success = true;
-                        } catch (Exception e) {
-                            LogUtil.e(TAG, "putExtra 2 fail", e);
-                        }
-                    }
-
-                    if (!success) {
-                        Intent newTargetIntent = new Intent();
-                        newTargetIntent.setComponent(targetIntent.getComponent());
-                        newTargetIntent.putExtra(Env.EXTRA_TARGET_INFO, targetActivityInfo);
-                        if (stubActivityInfo != null) {
-                            newTargetIntent.putExtra(Env.EXTRA_STUB_INFO, stubActivityInfo);
-                        }
-                        FieldUtils.writeDeclaredField(msg.obj, "intent", newTargetIntent);
-                    } else {
-                        FieldUtils.writeDeclaredField(msg.obj, "intent", targetIntent);
-                    }
+                    FieldUtils.writeDeclaredField(msg.obj, "intent", targetIntent);
                     FieldUtils.writeDeclaredField(msg.obj, "activityInfo", targetActivityInfo);
 
                     LogUtil.i(TAG, "handleLaunchActivity OK");
@@ -403,11 +382,8 @@ public class PluginCallback implements Handler.Callback {
             LogUtil.e(TAG, "handleLaunchActivity FAIL", e);
         }
 
-        if (mCallback != null) {
-            return mCallback.handleMessage(msg);
-        } else {
-            return false;
-        }
+        mOldHandle.handleMessage(msg);
+        return true;
     }
 
     private boolean isShortcutProxyActivity(Intent targetIntent) {
@@ -430,33 +406,5 @@ public class PluginCallback implements Handler.Callback {
         }
     }
 
-    private ClassLoader fixedClassLoader(ClassLoader newParent) {
-        ClassLoader nowClassLoader = PluginCallback.class.getClassLoader();
-        ClassLoader oldParent = nowClassLoader.getParent();
-        try {
-            if (newParent != null && newParent != oldParent) {
-                FieldUtils.writeField(nowClassLoader, "parent", newParent);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return oldParent;
-    }
-
-    private void setIntentClassLoader(Intent intent, ClassLoader classLoader) {
-        try {
-            Bundle mExtras = (Bundle) FieldUtils.readField(intent, "mExtras");
-            if (mExtras != null) {
-                mExtras.setClassLoader(classLoader);
-            } else {
-                Bundle value = new Bundle();
-                value.setClassLoader(classLoader);
-                FieldUtils.writeField(intent, "mExtras", value);
-            }
-        } catch (Exception e) {
-        } finally {
-            intent.setExtrasClassLoader(classLoader);
-        }
-    }
 
 }

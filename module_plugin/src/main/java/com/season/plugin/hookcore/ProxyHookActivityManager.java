@@ -1,5 +1,6 @@
 package com.season.plugin.hookcore;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.AndroidRuntimeException;
@@ -13,6 +14,7 @@ import com.season.plugin.hookcore.handle.BaseHookHandle;
 import com.season.lib.support.reflect.FieldUtils;
 import com.season.lib.support.reflect.Utils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -75,8 +77,9 @@ public class ProxyHookActivityManager extends BaseHookProxy {
             Object proxyActivityManager = Proxy.newProxyInstance(objClass.getClassLoader(), ifs,
                     this);
             FieldUtils.writeStaticField(cls, "IActivityManagerSingleton", proxyActivityManager);
-            LogUtil.i(TAG, "28 Install ActivityManager BaseHook 1 old=%s,new=%s", mOldObj, proxyActivityManager);
+            LogUtil.i(TAG, "-->28 Install ActivityManager BaseHook 1 old=%s,new=%s", mOldObj, proxyActivityManager);
         } else if (isSingleton(obj)) {
+
             Object obj1 = FieldUtils.readField(obj, "mInstance");
             if (obj1 == null) {
                 MethodUtils.invokeMethod(obj, "get");
@@ -91,6 +94,7 @@ public class ProxyHookActivityManager extends BaseHookProxy {
             //这里先写一次，防止后面找不到Singleton类导致的挂钩子失败的问题。
             FieldUtils.writeField(obj, "mInstance", object);
 
+            LogUtil.i(TAG, "28 Install ActivityManager 2 BaseHook  old=%s,new=%s", mOldObj, object);
             //这里使用方式1，如果成功的话，会导致上面的写操作被覆盖。
             FieldUtils.writeStaticField(cls, "IActivityManagerSingleton", new android.util.Singleton<Object>() {
                 @Override

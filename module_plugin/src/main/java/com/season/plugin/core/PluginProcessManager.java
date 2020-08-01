@@ -54,6 +54,7 @@ import com.season.plugin.hookcore.handle.PluginClassLoader;
 import com.season.plugin.tool.PluginFileHelper;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -185,7 +186,8 @@ public class PluginProcessManager {
             if (object != null) {
                 Object mPackagesObj = FieldUtils.readField(object, "mPackages");
                 Object containsKeyObj = MethodUtils.invokeMethod(mPackagesObj, "containsKey", pluginInfo.packageName);
-                if (true && containsKeyObj instanceof Boolean && !(Boolean) containsKeyObj) {
+                LogUtil.e("1212>>", containsKeyObj +""+ pluginInfo.toString());
+                if (containsKeyObj instanceof Boolean && !(Boolean) containsKeyObj) {
                     final Object loadedApk;
                     if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
                         loadedApk = MethodUtils.invokeMethod(object, "getPackageInfoNoCheck", pluginInfo.applicationInfo, CompatibilityInfoCompat.DEFAULT_COMPATIBILITY_INFO());
@@ -219,6 +221,7 @@ public class PluginProcessManager {
                         Thread.currentThread().setContextClassLoader(classloader);
                         found = true;
                     }
+
                     MethodUtils.invokeStaticMethod(Class.forName("android.os.Process"), "setArgV0", pluginInfo.processName);
                 }
             }
@@ -387,13 +390,13 @@ public class PluginProcessManager {
             }
             Object SYSTEM_SERVICE_MAP = null;
             try {
-                SYSTEM_SERVICE_MAP = FieldUtils.readStaticField(baseContext.getClass(), "SYSTEM_SERVICE_MAP");
+               // SYSTEM_SERVICE_MAP = FieldUtils.readStaticField(baseContext.getClass(), "SYSTEM_SERVICE_MAP");
             } catch (Exception e) {
-              //  LogUtil.e(TAG, "readStaticField(SYSTEM_SERVICE_MAP) from %s fail", e, baseContext.getClass());
+                LogUtil.e(TAG, "readStaticField(SYSTEM_SERVICE_MAP) from %s fail", e);
             }
             if (SYSTEM_SERVICE_MAP == null) {
                 try {
-                    SYSTEM_SERVICE_MAP = FieldUtils.readStaticField(Class.forName("android.app.SystemServiceRegistry"), "SYSTEM_SERVICE_FETCHERS");
+                  //  SYSTEM_SERVICE_MAP = FieldUtils.readStaticField(Class.forName("android.app.SystemServiceRegistry"), "SYSTEM_SERVICE_FETCHERS");
                 } catch (Exception e) {
                     LogUtil.e(TAG, "readStaticField(SYSTEM_SERVICE_FETCHERS) from android.app.SystemServiceRegistry fail", e);
                 }

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Instrumentation;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import com.season.plugin.stub.util.RunningActivities;
 import com.season.lib.support.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 
 /**
@@ -55,6 +57,40 @@ public class PluginInstrumentation extends Instrumentation {
         mHostContext = hostContext;
     }
 
+    @Override
+    public Activity newActivity(ClassLoader cl, String className,
+                                Intent intent)
+            throws InstantiationException, IllegalAccessException,
+            ClassNotFoundException {
+        ComponentName targetComponentName = intent.resolveActivity(mHostContext.getPackageManager());
+        try {
+            ClassLoader pluginClassLoader = PluginProcessManager.getPluginClassLoader(targetComponentName.getPackageName());
+            LogUtil.e("1212>>",  pluginClassLoader.toString());
+            LogUtil.e("1212",  cl.toString());
+            //return mTarget.newActivity(pluginClassLoader, className, intent);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return mTarget.newActivity(cl, className, intent);
+    }
+
+    @Override
+    public Application newApplication(ClassLoader cl, String className, Context context)
+            throws InstantiationException, IllegalAccessException,
+            ClassNotFoundException {
+        try {
+            ClassLoader pluginClassLoader = PluginProcessManager.getPluginClassLoader(context.getPackageName());
+            //return mTarget.newApplication(pluginClassLoader, className, context);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return mTarget.newApplication(cl, className, context);
+    }
 
     @Override
     public void callActivityOnCreate(Activity activity, Bundle icicle) {

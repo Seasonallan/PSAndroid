@@ -613,7 +613,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
                 Intent intent = (Intent) args[intentOfArgIndex];
 
                 ActivityInfo activityInfo = resolveActivity(intent);
-                //LogUtil.i("start>>" + activityInfo);
+                LogUtil.i("121 start ori>>" + intent);
                 if (activityInfo != null && isPackagePlugin(activityInfo.packageName)) {
                     ComponentName component = selectProxyActivity(intent);
                     if (component != null) {
@@ -648,6 +648,7 @@ public class HookHandleActivityManager extends BaseHookHandle {
 
                         args[intentOfArgIndex] = newIntent;
                         args[1] = mHostContext.getPackageName();
+                        LogUtil.i("--121-replace>>" + newIntent);
                     } else {
                         LogUtil.w(TAG, "startActivity,replace selectProxyActivity fail");
                     }

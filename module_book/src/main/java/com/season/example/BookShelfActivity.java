@@ -217,7 +217,7 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
     protected void onResume() {
         super.onResume();
         width = ScreenUtils.getScreenWidth();
-        height = ScreenUtils.getScreenHeight();
+        height = 78 + ScreenUtils.getScreenHeight(); //刘海屏测试
         if (!BitmapUtil.isBitmapAvaliable(bitmap)) {
             return;
         }

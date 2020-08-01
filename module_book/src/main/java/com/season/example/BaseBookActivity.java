@@ -259,7 +259,14 @@ public class BaseBookActivity extends PageTurningActivity implements
 			mCatalogLay.addView(mReaderMenuPopWin);
 		}
 		mCatalogLay.setVisibility(View.VISIBLE);
-		NavigationBarUtil.showNavigationBar(BaseBookActivity.this);
+
+
+		View decorView = getWindow().getDecorView();
+		int uiOptions =  View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;;
+		decorView.setSystemUiVisibility(uiOptions);
+
+		//NavigationBarUtil.showNavigationBar(BaseBookActivity.this);
 		mReaderMenuPopWin.show();
 	}
 

@@ -14,6 +14,7 @@ import android.content.pm.PermissionInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -26,6 +27,7 @@ import com.season.plugin.hookcore.BaseHook;
 import com.season.plugin.hookcore.HookHandlerCallback;
 import com.season.plugin.hookcore.HookInstrumentation;
 import com.season.plugin.hookcore.ProxyHookActivityManager;
+import com.season.plugin.hookcore.ProxyHookActivityTaskManager;
 import com.season.plugin.hookcore.ProxyHookPackageManager;
 import com.season.lib.support.reflect.MethodUtils;
 import com.season.pluginlib.IApplicationCallback;
@@ -86,6 +88,9 @@ public class PluginManager implements ServiceConnection {
         //hook Instrumentation 处理生命周期，替身的创建和销毁，并伪装系统服务 使用静态代理
         installHookOnce(new HookInstrumentation(mHostContext));
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            installHookOnce(new ProxyHookActivityTaskManager(mHostContext));
+        }
         connectToService();
     }
 
