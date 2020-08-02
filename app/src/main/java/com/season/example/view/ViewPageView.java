@@ -3,6 +3,7 @@ package com.season.example.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.SystemClock;
@@ -157,6 +158,9 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
         }
     }
 
+    public Point getTouchPoint(){
+        return new Point((int)mTouchDownPoint.x, (int) mTouchDownPoint.y);
+    }
 
     private PointF mTouchDownPoint;
     private boolean isPressInvalid;

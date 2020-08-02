@@ -69,12 +69,15 @@ public class PagerActivity extends BaseTLEActivity {
                         String path;
                         if (position == 1) {
                             path = "/ps/main";
+                            PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                         } else if (position == 2){
                             path = "/plugin/main";
+                            PageBrokenActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
+                            PageBrokenActivity.putClickPoint(mainPageView.getTouchPoint());
                         } else {
                             path = "/book/shelf/home";
+                            PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                         }
-                        PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                         ARouter.getInstance().build(path).navigation();
                     }else{
                         mainPageView.gotoNextPage();

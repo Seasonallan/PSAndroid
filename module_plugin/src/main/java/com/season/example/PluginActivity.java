@@ -26,7 +26,7 @@ import java.io.File;
 
 
 @Route(path= "/plugin/main")
-public class PluginActivity extends PageTurningActivity {
+public class PluginActivity extends PageBrokenActivity {
 
     
     private LoadingView mLoadingView;
