@@ -178,8 +178,11 @@ public abstract class PopInputLayout extends FrameLayout implements View.OnClick
     }
 
     public void onEmojiconClicked(Emojicon emojicon) {
-        mEtInput.setText(mEtInput.getText().toString() + emojicon.getEmoji());
-        mEtInput.setSelection(mEtInput.getText().toString().length());
+        mEtInput.getText().insert(mEtInput.getSelectionStart(), emojicon.getEmoji());
+        mEtInput.setSelection(mEtInput.getSelectionStart() + 0);
+        //mEtInput.setText();
+        //mEtInput.setText(mEtInput.getText().toString() + emojicon.getEmoji());
+        //mEtInput.setSelection(mEtInput.getText().toString().length());
     }
 
     public void onEmojiconBackspaceClicked(View v) {

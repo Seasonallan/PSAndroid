@@ -1,29 +1,27 @@
 package com.season.example;
 
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.season.nouse.test.ui.CalendarSelActivity;
 import com.season.example.alive.EndCallService;
 import com.season.example.alive.LocalService;
-import com.season.lib.util.LogUtil;
-import com.season.lib.util.NavigationBarUtil;
-import com.season.myapplication.KeepAliveConnection;
+import com.season.mvp.ui.BaseTLEActivity;
 import com.season.myapplication.R;
 
-import java.util.Random;
+public class SplashActivity extends BaseTLEActivity {
 
-public class SplashActivity extends Activity {
+
+    @Override
+    protected boolean isTopTileEnable() {
+        return false;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +49,11 @@ public class SplashActivity extends Activity {
         }
         getWindow().setAttributes(lp);
 
+        if (false){
+            startActivity(new Intent(SplashActivity.this, CalendarSelActivity.class));
+            finish();
+            return;
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

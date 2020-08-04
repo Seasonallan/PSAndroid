@@ -10,11 +10,14 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/img_me"
         android:label="season"
+        android:requestLegacyExternalStorage="true"
         android:name="com.season.SeasonApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -31,6 +34,9 @@
         <activity android:name="com.season.nouse.BallActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.season.example.PagerActivity" android:screenOrientation="portrait"/>
 
+        <activity android:name="com.season.nouse.test.ui.CalendarDingActivity" />
+        <activity android:name="com.season.nouse.test.ui.CalendarSelActivity" />
+        <activity android:name="com.season.nouse.test.ui.CalendarMiActivity" />
 
         <service android:name="com.season.example.alive.JobSchedulerService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>

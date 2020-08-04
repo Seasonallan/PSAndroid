@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import androidx.annotation.RequiresApi;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.season.SeasonApplication;
 import com.season.example.view.PageItem;
 import com.season.example.view.PageItemView;
 import com.season.example.view.ViewPageView;
@@ -41,6 +42,8 @@ public class PagerActivity extends BaseTLEActivity {
         super.onCreate(savedInstanceState);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //NavigationBarUtil.hideNavigationBar(this);
+
+        SeasonApplication.getRefWatcher().watch(this);
 
         //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         //沉浸式状态栏
@@ -137,7 +140,7 @@ public class PagerActivity extends BaseTLEActivity {
                     }
 
                 }, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE,
-                Manifest.permission.PROCESS_OUTGOING_CALLS );
+                Manifest.permission.PROCESS_OUTGOING_CALLS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
     }
 
