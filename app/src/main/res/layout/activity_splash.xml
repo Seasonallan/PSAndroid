@@ -6,5 +6,9 @@
     android:background="@drawable/img_splash"
     tools:context="com.season.example.SplashActivity">
 
+    <com.season.example.view.StarView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 </FrameLayout>

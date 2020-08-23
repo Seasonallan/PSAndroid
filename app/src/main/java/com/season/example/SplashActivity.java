@@ -50,6 +50,10 @@ public class SplashActivity extends BaseTLEActivity {
         getWindow().setAttributes(lp);
 
         if (false){
+            return;
+        }
+
+        if (false){
             startActivity(new Intent(SplashActivity.this, CalendarSelActivity.class));
             finish();
             return;
