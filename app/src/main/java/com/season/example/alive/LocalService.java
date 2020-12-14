@@ -1,14 +1,23 @@
 package com.season.example.alive;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+
+import com.season.example.SplashActivity;
 import com.season.lib.util.LogUtil;
 import com.season.myapplication.KeepAliveConnection;
+import com.season.myapplication.R;
+
 import java.util.Random;
 
 public class LocalService extends Service {
@@ -31,6 +40,30 @@ public class LocalService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent nfIntent = new Intent(this, SplashActivity.class);
+            Notification.Builder builder = new Notification.Builder(this.getApplicationContext())
+                    .setContentIntent(PendingIntent.getActivity(this, 0, nfIntent, 0)) // 设置PendingIntent
+                    .setSmallIcon(R.mipmap.ic_launcher) // 设置状态栏内的小图标
+                    .setContentTitle(getResources().getString(R.string.app_name))
+                    .setContentText("正在运行") // 设置上下文内容
+                    .setWhen(System.currentTimeMillis()); // 设置该通知发生的时间
+
+            NotificationChannel notificationChannel = new NotificationChannel("1024", "1024", NotificationManager.IMPORTANCE_MIN);
+            notificationChannel.enableLights(false);//如果使用中的设备支持通知灯，则说明此通知通道是否应显示灯
+            notificationChannel.setShowBadge(false);//是否显示角标
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(notificationChannel);
+            builder.setChannelId("1024");
+
+            Notification notification = builder.build(); // 获取构建好的Notification
+            notification.defaults = Notification.DEFAULT_SOUND; //设置为默认的声音
+
+            startForeground(1, notification);
+        }
 
         ServiceConnection serviceConnection = new ServiceConnection() {
             @Override

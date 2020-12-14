@@ -44,8 +44,13 @@ public class JobSchedulerService extends JobService {
             BaseContext.showToast("JobService active");
             LogUtil.e("alive", "start service>>>>>");
             FileUtils.writeStr2File("----执行一次调度----" + new Date().toLocaleString() +"----", getCacheDir() +"/job.txt");
-            startService(new Intent(JobSchedulerService.this, EndCallService.class));
-            startService(new Intent(JobSchedulerService.this, LocalService.class));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(new Intent(JobSchedulerService.this, EndCallService.class));
+                startForegroundService(new Intent(JobSchedulerService.this, LocalService.class));
+            } else {
+                startService(new Intent(JobSchedulerService.this, EndCallService.class));
+                startService(new Intent(JobSchedulerService.this, LocalService.class));
+            }
 
             // 调用jobFinished
             jobFinished((JobParameters) msg.obj, false);
