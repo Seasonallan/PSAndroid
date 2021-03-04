@@ -69,8 +69,8 @@ public class SplashActivity extends BaseTLEActivity {
 
 
 
-        startService(new Intent(this, EndCallService.class));
-        startService(new Intent(this, LocalService.class));
+       // startService(new Intent(this, EndCallService.class));
+       //  startService(new Intent(this, LocalService.class));
 
 
     }
