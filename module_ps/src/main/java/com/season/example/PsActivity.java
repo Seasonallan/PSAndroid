@@ -651,9 +651,9 @@ public class PsActivity extends PageTurningActivity implements View.OnClickListe
         } else if (i == R.id.bt_image) {
             testPoi++;testPoi=testPoi>2?0:testPoi;
             if (testPoi == 0) viewExtend.addImageOrGifFromUrl("https://pics6.baidu.com/feed/d01373f082025aaf0c2b05650a0fa262024f1a6f.jpeg?token=6649fdc0f364b5ff0c55c18cb4e1ff65");
-            if (testPoi == 1) viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583398707311&di=0d84c3ca3c68291c6a78e533f20c4fb0&imgtype=0&src=http%3A%2F%2Fn.sinaimg.cn%2Fsinacn17%2F480%2Fw240h240%2F20180618%2F5c4d-heauxvz1011485.gif");
+            if (testPoi == 1) viewExtend.addImageOrGifFromUrl("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fcdn.duitang.com%2Fuploads%2Fitem%2F201502%2F06%2F20150206175026_ffH8R.gif&refer=http%3A%2F%2Fcdn.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1628411114&t=68bcd7b63363540278da9bb4a593c6b4");
           //  else    viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583301994914&di=e9d75711d7e4528212a23043dc5bbb45&imgtype=0&src=http%3A%2F%2Fhiphotos.baidu.com%2F%2587%25E5%25C1%25B6%2Fpic%2Fitem%2F4659b945ad345982cdfbd72f0cf431adcaef849b.jpg");
-            else    viewExtend.addImageOrGifFromUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592646204043&di=1c03c032f1d2ed77ae3de4b1caa968db&imgtype=0&src=http%3A%2F%2Ff.hiphotos.baidu.com%2Fzhidao%2Fwh%253D450%252C600%2Fsign%3D8c2a6c8d0afa513d51ff64da085d79cd%2F43a7d933c895d143b0ee1d7271f082025baf07c2.jpg");
+            else    viewExtend.addImageOrGifFromUrl("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi03.c.aliimg.com%2Fimg%2Fibank%2F2013%2F509%2F129%2F791921905_1855282854.jpg&refer=http%3A%2F%2Fi03.c.aliimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1628411114&t=b62c6147e98a5bdd976e2a60951d5757");
 
         }  else if (i == R.id.bt_text) {
             View view = mPsCanvas.getFocusView();

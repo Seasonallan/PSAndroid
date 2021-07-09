@@ -47,26 +47,34 @@ public class StarView extends View {
             star.move();
             star.draw(canvas);
         }
+        startAnimation();
+    }
+
+    private void startAnimation(){
         if (refreshThread == null){
-            refreshThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (running){
-                        if (stars.size() <= 0 && getWidth() > 0){
-                            for (int i = 0; i < 100; i++) {
-                                stars.add(new Star(getWidth(), getHeight()));
+            synchronized (this){
+                if (refreshThread == null){
+                    refreshThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (running){
+                                if (stars.size() <= 0 && getWidth() > 0){
+                                    for (int i = 0; i < 100; i++) {
+                                        stars.add(new Star(getWidth(), getHeight()));
+                                    }
+                                }
+                                postInvalidate();
+                                try {
+                                    Thread.sleep(10);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
-                        postInvalidate();
-                        try {
-                            Thread.sleep(10);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    });
+                    refreshThread.start();
                 }
-            });
-            refreshThread.start();
+            }
         }
     }
 
@@ -104,7 +112,7 @@ public class StarView extends View {
         }
 
         public void move() {
-            progress += 0.1f;
+            progress += 1.1f;
 
             if (endLeft > width/2){
                 left = width/2 + (int) (progress * (endLeft - width/2)/100);
@@ -141,7 +149,7 @@ public class StarView extends View {
 
     Thread refreshThread;
 
-    boolean running = true;
+    volatile boolean running = true;
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();

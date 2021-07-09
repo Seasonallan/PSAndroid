@@ -154,6 +154,9 @@ public class GifDecoder extends Thread {
 		if (position >= frameCount) {
 			position = 0;
 		}
+		if (position < 0){
+			return null;
+		}
 		if (position >= frameCache.size()){
 			return null;
 		}

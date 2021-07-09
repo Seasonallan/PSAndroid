@@ -2,18 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.season.myapplication">
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -42,20 +35,6 @@
         <activity android:name="com.season.nouse.test.ui.CalendarSelActivity" />
         <activity android:name="com.season.nouse.test.ui.CalendarMiActivity" />
 
-        <service android:name="com.season.example.alive.JobSchedulerService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <service android:name="com.season.example.alive.EndCallService"
-            android:enabled="true"
-            android:exported="true" />
-        <service android:name="com.season.example.alive.LocalService"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver android:name="com.season.example.PhoneBroadcastReceiver">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.PHONE_STATE"/>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
-            </intent-filter>
-        </receiver>
 
         <activity android:name="com.season.example.PsActivity"
             tools:node="replace"

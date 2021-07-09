@@ -43,8 +43,6 @@ public class PagerActivity extends BaseTLEActivity {
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //NavigationBarUtil.hideNavigationBar(this);
 
-        SeasonApplication.getRefWatcher().watch(this);
-
         //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         //沉浸式状态栏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -139,8 +137,7 @@ public class PagerActivity extends BaseTLEActivity {
                     public void noPermission() {
                     }
 
-                }, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE,
-                Manifest.permission.PROCESS_OUTGOING_CALLS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }, Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
     }
 
