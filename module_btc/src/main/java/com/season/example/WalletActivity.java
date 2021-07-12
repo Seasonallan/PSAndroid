@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.quincysx.crypto.CoinTypes;
+import com.quincysx.crypto.bip44.CoinEnum;
 import com.season.btc.R;
 import com.season.lib.BaseContext;
 import com.season.mvp.ui.PageTurningActivity;
@@ -45,10 +45,11 @@ public class WalletActivity extends PageTurningActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRv.setLayoutManager(layoutManager);
 
-        List<CoinTypes> list = new ArrayList<>();
-        list.add(CoinTypes.Bitcoin);
-        list.add(CoinTypes.Ethereum);
-        list.add(CoinTypes.TRX);
+        List<CoinEnum> list = new ArrayList<>();
+        list.add(CoinEnum.Bitcoin);
+        list.add(CoinEnum.Ethereum);
+        list.add(CoinEnum.TRX);
+        list.add(CoinEnum.XRP);
         mAdapter = new ChainAdapter(this, list) {
             @Override
             public void onItemClick(int position) {
@@ -79,9 +80,9 @@ public class WalletActivity extends PageTurningActivity {
     public class ChainAdapter extends RecyclerView.Adapter<ChainAdapter.ItemViewHolder> {
         Context mContext;
 
-        private List<CoinTypes> mData;
+        private List<CoinEnum> mData;
 
-        public ChainAdapter(Context context, List<CoinTypes> data) {
+        public ChainAdapter(Context context, List<CoinEnum> data) {
             mContext = context;
             mData = data;
         }
@@ -99,20 +100,7 @@ public class WalletActivity extends PageTurningActivity {
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, final int position) {
-
-            switch (mData.get(position)) {
-                case Bitcoin:
-                    holder.mIvPic.setImageResource(R.drawable.ic_circle_btc);
-                    break;
-                case Ethereum:
-                    holder.mIvPic.setImageResource(R.drawable.ic_circle_eth);
-                    break;
-                case TRX:
-                    holder.mIvPic.setImageResource(R.drawable.ic_circle_trx);
-                    break;
-                default:
-                    break;
-            }
+            holder.mIvPic.setImageResource(mData.get(position).coinIcon());
             holder.mTvContent.setText(mData.get(position).coinName());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

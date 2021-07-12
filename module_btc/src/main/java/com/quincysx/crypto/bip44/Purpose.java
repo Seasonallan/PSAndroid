@@ -1,6 +1,5 @@
 package com.quincysx.crypto.bip44;
 
-import com.quincysx.crypto.CoinTypes;
 import com.quincysx.crypto.bip32.Index;
 
 /**
@@ -35,7 +34,7 @@ public final class Purpose {
      * @param coinType The coin type
      * @return A coin type instance for this purpose
      */
-    public CoinType coinType(final CoinTypes coinType) {
+    public CoinType coinType(final CoinEnum coinType) {
         return new CoinType(this, coinType);
     }
 }

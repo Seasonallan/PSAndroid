@@ -8,18 +8,21 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.quincysx.crypto.CoinTypes;
 import com.quincysx.crypto.ECKeyPair;
+import com.quincysx.crypto.bip44.CoinEnum;
 import com.quincysx.crypto.utils.HexUtils;
 import com.season.btc.BtcOpenApi;
 import com.season.btc.R;
 import com.season.lib.support.http.DownloadAPI;
+import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
 import com.season.mvp.ui.BaseTLEActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tron.TronWalletApi;
+import org.tron.wallet.crypto.ECKey;
+import org.tron.wallet.util.ByteArray;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -29,23 +32,24 @@ import java.util.List;
 public class BlockchainActivity extends BaseTLEActivity {
 
 
-    public static void open(Context context, CoinTypes bookInfo) {
+    public static void open(Context context, CoinEnum bookInfo) {
         Intent intent = new Intent();
-        intent.setClass(context, BlockchainActivity.class);
+        intent.setClass(context, bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class : BlockchainActivity.class);
         intent.putExtra("coin", bookInfo.coinType());
         context.startActivity(intent);
     }
 
-    CoinTypes coin;
+    CoinEnum coin;
     List<String> mWords;
     ECKeyPair ecKeyPair;
     Handler handler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         handler = new Handler();
-        coin = CoinTypes.parseCoinType(getIntent().getIntExtra("coin", CoinTypes.Bitcoin.coinType()));
+        coin = CoinEnum.parseCoinType(getIntent().getIntExtra("coin", CoinEnum.Bitcoin.coinType()));
         setContentView(R.layout.activity_chain);
         getTitleBar().setTopTile(coin.coinName());
         getTitleBar().enableLeftButton();
@@ -68,10 +72,10 @@ public class BlockchainActivity extends BaseTLEActivity {
                 ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
                 fillTime();
                 fillContent("--私钥: " + ecKeyPair.getPrivateKey());
-                if (coin == CoinTypes.TRX){
+                if (coin == CoinEnum.TRX) {
                     org.tron.wallet.crypto.ECKey ecKey = org.tron.wallet.crypto.ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
-                    fillContent("-->地址: " + TronWalletApi.getAddress(ecKey.getPubKeyPoint()));
-                }else{
+                    fillContent("--地址: " + TronWalletApi.getAddress(ecKey.getPubKeyPoint()));
+                } else {
                     fillContent("--地址: " + ecKeyPair.getAddress());
                 }
             }
@@ -82,7 +86,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             public void onClick(View v) {
                 try {
                     fillTime();
-                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/addr/b/"+coin.coinName()+"/" +
+                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/addr/b/" + coin.coinName() + "/" +
                             getAddress() +
                             "?apikey=AnqHS6Rs2WX0hwFXlrv", new DownloadAPI.IHttpRequestListener() {
                         @Override
@@ -106,9 +110,9 @@ public class BlockchainActivity extends BaseTLEActivity {
             }
         });
 
-        if (coin.coinType() == CoinTypes.Bitcoin.coinType()){
+        if (coin.coinType() == CoinEnum.Bitcoin.coinType()) {
             findViewById(R.id.btn4).setVisibility(View.VISIBLE);
-        }else{
+        } else {
             findViewById(R.id.btn4).setVisibility(View.GONE);
         }
         findViewById(R.id.btn4).setOnClickListener(new View.OnClickListener() {
@@ -145,7 +149,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             public void onClick(View v) {
                 switch (coin) {
                     case Bitcoin:
-                        if (unspent == null){
+                        if (unspent == null) {
                             ToastUtil.showToast("先获取未花费");
                             return;
                         }
@@ -167,34 +171,40 @@ public class BlockchainActivity extends BaseTLEActivity {
                         }).start();
                         break;
                     case TRX:
+                        String txId = "77ddfa7093cc5f745c0d3a54abb89ef070f983343c05e0f89e5a52f3e5401299";//先调用接口生成交易id
+                        ECKey ecKey = ECKey.fromPrivate(ByteArray.fromHexString(ecKeyPair.getPrivateKey()));
+                        String sign_hex = ecKey.sign(HexUtils.fromHex(txId)).toHex();
+                        fillTime();
+                        fillContent(sign_hex);
                         break;
                 }
             }
         });
 
 
-
         log = findViewById(R.id.tv);
         scrollView = findViewById(R.id.c);
         log.setText("------------当前配置------------" + "\n" +
-                "--链ID: " + coin.coinName() + "\n" +
-                "--RPC: " + coin.coinName() + "\n" +
-                "--钱包地址: " + coin.coinName() + "\n" +
-                "--钱包私钥: " + coin.coinName() + "\n" +
+                "--Purpose: " + 44 + "\n" +
+                "--Coin: " + coin.coinType() + "\n" +
+                "--Account: " + 0 + "\n" +
+                "--测试地址: " + getAddress() + "\n" +
                 "");
 
     }
 
-    private String getAddress(){
+    private String getAddress() {
         //return ecKeyPair.getAddress();
         switch (coin) {
             case Bitcoin:
                 return "183hmJGRuTEi2YDCWy5iozY8rZtFwVgahM";
             case Ethereum:
                 return "0x9af168dcab9184561fdd9065812ec89d83e08d99";
+            case XRP:
+                return "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
             case TRX:
             default:
-                return "183hmJGRuTEi2Y2DCWy5iozY8rZtFwVgahM";
+                return "TM2Hh95KyfUvwurTKBD2H5r84yh2QJdirG";
         }
     }
 
@@ -219,7 +229,8 @@ public class BlockchainActivity extends BaseTLEActivity {
             @Override
             public void run() {
                 log.setText(log.getText().toString()
-                        + "\n"+ response);
+                        + "\n" + response);
+                LogUtil.LOG(log.getText().toString());
                 scrollView.post(new Runnable() {
                     @Override
                     public void run() {

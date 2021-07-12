@@ -1,7 +1,7 @@
 package com.season.btc;
 
 
-import com.quincysx.crypto.CoinTypes;
+import com.quincysx.crypto.bip44.CoinEnum;
 import com.quincysx.crypto.ECKeyPair;
 import com.quincysx.crypto.bip32.ExtendedKey;
 import com.quincysx.crypto.bip32.ValidationException;
@@ -50,14 +50,14 @@ public class BtcOpenApi {
          * @param list
          * @return
          */
-        public static ECKeyPair createFromMnemonic(List<String> list, CoinTypes coinTypes) {
+        public static ECKeyPair createFromMnemonic(List<String> list, CoinEnum coinEnum) {
             byte[] seed = new SeedCalculator().calculateSeed(list, "");
             ExtendedKey extendedKey = null;
             ECKeyPair master = null;
             try {
                 extendedKey = ExtendedKey.create(seed);
                 AddressIndex address = BIP44.m().purpose44()
-                        .coinType(coinTypes)
+                        .coinType(coinEnum)
                         .account(0)
                         .external()
                         .address(0);

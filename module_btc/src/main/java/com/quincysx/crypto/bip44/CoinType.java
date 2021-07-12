@@ -1,24 +1,22 @@
 package com.quincysx.crypto.bip44;
 
 
-import com.quincysx.crypto.CoinTypes;
-
 /**
  * @author QuincySx
  * @date 2018/3/5 下午4:26
  */
 public class CoinType {
     private final Purpose purpose;
-    private final CoinTypes coinType;
+    private final CoinEnum coinType;
     private final String string;
 
-    CoinType(final Purpose purpose, final CoinTypes coinType) {
+    CoinType(final Purpose purpose, final CoinEnum coinType) {
         this.purpose = purpose;
         this.coinType = coinType;
         string = String.format("%s/%d'", purpose, coinType.coinType());
     }
 
-    public CoinTypes getValue() {
+    public CoinEnum getValue() {
         return coinType;
     }
 
