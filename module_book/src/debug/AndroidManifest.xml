@@ -11,7 +11,7 @@
         android:allowBackup="true"
         android:label="book"
         android:icon="@drawable/ic_launcher"
-        android:theme="@android:style/Theme.Light.NoTitleBar"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:supportsRtl="true">
         <activity android:name="com.season.example.BookShelfActivity"  android:screenOrientation="portrait">
             <intent-filter>

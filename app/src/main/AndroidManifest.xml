@@ -50,6 +50,11 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity android:name="com.season.example.WalletActivity"
+            tools:node="replace"
+            android:screenOrientation="portrait">
+        </activity>
+
         <provider
             android:name="com.season.example.provider.BookContentProvider"
             android:exported="true"

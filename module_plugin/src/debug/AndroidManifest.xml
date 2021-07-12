@@ -14,7 +14,7 @@
         android:allowBackup="true"
         android:label="plugin"
         android:icon="@drawable/plugin_icon"
-        android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:name=".PluginSupportApplication"
         android:supportsRtl="true">
 

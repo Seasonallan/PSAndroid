@@ -1,0 +1,15 @@
+apply from: config
+
+dependencies {
+
+    //compile files('libs/bcprov-jdk15on-1.59.jar')
+    compile files('libs/tron-sdk-1.jar')
+    implementation "com.google.guava:guava:30.1.1-jre"
+
+    compile files('libs/spongycastle-core-1.58.0.0.jar')
+    compile files('libs/spongycastle-prov-1.58.0.0.jar')
+
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "org.web3j:core:4.6.0-android"
+
+}

@@ -75,6 +75,9 @@ public class PagerActivity extends BaseTLEActivity {
                             path = "/plugin/main";
                             PageBrokenActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                             PageBrokenActivity.putClickPoint(mainPageView.getTouchPoint());
+                        } else if (position == 0){
+                            path = "/wallet/main";
+                            PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                         } else {
                             path = "/book/shelf/home";
                             PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
@@ -91,6 +94,15 @@ public class PagerActivity extends BaseTLEActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                mainPageView.addPageView(new PageItemView(PagerActivity.this,
+                        PageItem.create("区块链", "区块链 2020")
+                                .decorateContent(" • 功能 •", "钱包", "离线签名", "助记词", "私钥")
+                                .decorateContent(" • 核心 •", "BIP44", "椭圆曲线算法")
+                                .page(0)
+                                .color(COLOR(R.color.global_blue_dark))
+                ));
+                mainPageView.addPageView(get1ImageView(R.drawable.image_7));
 
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
                         PageItem.create("图层动画合成", "表情说说 2018")
@@ -120,7 +132,6 @@ public class PagerActivity extends BaseTLEActivity {
                 ));
 
                 mainPageView.addPageView(get1ImageView(R.drawable.image_6));
-                mainPageView.addPageView(get1ImageView(R.drawable.image_7));
 
             }
         }, 100);

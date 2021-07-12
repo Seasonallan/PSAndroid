@@ -8,7 +8,7 @@
         android:allowBackup="true"
         android:label="ps"
         android:icon="@drawable/emoji_00a9"
-        android:theme="@style/Theme.AppCompat.Light"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:supportsRtl="true" >
         <activity android:name="com.season.example.PsActivity"
             android:screenOrientation="portrait">
