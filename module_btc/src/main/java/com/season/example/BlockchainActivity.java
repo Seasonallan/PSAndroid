@@ -114,7 +114,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             }
         });
 
-        if (coin.coinType() == CoinEnum.Bitcoin.coinType()) {
+        if (coin == CoinEnum.Bitcoin || coin == CoinEnum.Litecoin) {
             findViewById(R.id.btn4).setVisibility(View.VISIBLE);
         } else {
             findViewById(R.id.btn4).setVisibility(View.GONE);
@@ -124,7 +124,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             public void onClick(View v) {
                 try {
                     fillTime();
-                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/unspent/btc/" +
+                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/unspent/"+coin.coinName()+"/" +
                             getAddress() +
                             "/1/2?apikey=AnqHS6Rs2WX0hwFXlrv", new DownloadAPI.IHttpRequestListener() {
                         @Override
@@ -153,6 +153,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             public void onClick(View v) {
                 switch (coin) {
                     case Bitcoin:
+                    case Litecoin:
                         if (unspent == null) {
                             ToastUtil.showToast("先获取未花费");
                             return;
@@ -222,6 +223,8 @@ public class BlockchainActivity extends BaseTLEActivity {
         switch (coin) {
             case Bitcoin:
                 return "183hmJGRuTEi2YDCWy5iozY8rZtFwVgahM";
+            case Litecoin:
+                return "LajyQBeZaBA1NkZDeY8YT5RYYVRkXMvb2T";
             case Ethereum:
                 return "0x9af168dcab9184561fdd9065812ec89d83e08d99";
             case XRP:

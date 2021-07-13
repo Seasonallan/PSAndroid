@@ -630,8 +630,8 @@ public final class BTCTransaction implements Transaction {
                 if (addressWithCheckSumAndNetworkCode[0] != 0
                         && addressWithCheckSumAndNetworkCode[0] != 111
                         && addressWithCheckSumAndNetworkCode[0] != 5) {
-                    throw new BitcoinException(BitcoinException.ERR_UNSUPPORTED, "Unknown address" +
-                            " type", address);
+                    //throw new BitcoinException(BitcoinException.ERR_UNSUPPORTED, "Unknown address" +
+                    //        " type", address);
                 }
                 byte[] bareAddress = new byte[20];
                 System.arraycopy(addressWithCheckSumAndNetworkCode, 1, bareAddress, 0,
