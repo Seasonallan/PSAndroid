@@ -29,6 +29,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import io.eblock.eos4j.OfflineSign;
+import io.eblock.eos4j.Rpc;
+import io.eblock.eos4j.api.vo.SignParam;
+
 public class BlockchainActivity extends BaseTLEActivity {
 
 
@@ -62,7 +66,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             public void onClick(View v) {
                 mWords = BtcOpenApi.Wallet.createRandomMnemonic();
                 fillTime();
-                fillContent(Arrays.toString(mWords.toArray()));
+                fillContent(Arrays.toString(mWords.toArray()).replaceAll(",", ""));
             }
         });
 
@@ -176,6 +180,26 @@ public class BlockchainActivity extends BaseTLEActivity {
                         String sign_hex = ecKey.sign(HexUtils.fromHex(txId)).toHex();
                         fillTime();
                         fillContent(sign_hex);
+                        break;
+                    case EOS:
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Rpc rpc = new Rpc("https://eos.greymass.com:443");
+                                // 获取离线签名参数
+                                SignParam params = rpc.getOfflineSignParams(60l);
+                                // 离线签名
+                                OfflineSign sign = new OfflineSign();
+                                try {
+                                    String content = sign.sign(params, "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3", "eosio.token",
+                                            "eeeeeeeeeeee", "555555555551", "372.0993 EOS", "test");
+                                    fillTime();
+                                    fillContent(new JSONObject(content).toString(4));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
                         break;
                 }
             }

@@ -50,6 +50,7 @@ public class WalletActivity extends PageTurningActivity {
         list.add(CoinEnum.Ethereum);
         list.add(CoinEnum.TRX);
         list.add(CoinEnum.XRP);
+        list.add(CoinEnum.EOS);
         mAdapter = new ChainAdapter(this, list) {
             @Override
             public void onItemClick(int position) {
