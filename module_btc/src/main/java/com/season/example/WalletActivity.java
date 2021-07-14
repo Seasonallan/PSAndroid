@@ -53,6 +53,7 @@ public class WalletActivity extends PageTurningActivity {
         list.add(CoinEnum.EOS);
         list.add(CoinEnum.Litecoin);
         list.add(CoinEnum.Dogecoin);
+        list.add(CoinEnum.BCH);
 
         mAdapter = new ChainAdapter(this, list) {
             @Override

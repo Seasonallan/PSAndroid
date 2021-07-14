@@ -59,7 +59,10 @@ public class BlockchainActivity extends BaseTLEActivity {
         getTitleBar().enableLeftButton();
 
         mWords = BtcOpenApi.Wallet.createRandomMnemonic();
+        fillContent(Arrays.toString(mWords.toArray()).replaceAll(",", ""));
         ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
+        fillContent("--私钥: " + ecKeyPair.getPrivateKey());
+        fillContent("--地址: " + ecKeyPair.getAddress());
 
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +117,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             }
         });
 
-        if (coin == CoinEnum.Bitcoin || coin == CoinEnum.Litecoin || coin == CoinEnum.Dogecoin) {
+        if (coin == CoinEnum.Bitcoin || coin == CoinEnum.Litecoin || coin == CoinEnum.Dogecoin || coin == CoinEnum.BCH) {
             findViewById(R.id.btn4).setVisibility(View.VISIBLE);
         } else {
             findViewById(R.id.btn4).setVisibility(View.GONE);
@@ -155,6 +158,7 @@ public class BlockchainActivity extends BaseTLEActivity {
                     case Bitcoin:
                     case Litecoin:
                     case Dogecoin:
+                    case BCH:
                         if (unspent == null) {
                             ToastUtil.showToast("先获取未花费");
                             return;
@@ -232,6 +236,8 @@ public class BlockchainActivity extends BaseTLEActivity {
                 return "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
             case Dogecoin:
                 return "DMqRVLrhbam3Kcfddpxd6EYvEBbpi3bEpP";
+            case BCH:
+                return "198xLnUH1dNX5fLKdRx3VSCVehrs2xJCK4";
             case TRX:
             default:
                 return "TM2Hh95KyfUvwurTKBD2H5r84yh2QJdirG";

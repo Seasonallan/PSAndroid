@@ -15,6 +15,7 @@ public enum CoinEnum {
     Ethereum(60, "ETH", R.drawable.ic_circle_eth),
     EOS(194, "EOS", R.drawable.ic_circle_eos),
     XRP(144, "XRP", R.drawable.ic_circle_xrp),
+    BCH(145, "BCH", R.drawable.ic_circle_bch),
     TRX(195, "TRX", R.drawable.ic_circle_trx);
 
 

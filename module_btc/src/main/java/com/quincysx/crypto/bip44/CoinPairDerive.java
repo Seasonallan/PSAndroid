@@ -4,6 +4,7 @@ import com.quincysx.crypto.ECKeyPair;
 import com.quincysx.crypto.bip32.ExtendedKey;
 import com.quincysx.crypto.bip32.Index;
 import com.quincysx.crypto.bip32.ValidationException;
+import com.quincysx.crypto.bitcoin.BCHCoinECKeyPair;
 import com.quincysx.crypto.bitcoin.BitCoinECKeyPair;
 import com.quincysx.crypto.bitcoin.DogeCoinECKeyPair;
 import com.quincysx.crypto.bitcoin.LtcCoinECKeyPair;
@@ -59,6 +60,8 @@ public class CoinPairDerive {
                 return LtcCoinECKeyPair.parse(child.getMaster(), false);
             case Dogecoin:
                 return DogeCoinECKeyPair.parse(child.getMaster(), false);
+            case BCH:
+                return BCHCoinECKeyPair.parse(child.getMaster(), false);
             case XRP:
             case Bitcoin:
             default:
