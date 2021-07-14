@@ -114,7 +114,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             }
         });
 
-        if (coin == CoinEnum.Bitcoin || coin == CoinEnum.Litecoin) {
+        if (coin == CoinEnum.Bitcoin || coin == CoinEnum.Litecoin || coin == CoinEnum.Dogecoin) {
             findViewById(R.id.btn4).setVisibility(View.VISIBLE);
         } else {
             findViewById(R.id.btn4).setVisibility(View.GONE);
@@ -154,6 +154,7 @@ public class BlockchainActivity extends BaseTLEActivity {
                 switch (coin) {
                     case Bitcoin:
                     case Litecoin:
+                    case Dogecoin:
                         if (unspent == null) {
                             ToastUtil.showToast("先获取未花费");
                             return;
@@ -229,6 +230,8 @@ public class BlockchainActivity extends BaseTLEActivity {
                 return "0x9af168dcab9184561fdd9065812ec89d83e08d99";
             case XRP:
                 return "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
+            case Dogecoin:
+                return "DMqRVLrhbam3Kcfddpxd6EYvEBbpi3bEpP";
             case TRX:
             default:
                 return "TM2Hh95KyfUvwurTKBD2H5r84yh2QJdirG";

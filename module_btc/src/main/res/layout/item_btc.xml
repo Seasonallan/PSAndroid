@@ -16,6 +16,7 @@
     <TextView
         android:id="@+id/item_content"
         android:layout_width="wrap_content"
+        android:minWidth="88dp"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:textSize="16dp" />

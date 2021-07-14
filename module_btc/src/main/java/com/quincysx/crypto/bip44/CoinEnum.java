@@ -11,7 +11,7 @@ public enum CoinEnum {
     Bitcoin(0, "BTC", R.drawable.ic_circle_btc),
     BitcoinTest(1, "BTC", R.drawable.ic_circle_btc),
     Litecoin(2, "LTC", R.drawable.ic_circle_ltc),
-    Dogecoin(3, "DOGE", R.drawable.ic_circle_btc),
+    Dogecoin(3, "DOGE", R.drawable.ic_circle_doge),
     Ethereum(60, "ETH", R.drawable.ic_circle_eth),
     EOS(194, "EOS", R.drawable.ic_circle_eos),
     XRP(144, "XRP", R.drawable.ic_circle_xrp),
