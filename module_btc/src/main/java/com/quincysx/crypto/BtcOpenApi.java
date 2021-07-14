@@ -1,4 +1,4 @@
-package com.season.btc;
+package com.quincysx.crypto;
 
 
 import com.quincysx.crypto.bip44.CoinEnum;

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.quincysx.crypto.ECKeyPair;
 import com.quincysx.crypto.bip44.CoinEnum;
 import com.quincysx.crypto.utils.HexUtils;
-import com.season.btc.BtcOpenApi;
+import com.quincysx.crypto.BtcOpenApi;
 import com.season.btc.R;
 import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
@@ -38,7 +38,8 @@ public class BlockchainActivity extends BaseTLEActivity {
 
     public static void open(Context context, CoinEnum bookInfo) {
         Intent intent = new Intent();
-        intent.setClass(context, bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class : BlockchainActivity.class);
+        intent.setClass(context, bookInfo == CoinEnum.FIL ? BlockchainFilActivity.class :
+                (bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class : BlockchainActivity.class));
         intent.putExtra("coin", bookInfo.coinType());
         context.startActivity(intent);
     }

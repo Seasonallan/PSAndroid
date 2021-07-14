@@ -20,6 +20,7 @@
 
         <activity android:name="com.season.example.BlockchainActivity" />
         <activity android:name="com.season.example.BlockchainXrpActivity" />
+        <activity android:name="com.season.example.BlockchainFilActivity" />
     </application>
 
 </manifest>

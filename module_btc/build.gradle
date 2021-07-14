@@ -12,4 +12,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "org.web3j:core:4.6.0-android"
 
+    compile files('libs/ove.blake2b-alpha.0.jar')
 }

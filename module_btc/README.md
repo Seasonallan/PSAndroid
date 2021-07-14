@@ -27,4 +27,12 @@
               }
               return BitcoinCashAddressFormatter.toCashAddress(BitcoinCashAddressType.P2PKH,
                       hashedPublicKey, MoneyNetwork.MAIN);
+                      
+                      
+
++ Filecoin 地址格式
+Filecoin 有三种地址格式：普通地址（f1 开头）、矿工地址（f0 开头）和矿工地址（f3 开头。
+ 普通地址格式（f1 开头）：f16tugakjlpyoomxy5uv2d6bdj7wcyr3ueofu7w7a
+ 矿工地址格式（f0 开头）：f01782
+ 矿工地址格式（f3 开头）：f3sg22lqqjewwczqcs2cjr3zp6htctbovwugzzut2nkvb366wzn5tp2zkfvu5xrfqhreowiryxump7l5e6jaaq   
  

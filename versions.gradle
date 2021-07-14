@@ -3,7 +3,7 @@ ext {
     _versionCode = 1
     _versionName = "3.0.0"
     //android
-    _minSdkVersion = 16
+    _minSdkVersion = 19
     _targetSdkVersion = 29
     _compileSdkVersion = 29
     _buildToolsVersion = "29.0.2"

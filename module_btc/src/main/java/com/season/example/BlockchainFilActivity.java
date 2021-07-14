@@ -8,11 +8,18 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.quincysx.crypto.bip44.CoinEnum;
-import com.ripple.AitdOpenApi;
+import com.filecoinj.Base32;
+import com.filecoinj.ECKey;
+import com.filecoinj.crypto.cryptohash.Digest;
 import com.quincysx.crypto.BtcOpenApi;
+import com.quincysx.crypto.bip39.SeedCalculator;
+import com.quincysx.crypto.bip44.CoinEnum;
+import com.quincysx.crypto.bitcoin.bch.bitcoincash.BitcoinCashBase32;
+import com.quincysx.crypto.utils.HexUtils;
 import com.season.btc.R;
+import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
+import com.season.lib.util.ToastUtil;
 import com.season.mvp.ui.BaseTLEActivity;
 
 import org.json.JSONException;
@@ -22,12 +29,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class BlockchainXrpActivity extends BaseTLEActivity {
+import ove.crypto.digest.Blake2b;
+
+public class BlockchainFilActivity extends BaseTLEActivity {
 
 
     public static void open(Context context, CoinEnum bookInfo) {
         Intent intent = new Intent();
-        intent.setClass(context, BlockchainXrpActivity.class);
+        intent.setClass(context, BlockchainFilActivity.class);
         intent.putExtra("coin", bookInfo.coinType());
         context.startActivity(intent);
     }
@@ -36,12 +45,24 @@ public class BlockchainXrpActivity extends BaseTLEActivity {
     List<String> mWords;
     String seed;
     Handler handler;
+
+
+    private String byteToAddress(byte[] pub) {
+        Blake2b.Digest digest =  Blake2b.Digest.newInstance(20);
+        String hash = HexUtils.toHex(digest.digest(pub));
+
+        //4.计算校验和
+        String pubKeyHash = "01" + HexUtils.toHex(digest.digest(pub));
+
+        Blake2b.Digest blake2b3 = Blake2b.Digest.newInstance(4);
+        String checksum = HexUtils.toHex(blake2b3.digest(HexUtils.fromHex(pubKeyHash)));
+        //5.生成地址
+
+        return "f1" + Base32.encode(HexUtils.fromHex(hash + checksum)).toLowerCase();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        AitdOpenApi.initSDK("https://s1.ripple.com:51234");
-        AitdOpenApi.switchCoinModeXRP();
 
         handler = new Handler();
         coin = CoinEnum.parseCoinType(getIntent().getIntExtra("coin", CoinEnum.Bitcoin.coinType()));
@@ -51,7 +72,6 @@ public class BlockchainXrpActivity extends BaseTLEActivity {
 
         mWords = BtcOpenApi.Wallet.createRandomMnemonic();
 
-        seed = "snoPBrXtMeMyMHUVTgbuqAfg1SUTb";
 
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,28 +85,46 @@ public class BlockchainXrpActivity extends BaseTLEActivity {
         findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                seed = AitdOpenApi.Wallet.createFromMnemonic(mWords);
                 fillTime();
-                fillContent("--私钥: " + seed);
-                fillContent("--地址: " + AitdOpenApi.Wallet.getAddress(seed));
+
+                byte[] seed = new SeedCalculator().calculateSeed(mWords, "");
+                ECKey ecKey = ECKey.fromPrivate(seed);
+                byte[] privateKeyBytes = ecKey.getPrivKeyBytes();
+                byte[] pubKey = ecKey.getPubKey();
+                String filAddress = byteToAddress(pubKey);
+                String privateKey = HexUtils.toHex(privateKeyBytes);
+
+                fillContent("--私钥: " + privateKey);
+                fillContent("--地址: " + filAddress);
             }
         });
 
         findViewById(R.id.btn3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String accountInfo = AitdOpenApi.Request.getAccountInfo(AitdOpenApi.Wallet.getAddress(seed));
-                        fillTime();
-                        try {
-                            fillContent(new JSONObject(accountInfo).toString(4));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                try {
+                    fillTime();
+                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/addr/b/" + coin.coinName() + "/" +
+                            getAddress() +
+                            "?apikey=AnqHS6Rs2WX0hwFXlrv", new DownloadAPI.IHttpRequestListener() {
+                        @Override
+                        public void onCompleted(String result) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                fillContent(jsonObject.toString(4));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                }).start();
+
+                        @Override
+                        public void onError() {
+                            fillContent("error");
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -95,15 +133,7 @@ public class BlockchainXrpActivity extends BaseTLEActivity {
         findViewById(R.id.btn5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String hex = AitdOpenApi.Request.sign(seed,
-                                "rNqKQoZzmYEXSafD2JU6pgNEp1BpJUU9oV", "0.5", "5", "000000");
-                        fillTime();
-                        fillContent(hex);
-                    }
-                }).start();
+                ToastUtil.showToast("not support");
             }
         });
 
@@ -121,18 +151,7 @@ public class BlockchainXrpActivity extends BaseTLEActivity {
     }
 
     private String getAddress(){
-        //return ecKeyPair.getAddress();
-        switch (coin) {
-            case Bitcoin:
-                return "183hmJGRuTEi2YDCWy5iozY8rZtFwVgahM";
-            case Ethereum:
-                return "0x9af168dcab9184561fdd9065812ec89d83e08d99";
-            case XRP:
-                return "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
-            case TRX:
-            default:
-                return "TM2Hh95KyfUvwurTKBD2H5r84yh2QJdirG";
-        }
+        return "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za";
     }
 
 
