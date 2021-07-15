@@ -1,8 +1,6 @@
 package com.quincysx.crypto;
 
 
-import com.quincysx.crypto.bip44.CoinEnum;
-import com.quincysx.crypto.ECKeyPair;
 import com.quincysx.crypto.bip32.ExtendedKey;
 import com.quincysx.crypto.bip32.ValidationException;
 import com.quincysx.crypto.bip39.MnemonicGenerator;
@@ -12,6 +10,7 @@ import com.quincysx.crypto.bip39.WordCount;
 import com.quincysx.crypto.bip39.wordlists.English;
 import com.quincysx.crypto.bip44.AddressIndex;
 import com.quincysx.crypto.bip44.BIP44;
+import com.quincysx.crypto.bip44.CoinEnum;
 import com.quincysx.crypto.bip44.CoinPairDerive;
 import com.quincysx.crypto.bitcoin.BTCTransaction;
 import com.quincysx.crypto.utils.HexUtils;
@@ -20,6 +19,12 @@ import com.season.lib.util.LogUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -28,10 +33,14 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -149,6 +158,56 @@ public class BtcOpenApi {
         }
 
 
+        public static String sighContract(boolean broadCast, ECKeyPair ecKeyPair,
+                                          String to_address, BigInteger gasPrice, BigInteger gasLimit,
+                                          String amount, String contractAddress) {
+
+            try {
+                String rpc = "http://192.168.1.11:8545";
+                rpc = "https://mainnet.infura.io/v3/3a46513ddfc74656956b784aa8682dfb";
+
+                Web3j web3j = Web3j.build(new HttpService(rpc));
+
+                EthGetTransactionCount c = web3j.ethGetTransactionCount("0x" + ecKeyPair.getAddress(), DefaultBlockParameterName.LATEST).send();
+                BigInteger transactionCount = c.getTransactionCount();
+                String to = to_address.startsWith("0x") ? to_address : "0x" + to_address;
+
+                BigDecimal value = Convert.toWei(amount, Convert.Unit.MWEI);
+                Function transfer = new Function(
+                        "transfer",
+                        Arrays.asList(new Address(to), new Uint256(value.toBigInteger())),
+                        Collections.singletonList(new TypeReference<Bool>() {
+                        }));
+                Credentials credentials = Credentials.create(ecKeyPair.getPrivateKey());
+
+                String encodedFunction = FunctionEncoder.encode(transfer);
+
+                RawTransaction rawTransaction = RawTransaction.createTransaction(
+                        transactionCount,
+                        gasPrice,
+                        gasLimit,
+                        contractAddress,
+                        encodedFunction);
+                byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, 1, credentials);
+                String hexValue = Numeric.toHexString(signedMessage);
+
+                if (!broadCast) {
+                    return hexValue;
+                }
+                EthSendTransaction raw = web3j
+                        .ethSendRawTransaction(hexValue)
+                        .send();
+                if (!raw.hasError()) {
+                    return raw.getTransactionHash();
+                }else{
+                    return raw.getError().getMessage();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
         /**
          * ETH转账签名
          *
@@ -167,11 +226,11 @@ public class BtcOpenApi {
                                      BigInteger amount, String data) {
             try {
                 String rpc = "http://192.168.1.11:8545";
-                long chainId = 1337;
+                long chainId = 1;
 
                 Web3j web3j = Web3j.build(new HttpService(rpc));
 
-                EthGetTransactionCount c = web3j.ethGetTransactionCount("0x"+master.getAddress(), DefaultBlockParameterName.PENDING).send();
+                EthGetTransactionCount c = web3j.ethGetTransactionCount("0x" + master.getAddress(), DefaultBlockParameterName.LATEST).send();
 
 
                 RawTransaction rtx = RawTransaction.createTransaction(c.getTransactionCount(),

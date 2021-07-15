@@ -21,6 +21,8 @@
         <activity android:name="com.season.example.BlockchainActivity" />
         <activity android:name="com.season.example.BlockchainXrpActivity" />
         <activity android:name="com.season.example.BlockchainFilActivity" />
+        <activity android:name="com.season.example.token.TokenActivity" />
+        <activity android:name="com.season.example.token.TokenTransactionActivity" />
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.season.example;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.quincysx.crypto.bip44.CoinEnum;
 import com.season.btc.R;
+import com.season.example.token.TokenActivity;
 import com.season.lib.BaseContext;
 import com.season.mvp.ui.PageTurningActivity;
 
@@ -55,11 +57,16 @@ public class WalletActivity extends PageTurningActivity {
         list.add(CoinEnum.Dogecoin);
         list.add(CoinEnum.BCH);
         list.add(CoinEnum.FIL);
+        list.add(CoinEnum.TOKEN);
 
         mAdapter = new ChainAdapter(this, list) {
             @Override
             public void onItemClick(int position) {
                 super.onItemClick(position);
+                if (position >= getItemCount() - 1){
+                    startActivity(new Intent(WalletActivity.this, TokenActivity.class));
+                    return;
+                }
                 BlockchainActivity.open(WalletActivity.this, mAdapter.mData.get(position));
             }
         };

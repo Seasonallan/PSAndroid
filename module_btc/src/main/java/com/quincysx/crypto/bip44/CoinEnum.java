@@ -17,7 +17,8 @@ public enum CoinEnum {
     XRP(144, "XRP", R.drawable.ic_circle_xrp),
     BCH(145, "BCH", R.drawable.ic_circle_bch),
     TRX(195, "TRX", R.drawable.ic_circle_trx),
-    FIL(-1, "FIL", R.drawable.ic_circle_fil);
+    FIL(-1, "FIL", R.drawable.ic_circle_fil),
+    TOKEN(-2, "合约代币", R.drawable.ic_circle_shib);
 
 
 
