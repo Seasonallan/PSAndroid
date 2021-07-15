@@ -4,7 +4,7 @@ buildscript {
     ext {
         config = "${rootDir}/config.gradle"
         versions = "${rootDir}/versions.gradle"
-        isModule = true//是否开启组件化
+        isModule = false//是否开启组件化
     }
 
     repositories {

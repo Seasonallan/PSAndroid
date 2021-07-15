@@ -119,6 +119,12 @@ public class TokenActivity extends BaseTLEActivity {
             holder.mTvDesc.setText(mData.get(position).desc);
             holder.mTvAddress.setText(mData.get(position).address);
             holder.mTvAmount.setText(mData.get(position).amount);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClick(position);
+                }
+            });
         }
 
         @Override
