@@ -54,7 +54,7 @@ public class TokenActivity extends BaseTLEActivity {
             @Override
             public void onItemClick(int position) {
                 super.onItemClick(position);
-
+                TokenTransactionActivity.open(TokenActivity.this, mAdapter.mData.get(position));
             }
         };
         mRv.setAdapter(mAdapter);
