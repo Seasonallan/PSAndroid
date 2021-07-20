@@ -96,9 +96,11 @@ public class BlockchainActivity extends BaseTLEActivity {
             public void onClick(View v) {
                 try {
                     fillTime();
-                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/addr/b/" + coin.coinName() + "/" +
+                    String url = "https://services.tokenview.com/vipapi/addr/b/" + coin.coinName() + "/" +
                             getAddress() +
-                            "?apikey=AnqHS6Rs2WX0hwFXlrv", new DownloadAPI.IHttpRequestListener() {
+                            "?apikey=AnqHS6Rs2WX0hwFXlrv";
+                    LogUtil.LOG(url);
+                    DownloadAPI.getRequestThread(url, new DownloadAPI.IHttpRequestListener() {
                         @Override
                         public void onCompleted(String result) {
                             try {
@@ -148,6 +150,8 @@ public class BlockchainActivity extends BaseTLEActivity {
                             fillContent("error");
                         }
                     });
+                    //https://blockchain.info/unspent?active=12se8UhjbNZHRjF8RLtFHPs2grFRudoKBk
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -228,20 +232,20 @@ public class BlockchainActivity extends BaseTLEActivity {
 
     private String getAddress() {
         //return ecKeyPair.getAddress();
+
         switch (coin) {
-            case Bitcoin:
-                return "183hmJGRuTEi2YDCWy5iozY8rZtFwVgahM";
             case Litecoin:
                 return "LajyQBeZaBA1NkZDeY8YT5RYYVRkXMvb2T";
+            case Bitcoin:
+                return BtcOpenApi.Wallet.createFromMnemonic(Arrays.asList(Key.sMnemonic.split(" ")), coin).getAddress();
             case Ethereum:
-                return "0x9af168dcab9184561fdd9065812ec89d83e08d99";
+                return "0x"+BtcOpenApi.Wallet.createFromMnemonic(Arrays.asList(Key.sMnemonic.split(" ")), coin).getAddress();
             case XRP:
                 return "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
             case Dogecoin:
                 return "DMqRVLrhbam3Kcfddpxd6EYvEBbpi3bEpP";
             case BCH:
                 return "198xLnUH1dNX5fLKdRx3VSCVehrs2xJCK4";
-            case TRX:
             default:
                 return "TM2Hh95KyfUvwurTKBD2H5r84yh2QJdirG";
         }
