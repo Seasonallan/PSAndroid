@@ -280,7 +280,7 @@ public class ViewPageView extends View implements PageAnimController.PageCarver 
     int widthMeasureSpec;
     int heightMeasureSpec;
     RectF nextPageRect;
-    int SIZE = 100;
+    int SIZE = 200;
 
     /**
      * 点击位置是否在右下角

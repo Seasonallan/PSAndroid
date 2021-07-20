@@ -347,7 +347,7 @@ public class AitdOpenApi {
         }
 
 
-        private static String buildRequestBody(String method, JSONArray params) {
+        public static String buildRequestBody(String method, JSONArray params) {
             JSONObject js_request = new JSONObject();
             try {
                 js_request.put("method", method);

@@ -8,6 +8,7 @@
         android:allowBackup="true"
         android:label="btc"
         android:icon="@drawable/ic_circle_btc"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:supportsRtl="true" >
         <activity android:name="com.season.example.WalletActivity"
@@ -21,6 +22,7 @@
         <activity android:name="com.season.example.BlockchainActivity" />
         <activity android:name="com.season.example.BlockchainXrpActivity" />
         <activity android:name="com.season.example.BlockchainFilActivity" />
+        <activity android:name="com.season.example.BlockchainTrxActivity" />
         <activity android:name="com.season.example.token.TokenActivity" />
         <activity android:name="com.season.example.token.TokenTransactionActivity" />
     </application>

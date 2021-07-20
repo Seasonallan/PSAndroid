@@ -64,6 +64,50 @@
             android:layout_marginTop="8dp"
             android:text="获取未花费" />
 
+        <LinearLayout
+            android:id="@+id/btneX"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btneX1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="冻结" />
+
+            <Button
+                android:id="@+id/btneX2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="解冻" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btneY"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btneY1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="投票" />
+
+            <Button
+                android:id="@+id/btneY2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="获取收益" />
+        </LinearLayout>
+
         <Button
             android:id="@+id/btn5"
             android:layout_width="match_parent"

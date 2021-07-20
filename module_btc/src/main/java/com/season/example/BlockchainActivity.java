@@ -8,10 +8,10 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.quincysx.crypto.BtcOpenApi;
 import com.quincysx.crypto.ECKeyPair;
 import com.quincysx.crypto.bip44.CoinEnum;
 import com.quincysx.crypto.utils.HexUtils;
-import com.quincysx.crypto.BtcOpenApi;
 import com.season.btc.R;
 import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
@@ -38,8 +38,10 @@ public class BlockchainActivity extends BaseTLEActivity {
 
     public static void open(Context context, CoinEnum bookInfo) {
         Intent intent = new Intent();
-        intent.setClass(context, bookInfo == CoinEnum.FIL ? BlockchainFilActivity.class :
-                (bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class : BlockchainActivity.class));
+        intent.setClass(context, bookInfo == CoinEnum.TRX ? BlockchainTrxActivity.class :
+                (bookInfo == CoinEnum.FIL ? BlockchainFilActivity.class :
+                (bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class :
+                        BlockchainActivity.class)));
         intent.putExtra("coin", bookInfo.coinType());
         context.startActivity(intent);
     }
@@ -128,7 +130,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             public void onClick(View v) {
                 try {
                     fillTime();
-                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/unspent/"+coin.coinName()+"/" +
+                    DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/unspent/" + coin.coinName() + "/" +
                             getAddress() +
                             "/1/2?apikey=AnqHS6Rs2WX0hwFXlrv", new DownloadAPI.IHttpRequestListener() {
                         @Override
