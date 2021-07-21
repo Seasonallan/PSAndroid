@@ -262,11 +262,24 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                             JSONObject jsonObject = new JSONObject(res);
                             int reward = jsonObject.getInt("reward");
                             if (reward > 0) {
+                                fillContent("reward="+reward);
                                 js_request.put("owner_address", getAddress());
                                 js_request.put("visible", true);
                                 res = SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/withdrawbalance",
                                         js_request.toString());
                                 jsonObject = new JSONObject(res);
+
+                                byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
+                                String wordTest = Key.sMnemonic;
+                                mWords = Arrays.asList(wordTest.split(" "));
+                                ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
+                                ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
+                                String sign_hex = ecKey.sign(rawData).toHex();
+
+                                String hex = broadcastTransaction(jsonObject,
+                                        sign_hex);
+
+                                fillContent(hex);
                             }
                             fillContent(jsonObject.toString(4));
                         } catch (JSONException e) {
