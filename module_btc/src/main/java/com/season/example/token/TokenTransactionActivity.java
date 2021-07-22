@@ -60,9 +60,8 @@ public class TokenTransactionActivity extends BaseTLEActivity {
         setContentView(R.layout.activity_chain);
         getTitleBar().setTopTile(token.name);
         getTitleBar().enableLeftButton();
-
-        String wordTest = "clay negative blind dust sentence hawk captain recycle milk solve weird piano";
-        mWords = Arrays.asList(wordTest.split(" "));
+ 
+        mWords = Arrays.asList(Key.sMnemonic.split(" "));
         fillContent(Arrays.toString(mWords.toArray()).replaceAll(",", ""));
         ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, CoinEnum.Ethereum);
         fillContent("--私钥: " + ecKeyPair.getPrivateKey());
