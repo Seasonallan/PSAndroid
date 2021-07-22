@@ -14,6 +14,7 @@ import com.quincysx.crypto.utils.HexUtils;
 import com.ripple.LogRipple;
 import com.ripple.SimpleRequest;
 import com.season.btc.R;
+import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
 import com.season.mvp.ui.BaseTLEActivity;
 
@@ -44,6 +45,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
     ECKeyPair ecKeyPair;
     ECKey ecKey;
     Handler handler;
+    double price = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,29 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
         fillContent("--私钥: " + ecKeyPair.getPrivateKey());
         ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
         fillContent("--地址: " + TronWalletApi.getAddress(ecKey.getPubKeyPoint()));
+
+
+
+
+        String url = "https://services.tokenview.com/vipapi/coin/marketInfo/" + coin.coinName().toLowerCase() + "?apikey=" + Key.apiKey;
+        LogUtil.LOG(url);
+        DownloadAPI.getRequestThread(url, new DownloadAPI.IHttpRequestListener() {
+            @Override
+            public void onCompleted(String result) {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    price = jsonObject.getJSONObject("data").getDouble("priceUsd");
+                    fillContent("当前价格：" + price);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError() {
+                fillContent("error");
+            }
+        });
 
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +139,8 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                             voteCount = frozenBandWidth.add(new BigInteger(frozenEnergy)).divide(new BigInteger("1000000")).intValue();
                             showJson.put("票数", voteCount);
                             fillContent(showJson.toString(4));
+
+                            fillContent("价格：" + voteCount * price * 6.4);
                         } catch (JSONException e) {
                             LogRipple.error("exception", e);
                         }
@@ -268,6 +295,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                                 res = SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/withdrawbalance",
                                         js_request.toString());
                                 jsonObject = new JSONObject(res);
+                                fillContent(jsonObject.toString(4));
 
                                 byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
                                 String wordTest = Key.sMnemonic;
@@ -284,6 +312,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                             fillContent(jsonObject.toString(4));
                         } catch (JSONException e) {
                             LogRipple.error("exception", e);
+                            fillContent(e.toString());
                         }
                     }
                 }).start();

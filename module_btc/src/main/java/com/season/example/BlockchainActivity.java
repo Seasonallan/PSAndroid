@@ -50,6 +50,7 @@ public class BlockchainActivity extends BaseTLEActivity {
     List<String> mWords;
     ECKeyPair ecKeyPair;
     Handler handler;
+    double price = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,27 @@ public class BlockchainActivity extends BaseTLEActivity {
         ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
         fillContent("--私钥: " + ecKeyPair.getPrivateKey());
         fillContent("--地址: " + ecKeyPair.getAddress());
+
+
+        String url = "https://services.tokenview.com/vipapi/coin/marketInfo/" + coin.coinName().toLowerCase() + "?apikey=" + Key.apiKey;
+        LogUtil.LOG(url);
+        DownloadAPI.getRequestThread(url, new DownloadAPI.IHttpRequestListener() {
+            @Override
+            public void onCompleted(String result) {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    price = jsonObject.getJSONObject("data").getDouble("priceUsd");
+                    fillContent("当前价格：" + price);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError() {
+                fillContent("error");
+            }
+        });
 
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +120,7 @@ public class BlockchainActivity extends BaseTLEActivity {
                     fillTime();
                     String url = "https://services.tokenview.com/vipapi/addr/b/" + coin.coinName() + "/" +
                             getAddress() +
-                            "?apikey=AnqHS6Rs2WX0hwFXlrv";
+                            "?apikey=" + Key.apiKey;
                     LogUtil.LOG(url);
                     DownloadAPI.getRequestThread(url, new DownloadAPI.IHttpRequestListener() {
                         @Override
@@ -106,6 +128,8 @@ public class BlockchainActivity extends BaseTLEActivity {
                             try {
                                 JSONObject jsonObject = new JSONObject(result);
                                 fillContent(jsonObject.toString(4));
+                                double amount = jsonObject.getDouble("data");
+                                fillContent("价格：" + amount * price * 6.4);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -134,7 +158,7 @@ public class BlockchainActivity extends BaseTLEActivity {
                     fillTime();
                     DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/unspent/" + coin.coinName() + "/" +
                             getAddress() +
-                            "/1/2?apikey=AnqHS6Rs2WX0hwFXlrv", new DownloadAPI.IHttpRequestListener() {
+                            "/1/2?apikey=" + Key.apiKey, new DownloadAPI.IHttpRequestListener() {
                         @Override
                         public void onCompleted(String result) {
                             try {

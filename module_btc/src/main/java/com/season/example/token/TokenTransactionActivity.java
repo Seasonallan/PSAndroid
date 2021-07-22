@@ -15,6 +15,7 @@ import com.quincysx.crypto.utils.HexUtils;
 import com.season.btc.R;
 import com.season.example.BlockchainFilActivity;
 import com.season.example.BlockchainXrpActivity;
+import com.season.example.Key;
 import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
@@ -78,7 +79,7 @@ public class TokenTransactionActivity extends BaseTLEActivity {
                     fillTime();
                     String address = "https://services.tokenview.com/vipapi/eth/address/tokenbalance/0x" +
                             ecKeyPair.getAddress().toLowerCase() +
-                            "?apikey=AnqHS6Rs2WX0hwFXlrv";
+                            "?apikey=" + Key.apiKey;
                     DownloadAPI.getRequestThread(address, new DownloadAPI.IHttpRequestListener() {
                         @Override
                         public void onCompleted(String result) {

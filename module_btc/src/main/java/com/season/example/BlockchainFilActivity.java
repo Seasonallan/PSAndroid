@@ -106,7 +106,7 @@ public class BlockchainFilActivity extends BaseTLEActivity {
                     fillTime();
                     DownloadAPI.getRequestThread("https://services.tokenview.com/vipapi/addr/b/" + coin.coinName() + "/" +
                             getAddress() +
-                            "?apikey=AnqHS6Rs2WX0hwFXlrv", new DownloadAPI.IHttpRequestListener() {
+                            "?apikey=" + Key.apiKey, new DownloadAPI.IHttpRequestListener() {
                         @Override
                         public void onCompleted(String result) {
                             try {

@@ -276,7 +276,7 @@ public class BtcOpenApi {
                 //address = "bc1qjvkwdrkmvhx9d07lg4fclvh2l0nnsy5nv5vu7k";
                 try {
                     String url = "https://tokenview.com/api/search/" + address;
-                    // String url = "https://services.tokenview.com/vipapi" + "/address/btc/" + address + "/1%2F1?&apikey=AnqHS6Rs2WX0hwFXlrv";
+                    // String url = "https://services.tokenview.com/vipapi" + "/address/btc/" + address + "/1%2F1?&apikey=" + Key.apiKey;
                     //LogRipple.printForce(url);
                     String res = DownloadAPI.getRequest(url);
                     if (res != null) {
