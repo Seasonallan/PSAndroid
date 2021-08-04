@@ -30,6 +30,7 @@ import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.generated.Uint256;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,16 +132,25 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                                     frozenBandWidth = frozenBandWidth.add(frozenBandWidthItem);
                                 }
                             }
-                            showJson.put("可用余额", jsonObject.getString("balance"));
+                            String balance = jsonObject.getString("balance");
+                            showJson.put("可用余额", balance);
                             showJson.put("冻结宽带", frozenBandWidth.toString());
-                            String frozenEnergy = jsonObject.getJSONObject("account_resource").getJSONObject("frozen_balance_for_energy").getString("frozen_balance");
-                            showJson.put("冻结能量", frozenEnergy);
 
+                            String frozenEnergy = "0";
+                            try {
+                                frozenEnergy = jsonObject.getJSONObject("account_resource").
+                                        getJSONObject("frozen_balance_for_energy").getString("frozen_balance");
+                            } catch (JSONException e) {
+                                LogRipple.error("exception", e);
+                            }
+                            showJson.put("冻结能量", frozenEnergy);
                             voteCount = frozenBandWidth.add(new BigInteger(frozenEnergy)).divide(new BigInteger("1000000")).intValue();
                             showJson.put("票数", voteCount);
                             fillContent(showJson.toString(4));
 
-                            fillContent("价格：" + voteCount * price * 6.4);
+                            BigInteger account =  new BigInteger(balance).add(new BigInteger(frozenEnergy)).add(frozenBandWidth);
+                            showJson.put("总余额", account.toString());
+                            fillContent("价格：" + new BigDecimal(account).multiply(new BigDecimal(price * 6.4 / 1000000)).toString());
                         } catch (JSONException e) {
                             LogRipple.error("exception", e);
                         }
@@ -164,7 +174,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String res = freezeBalance(2000, "ENERGY"); //BANDWIDTH 或者 ENERGY
+                        String res = freezeBalance(1000, "BANDWIDTH"); //BANDWIDTH 或者 ENERGY
                         try {
                             JSONObject jsonObject = new JSONObject(res);
                             fillContent(jsonObject.toString(4));
@@ -326,13 +336,21 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                     @Override
                     public void run() {
                         fillTime();
-                        String res = createTransaction(TronWalletApi.getAddress(ecKey.getPubKeyPoint()), 10);
+                        String res = createTransaction("TYaJynMQt5jegbvYud6XEbySYocK9K6TAa", 1000);
                         try {
                             JSONObject jsonObject = new JSONObject(res);
                             fillContent(jsonObject.toString(4));
                             byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
+                            String wordTest = Key.sMnemonic;
+                            mWords = Arrays.asList(wordTest.split(" "));
+                            ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
+                            ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
                             String sign_hex = ecKey.sign(rawData).toHex();
                             fillContent(sign_hex);
+
+                            String hex = broadcastTransaction(jsonObject,
+                                    sign_hex);
+                            fillContent(hex);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -352,6 +370,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                 "");
 
     }
+
 
     int voteCount = 0;
 
@@ -435,7 +454,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
         JSONObject js_request = new JSONObject();
         try {
             js_request.put("owner_address", getAddress());
-            js_request.put("resource", "ENERGY"); //BANDWIDTH 或者 ENERGY
+            js_request.put("resource", "BANDWIDTH"); //BANDWIDTH 或者 ENERGY
             js_request.put("visible", true);
             return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/unfreezebalance",
                     js_request.toString());
