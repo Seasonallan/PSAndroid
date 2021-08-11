@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <Button
+            android:id="@+id/tv_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:tag="BTC_USDT"
+            android:text="BTC"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/tv_start1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="10dp"
+            android:tag="ETH_USDT"
+            android:text="ETH"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/tv_start2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="10dp"
+            android:tag="AITD_USDT"
+            android:text="AITD"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:background="@color/chart_white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <RadioGroup
+            android:id="@+id/rg_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_theme1"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:checked="true"
+                android:text="夜间模式" />
+
+            <RadioButton
+                android:id="@+id/rb_theme2"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:text="白天模式" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rg_environment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_environment1"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:checked="true"
+                android:text="线上环境" />
+
+            <RadioButton
+                android:id="@+id/rb_environment2"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:text="预发布环境" />
+
+            <RadioButton
+                android:id="@+id/rb_environment3"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:text="测试环境" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rg_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_color1"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:checked="true"
+                android:text="绿涨红跌" />
+
+            <RadioButton
+                android:id="@+id/rb_color2"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:text="红涨绿跌" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rg_language"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_language1"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:checked="true"
+                android:tag="ZH_CN"
+                android:text="简体" />
+
+            <RadioButton
+                android:id="@+id/rb_language2"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:tag="ZH_TW"
+                android:text="繁体" />
+
+            <RadioButton
+                android:id="@+id/rb_language3"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:tag="en"
+                android:text="英文" />
+
+            <RadioButton
+                android:id="@+id/rb_language4"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:tag="JP"
+                android:text="日语" />
+
+            <RadioButton
+                android:id="@+id/rb_language5"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:tag="FRA"
+                android:text="法语" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+
+</FrameLayout>

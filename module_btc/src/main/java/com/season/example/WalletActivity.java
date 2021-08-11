@@ -24,7 +24,7 @@ import com.season.mvp.ui.PageTurningActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-@Route(path= "/wallet/main")
+@Route(path = "/wallet/main")
 public class WalletActivity extends PageTurningActivity {
 
     RecyclerView mRv;
@@ -63,7 +63,7 @@ public class WalletActivity extends PageTurningActivity {
             @Override
             public void onItemClick(int position) {
                 super.onItemClick(position);
-                if (position >= getItemCount() - 1){
+                if (position >= getItemCount() - 1) {
                     startActivity(new Intent(WalletActivity.this, TokenActivity.class));
                     return;
                 }
@@ -72,6 +72,9 @@ public class WalletActivity extends PageTurningActivity {
         };
         mRv.setAdapter(mAdapter);
 
+        findViewById(R.id.k_chart).setOnClickListener(v -> {
+            startActivity(new Intent(WalletActivity.this, SelectActivity.class));
+        });
     }
 
     @Override

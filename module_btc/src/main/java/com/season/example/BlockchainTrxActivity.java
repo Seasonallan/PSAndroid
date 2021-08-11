@@ -320,7 +320,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                                 fillContent(hex);
                             }
                             fillContent(jsonObject.toString(4));
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             LogRipple.error("exception", e);
                             fillContent(e.toString());
                         }
@@ -336,7 +336,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                     @Override
                     public void run() {
                         fillTime();
-                        String res = createTransaction("TYaJynMQt5jegbvYud6XEbySYocK9K6TAa", 1000);
+                        String res = createTransaction("TYaJynMQt5jegbvYud6XEbySYocK9K6TAa", 1400);
                         try {
                             JSONObject jsonObject = new JSONObject(res);
                             fillContent(jsonObject.toString(4));
@@ -351,7 +351,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                             String hex = broadcastTransaction(jsonObject,
                                     sign_hex);
                             fillContent(hex);
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -389,7 +389,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             js_request.put("visible", true);
             return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/votewitnessaccount",
                     js_request.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LogRipple.error("exception", e);
         }
         return "";
@@ -426,7 +426,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             js_request.put("address", address);
             return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/getBrokerage",
                     js_request.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LogRipple.error("exception", e);
         }
         return "";
@@ -443,7 +443,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             js_request.put("visible", true);
             return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/freezebalance",
                     js_request.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LogRipple.error("exception", e);
         }
         return "";
@@ -458,7 +458,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             js_request.put("visible", true);
             return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/unfreezebalance",
                     js_request.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LogRipple.error("exception", e);
         }
         return "";
@@ -474,7 +474,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             js_request.put("visible", true);
             return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/createtransaction",
                     js_request.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LogRipple.error("exception", e);
         }
         return "";
@@ -487,7 +487,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             jsonObject.put("signature", signatures);
             return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/broadcasttransaction",
                     jsonObject.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LogRipple.error("exception", e);
         }
         return "";

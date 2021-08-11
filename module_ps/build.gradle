@@ -1,9 +1,5 @@
 apply from: config
 
 dependencies {
-
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-
-
     //implementation project(":library")
 }

@@ -9,8 +9,14 @@ dependencies {
     compile files('libs/spongycastle-core-1.58.0.0.jar')
     compile files('libs/spongycastle-prov-1.58.0.0.jar')
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation "org.web3j:core:4.6.0-android"
+    implementation ("org.web3j:core:4.6.0-android"){
+        //解决与KLineChart里面依赖冲突问题
+        exclude (group: 'org.java-websocket')
+        exclude (group: 'org.slf4j')
+    }
 
     compile files('libs/ove.blake2b-alpha.0.jar')
+
+    implementation 'com.github.Seasonallan:KLineChart:2.3'
+
 }

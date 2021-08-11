@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.season.example.SelectActivity" />
         <activity android:name="com.season.example.BlockchainActivity" />
         <activity android:name="com.season.example.BlockchainXrpActivity" />
         <activity android:name="com.season.example.BlockchainFilActivity" />

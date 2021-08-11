@@ -17,29 +17,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:visibility="invisible">
+        android:orientation="vertical">
 
         <Button
-            android:id="@+id/btc"
+            android:id="@+id/k_chart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="16dp"
-            android:text="BTC" />
-
-
-        <Button
-            android:id="@+id/eth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="16dp"
-            android:text="ETH" />
+            android:text="K线图" />
 
     </LinearLayout>
 </RelativeLayout>
