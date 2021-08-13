@@ -78,7 +78,8 @@ public class CustomGifView extends CustomBaseView{
     @Override
     public void onRelease() {
         super.onRelease();
-        gifPlugin.onRelease();
+        if (gifPlugin != null)
+            gifPlugin.onRelease();
     }
 
 

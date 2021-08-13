@@ -10,9 +10,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.season.btc.R;
+import com.season.lib.util.ToastUtil;
+import com.season.mvp.ui.BaseTLEActivity;
 
 
-public class SelectActivity extends AppCompatActivity {
+public class SelectActivity extends BaseTLEActivity {
 
     RadioGroup themeRadioGroup;
     RadioGroup envRadioGroup;
@@ -23,6 +25,9 @@ public class SelectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
+
+        getTitleBar().enableLeftButton();
+        getTitleBar().setTopTile("K线图模块");
 
         themeRadioGroup = findViewById(R.id.rg_theme);
         envRadioGroup = findViewById(R.id.rg_environment);
@@ -60,15 +65,10 @@ public class SelectActivity extends AppCompatActivity {
             String backType = data.getStringExtra("backType");
             switch (backType) {
                 case "买入":
-//                    this.result.success("1");
-                    Log.e("TAG", "1");
+                    ToastUtil.showToast("买入按钮点击");
                     break;
                 case "卖出":
-//                    this.result.success("2");
-                    Log.e("TAG", "2");
-                    break;
-                default:
-                    Log.e("TAG", "0");
+                    ToastUtil.showToast("卖出按钮点击");
                     break;
             }
         }

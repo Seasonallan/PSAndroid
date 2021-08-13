@@ -17,6 +17,6 @@ dependencies {
 
     compile files('libs/ove.blake2b-alpha.0.jar')
 
-    implementation 'com.github.Seasonallan:KLineChart:2.3'
+    implementation 'com.github.Seasonallan:KLineChart:2.5'
 
 }
