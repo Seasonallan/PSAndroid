@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -18,16 +19,27 @@ import com.season.lib.util.LogUtil;
 import com.season.lib.util.ToastUtil;
 import com.season.mvp.ui.BaseTLEActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tron.TronWalletApi;
 import org.tron.wallet.crypto.ECKey;
 import org.tron.wallet.util.ByteArray;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import io.eblock.eos4j.OfflineSign;
 import io.eblock.eos4j.Rpc;
@@ -40,8 +52,8 @@ public class BlockchainActivity extends BaseTLEActivity {
         Intent intent = new Intent();
         intent.setClass(context, bookInfo == CoinEnum.TRX ? BlockchainTrxActivity.class :
                 (bookInfo == CoinEnum.FIL ? BlockchainFilActivity.class :
-                (bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class :
-                        BlockchainActivity.class)));
+                        (bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class :
+                                BlockchainActivity.class)));
         intent.putExtra("coin", bookInfo.coinType());
         context.startActivity(intent);
     }
@@ -194,10 +206,34 @@ public class BlockchainActivity extends BaseTLEActivity {
                             ToastUtil.showToast("先获取未花费");
                             return;
                         }
-                        String hex = BtcOpenApi.Wallet.signBtc(unspent, ecKeyPair,
-                                "1DfDKUMzSxJD8dontsxTvXVUUBZrQ24ZfA", 0.5, 0.00001);
+                        String hex = BtcOpenApi.Wallet.signBtc(unspent, BtcOpenApi.Wallet.createFromMnemonic(Arrays.asList(Key.sMnemonic.split(" ")), coin),
+                                "1HfCUgZFxoqxQbWt1NRExNNoMn5uobQKF2", 0.0249, 0.0000999);
                         fillTime();
                         fillContent(hex);
+
+                        //广播交易
+                        String url = "https://services.tokenview.com/vipapi/onchainwallet/" + coin.coinName().toLowerCase() + "?apikey=" + Key.apiKey;
+                        LogUtil.LOG(url);
+
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                JSONObject jsonObject = new JSONObject();
+                                try {
+                                    jsonObject.put("jsonrpc", "2.0");
+                                    jsonObject.put("id", "viewtoken");
+                                    jsonObject.put("method", "sendrawtransaction");
+                                    JSONArray jsonArray = new JSONArray();
+                                    jsonArray.put(hex);
+                                    jsonObject.put("params", jsonArray);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                String result = doJsonPost(url, jsonObject.toString());
+                                LogUtil.LOG(result);
+                            }
+                        }.start();
+
                         break;
                     case Ethereum:
                         new Thread(new Runnable() {
@@ -263,7 +299,7 @@ public class BlockchainActivity extends BaseTLEActivity {
             case Bitcoin:
                 return BtcOpenApi.Wallet.createFromMnemonic(Arrays.asList(Key.sMnemonic.split(" ")), coin).getAddress();
             case Ethereum:
-                return "0x"+BtcOpenApi.Wallet.createFromMnemonic(Arrays.asList(Key.sMnemonic.split(" ")), coin).getAddress();
+                return "0x" + BtcOpenApi.Wallet.createFromMnemonic(Arrays.asList(Key.sMnemonic.split(" ")), coin).getAddress();
             case XRP:
                 return "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
             case Dogecoin:
@@ -308,4 +344,52 @@ public class BlockchainActivity extends BaseTLEActivity {
         });
     }
 
+
+    //发送JSON字符串 如果成功则返回成功标识。
+    public static String doJsonPost(String urlPath, String Json) {
+        // HttpClient 6.0被抛弃了
+        String result = "";
+        BufferedReader reader = null;
+        try {
+            URL url = new URL(urlPath);
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Charset", "UTF-8");
+            // 设置文件类型:
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            // 设置接收类型否则返回415错误
+            //conn.setRequestProperty("accept","*/*")此处为暴力方法设置接受所有类型，以此来防范返回415;
+            conn.setRequestProperty("accept", "application/json");
+            // 往服务器里面发送数据
+            if (Json != null && !TextUtils.isEmpty(Json)) {
+                byte[] writebytes = Json.getBytes();
+                // 设置文件长度
+                conn.setRequestProperty("Content-Length", String.valueOf(writebytes.length));
+                OutputStream outwritestream = conn.getOutputStream();
+                outwritestream.write(Json.getBytes());
+                outwritestream.flush();
+                outwritestream.close();
+            }
+            if (conn.getResponseCode() == 200) {
+                reader = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                result = reader.readLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
 }

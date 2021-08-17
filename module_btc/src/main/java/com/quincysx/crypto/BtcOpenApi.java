@@ -120,7 +120,7 @@ public class BtcOpenApi {
                 BTCTransaction.Input[] inputs = new BTCTransaction.Input[utxo_for_pay_list.size()];
                 for (int i = 0; i < utxo_for_pay_list.size(); i++) {
                     BTCTransaction.OutPoint outPoint = new BTCTransaction.OutPoint(HexUtils.fromHex(utxo_for_pay_list.get(i).getString("txid")),
-                            utxo_for_pay_list.get(i).getInt("block_no"));
+                            utxo_for_pay_list.get(i).getInt("output_no"));
                     BTCTransaction.Script script002 = BTCTransaction.Script.buildOutput(master.getAddress());  //自己的地址
                     BTCTransaction.Input input = new BTCTransaction.Input(outPoint, script002, 0);
                     inputs[i] = input;
