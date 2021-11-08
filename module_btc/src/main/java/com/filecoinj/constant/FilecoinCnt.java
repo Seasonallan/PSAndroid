@@ -1,4 +1,4 @@
-package com.filecoinj;
+package com.filecoinj.constant;
 
 public class FilecoinCnt {
     /**

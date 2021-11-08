@@ -8,10 +8,10 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.filecoinj.Base32;
-import com.filecoinj.ECKey;
-import com.filecoinj.FileTransaction;
-import com.filecoinj.TransactionHandler;
+import com.filecoinj.crypto.ECKey;
+import com.filecoinj.handler.TransactionHandler;
+import com.filecoinj.model.FileTransaction;
+import com.filecoinj.utils.Base32;
 import com.quincysx.crypto.BtcOpenApi;
 import com.quincysx.crypto.bip39.SeedCalculator;
 import com.quincysx.crypto.bip44.CoinEnum;
@@ -72,7 +72,7 @@ public class BlockchainFilActivity extends BaseTLEActivity {
         getTitleBar().enableLeftButton();
 
         mWords = BtcOpenApi.Wallet.createRandomMnemonic();
-
+        mWords = Arrays.asList(Key.sMnemonic.split(" "));
 
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,7 +136,8 @@ public class BlockchainFilActivity extends BaseTLEActivity {
             public void onClick(View v) {
 
                 byte[] seed = new SeedCalculator().calculateSeed(mWords, "");
-                ECKey ecKey = ECKey.fromPrivate(seed);
+                ECKey ecKeySeed = ECKey.fromPrivate(seed);
+                ECKey ecKey = ECKey.fromPrivate(ecKeySeed.getPrivKeyBytes());
                 byte[] pubKey = ecKey.getPubKey();
                 String filAddress = byteToAddress(pubKey);
 
@@ -154,7 +155,7 @@ public class BlockchainFilActivity extends BaseTLEActivity {
 
                     TransactionHandler transactionHandler = new TransactionHandler();
                     byte[] cidHash = transactionHandler.transactionSerialize(fileTransaction);
-                    fillContent("--data: " + new String(cidHash));
+                    fillContent("--cidHash: ");
                     String data = Base64.encode(ecKey.sign(cidHash).toByteArray());
                     fillContent("--data: " + data);
                     //等待广播

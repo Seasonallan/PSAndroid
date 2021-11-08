@@ -19,7 +19,6 @@ package com.filecoinj.crypto.utils;
 import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,8 +27,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import okio.ByteString;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -95,9 +92,9 @@ public class Sha256Hash implements Serializable, Comparable<Sha256Hash> {
         return new Sha256Hash(rawHashBytes);
     }
 
-    public static Sha256Hash wrap(ByteString rawHashByteString) {
-        return wrap(rawHashByteString.toByteArray());
-    }
+//    public static Sha256Hash wrap(ByteString rawHashByteString) {
+//        return wrap(rawHashByteString.toByteArray());
+//    }
 
     /**
      * Use {@link #of(byte[])} instead: this old name is ambiguous.
@@ -271,9 +268,9 @@ public class Sha256Hash implements Serializable, Comparable<Sha256Hash> {
     /**
      * For pb return ByteString.
      */
-    public ByteString getByteString() {
-        return new ByteString(bytes);
-    }
+//    public ByteString getByteString() {
+//        return ByteString.copyFrom(bytes);
+//    }
 
     @Override
     public int compareTo(final Sha256Hash other) {

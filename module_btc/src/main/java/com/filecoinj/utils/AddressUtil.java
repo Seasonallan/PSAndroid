@@ -1,6 +1,9 @@
-package com.filecoinj;
+package com.filecoinj.utils;
 
 import android.text.TextUtils;
+
+import com.filecoinj.exception.AddressException;
+import com.filecoinj.model.Address;
 
 public class AddressUtil {
     /**
@@ -8,7 +11,7 @@ public class AddressUtil {
      */
     private final static int addressLength = 21;
 
-    public static Address initAddress(String addressStr) throws Exception {
+    public static Address initAddress(String addressStr) throws AddressException {
         if (TextUtils.isEmpty(addressStr)) {
             throw new NullPointerException("addressStr 参数不能为空");
         }
@@ -20,7 +23,7 @@ public class AddressUtil {
         String network = addressStr.substring(0, 1);
         int type = Integer.parseInt(typeStr);
         if (type != 1 && type != 2 && type != 3) {
-            throw new Exception("错误的地址类型");
+            throw new AddressException("错误的地址类型");
         }
 
         byte[] addressBytes = new byte[addressLength];
@@ -32,9 +35,9 @@ public class AddressUtil {
                 break;
             case 2:
             case 3:
-                throw new Exception("暂不支持的地址类型");
+                throw new AddressException("暂不支持的地址类型");
             default:
-                throw new Exception("错误地址类型");
+                throw new AddressException("错误地址类型");
         }
 
         System.arraycopy(Base32.decode(substring), 0, addressBytes, 1, 20);

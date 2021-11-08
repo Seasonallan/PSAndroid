@@ -1,4 +1,4 @@
-package com.filecoinj;
+package com.filecoinj.model;
 
 import java.io.Serializable;
 

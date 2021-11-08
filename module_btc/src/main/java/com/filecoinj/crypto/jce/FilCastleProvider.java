@@ -20,6 +20,7 @@ package com.filecoinj.crypto.jce;
 
 import com.filecoinj.crypto.cryptohash.Keccak256;
 import com.filecoinj.crypto.cryptohash.Keccak512;
+
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Provider;

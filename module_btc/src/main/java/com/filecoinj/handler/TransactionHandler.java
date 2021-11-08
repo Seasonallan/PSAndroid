@@ -1,6 +1,12 @@
-package com.filecoinj;
+package com.filecoinj.handler;
+
+import com.filecoinj.constant.FilecoinCnt;
+import com.filecoinj.exception.AddressException;
+import com.filecoinj.model.FileTransaction;
+import com.filecoinj.utils.AddressUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -16,33 +22,33 @@ public class TransactionHandler {
     /**
      * 获取CID hash
      *
-     * @param transaction 交易实体
+     * @param fileTransaction 交易实体
      */
-    public byte[] transactionSerialize(FileTransaction transaction) throws Exception {
+    public byte[] transactionSerialize(FileTransaction fileTransaction) throws AddressException, IOException {
         int versions = 0;
-        ByteString fromByte = new ByteString(AddressUtil.initAddress(transaction.getFrom()).getBytes());
+        ByteString fromByte = new ByteString(AddressUtil.initAddress(fileTransaction.getFrom()).getBytes());
 
-        ByteString toByte = new ByteString(AddressUtil.initAddress(transaction.getTo()).getBytes());
+        ByteString toByte = new ByteString(AddressUtil.initAddress(fileTransaction.getTo()).getBytes());
 
         UnsignedInteger versionByte = new UnsignedInteger(versions);
 
-        UnsignedInteger nonceByte = new UnsignedInteger(transaction.getNonce());
+        UnsignedInteger nonceByte = new UnsignedInteger(fileTransaction.getNonce());
 
-        byte[] valueBytes = new BigInteger(transaction.getValue()).toByteArray();
-        valueBytes = WriteMajorTypeHeaderBuf(valueBytes, FilecoinCnt.MajUnsignedInt, Long.parseLong(transaction.getValue()));
+        byte[] valueBytes = new BigInteger(fileTransaction.getValue()).toByteArray();
+        valueBytes = WriteMajorTypeHeaderBuf(valueBytes, FilecoinCnt.MajUnsignedInt, Long.parseLong(fileTransaction.getValue()));
         ByteString valueByte = new ByteString(valueBytes);
 
-        byte[] gasFeeCapBytes = new BigInteger(transaction.getGasFeeCap()).toByteArray();
-        gasFeeCapBytes = WriteMajorTypeHeaderBuf(gasFeeCapBytes, FilecoinCnt.MajUnsignedInt, Long.parseLong(transaction.getGasFeeCap()));
+        byte[] gasFeeCapBytes = new BigInteger(fileTransaction.getGasFeeCap()).toByteArray();
+        gasFeeCapBytes = WriteMajorTypeHeaderBuf(gasFeeCapBytes, FilecoinCnt.MajUnsignedInt, Long.parseLong(fileTransaction.getGasFeeCap()));
         ByteString gasFeeCapByte = new ByteString(gasFeeCapBytes);
 
-        byte[] gasPeremiumBytes = new BigInteger(transaction.getGasPremium()).toByteArray();
-        gasPeremiumBytes = WriteMajorTypeHeaderBuf(gasPeremiumBytes, FilecoinCnt.MajUnsignedInt, Long.parseLong(transaction.getGasPremium()));
+        byte[] gasPeremiumBytes = new BigInteger(fileTransaction.getGasPremium()).toByteArray();
+        gasPeremiumBytes = WriteMajorTypeHeaderBuf(gasPeremiumBytes, FilecoinCnt.MajUnsignedInt, Long.parseLong(fileTransaction.getGasPremium()));
         ByteString gasPeremiumByte = new ByteString(gasPeremiumBytes);
 
-        UnsignedInteger gasLimitByte = new UnsignedInteger(transaction.getGasLimit());
+        UnsignedInteger gasLimitByte = new UnsignedInteger(fileTransaction.getGasLimit());
 
-        UnsignedInteger methodByte = new UnsignedInteger(transaction.getMethod());
+        UnsignedInteger methodByte = new UnsignedInteger(fileTransaction.getMethod());
 
         ByteString paramsByte = new ByteString(new byte[]{});
 

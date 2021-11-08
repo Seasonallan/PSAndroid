@@ -1,5 +1,4 @@
-package com.filecoinj;
-
+package com.filecoinj.utils;
 
 /* Base32
  *
@@ -25,18 +24,19 @@ package com.filecoinj;
  * along with Heritrix; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 /**
  * Base32 - encodes and decodes RFC3548 Base32 (see
  * http://www.faqs.org/rfcs/rfc3548.html )
- *
+ * <p>
  * Imported public-domain code of Bitzi.
  *
  * @author Robert Kaye
  * @author Gordon Mohr
  */
-public class Base32 extends Object{
+public class Base32 extends Object {
     private static final String base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    private static final int[] base32Lookup = { 0xFF, 0xFF, 0x1A, 0x1B, 0x1C,
+    private static final int[] base32Lookup = {0xFF, 0xFF, 0x1A, 0x1B, 0x1C,
             0x1D, 0x1E, 0x1F, // '0', '1', '2', '3', '4', '5', '6', '7'
             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // '8', '9', ':',
             // ';', '<', '=',
@@ -70,10 +70,8 @@ public class Base32 extends Object{
     /**
      * Encodes byte array to Base32 String.
      *
-     * @param bytes
-     *            Bytes to encode.
+     * @param bytes Bytes to encode.
      * @return Encoded byte array <code>bytes</code> as a String.
-     *
      */
     static public String encode(final byte[] bytes) {
         int i = 0, index = 0, digit = 0;
@@ -148,18 +146,4 @@ public class Base32 extends Object{
         return bytes;
     }
 
-    private static String toHex(byte[] decoded) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("{");
-        for (int i = 0; i < decoded.length; i++) {
-            int b = decoded[i];
-            if (b < 0) {
-                b += 256;
-            }
-            sb.append("0x" + (Integer.toHexString(b + 256)).substring(1)+",");
-        }
-        sb.deleteCharAt(sb.length()-1);
-        sb.append("}");
-        return sb.toString();
-    }
 }

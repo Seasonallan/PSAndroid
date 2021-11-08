@@ -16,7 +16,7 @@
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.filecoinj;
+package com.filecoinj.crypto;
 
 import com.filecoinj.crypto.jce.ECKeyAgreement;
 import com.filecoinj.crypto.jce.ECKeyFactory;
