@@ -10,16 +10,16 @@ import android.widget.TextView;
 
 import com.filecoinj.Base32;
 import com.filecoinj.ECKey;
-import com.filecoinj.crypto.cryptohash.Digest;
+import com.filecoinj.FileTransaction;
+import com.filecoinj.TransactionHandler;
 import com.quincysx.crypto.BtcOpenApi;
 import com.quincysx.crypto.bip39.SeedCalculator;
 import com.quincysx.crypto.bip44.CoinEnum;
-import com.quincysx.crypto.bitcoin.bch.bitcoincash.BitcoinCashBase32;
+import com.quincysx.crypto.utils.Base64;
 import com.quincysx.crypto.utils.HexUtils;
 import com.season.btc.R;
 import com.season.lib.support.http.DownloadAPI;
 import com.season.lib.util.LogUtil;
-import com.season.lib.util.ToastUtil;
 import com.season.mvp.ui.BaseTLEActivity;
 
 import org.json.JSONException;
@@ -48,7 +48,7 @@ public class BlockchainFilActivity extends BaseTLEActivity {
 
 
     private String byteToAddress(byte[] pub) {
-        Blake2b.Digest digest =  Blake2b.Digest.newInstance(20);
+        Blake2b.Digest digest = Blake2b.Digest.newInstance(20);
         String hash = HexUtils.toHex(digest.digest(pub));
 
         //4.计算校验和
@@ -60,6 +60,7 @@ public class BlockchainFilActivity extends BaseTLEActivity {
 
         return "f1" + Base32.encode(HexUtils.fromHex(hash + checksum)).toLowerCase();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,10 +134,35 @@ public class BlockchainFilActivity extends BaseTLEActivity {
         findViewById(R.id.btn5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtil.showToast("not support");
+
+                byte[] seed = new SeedCalculator().calculateSeed(mWords, "");
+                ECKey ecKey = ECKey.fromPrivate(seed);
+                byte[] pubKey = ecKey.getPubKey();
+                String filAddress = byteToAddress(pubKey);
+
+                try {
+                    FileTransaction fileTransaction = new FileTransaction();
+                    fileTransaction.from = filAddress;
+                    fileTransaction.to = getAddress();
+                    fileTransaction.nonce = 22L;
+                    fileTransaction.method = 0L;
+                    fileTransaction.params = "";
+                    fileTransaction.gasPremium = "100053";
+                    fileTransaction.gasLimit = 1078170L;
+                    fileTransaction.gasFeeCap = "7580780488";
+                    fileTransaction.value = "100000000000";
+
+                    TransactionHandler transactionHandler = new TransactionHandler();
+                    byte[] cidHash = transactionHandler.transactionSerialize(fileTransaction);
+                    fillContent("--data: " + new String(cidHash));
+                    String data = Base64.encode(ecKey.sign(cidHash).toByteArray());
+                    fillContent("--data: " + data);
+                    //等待广播
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
-
 
 
         log = findViewById(R.id.tv);
@@ -150,7 +176,7 @@ public class BlockchainFilActivity extends BaseTLEActivity {
 
     }
 
-    private String getAddress(){
+    private String getAddress() {
         return "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za";
     }
 
@@ -175,7 +201,7 @@ public class BlockchainFilActivity extends BaseTLEActivity {
             @Override
             public void run() {
                 log.setText(log.getText().toString()
-                        + "\n"+ response);
+                        + "\n" + response);
                 LogUtil.LOG(log.getText().toString());
                 scrollView.post(new Runnable() {
                     @Override

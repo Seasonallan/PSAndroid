@@ -18,5 +18,5 @@ dependencies {
     compile files('libs/ove.blake2b-alpha.0.jar')
 
     implementation 'com.github.Seasonallan:KLineChart:2.5'
-
+    implementation 'co.nstant.in:cbor:0.9'
 }

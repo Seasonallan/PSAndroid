@@ -19,7 +19,6 @@ import com.season.lib.util.LogUtil;
 import com.season.mvp.ui.BaseTLEActivity;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.tron.TronWalletApi;
 import org.tron.wallet.crypto.ECKey;
@@ -78,7 +77,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                     JSONObject jsonObject = new JSONObject(result);
                     price = jsonObject.getJSONObject("data").getDouble("priceUsd");
                     fillContent("当前价格：" + price);
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -140,7 +139,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                             try {
                                 frozenEnergy = jsonObject.getJSONObject("account_resource").
                                         getJSONObject("frozen_balance_for_energy").getString("frozen_balance");
-                            } catch (JSONException e) {
+                            } catch (Exception e) {
                                 LogRipple.error("exception", e);
                             }
                             showJson.put("冻结能量", frozenEnergy);
@@ -151,7 +150,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                             BigInteger account =  new BigInteger(balance).add(new BigInteger(frozenEnergy)).add(frozenBandWidth);
                             showJson.put("总余额", account.toString());
                             fillContent("价格：" + new BigDecimal(account).multiply(new BigDecimal(price * 6.4 / 1000000)).toString());
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             LogRipple.error("exception", e);
                         }
                     }
