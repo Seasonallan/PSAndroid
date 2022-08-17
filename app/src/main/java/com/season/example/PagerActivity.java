@@ -56,36 +56,33 @@ public class PagerActivity extends BaseTLEActivity {
 
 
         mainPageView = new ViewPageView(this);
-        mainPageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainPageView.isBottomRightClick()){
-                    mainPageView.gotoNextPage();
-                    return;
-                }
-                if (v instanceof ViewPageView){
-                    View itemView = ((ViewPageView) v).getCurrentView();
-                    if (itemView instanceof PageItemView){
-                        int position = ((PageItemView) itemView).getPage();
-                        String path;
-                        if (position == 1) {
-                            path = "/ps/main";
-                            PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
-                        } else if (position == 2){
-                            path = "/plugin/main";
-                            PageBrokenActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
-                            PageBrokenActivity.putClickPoint(mainPageView.getTouchPoint());
-                        } else if (position == 0){
-                            path = "/wallet/main";
-                            PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
-                        } else {
-                            path = "/book/shelf/home";
-                            PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
-                        }
-                        ARouter.getInstance().build(path).navigation();
-                    }else{
-                        mainPageView.gotoNextPage();
+        mainPageView.setOnClickListener(v -> {
+            if (mainPageView.isBottomRightClick()){
+                mainPageView.gotoNextPage();
+                return;
+            }
+            if (v instanceof ViewPageView){
+                View itemView = ((ViewPageView) v).getCurrentView();
+                if (itemView instanceof PageItemView){
+                    int position = ((PageItemView) itemView).getPage();
+                    String path;
+                    if (position == 1) {
+                        path = "/ps/main";
+                        PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
+                    } else if (position == 2){
+                        path = "/plugin/main";
+                        PageBrokenActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
+                        PageBrokenActivity.putClickPoint(mainPageView.getTouchPoint());
+                    } else if (position == 0){
+                        path = "/wallet/main";
+                        PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
+                    } else {
+                        path = "/book/shelf/home";
+                        PageTurningActivity.putCacheBitmap(mainPageView.getCurrentPageBitmap());
                     }
+                    ARouter.getInstance().build(path).navigation();
+                }else{
+                    mainPageView.gotoNextPage();
                 }
             }
         });
@@ -96,11 +93,11 @@ public class PagerActivity extends BaseTLEActivity {
             public void run() {
 
                 mainPageView.addPageView(new PageItemView(PagerActivity.this,
-                        PageItem.create("区块链", "区块链 2020")
-                                .decorateContent(" • 功能 •", "钱包", "离线签名", "助记词", "私钥")
-                                .decorateContent(" • 核心 •", "BIP44", "椭圆曲线算法")
-                                .page(0)
-                                .color(COLOR(R.color.global_blue_dark))
+                        PageItem.create("书籍阅读器", "乐阅 2014")
+                                .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
+                                .decorateContent(" • 核心 •", "书籍解析", "页面排版", "动画控制", "事件派发")
+                                .page(3)
+                                .color(COLOR(R.color.global_yellow))
                 ));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_7));
 
@@ -123,14 +120,14 @@ public class PagerActivity extends BaseTLEActivity {
                 ));
                 //mainPageView.addPageView(get1ImageView(R.drawable.image_4));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_5));
-                mainPageView.addPageView(new PageItemView(PagerActivity.this,
-                        PageItem.create("书籍阅读器", "乐阅 2014")
-                                .decorateContent(" • 功能 •", "书签", "笔记", "动画", "阅读器")
-                                .decorateContent(" • 核心 •", "书籍解析", "页面排版", "动画控制", "事件派发")
-                                .page(3)
-                                .color(COLOR(R.color.global_yellow))
-                ));
 
+                mainPageView.addPageView(new PageItemView(PagerActivity.this,
+                        PageItem.create("区块链", "区块链 2020")
+                                .decorateContent(" • 功能 •", "钱包", "离线签名", "助记词", "私钥")
+                                .decorateContent(" • 核心 •", "BIP44", "椭圆曲线算法")
+                                .page(0)
+                                .color(COLOR(R.color.global_blue_dark))
+                ));
                 mainPageView.addPageView(get1ImageView(R.drawable.image_6));
 
             }

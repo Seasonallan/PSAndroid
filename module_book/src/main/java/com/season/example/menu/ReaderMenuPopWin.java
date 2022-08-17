@@ -729,12 +729,12 @@ public class ReaderMenuPopWin extends FrameLayout implements PlayerListener{
 	 * @param value
 	 */
 	private void setScreenBrightess(int value){
-		final WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
-		lp.screenBrightness = value * 1.0f / 100.0f;
-		if(lp.screenBrightness < 0.10){
-			lp.screenBrightness = 0.10f;
-		}
-		mActivity.getWindow().setAttributes(lp);
+//		final WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
+//		lp.screenBrightness = value * 1.0f / 100.0f;
+//		if(lp.screenBrightness < 0.10){
+//			lp.screenBrightness = 0.10f;
+//		}
+//		mActivity.getWindow().setAttributes(lp);
 	}
 
 	private boolean handlerMenuItemAction(MenuItemAdapter.MenuItem item){

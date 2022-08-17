@@ -56,7 +56,7 @@ public class BookShelfPreLoader {
 
 
     public void saveLocal(Object list) {
-        //saveShelfBooks(list);
+        saveShelfBooks(list);
         bookLists = null;
     }
 
@@ -77,13 +77,19 @@ public class BookShelfPreLoader {
                 if (object instanceof List) {
                     bookLists = (List<BookInfo>) object;
                 }
+               //bookLists = null;
                 if (bookLists == null || bookLists.size() == 0) {
                     bookLists = new ArrayList<>();
                     bookLists.add(new BookInfo("00001", "1.epub", R.raw.epub_book));
                     bookLists.add(new BookInfo("00011", "2.epub", R.raw.epub_book2));
                     bookLists.add(new BookInfo("00012", "3.epub", R.raw.santi));
                     bookLists.add(new BookInfo("00013", "4.epub", R.raw.zuoer));
+                    bookLists.add(new BookInfo("000123", "凡人修仙传.txt", R.raw.frxxz));
+                    bookLists.add(new BookInfo("00014", "求魔.txt", R.raw.qiumo));
+                    bookLists.add(new BookInfo("000144", "明骑.txt", R.raw.mingqi));
+                    bookLists.add(new BookInfo("000114", "大明.txt", R.raw.daming));
                     bookLists.add(new BookInfo("00014", "5.epub", R.raw.ssssslth));
+                    bookLists.add(new BookInfo("00015", "原始战记.txt", R.raw.yszj));
                     bookLists.add(new BookInfo("00002", "浪漫满屋.txt", R.raw.text_book));
                     bookLists.add(new BookInfo("00022", "爱在何方，家在何处.txt", R.raw.azhf));
                     bookLists.add(new BookInfo("00003", "book.umd", R.raw.umd_book));
@@ -142,12 +148,9 @@ public class BookShelfPreLoader {
                 }
                 isPreLoaded = true;
                 if (iCallback != null) {
-                    BaseContext.getHandler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            iCallback.onBookLoaded(bookLists);
-                            iCallback = null;
-                        }
+                    BaseContext.getHandler().post(() -> {
+                        iCallback.onBookLoaded(bookLists);
+                        iCallback = null;
                     });
                 }
             }

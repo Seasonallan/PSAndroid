@@ -100,6 +100,8 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
         findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String wordTest = Key.sMnemonic;
+                mWords = Arrays.asList(wordTest.split(" "));
                 ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
                 fillTime();
                 fillContent("--私钥: " + ecKeyPair.getPrivateKey());
@@ -335,7 +337,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                     @Override
                     public void run() {
                         fillTime();
-                        String res = createTransaction("TYaJynMQt5jegbvYud6XEbySYocK9K6TAa", 1400);
+                        String res = createTransaction("TRQoG5FVDazBVW5QBBh3acgmEUxNfwhrV6", 1200);
                         try {
                             JSONObject jsonObject = new JSONObject(res);
                             fillContent(jsonObject.toString(4));
