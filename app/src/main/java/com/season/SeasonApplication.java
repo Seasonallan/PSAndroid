@@ -21,7 +21,7 @@ public class SeasonApplication extends Application {
 
         BaseContext.init(this);
         //PluginHelper.getInstance().startPlugin(this);
-        BookShelfPreLoader.getInstance().preLoad();
+        //BookShelfPreLoader.getInstance().preLoad();
 
     }
 

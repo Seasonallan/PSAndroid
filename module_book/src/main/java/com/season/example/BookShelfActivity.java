@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,6 +60,7 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
     }
 
     private void saveLocal(){
+        Log.e("ET", "saveOnce");
         BookShelfPreLoader.getInstance().saveShelfBooks(mContainer.getFinalDatas());
     }
 
@@ -139,6 +141,7 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
                 }, 600);
             }
         });
+        BookShelfPreLoader.getInstance().preLoad();
         DragController.getInstance().registerDragListener(new IDragListener() {
             @Override
             public void onDragEnable() {
@@ -345,7 +348,6 @@ public class BookShelfActivity extends PageTurningActivity implements DragScroll
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BookShelfPreLoader.getInstance().saveLocal(mContainer.getFinalDatas());
         DragController.getInstance().clear();
         ImageMemoryCache.getInstance().clear();
     }
