@@ -54,6 +54,31 @@ public class BtcOpenApi {
     public static class Wallet {
 
         /**
+         * 通过创建钱包
+         *
+         * @return
+         */
+        public static ECKeyPair createFromString(String string, String key, CoinEnum coinEnum) {
+            byte[] seed = new SeedCalculator().calculateSeed(string, key);
+            ExtendedKey extendedKey = null;
+            ECKeyPair master = null;
+            try {
+                extendedKey = ExtendedKey.create(seed);
+                AddressIndex address = BIP44.m().purpose44()
+                        .coinType(coinEnum)
+                        .account(0)
+                        .external()
+                        .address(0);
+                CoinPairDerive coinKeyPair = new CoinPairDerive(extendedKey);
+                master = coinKeyPair.derive(address);
+                return master;
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        /**
          * 通过助记词创建钱包
          *
          * @param list

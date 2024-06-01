@@ -50,7 +50,7 @@ public class BlockchainActivity extends BaseTLEActivity {
 
     public static void open(Context context, CoinEnum bookInfo) {
         Intent intent = new Intent();
-        intent.setClass(context, bookInfo == CoinEnum.TRX ? BlockchainTrxActivity.class :
+        intent.setClass(context, bookInfo == CoinEnum.TRX ? TrxActivity.class :
                 (bookInfo == CoinEnum.FIL ? BlockchainFilActivity.class :
                         (bookInfo == CoinEnum.XRP ? BlockchainXrpActivity.class :
                                 BlockchainActivity.class)));

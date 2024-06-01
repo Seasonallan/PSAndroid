@@ -86,6 +86,8 @@ public class SimpleRequest {
                 String response = stringBuilder.toString();
                 LogRipple.e("Net", response);
                 return response;
+            }else{
+                LogRipple.e("Net", httpURLConnection.getResponseCode());
             }
         } catch (Exception e) {
 

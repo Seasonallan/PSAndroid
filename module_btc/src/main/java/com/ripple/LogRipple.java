@@ -1,5 +1,7 @@
 package com.ripple;
 
+import android.util.Log;
+
 import com.season.btc.BuildConfig;
 
 public class LogRipple {
@@ -12,7 +14,7 @@ public class LogRipple {
 
     public static void e(String tag, Object content) {
         if (enable) {
-            //Log.e(tag, content.toString());
+            Log.e(tag, content.toString());
             System.out.println(content.toString());
         }
     }
@@ -27,7 +29,7 @@ public class LogRipple {
 
     public static void error(String tag, Exception e) {
         if (enable && e != null) {
-            //Log.e(tag, e.getMessage());
+            Log.e(tag, e.getMessage());
             System.out.println(e.getMessage());
         }
     }

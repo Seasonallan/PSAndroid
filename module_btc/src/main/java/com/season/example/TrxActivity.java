@@ -1,10 +1,15 @@
 package com.season.example;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.quincysx.crypto.BtcOpenApi;
 import com.quincysx.crypto.ECKeyPair;
@@ -38,183 +43,107 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class BlockchainTrxActivity extends BaseTLEActivity {
+public class TrxActivity extends BaseTLEActivity {
 
     CoinEnum coin;
-    List<String> mWords;
     ECKeyPair ecKeyPair;
     ECKey ecKey;
     Handler handler;
-    double price = 1;
+    EditText editText;
+    String hosts = "https://api.trongrid.io"; //http://18.133.82.227:8090
+
+    String getShowAmount(String amount){
+        StringBuffer buffer = new StringBuffer();
+        int size = 3;
+        for (int i = 0; i < amount.length(); i++) {
+            buffer.append(amount.charAt(amount.length() - 1 - i));
+            size --;
+            if (size == 0 && i < amount.length() - 1){
+                buffer.append(",");
+                size = 3;
+            }
+        }
+
+        return buffer.reverse().toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         handler = new Handler();
-        coin = CoinEnum.parseCoinType(getIntent().getIntExtra("coin", CoinEnum.Bitcoin.coinType()));
-        setContentView(R.layout.activity_chain);
-        getTitleBar().setTopTile(coin.coinName());
-        getTitleBar().enableLeftButton();
+        coin = CoinEnum.TRX;
+        setContentView(R.layout.activity_trx);
+        getTitleBar().setTopTile("Trx Wallet");
 
-        mWords = BtcOpenApi.Wallet.createRandomMnemonic();
-
-        fillContent(Arrays.toString(mWords.toArray()).replaceAll(",", ""));
-        ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
-        fillContent("--私钥: " + ecKeyPair.getPrivateKey());
+        editText = findViewById(R.id.et_count);
+        ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(BtcOpenApi.Wallet.createRandomMnemonic(), coin);
         ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
-        fillContent("--地址: " + TronWalletApi.getAddress(ecKey.getPubKeyPoint()));
 
-
-
-
-        String url = "https://services.tokenview.com/vipapi/coin/marketInfo/" + coin.coinName().toLowerCase() + "?apikey=" + Key.apiKey;
-        LogUtil.LOG(url);
-        DownloadAPI.getRequestThread(url, new DownloadAPI.IHttpRequestListener() {
-            @Override
-            public void onCompleted(String result) {
+        //查询余额，已完成
+        findViewById(R.id.btnAmount).setOnClickListener(v -> {
+            fillTime();
+            new Thread(() -> {
+                JSONObject js_request = new JSONObject();
                 try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    price = jsonObject.getJSONObject("data").getDouble("priceUsd");
-                    fillContent("当前价格：" + price);
+                    js_request.put("address", getAddress());
+                    js_request.put("visible", true);
+                    String res = SimpleRequest.postRequest(hosts + "/wallet/getaccount",
+                            js_request.toString());
+                    JSONObject jsonObject = new JSONObject(res);
+                    JSONObject showJson = new JSONObject();
+                    String balance = jsonObject.getString("balance");
+                    showJson.put("可用余额", getShowAmount(balance));
+                    BigInteger frozenBandWidth = new BigInteger("0");
+                    if (jsonObject.has("frozenV2")) {
+                        JSONArray array = jsonObject.getJSONArray("frozenV2");
+                        for (int i = 0; i < array.length(); i++) {
+                            if (array.getJSONObject(i).has("amount")){
+                                BigInteger frozenBandWidthItem = new BigInteger(array.getJSONObject(i).getString("amount"));
+                                frozenBandWidth = frozenBandWidth.add(frozenBandWidthItem);
+                            }
+                        }
+                    }
+                    showJson.put("冻结宽带", getShowAmount(frozenBandWidth.toString()));
+                    if (jsonObject.has("unfrozenV2")) {
+                        JSONArray array = jsonObject.getJSONArray("unfrozenV2");
+                        for (int i = 0; i < array.length(); i++) {
+                            showJson.put("解冻宽带-" + (i + 1), getShowAmount(array.getJSONObject(i).getString("unfreeze_amount"))
+                                    + "，到期时间:"+ new Date(array.getJSONObject(i).getLong("unfreeze_expire_time")).toLocaleString());
+                        }
+                    }
+
+                    voteCount = frozenBandWidth.divide(new BigInteger("1000000")).intValue();
+                    showJson.put("票数", voteCount);
+                    if (jsonObject.has("votes")){
+                        JSONArray array = jsonObject.getJSONArray("votes");
+                        for (int i = 0; i < array.length(); i++) {
+                            showJson.put("投票-" + (i + 1), array.getJSONObject(i).getString("vote_address")
+                                    + "，数量:"+ array.getJSONObject(i).getString("vote_count"));
+                        }
+                    }
+                    fillContent(showJson.toString(4));
+
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogRipple.error("exception", e);
                 }
-            }
-
-            @Override
-            public void onError() {
-                fillContent("error");
-            }
+            }).start();
         });
 
-        findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mWords = BtcOpenApi.Wallet.createRandomMnemonic();
-                fillTime();
-                fillContent(Arrays.toString(mWords.toArray()).replaceAll(",", ""));
-            }
-        });
-
-        findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String wordTest = Key.sMnemonic;
-                mWords = Arrays.asList(wordTest.split(" "));
-                ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
-                fillTime();
-                fillContent("--私钥: " + ecKeyPair.getPrivateKey());
-                ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
-                fillContent("--地址: " + TronWalletApi.getAddress(ecKey.getPubKeyPoint()));
-            }
-        });
-
-        findViewById(R.id.btn3).setOnClickListener(new View.OnClickListener() {
+        //冻结，已完成
+        findViewById(R.id.btnFroze).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fillTime();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject js_request = new JSONObject();
-                        try {
-                            js_request.put("address", getAddress());
-                            js_request.put("visible", true);
-                            String res = SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/getaccount",
-                                    js_request.toString());
-                            JSONObject jsonObject = new JSONObject(res);
-                            JSONObject showJson = new JSONObject();
-                            BigInteger frozenBandWidth = new BigInteger("0");
-                            if (jsonObject.has("frozen")) {
-                                JSONArray array = jsonObject.getJSONArray("frozen");
-                                for (int i = 0; i < array.length(); i++) {
-                                    BigInteger frozenBandWidthItem = new BigInteger(array.getJSONObject(i).getString("frozen_balance"));
-                                    frozenBandWidth = frozenBandWidth.add(frozenBandWidthItem);
-                                }
-                            }
-                            String balance = jsonObject.getString("balance");
-                            showJson.put("可用余额", balance);
-                            showJson.put("冻结宽带", frozenBandWidth.toString());
-
-                            String frozenEnergy = "0";
-                            try {
-                                frozenEnergy = jsonObject.getJSONObject("account_resource").
-                                        getJSONObject("frozen_balance_for_energy").getString("frozen_balance");
-                            } catch (Exception e) {
-                                LogRipple.error("exception", e);
-                            }
-                            showJson.put("冻结能量", frozenEnergy);
-                            voteCount = frozenBandWidth.add(new BigInteger(frozenEnergy)).divide(new BigInteger("1000000")).intValue();
-                            showJson.put("票数", voteCount);
-                            fillContent(showJson.toString(4));
-
-                            BigInteger account =  new BigInteger(balance).add(new BigInteger(frozenEnergy)).add(frozenBandWidth);
-                            showJson.put("总余额", account.toString());
-                            fillContent("价格：" + new BigDecimal(account).multiply(new BigDecimal(price * 6.4 / 1000000)).toString());
-                        } catch (Exception e) {
-                            LogRipple.error("exception", e);
-                        }
-                    }
-                }).start();
-            }
-        });
-
-        findViewById(R.id.btn4).setVisibility(View.GONE);
-        findViewById(R.id.btn4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
-        findViewById(R.id.btneX).setVisibility(View.VISIBLE);
-        findViewById(R.id.btneX1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fillTime();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String res = freezeBalance(1000, "BANDWIDTH"); //BANDWIDTH 或者 ENERGY
+                        String res = freezeBalance(Integer.parseInt(editText.getText().toString()), "BANDWIDTH"); //BANDWIDTH 或者 ENERGY
                         try {
                             JSONObject jsonObject = new JSONObject(res);
                             fillContent(jsonObject.toString(4));
                             byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
 
-                            String wordTest = Key.sMnemonic;
-                            mWords = Arrays.asList(wordTest.split(" "));
-                            ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
-                            ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
-                            String sign_hex = ecKey.sign(rawData).toHex();
-
-                            String hex = broadcastTransaction(jsonObject,
-                                    sign_hex);
-
-                            fillContent(new JSONObject(hex).toString(4));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }).start();
-            }
-        });
-        findViewById(R.id.btneX2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fillTime();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String res = unFreezeBalance();
-                        try {
-                            JSONObject jsonObject = new JSONObject(res);
-                            fillContent(jsonObject.toString(4));
-                            byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
-                            String wordTest = Key.sMnemonic;
-                            mWords = Arrays.asList(wordTest.split(" "));
-                            ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
-                            ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
                             String sign_hex = ecKey.sign(rawData).toHex();
 
                             String hex = broadcastTransaction(jsonObject,
@@ -230,9 +159,64 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             }
         });
 
+        //解冻，已完成
+        findViewById(R.id.btnUnFroze).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fillTime();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String res = unFreezeBalance(Integer.parseInt(editText.getText().toString()));
+                        try {
+                            JSONObject jsonObject = new JSONObject(res);
+                            fillContent(jsonObject.toString(4));
+                            byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
+                            String sign_hex = ecKey.sign(rawData).toHex();
 
-        findViewById(R.id.btneY).setVisibility(View.VISIBLE);
-        findViewById(R.id.btneY1).setOnClickListener(new View.OnClickListener() {
+                            String hex = broadcastTransaction(jsonObject,
+                                    sign_hex);
+
+                            fillContent(new JSONObject(hex).toString(4));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }).start();
+            }
+        });
+
+        //取消解冻，已完成
+        findViewById(R.id.btnUnFrozeCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fillTime();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String res = unFreezeCancel();
+                        try {
+                            JSONObject jsonObject = new JSONObject(res);
+                            fillContent(jsonObject.toString(4));
+                            byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
+                            String sign_hex = ecKey.sign(rawData).toHex();
+
+                            String hex = broadcastTransaction(jsonObject,
+                                    sign_hex);
+
+                            fillContent(new JSONObject(hex).toString(4));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }).start();
+            }
+        });
+
+        //投票，已完成
+        findViewById(R.id.btnVote).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fillTime();
@@ -266,10 +250,6 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                             JSONObject jsonObject = new JSONObject(res);
                             fillContent(jsonObject.toString(4));
                             byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
-                            String wordTest = Key.sMnemonic;
-                            mWords = Arrays.asList(wordTest.split(" "));
-                            ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
-                            ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
                             String sign_hex = ecKey.sign(rawData).toHex();
 
                             String hex = broadcastTransaction(jsonObject,
@@ -284,7 +264,9 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                 }).start();
             }
         });
-        findViewById(R.id.btneY2).setOnClickListener(new View.OnClickListener() {
+
+        //收益，已完成
+        findViewById(R.id.btnProfit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fillTime();
@@ -295,7 +277,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                         try {
                             js_request.put("address", getAddress());
                             js_request.put("visible", true);
-                            String res = SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/getReward",
+                            String res = SimpleRequest.postRequest(hosts + "/wallet/getReward",
                                     js_request.toString());
                             JSONObject jsonObject = new JSONObject(res);
                             int reward = jsonObject.getInt("reward");
@@ -303,16 +285,12 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
                                 fillContent("reward="+reward);
                                 js_request.put("owner_address", getAddress());
                                 js_request.put("visible", true);
-                                res = SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/withdrawbalance",
+                                res = SimpleRequest.postRequest(hosts + "/wallet/withdrawbalance",
                                         js_request.toString());
                                 jsonObject = new JSONObject(res);
                                 fillContent(jsonObject.toString(4));
 
                                 byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
-                                String wordTest = Key.sMnemonic;
-                                mWords = Arrays.asList(wordTest.split(" "));
-                                ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
-                                ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
                                 String sign_hex = ecKey.sign(rawData).toHex();
 
                                 String hex = broadcastTransaction(jsonObject,
@@ -330,33 +308,99 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             }
         });
 
-        findViewById(R.id.btn5).setOnClickListener(new View.OnClickListener() {
+        //转账，已完成
+        findViewById(R.id.btnSignExchange).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fillTime();
-                        String res = createTransaction("TRQoG5FVDazBVW5QBBh3acgmEUxNfwhrV6", 1200);
-                        try {
-                            JSONObject jsonObject = new JSONObject(res);
-                            fillContent(jsonObject.toString(4));
-                            byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
-                            String wordTest = Key.sMnemonic;
-                            mWords = Arrays.asList(wordTest.split(" "));
-                            ecKeyPair = BtcOpenApi.Wallet.createFromMnemonic(mWords, coin);
-                            ecKey = ECKey.fromPrivate(HexUtils.fromHex(ecKeyPair.getPrivateKey()));
-                            String sign_hex = ecKey.sign(rawData).toHex();
-                            fillContent(sign_hex);
 
-                            String hex = broadcastTransaction(jsonObject,
-                                    sign_hex);
-                            fillContent(hex);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                // 创建一个AlertDialog构造器
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(TrxActivity.this);
+                builder.setTitle("密码验证");
+                View view = LayoutInflater.from(TrxActivity.this).inflate(R.layout.dialog_set, null);
+                builder.setView(view);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 获取输入框的内容
+                        String key = ((EditText)view.findViewById(R.id.et_name)).getText().toString();
+                        if ("900615".equals(key)){
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fillTime();
+                                    String res = createTransaction("TVxTMHP2Gk2AKcMPmSuSLNStgCFTK4b9uf", Integer.parseInt(editText.getText().toString()));
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(res);
+                                        fillContent(jsonObject.toString(4));
+                                        byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
+                                        String sign_hex = ecKey.sign(rawData).toHex();
+                                        fillContent(sign_hex);
+
+                                        String hex = broadcastTransaction(jsonObject,
+                                                sign_hex);
+                                        fillContent(hex);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).start();
+                        }else{
+                            fillContent("密码错误");
                         }
                     }
-                }).start();
+                });
+                builder.setCancelable(false);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        //转账，已完成
+        findViewById(R.id.btnSignGame).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // 创建一个AlertDialog构造器
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(TrxActivity.this);
+                builder.setTitle("密码验证");
+                View view = LayoutInflater.from(TrxActivity.this).inflate(R.layout.dialog_set, null);
+                builder.setView(view);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 获取输入框的内容
+                        String key = ((EditText)view.findViewById(R.id.et_name)).getText().toString();
+                        if ("900615".equals(key)){
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fillTime();
+                                    String res = createTransaction("TA1kh61TQzQbNjLt3ruNcnWCj8awbQiS3a", Integer.parseInt(editText.getText().toString()));
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(res);
+                                        fillContent(jsonObject.toString(4));
+                                        byte[] rawData = ByteArray.fromHexString(jsonObject.getString("txID"));
+                                        String sign_hex = ecKey.sign(rawData).toHex();
+                                        fillContent(sign_hex);
+
+                                        String hex = broadcastTransaction(jsonObject,
+                                                sign_hex);
+                                        fillContent(hex);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).start();
+                        }else{
+                            fillContent("密码错误");
+                        }
+                    }
+                });
+                builder.setCancelable(false);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
@@ -388,7 +432,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             js_request.put("owner_address", getAddress());
             js_request.put("votes", votes);
             js_request.put("visible", true);
-            return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/votewitnessaccount",
+            return SimpleRequest.postRequest(hosts + "/wallet/votewitnessaccount",
                     js_request.toString());
         } catch (Exception e) {
             LogRipple.error("exception", e);
@@ -405,7 +449,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
     public List<witnesses> witnesses() {
         List<witnesses> witnesses = new ArrayList<>();
         try {
-            String res = SimpleRequest.getRequest("http://18.133.82.227:8090/wallet/listwitnesses?visible=true");
+            String res = SimpleRequest.getRequest(hosts + "/wallet/listwitnesses?visible=true");
             JSONObject object = new JSONObject(res);
             JSONArray array = object.getJSONArray("witnesses");
             for (int i = 0; i < array.length(); i++) {
@@ -425,7 +469,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
         JSONObject js_request = new JSONObject();
         try {
             js_request.put("address", address);
-            return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/getBrokerage",
+            return SimpleRequest.postRequest(hosts + "/wallet/getBrokerage",
                     js_request.toString());
         } catch (Exception e) {
             LogRipple.error("exception", e);
@@ -437,12 +481,12 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
     public String freezeBalance(int freeze_amount, String resource) {
         JSONObject js_request = new JSONObject();
         try {
-            js_request.put("frozen_duration", 3); //冻结天数, 目前固定为 3 天
+            //js_request.put("frozen_duration", 3); //冻结天数, 目前固定为 3 天
             js_request.put("owner_address", getAddress());
             js_request.put("resource", resource);
-            js_request.put("frozen_balance", freeze_amount * 1000000);
+            js_request.put("frozen_balance", freeze_amount * 1000000l);
             js_request.put("visible", true);
-            return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/freezebalance",
+            return SimpleRequest.postRequest(hosts + "/wallet/freezebalancev2",
                     js_request.toString());
         } catch (Exception e) {
             LogRipple.error("exception", e);
@@ -451,13 +495,27 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
     }
 
 
-    public String unFreezeBalance() {
+    public String unFreezeBalance(int freeze_amount) {
         JSONObject js_request = new JSONObject();
         try {
             js_request.put("owner_address", getAddress());
             js_request.put("resource", "BANDWIDTH"); //BANDWIDTH 或者 ENERGY
+            js_request.put("unfreeze_balance", freeze_amount * 1000000l); //"unfreeze_balance": 1000000,
+            js_request.put("visible", true); //"unfreeze_balance": 1000000,
+            return SimpleRequest.postRequest(hosts + "/wallet/unfreezebalancev2",
+                    js_request.toString());
+        } catch (Exception e) {
+            LogRipple.error("exception", e);
+        }
+        return "";
+    }
+
+    public String unFreezeCancel() {
+        JSONObject js_request = new JSONObject();
+        try {
+            js_request.put("owner_address", getAddress());
             js_request.put("visible", true);
-            return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/unfreezebalance",
+            return SimpleRequest.postRequest(hosts + "/wallet/cancelallunfreezev2",
                     js_request.toString());
         } catch (Exception e) {
             LogRipple.error("exception", e);
@@ -471,9 +529,9 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
         try {
             js_request.put("to_address", address);
             js_request.put("owner_address", getAddress());
-            js_request.put("amount", amount * 1000000);
+            js_request.put("amount", amount * 1000000l);
             js_request.put("visible", true);
-            return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/createtransaction",
+            return SimpleRequest.postRequest(hosts + "/wallet/createtransaction",
                     js_request.toString());
         } catch (Exception e) {
             LogRipple.error("exception", e);
@@ -486,7 +544,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
             JSONArray signatures = new JSONArray();
             signatures.put(signature);
             jsonObject.put("signature", signatures);
-            return SimpleRequest.postRequest("http://18.133.82.227:8090/wallet/broadcasttransaction",
+            return SimpleRequest.postRequest(hosts + "/wallet/broadcasttransaction",
                     jsonObject.toString());
         } catch (Exception e) {
             LogRipple.error("exception", e);
@@ -496,7 +554,7 @@ public class BlockchainTrxActivity extends BaseTLEActivity {
 
 
     private String getAddress() {
-        return "TVxTMHP2Gk2AKcMPmSuSLNStgCFTK4b9uf";
+        return TronWalletApi.getAddress(ecKey.getPubKeyPoint());
     }
 
 
